@@ -4,7 +4,7 @@ import { View } from '../../views/view';
 
 import '@polymer/paper-slider/paper-slider'
 
-import {main} from '../../flames/renderer/program'
+import {FlameRenderer} from '../../flames/renderer/flame-renderer'
 
 @customElement('empty-view')
 export class EmptyView extends View {
@@ -80,7 +80,8 @@ export class EmptyView extends View {
       var fpsCounterElement = document.getElementById("fps-counter") as HTMLElement;
       var canvas = document.getElementById("screen")  as HTMLCanvasElement;
 
-      main(canvas, brightnessElement, radioButtonElements, fpsCounterElement, param1Element);
+      const renderer = new FlameRenderer(canvas, brightnessElement, radioButtonElements, fpsCounterElement, param1Element);
+      renderer.drawScene()
     }
   }
 
