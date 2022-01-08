@@ -1,0 +1,8 @@
+map-view {
+  display: flex;
+  height: 100%;
+}
+
+map-view .map {
+  flex: 1;
+}

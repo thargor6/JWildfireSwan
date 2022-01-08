@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: jwildfireswan
+  namespace: default
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: jwildfireswan
+  template:
+    metadata:
+      labels:
+        app: jwildfireswan
+    spec:
+      containers:
+        - name: jwildfireswan
+          image: jwildfireswan:latest
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 8080
+          resources:
+            limits:
+              memory: 512Mi
+              cpu: '1'
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: jwildfireswan-balancer
+spec:
+  selector:
+    app: jwildfireswan
+  ports:
+    - protocol: TCP
+      port: 8000 # The port to expose to the outside
+      targetPort: 8080 # The port the application is running on in the pods
+  type: LoadBalancer
+  sessionAffinity: ClientIP
