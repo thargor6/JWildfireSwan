@@ -22,8 +22,7 @@ export class FlameRenderer {
     display: FlameRendererDisplay;
 
     constructor(private canvas: HTMLCanvasElement, private brightnessElement: HTMLElement,
-                private radioButtonElements: any, private fpsCounterElement: HTMLElement,
-                private param1Element: HTMLElement) {
+                private radioButtonElements: any, private param1Element: HTMLElement) {
 
         canvas.width = this.canvas_size;
         canvas.height = this.canvas_size;
