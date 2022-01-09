@@ -41,11 +41,30 @@ interface ShowRawBufferProgram extends WebGLProgram {
     uTexSamp: WebGLUniformLocation;
 }
 
+function addVariations(xForm: XForm, xFormIdx: number) {
+    if(xFormIdx===11) {
+        return ` float amount = 0.25;        
+                     float r = (gold_noise(tex, seed) + rand(tex)) * (PI + PI);
+                     float sina = sin(r);
+                     float cosa = cos(r);
+                     float r2 = amount * gold_noise(tex, seed3);
+                     tx += r2 * cosa;
+                     ty += r2 * sina;`;
+    }
+    if(xFormIdx===2) {
+        return `tx -= 0.3 * 1.0 / (r * r) * point.x;
+                ty -= 0.3 * 1.0 / (r * r) * point.y;`;
+    }
+    return '';
+}
+
 function addXForm(xForm: XForm, xFormIdx: number) {
     return ` if(xFormIdx==${xFormIdx}) {
-				  tx = evalP(${xForm.c00.value}, 0.5, 0.75, 0.0) * point.x + ${xForm.c10.value} * point.y + evalP(${xForm.c20.value}, 0.025, 0.75, 0.0);
-                  ty = evalP(${xForm.c01.value}, 0.25, 0.5, 0.0) * point.x + ${xForm.c11.value} * point.y + evalP(${xForm.c21.value}, 0.05, 5.75, 0.0);
+				  tx = evalP(${xForm.c00.value}, 0.0, 0.75, 0.0) * point.x + ${xForm.c10.value} * point.y + ${xForm.c20.value};
+                  ty = ${xForm.c01.value} * point.x + ${xForm.c11.value} * point.y + ${xForm.c21.value};
+                  ${addVariations(xForm, xFormIdx)}
 				}
+				
 	`;
 }
 

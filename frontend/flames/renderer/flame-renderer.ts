@@ -85,7 +85,7 @@ export class FlameRenderer {
 
         if(this.frames>5) {
          // this.frames=0;
-          this.ctx.textures.clearHistogram();
+       //   this.ctx.textures.clearHistogram();
         }
 
         if (this.frames < 2500)
