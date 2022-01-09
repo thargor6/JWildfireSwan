@@ -5,6 +5,7 @@ import { View } from '../../views/view';
 import '@polymer/paper-slider/paper-slider'
 
 import {FlameRenderer} from '../../flames/renderer/flame-renderer'
+import {FlameFactory} from "Frontend/flames/model/flame-factory";
 
 @customElement('empty-view')
 export class EmptyView extends View {
@@ -13,14 +14,11 @@ export class EmptyView extends View {
 
 
 <canvas id="screen1" width="512" height="512"></canvas>
-<canvas id="screen2" width="256" height="256"></canvas>
 
 <div id="overlay">
    <form name="controls">
     <paper-slider  id="brightness" step="0.0001" value="2.2" min="0" max="4"></paper-slider>
     <paper-slider  id="param1" step="0.1" value="2.5" min="0" max="10.0"></paper-slider>
-
-
     <label><input type="radio" name="displayMode" value="flame" checked="checked"> Flame</label>
     <label><input type="radio" name="displayMode" value="position"> Position</label>
     <label><input type="radio" name="displayMode" value="colour"> Colour</label>
@@ -49,6 +47,7 @@ export class EmptyView extends View {
 
   protected firstUpdated(_changedProperties: PropertyValues) {
     super.firstUpdated(_changedProperties);
+
     if(!this.initFlag) {
       this.initFlag = true;
       var brightnessElement = document.querySelector("#brightness") as HTMLElement;
@@ -56,13 +55,11 @@ export class EmptyView extends View {
       var radioButtonElements = document.getElementsByName('displayMode') ;
       var canvas = document.getElementById("screen1")  as HTMLCanvasElement;
 
-      const renderer = new FlameRenderer(canvas, brightnessElement, radioButtonElements, param1Element);
+      const flame = FlameFactory.createSierpinsky();
+      const renderer = new FlameRenderer(canvas, flame, brightnessElement, radioButtonElements, param1Element);
       renderer.drawScene()
 
-      var canvas2 = document.getElementById("screen2")  as HTMLCanvasElement;
-      const renderer2 = new FlameRenderer(canvas2, brightnessElement, radioButtonElements, param1Element);
-      renderer2.drawScene()
     }
-  }
 
+  }
 }

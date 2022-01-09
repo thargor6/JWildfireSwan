@@ -5,7 +5,7 @@ export class Textures {
     _texture1: WebGLTexture;
     texture2: WebGLTexture;
 
-    constructor(gl: WebGLRenderingContext, points_size: number, grid_size: number) {
+    constructor(public gl: WebGLRenderingContext, public points_size: number, public grid_size: number) {
         this.texture0 = gl.createTexture()!;
 
         gl.bindTexture(gl.TEXTURE_2D, this.texture0);
@@ -79,5 +79,11 @@ export class Textures {
 
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+    }
+
+    clearHistogram() {
+        const gl = this.gl;
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, this.grid_size, this.grid_size, 0, gl.RGBA, gl.FLOAT, null);
+
     }
 }

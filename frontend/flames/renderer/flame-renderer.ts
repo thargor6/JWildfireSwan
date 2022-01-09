@@ -8,20 +8,22 @@ import {FlameRenderContext} from "./render_context";
 import {FlameRenderSettings} from "./render_settings";
 import {FlameRendererDisplay} from "./display";
 import {FlameIterator} from "./iterator";
-
+import {Flame} from "Frontend/flames/model/flame";
 
 export class FlameRenderer {
     frames = 0;
-    grid_size: number = 512;
+    grid_size: number = 1024;
     canvas_size = this.grid_size;
-    points_size = 128;
+    points_size = 512;
 
     ctx: FlameRenderContext;
     settings: FlameRenderSettings;
     iterator: FlameIterator;
     display: FlameRendererDisplay;
 
-    constructor(private canvas: HTMLCanvasElement, private brightnessElement: HTMLElement,
+    constructor(private canvas: HTMLCanvasElement,
+                private flame: Flame,
+                private brightnessElement: HTMLElement,
                 private radioButtonElements: any, private param1Element: HTMLElement) {
 
         canvas.width = this.canvas_size;
@@ -29,7 +31,7 @@ export class FlameRenderer {
 
         const gl = initGL(canvas);
 
-        const shaders = new Shaders(gl, canvas, this.points_size);
+        const shaders = new Shaders(gl, canvas, this.points_size, flame);
         const buffers = new Buffers(gl, shaders, this.points_size);
         const textures = new Textures(gl, this.points_size, this.grid_size);
         const framebuffers = new Framebuffers(gl, textures);
@@ -59,7 +61,7 @@ export class FlameRenderer {
         this.iterator.iterateIFS();
 
         //
-        if (this.frames > 20) {
+        if (this.frames > 8) {
             this.iterator.plotHistogram();
         }
 
@@ -79,6 +81,12 @@ export class FlameRenderer {
         }
 
         this.frames++;
+
+
+        if(this.frames>5) {
+         // this.frames=0;
+          this.ctx.textures.clearHistogram();
+        }
 
         if (this.frames < 2500)
             window.requestAnimationFrame(this.drawScene.bind(this));
