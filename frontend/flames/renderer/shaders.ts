@@ -48,18 +48,29 @@ function addVariations(xForm: XForm, xFormIdx: number) {
                      float sina = sin(r);
                      float cosa = cos(r);
                      float r2 = amount * gold_noise(tex, seed3);
-                     tx += r2 * cosa;
-                     ty += r2 * sina;`;
+                     vx += r2 * cosa;
+                     vy += r2 * sina;`;
     }
     if(xFormIdx===2) {
-        return `tx -= 0.3 * 1.0 / (r * r) * point.x;
-                ty -= 0.3 * 1.0 / (r * r) * point.y;`;
+        return `float lr = 0.5 / (tx*tx + ty * ty);
+                vx += tx * lr;
+                vy += ty * lr;
+                vx += tx * 0.5; vy += ty * 0.5;
+                `;
     }
-    return '';
+    if(xFormIdx===0) {
+        return `float lr = 0.04 / (tx*tx + ty * ty);
+                vx += tx * lr;
+                vy += ty * lr;
+                vx += tx * 0.37; vy += ty * 0.37;
+                `;
+    }
+    return 'vx += tx * 0.5; vy += ty * 0.5;';
 }
 
 function addXForm(xForm: XForm, xFormIdx: number) {
     return ` if(xFormIdx==${xFormIdx}) {
+                  vx = vy = 0.0;
 				  tx = evalP(${xForm.c00.value}, 0.0, 0.75, 0.0) * point.x + ${xForm.c10.value} * point.y + ${xForm.c20.value};
                   ty = ${xForm.c01.value} * point.x + ${xForm.c11.value} * point.y + ${xForm.c21.value};
                   ${addVariations(xForm, xFormIdx)}
@@ -131,9 +142,11 @@ function createCompPointsShader(flame: Flame) {
 				float r = rand(tex);
 
                 float tx, ty;
+                float vx = 0.0, vy = 0.0;
 
 				${addXForms(flame)}
-				point = vec2(tx*0.5, ty*0.5);
+				//point = vec2(tx*0.5, ty*0.5);
+				point = vec2(vx, vy);
 				
 
 				gl_FragColor = vec4(point, 0.0, 1.0);

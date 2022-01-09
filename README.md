@@ -1,6 +1,6 @@
 # JWildfire Swan - playful fractal flames, GPU accelerated 
 
-![Example](example1.jpg?raw=true)
+![Example](example2.jpg?raw=true)
 
 This is an experimental project and work in progress.
 
@@ -14,6 +14,8 @@ So it is more a game than a professional application, even you will be able to
 create real art with it.
 
 There shall be no special GPU mode, so GPU (when available) is used per default.
+
+![Example](example1.jpg?raw=true)
 
 ## Technical details
 The user-interface is made use Vaadin Fusion.
