@@ -24,3 +24,10 @@ The flame-code will be implemented using TypeScript and WebGL.
 
 Some concepts, especially the WebGL buffer setup, are inspired by 
 https://github.com/richardassar/ElectricSheep_WebGL by Richard Assar.
+
+
+## Build
+
+### Install j-wildfire-lib into project repository
+
+mvn deploy:deploy-file -Durl=file:////Users/<USER>/.m2/repository/ -Dfile=/<COMPLETE_PATH>/j-wildfire-7.30.0.jar -DgroupId=com.jwildfire -DartifactId=j-wildfire-lib -Dpackaging=jar -Dversion=7.30.0

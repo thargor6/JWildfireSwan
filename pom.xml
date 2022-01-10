@@ -139,6 +139,13 @@
             <version>4.4.0</version>
             <scope>test</scope>
         </dependency>
+
+        <dependency>
+            <groupId>com.jwildfire</groupId>
+            <artifactId>j-wildfire-lib</artifactId>
+            <version>7.30.0</version>
+        </dependency>
+
     </dependencies>
 
     <build>
