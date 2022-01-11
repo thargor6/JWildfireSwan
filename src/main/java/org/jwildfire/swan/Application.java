@@ -16,7 +16,7 @@ import org.springframework.boot.web.servlet.support.SpringBootServletInitializer
  * and some desktop browsers.
  *
  */
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages = "org.jwildfire")
 @Theme(value = "jwildfireswan")
 @PWA(name = "JWildfire Swan", shortName = "JWildfire Swan", offlineResources = {"images/logo.png"})
 @NpmPackage(value = "@polymer/paper-slider", version = "3.0.1")
