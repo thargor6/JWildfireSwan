@@ -17,4 +17,6 @@ public class Flame {
   @Nonnull
   private final List<@Nonnull XForm> xforms = new ArrayList<>();
 
+  @Nonnull
+  private final List<@Nonnull XForm> finalXforms = new ArrayList<>();
 }

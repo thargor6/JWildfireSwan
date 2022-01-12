@@ -14,26 +14,35 @@
   if not, write to the Free Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 */
+
 package org.jwildfire.swan.flames.mapper;
 
-import org.jwildfire.swan.flames.model.Flame;
+import org.jwildfire.swan.flames.model.XForm;
 import org.springframework.stereotype.Service;
 
 @Service
-public class FlameMapper {
-  private final XFormMapper xFormMapper;
+public class XFormMapper {
 
-  public FlameMapper(XFormMapper xFormMapper) {
-    this.xFormMapper = xFormMapper;
-  }
+  public XForm mapFromJwildfire(org.jwildfire.create.tina.base.XForm source) {
+    XForm res = new XForm();
 
-  public Flame mapFromJwildfire(org.jwildfire.create.tina.base.Flame source) {
-    Flame res = new Flame();
-    res.setBrightness(source.getBrightness());
-    source.getFirstLayer().getXForms().stream()
-        .forEach(xForm -> res.getXforms().add(xFormMapper.mapFromJwildfire(xForm)));
-    source.getFirstLayer().getFinalXForms().stream()
-        .forEach(xForm -> res.getFinalXforms().add(xFormMapper.mapFromJwildfire(xForm)));
+    res.setWeight(source.getWeight());
+    res.setColor(source.getColor());
+    res.setColorSymmetry(source.getColorSymmetry());
+
+    res.setC00(source.getCoeff00());
+    res.setC01(source.getCoeff01());
+    res.setC10(source.getCoeff10());
+    res.setC11(source.getCoeff11());
+    res.setC20(source.getCoeff20());
+    res.setC21(source.getCoeff21());
+
+    res.setP00(source.getPostCoeff00());
+    res.setP01(source.getPostCoeff01());
+    res.setP10(source.getPostCoeff10());
+    res.setP11(source.getPostCoeff11());
+    res.setP20(source.getPostCoeff20());
+    res.setP21(source.getPostCoeff21());
     return res;
   }
 }

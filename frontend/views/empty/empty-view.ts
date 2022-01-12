@@ -3,15 +3,18 @@ import { customElement } from 'lit/decorators.js';
 import { View } from '../../views/view';
 
 import '@polymer/paper-slider/paper-slider'
+import '@vaadin/vaadin-button'
 
 import {FlameRenderer} from '../../flames/renderer/flame-renderer'
 import {FlameFactory} from "Frontend/flames/model/flame-factory";
+import {FlamesEndpoint} from "Frontend/generated/endpoints";
 
 @customElement('empty-view')
 export class EmptyView extends View {
   render() {
     return html`
 
+      <vaadin-button @click="${this.onClick}">Test</vaadin-button>
 
 <canvas id="screen1" width="512" height="512"></canvas>
 
@@ -50,16 +53,28 @@ export class EmptyView extends View {
 
     if(!this.initFlag) {
       this.initFlag = true;
+
       var brightnessElement = document.querySelector("#brightness") as HTMLElement;
       var param1Element = document.querySelector("#param1") as HTMLElement;
       var radioButtonElements = document.getElementsByName('displayMode') ;
       var canvas = document.getElementById("screen1")  as HTMLCanvasElement;
 
-      const flame = FlameFactory.createSierpinsky();
-      const renderer = new FlameRenderer(canvas, flame, brightnessElement, radioButtonElements, param1Element);
-      renderer.drawScene()
+
+/*
+      FlamesEndpoint.getExampleFlame("example01").then( flame=> {
+        const renderer = new FlameRenderer(canvas, flame, brightnessElement, radioButtonElements, param1Element);
+        renderer.drawScene()
+      })
+*/
+      //const flame = FlameFactory.createSierpinsky();
+    //  const renderer = new FlameRenderer(canvas, flame, brightnessElement, radioButtonElements, param1Element);
+    //  renderer.drawScene()
 
     }
 
+  }
+
+  onClick = ()=> {
+    FlamesEndpoint.getExampleFlame("example01").then( f=> console.log("FLAME:", f))
   }
 }

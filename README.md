@@ -1,4 +1,4 @@
-# JWildfire Swan - playful fractal flames, GPU accelerated 
+# JWildfire Swan - fractal flames the playful way, GPU accelerated
 
 ![Example](example2.jpg?raw=true)
 

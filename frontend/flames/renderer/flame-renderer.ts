@@ -12,7 +12,7 @@ import {Flame} from "Frontend/flames/model/flame";
 
 export class FlameRenderer {
     frames = 0;
-    grid_size: number = 1024;
+    grid_size: number = 512;
     canvas_size = this.grid_size;
     points_size = 256;
 
