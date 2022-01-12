@@ -6,8 +6,8 @@ import '@polymer/paper-slider/paper-slider'
 import '@vaadin/vaadin-button'
 
 import {FlameRenderer} from '../../flames/renderer/flame-renderer'
-import {FlameFactory} from "Frontend/flames/model/flame-factory";
 import {FlamesEndpoint} from "Frontend/generated/endpoints";
+import {FlameMapper} from '../../flames/model/mapper/flame-mapper'
 
 @customElement('empty-view')
 export class EmptyView extends View {
@@ -60,21 +60,17 @@ export class EmptyView extends View {
       var canvas = document.getElementById("screen1")  as HTMLCanvasElement;
 
 
-/*
-      FlamesEndpoint.getExampleFlame("example01").then( flame=> {
-        const renderer = new FlameRenderer(canvas, flame, brightnessElement, radioButtonElements, param1Element);
+
+      FlamesEndpoint.getExampleFlame("example03").then( flame=> {
+        const renderer = new FlameRenderer(canvas, FlameMapper.mapFromBackend(flame), brightnessElement, radioButtonElements, param1Element);
         renderer.drawScene()
       })
-*/
-      //const flame = FlameFactory.createSierpinsky();
-    //  const renderer = new FlameRenderer(canvas, flame, brightnessElement, radioButtonElements, param1Element);
-    //  renderer.drawScene()
 
     }
 
   }
 
   onClick = ()=> {
-    FlamesEndpoint.getExampleFlame("example01").then( f=> console.log("FLAME:", f))
+    FlamesEndpoint.getExampleFlame("example01").then( f=> console.log("FLAME:",  FlameMapper.mapFromBackend(f)))
   }
 }
