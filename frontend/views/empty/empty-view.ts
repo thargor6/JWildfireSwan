@@ -61,7 +61,7 @@ export class EmptyView extends View {
 
 
 
-      FlamesEndpoint.getExampleFlame("example03").then( flame=> {
+      FlamesEndpoint.getExampleFlame("example04").then( flame=> {
         const renderer = new FlameRenderer(canvas, FlameMapper.mapFromBackend(flame), brightnessElement, radioButtonElements, param1Element);
         renderer.drawScene()
       })
@@ -71,6 +71,6 @@ export class EmptyView extends View {
   }
 
   onClick = ()=> {
-    FlamesEndpoint.getExampleFlame("example01").then( f=> console.log("FLAME:",  FlameMapper.mapFromBackend(f)))
+    FlamesEndpoint.getExampleFlame("example04").then( f=> console.log("FLAME:",  FlameMapper.mapFromBackend(f)))
   }
 }

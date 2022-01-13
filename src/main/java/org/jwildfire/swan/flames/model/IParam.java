@@ -15,24 +15,15 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 */
 
-export interface FlameParameter {
-    type: "number" | "dynamic";
-    value: number;
-}
+package org.jwildfire.swan.flames.model;
 
-class NumberParameter implements FlameParameter {
-    type: "number" | "dynamic";
+import com.vaadin.fusion.Nonnull;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 
-    constructor(public value: number) {
-        this.type = "number";
-    }
-}
-
-export class Parameters {
-    public static dNumber(value: number) {
-        return new NumberParameter(value+0.001);
-    }
-    public static iNumber(value: number) {
-        return new NumberParameter(value+0.0001);
-    }
+@Data
+@AllArgsConstructor
+public class IParam {
+  @Nonnull private String name;
+  @Nonnull private int value;
 }

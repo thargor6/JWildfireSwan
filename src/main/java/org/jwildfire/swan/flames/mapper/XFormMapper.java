@@ -17,8 +17,13 @@
 
 package org.jwildfire.swan.flames.mapper;
 
+import org.jwildfire.swan.flames.model.DParam;
+import org.jwildfire.swan.flames.model.IParam;
+import org.jwildfire.swan.flames.model.Variation;
 import org.jwildfire.swan.flames.model.XForm;
 import org.springframework.stereotype.Service;
+
+import java.util.Arrays;
 
 @Service
 public class XFormMapper {
@@ -43,6 +48,26 @@ public class XFormMapper {
     res.setP11(source.getPostCoeff11());
     res.setP20(source.getPostCoeff20());
     res.setP21(source.getPostCoeff21());
+
+    for(int i=0;i<source.getVariationCount();i++) {
+      org.jwildfire.create.tina.variation.Variation srcVar = source.getVariation(i);
+      Variation dstVar = new Variation();
+      dstVar.setAmount(srcVar.getAmount());
+      dstVar.setName(srcVar.getFunc().getName());
+      for (int j = 0; j < srcVar.getFunc().getParameterNames().length; j++) {
+        String pName = srcVar.getFunc().getParameterNames()[j];
+        Object pValue = srcVar.getFunc().getParameterValues()[j];
+        if(pValue!=null) {
+          if(pValue instanceof Integer) {
+            dstVar.getIParams().add(new IParam(pName, (Integer)pValue));
+          }
+          else if(pValue instanceof Double) {
+            dstVar.getDParams().add(new DParam(pName, (Double)pValue));
+          }
+        }
+      };
+      res.getVariations().add(dstVar);
+    }
     return res;
   }
 }

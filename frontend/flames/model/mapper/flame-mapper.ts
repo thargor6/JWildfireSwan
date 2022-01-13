@@ -17,18 +17,50 @@
 
 import {default as SourceXForm} from '../../../generated/org/jwildfire/swan/flames/model/XForm'
 import {default as SourceFlame} from '../../../generated/org/jwildfire/swan/flames/model/Flame'
-import {Flame, XForm} from "../flame";
+import {default as SourceVariation} from '../../../generated/org/jwildfire/swan/flames/model/Variation'
+import {Flame, XForm, Variation} from "../flame";
 import {Parameters} from "Frontend/flames/model/parameters";
+
+class VariationMapper {
+    static mapFromBackend(source: SourceVariation): Variation {
+        const res = new Variation();
+        res.name = source.name;
+        res.amount = Parameters.dNumber(source.amount);
+        source.dParams.map(sd => {
+          res.params.set(sd.name, Parameters.dNumber(sd.value))
+        })
+        source.iParams.map(id => {
+            res.params.set(id.name, Parameters.iNumber(id.value))
+        })
+        return res;
+    }
+}
 
 class XFormMapper {
     static mapFromBackend(source: SourceXForm): XForm {
         const res = new XForm();
-        res.c00 = Parameters.number(source.c00);
-        res.c01 = Parameters.number(source.c01);
-        res.c10 = Parameters.number(source.c10);
-        res.c11 = Parameters.number(source.c11);
-        res.c20 = Parameters.number(source.c20);
-        res.c21 = Parameters.number(source.c21);
+
+        res.weight = Parameters.dNumber(source.weight);
+        res.color = Parameters.dNumber(source.color);
+        res.colorSymmetry = Parameters.dNumber(source.colorSymmetry);
+
+        res.c00 = Parameters.dNumber(source.c00);
+        res.c01 = Parameters.dNumber(source.c01);
+        res.c10 = Parameters.dNumber(source.c10);
+        res.c11 = Parameters.dNumber(source.c11);
+        res.c20 = Parameters.dNumber(source.c20);
+        res.c21 = Parameters.dNumber(source.c21);
+
+        res.p00 = Parameters.dNumber(source.p00);
+        res.p01 = Parameters.dNumber(source.p01);
+        res.p10 = Parameters.dNumber(source.p10);
+        res.p11 = Parameters.dNumber(source.p11);
+        res.p20 = Parameters.dNumber(source.p20);
+        res.p21 = Parameters.dNumber(source.p21);
+
+        source.variations.map(svar => {
+            res.variations.push(VariationMapper.mapFromBackend(svar))
+        })
         return res;
     }
 }
@@ -36,9 +68,12 @@ class XFormMapper {
 export class FlameMapper {
     public static mapFromBackend(source: SourceFlame): Flame {
         const res = new Flame();
-        res.brightness = Parameters.number(source.brightness);
+        res.brightness = Parameters.dNumber(source.brightness);
         source.xforms.map(sxf => {
             res.xforms.push(XFormMapper.mapFromBackend(sxf))
+        })
+        source.finalXforms.map(sxf => {
+            res.finalXforms.push(XFormMapper.mapFromBackend(sxf))
         })
         return res;
     }

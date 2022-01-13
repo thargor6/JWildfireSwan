@@ -20,6 +20,9 @@ package org.jwildfire.swan.flames.model;
 import com.vaadin.fusion.Nonnull;
 import lombok.Data;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Data
 public class XForm {
   @Nonnull private double weight;
@@ -37,4 +40,7 @@ public class XForm {
   @Nonnull private double p11;
   @Nonnull private double p20;
   @Nonnull private double p21;
+
+  @Nonnull
+  private final List<@Nonnull Variation> variations = new ArrayList<>();
 }

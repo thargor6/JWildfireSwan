@@ -17,23 +17,49 @@
 
 import {FlameParameter, Parameters} from "Frontend/flames/model/parameters";
 
+export class Variation {
+    public name = 'linear';
+    public amount: FlameParameter = Parameters.dNumber(1.0);
+    private _params = new Map<string, FlameParameter>();
+    public get params() {
+        return this._params
+    }
+}
 
 export class XForm {
-    public c00: FlameParameter = Parameters.number(1.0);
-    public c01: FlameParameter = Parameters.number(0.0);
-    public c10: FlameParameter = Parameters.number(0.0);
-    public c11: FlameParameter = Parameters.number(1.0);
-    public c20: FlameParameter = Parameters.number(0.0);
-    public c21: FlameParameter = Parameters.number(0.0);
-    public color: FlameParameter = Parameters.number(0.5);
-    public symmetry: FlameParameter = Parameters.number(0.0);
-    public weight: FlameParameter = Parameters.number(1.0);
+    public c00: FlameParameter = Parameters.dNumber(1.0);
+    public c01: FlameParameter = Parameters.dNumber(0.0);
+    public c10: FlameParameter = Parameters.dNumber(0.0);
+    public c11: FlameParameter = Parameters.dNumber(1.0);
+    public c20: FlameParameter = Parameters.dNumber(0.0);
+    public c21: FlameParameter = Parameters.dNumber(0.0);
+
+    public p00: FlameParameter = Parameters.dNumber(1.0);
+    public p01: FlameParameter = Parameters.dNumber(0.0);
+    public p10: FlameParameter = Parameters.dNumber(0.0);
+    public p11: FlameParameter = Parameters.dNumber(1.0);
+    public p20: FlameParameter = Parameters.dNumber(0.0);
+    public p21: FlameParameter = Parameters.dNumber(0.0);
+
+    public color: FlameParameter = Parameters.dNumber(0.5);
+    public colorSymmetry: FlameParameter = Parameters.dNumber(0.0);
+    public weight: FlameParameter = Parameters.dNumber(1.0);
+
+    private _variations = new Array<Variation>();
+    public get variations() {
+        return this._variations;
+    }
 }
 
 export class Flame {
-    public brightness = Parameters.number(1.0);
+    public brightness = Parameters.dNumber(1.0);
     private _xforms = new Array<XForm>();
+    private _finalXforms = new Array<XForm>();
     public get xforms() {
         return this._xforms;
+    }
+
+    public get finalXforms() {
+        return this._finalXforms;
     }
 }
