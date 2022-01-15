@@ -9,7 +9,6 @@ import '@vaadin/vaadin-text-field'
 import {FlameRenderer} from '../../flames/renderer/flame-renderer'
 import {FlamesEndpoint} from "Frontend/generated/endpoints";
 import {FlameMapper} from '../../flames/model/mapper/flame-mapper'
-import {TextFieldValueChangedEvent} from "@vaadin/text-field/src/vaadin-text-field";
 import {HasValue} from "@vaadin/form";
 
 @customElement('empty-view')

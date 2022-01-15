@@ -6,6 +6,8 @@ import {shader_comp_col_fs} from '../shaders/shader-comp-col-fs'
 import {shader_show_fs} from '../shaders/shader-show-fs'
 import {shader_show_raw_fs} from '../shaders/shader-show-raw-fs'
 import {Flame, Variation, XForm} from "../model/flame";
+import {VariationShaders} from "Frontend/flames/renderer/variation-shaders";
+import {registerVars} from "Frontend/flames/renderer/basic-variation-shaders";
 
 interface ComputePointsProgram extends WebGLProgram {
     vertexPositionAttribute: GLint;
@@ -41,69 +43,16 @@ interface ShowRawBufferProgram extends WebGLProgram {
     uTexSamp: WebGLUniformLocation;
 }
 
+// https://www.shaderific.com/glsl-functions
+
 function addVariation(variation: Variation) {
-
-    if(variation.name==='linear' || variation.name==='linear3D') {
-        return `{
-          vx += tx * ${variation.amount.value}; 
-          vy += ty * ${variation.amount.value};
-        }`;
-    }
-    else if(variation.name==='spherical' || variation.name==='spherical3D') {
-        return `{
-          float lr = ${variation.amount.value} / (tx*tx + ty * ty);
-          vx += tx * lr;
-          vy += ty * lr;
-        }`;
-    }
-    else if(variation.name==='arch') {
-        return `{
-              float ang = (gold_noise(tex, seed) + rand(tex)) * ${variation.amount.value} * PI;
-              float sinr = sin(ang);
-              float cosr = cos(ang);
-                if (cosr != 0.0) {
-                vx += ${variation.amount.value} * sinr;
-                vy += ${variation.amount.value} * (sinr * sinr) / cosr;
-                    }
-
-        }`;
-    }
-    else {
-        return ``;
-    }
+    return VariationShaders.getVariationCode(variation)
 }
 
 function addVariations(xForm: XForm, xFormIdx: number) {
     return `{
           ${xForm.variations.map(variation => addVariation(variation)).join('')}
     }`
-}
-
-function addVariations0(xForm: XForm, xFormIdx: number) {
-    if(xFormIdx===11) {
-        return ` float amount = 0.25;        
-                     float r = (gold_noise(tex, seed) + rand(tex)) * (PI + PI);
-                     float sina = sin(r);
-                     float cosa = cos(r);
-                     float r2 = amount * gold_noise(tex, seed3);
-                     vx += r2 * cosa;
-                     vy += r2 * sina;`;
-    }
-    if(xFormIdx===2) {
-        return `float lr = 0.5 / (tx*tx + ty * ty);
-                vx += tx * lr;
-                vy += ty * lr;
-                vx += tx * 0.5; vy += ty * 0.5;
-                `;
-    }
-    if(xFormIdx===0) {
-        return `float lr = 0.04 / (tx*tx + ty * ty);
-                vx += tx * lr;
-                vy += ty * lr;
-                vx += tx * 0.37; vy += ty * 0.37;
-                `;
-    }
-    return 'vx += tx * 0.5; vy += ty * 0.5;';
 }
 
 function addXForm(xForm: XForm, xFormIdx: number) {
@@ -148,7 +97,8 @@ function createCompPointsShader(flame: Flame) {
 			uniform float seed3;
 			uniform float time;
 
-			const float PI = 3.141592;
+			const float M_PI = 3.141592;
+			const float EPSILON = 0.000001;
 
 			// https://stackoverflow.com/questions/4200224/random-noise-functions-for-glsl
 			// Gold Noise ©2015 dcerisano@standard3d.com
@@ -160,8 +110,7 @@ function createCompPointsShader(flame: Flame) {
 			float PHI = 1.61803398874989484820459;  // Φ = Golden Ratio   
 			
 			float gold_noise(in vec2 xy, in float seed){
-				   float r = fract(tan(distance(xy*PHI, xy)*seed)*xy.x);
-				   if( r < 0.0) return  -r; else return r;
+				   return fract(tan(distance(xy*PHI, xy)*seed)*xy.x);
 			}
 
             float evalP(float startValue, float amp, float freq, float phase) {
@@ -169,9 +118,17 @@ function createCompPointsShader(flame: Flame) {
             }
 			
 			// Rand
+			float atan2(in float y, in float x) {
+                return x == 0.0 ? sign(y)*M_PI * 0.5 : atan(y, x);
+            }
+
 			float rand(vec2 co) {
-			    float r = fract(sin(dot(co, vec2(12.9898 * seed, 78.233 * seed))) * 43758.5453);
-			     if( r < 0.0) return  -r; else return r;
+			    return fract(sin(dot(co, vec2(12.9898 * seed, 78.233 * seed))) * 43758.5453);
+			}
+
+			float rand2(vec2 co) {
+			   // return fract(sin(dot(co, vec2(12.9898 * seed + seed, 78.233 * seed))) * 43758.5453);
+			   return gold_noise(co, seed2);
 			}
 
 			void main(void) {
@@ -241,3 +198,5 @@ export class Shaders {
     }
 
 }
+
+registerVars()
