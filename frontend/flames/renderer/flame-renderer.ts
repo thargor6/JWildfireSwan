@@ -14,7 +14,7 @@ export class FlameRenderer {
     frames = 0;
     grid_size: number = 512;
     canvas_size = this.grid_size;
-    points_size = 256;
+    points_size = 128;
 
     ctx: FlameRenderContext;
     settings: FlameRenderSettings;
