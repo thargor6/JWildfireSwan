@@ -30,12 +30,26 @@ export enum VariationTypes {
     VARTYPE_CROP
 }
 
+export enum VariationParamType {
+    VP_NUMBER,
+    VP_BOOLEAN
+}
+
+export interface VariationParam {
+    name: string;
+    type: VariationParamType;
+}
+
 export abstract class VariationShaderFunc {
     abstract getCode(variation: RenderVariation): string
 
     abstract get name(): string
 
     get dependencies(): string[] {
+        return []
+    }
+
+    get params(): VariationParam[] {
         return []
     }
 

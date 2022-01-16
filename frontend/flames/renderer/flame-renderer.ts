@@ -29,6 +29,7 @@ export class FlameRenderer {
 
         const renderFlame = FlameMapper.mapForRendering(flame)
         renderFlame.refreshModWeightTables()
+        console.log("PREPARED FLAME:", renderFlame)
 
         this.canvas_size = this.grid_size
         canvas.width = this.canvas_size

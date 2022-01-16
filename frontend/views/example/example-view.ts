@@ -86,15 +86,12 @@ export class ExampleView extends View {
       
       <div id="todo">
         <h2>TODO's</h2>
-        <p>optimization of affine/post-affine tx</p>
-        <p>variations with params</p>
         <p>random flames</p>
         <p>basic camera stuff</p>
         <p>user settings</p>
         <p>color-iteration-stuff</p>
           <p>support for dc variations</p>
         <p>optional dark theme</p>
-        <p>lifecycle (init/initOnce) for variations</p>
         <p>display shader code in browser</p>
           <p>line codes for shader display</p>
         <p>implement tranforms weights</p>
@@ -104,7 +101,6 @@ export class ExampleView extends View {
         <p>deploy j-wildfire-lib on Maven repository</p>
           <p>deploy on heroku</p>
         <p>dynamic param evaluation stuff</p>
-        <p>new model classes for rendered flame</p>
       </div>
 
       </div>

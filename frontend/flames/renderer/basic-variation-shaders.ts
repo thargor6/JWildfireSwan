@@ -15,7 +15,13 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 */
 
-import {VariationShaderFunc2D, VariationShaderFunc3D, VariationTypes} from "./variation-shader-func";
+import {
+    VariationParam,
+    VariationParamType,
+    VariationShaderFunc2D,
+    VariationShaderFunc3D,
+    VariationTypes
+} from "./variation-shader-func";
 import {VariationShaders} from "Frontend/flames/renderer/variation-shaders";
 import {RenderVariation} from "Frontend/flames/model/render-flame";
 
@@ -115,6 +121,12 @@ class BlurFunc extends VariationShaderFunc2D {
 
 // TODO: filled param
 class CloverLeafWFFunc extends VariationShaderFunc2D {
+    PARAM_FILLED = "filled"
+
+    get params(): VariationParam[] {
+      return [{ name: this.PARAM_FILLED, type: VariationParamType.VP_NUMBER }]
+    }
+
     getCode(variation: RenderVariation): string {
         return `{
           float amount = ${variation.amount};
@@ -122,7 +134,7 @@ class CloverLeafWFFunc extends VariationShaderFunc2D {
 
           float r = (sin(2.0 * a) + 0.25 * sin(6.0 * a));
 
-          float filled = 0.85;
+          float filled = ${variation.params.get(this.PARAM_FILLED)};
 
           if (filled > 0.0 && filled > rand2(tex)) {
             r *= rand3(tex);
