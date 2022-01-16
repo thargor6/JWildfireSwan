@@ -53,4 +53,13 @@ public class FlamesEndpoint {
       return null;
     }
   }
+
+  public @Nonnull Flame parseFlame(String flameXml) {
+    try {
+      return service.parseFlame(flameXml);
+    } catch (Exception ex) {
+      log.error("Error parsing flame", ex);
+      return null;
+    }
+  }
 }
