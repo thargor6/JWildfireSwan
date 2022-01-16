@@ -9,6 +9,8 @@ import {FlameRenderSettings} from "./render_settings";
 import {FlameRendererDisplay} from "./display";
 import {FlameIterator} from "./iterator";
 import {Flame} from "Frontend/flames/model/flame";
+import {RenderFlame} from "Frontend/flames/model/render-flame";
+import {FlameMapper} from "Frontend/flames/model/mapper/flame-mapper";
 
 export class FlameRenderer {
     frames = 0;
@@ -25,14 +27,16 @@ export class FlameRenderer {
                 private brightnessElement: HTMLElement,
                 private radioButtonElements: any, private param1Element: HTMLElement) {
 
-        flame.refreshModWeightTables()
-        this.canvas_size = this.grid_size;
-        canvas.width = this.canvas_size;
-        canvas.height = this.canvas_size;
+        const renderFlame = FlameMapper.mapForRendering(flame)
+        renderFlame.refreshModWeightTables()
+
+        this.canvas_size = this.grid_size
+        canvas.width = this.canvas_size
+        canvas.height = this.canvas_size
 
         const gl = initGL(canvas);
 
-        const shaders = new Shaders(gl, canvas, this.points_size, flame);
+        const shaders = new Shaders(gl, canvas, this.points_size, renderFlame);
         const buffers = new Buffers(gl, shaders, this.points_size);
         const textures = new Textures(gl, this.points_size, this.grid_size);
         const framebuffers = new Framebuffers(gl, textures);

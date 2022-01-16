@@ -104,6 +104,7 @@ export class ExampleView extends View {
         <p>deploy j-wildfire-lib on Maven repository</p>
           <p>deploy on heroku</p>
         <p>dynamic param evaluation stuff</p>
+        <p>new model classes for rendered flame</p>
       </div>
 
       </div>

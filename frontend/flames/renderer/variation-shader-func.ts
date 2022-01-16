@@ -15,8 +15,8 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 */
 
-import {Variation} from '../model/flame'
 import {FlameParameter} from '../model/parameters'
+import {RenderVariation} from "Frontend/flames/model/render-flame";
 
 export enum VariationTypes {
     VARTYPE_BLUR,
@@ -31,7 +31,7 @@ export enum VariationTypes {
 }
 
 export abstract class VariationShaderFunc {
-    abstract getCode(variation: Variation): string
+    abstract getCode(variation: RenderVariation): string
 
     abstract get name(): string
 

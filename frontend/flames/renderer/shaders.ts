@@ -5,9 +5,9 @@ import {shader_direct_vs} from '../shaders/shader-direct-vs'
 import {shader_comp_col_fs} from '../shaders/shader-comp-col-fs'
 import {shader_show_fs} from '../shaders/shader-show-fs'
 import {shader_show_raw_fs} from '../shaders/shader-show-raw-fs'
-import {Flame, Variation, XForm} from "../model/flame";
 import {VariationShaders} from "Frontend/flames/renderer/variation-shaders";
 import {registerVars} from "Frontend/flames/renderer/basic-variation-shaders";
+import {RenderFlame, RenderXForm, RenderVariation} from "Frontend/flames/model/render-flame";
 
 interface ComputePointsProgram extends WebGLProgram {
     vertexPositionAttribute: GLint;
@@ -45,34 +45,34 @@ interface ShowRawBufferProgram extends WebGLProgram {
 
 // https://www.shaderific.com/glsl-functions
 
-function addVariation(variation: Variation) {
+function addVariation(variation: RenderVariation) {
     return VariationShaders.getVariationCode(variation)
 }
 
-function addVariations(xForm: XForm, xFormIdx: number) {
+function addVariations(xForm: RenderXForm, xFormIdx: number) {
     return `{
           ${xForm.variations.map(variation => addVariation(variation)).join('')}
     }`
 }
 
-function addXForm(xForm: XForm, xFormIdx: number) {
+function addXForm(xForm: RenderXForm, xFormIdx: number) {
     return `if(xFormIdx==${xFormIdx}) {
                _vx = _vy = 0.0;
-		       _tx = ${xForm.c00.value} * point.x + ${xForm.c10.value} * point.y + ${xForm.c20.value};
-               _ty = ${xForm.c01.value} * point.x + ${xForm.c11.value} * point.y + ${xForm.c21.value};
+		       _tx = ${xForm.c00} * point.x + ${xForm.c10} * point.y + ${xForm.c20};
+               _ty = ${xForm.c01} * point.x + ${xForm.c11} * point.y + ${xForm.c21};
                float _phi = atan2(_tx, _ty);
                float _r2 = _tx * _tx + _ty * _ty;
                float _r = sqrt(_tx * _tx + _ty * _ty) + EPSILON;                  
                ${addVariations(xForm, xFormIdx)}
-               float _px = ${xForm.p00.value} * _vx + ${xForm.p10.value} * _vy + ${xForm.p20.value};
-               float _py = ${xForm.p01.value} * _vx + ${xForm.p11.value} * _vy + ${xForm.p21.value};
+               float _px = ${xForm.p00} * _vx + ${xForm.p10} * _vy + ${xForm.p20};
+               float _py = ${xForm.p01} * _vx + ${xForm.p11} * _vy + ${xForm.p21};
                _vx = _px;
                _vy = _py;
 			}	
 	`;
 }
 
-function addXForms(flame: Flame) {
+function addXForms(flame: RenderFlame) {
     return `
        int xFormIdx;
        if(r < 0.3) {
@@ -91,7 +91,7 @@ function addXForms(flame: Flame) {
     `;
 }
 
-function createCompPointsShader(flame: Flame) {
+function createCompPointsShader(flame: RenderFlame) {
     return `
             #ifdef GL_ES
 				precision highp float;
@@ -171,7 +171,7 @@ export class Shaders {
     prog_show: ShowHistogramProgram;
     prog_show_raw: ShowRawBufferProgram;
 
-    constructor(gl: WebGLRenderingContext, canvas: HTMLCanvasElement, points_size: number, flame: Flame) {
+    constructor(gl: WebGLRenderingContext, canvas: HTMLCanvasElement, points_size: number, flame: RenderFlame) {
         this.prog_points = compileShaderDirect(gl, shader_points_vs, shader_points_fs, {}) as ComputePointsProgram;
         this.prog_points.vertexPositionAttribute = gl.getAttribLocation(this.prog_points, "aVertexPosition");
         gl.enableVertexAttribArray(this.prog_points.vertexPositionAttribute);

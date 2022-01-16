@@ -15,17 +15,17 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 */
 
-import {Variation} from '../model/flame';
 import {VariationShaderFunc2D, VariationShaderFunc3D, VariationTypes} from "./variation-shader-func";
 import {VariationShaders} from "Frontend/flames/renderer/variation-shaders";
+import {RenderVariation} from "Frontend/flames/model/render-flame";
 
 // https://www.shaderific.com/glsl-functions
 
 // 2D
 class ArchFunc extends VariationShaderFunc2D {
-    getCode(variation: Variation): string {
+    getCode(variation: RenderVariation): string {
         return `{
-              float amount = ${this.evalP(variation.amount)};
+              float amount = ${variation.amount};
               float ang = rand2(tex) * amount * M_PI;
               float sinr = sin(ang);
               float cosr = cos(ang);
@@ -50,9 +50,9 @@ class ArchFunc extends VariationShaderFunc2D {
 }
 
 class BentFunc extends VariationShaderFunc2D {
-    getCode(variation: Variation): string {
+    getCode(variation: RenderVariation): string {
         return `{
-          float amount = ${this.evalP(variation.amount)};
+          float amount = ${variation.amount};
           float nx = _tx;
           float ny = _ty;
           if (nx < 0.0)
@@ -74,9 +74,9 @@ class BentFunc extends VariationShaderFunc2D {
 }
 
 class BiLinearFunc extends VariationShaderFunc2D {
-    getCode(variation: Variation): string {
+    getCode(variation: RenderVariation): string {
         return `{
-          float amount = ${this.evalP(variation.amount)};
+          float amount = ${variation.amount};
           _vx += amount * _ty;
           _vy += amount * _tx;
         }`;
@@ -92,9 +92,9 @@ class BiLinearFunc extends VariationShaderFunc2D {
 }
 
 class BlurFunc extends VariationShaderFunc2D {
-    getCode(variation: Variation): string {
+    getCode(variation: RenderVariation): string {
         return `{
-          float amount = ${this.evalP(variation.amount)};
+          float amount = ${variation.amount};
           float r = rand2(tex) * (M_PI + M_PI);
           float sina = sin(r);
           float cosa = cos(r);
@@ -113,10 +113,42 @@ class BlurFunc extends VariationShaderFunc2D {
     }
 }
 
-class CrossFunc extends VariationShaderFunc2D {
-    getCode(variation: Variation): string {
+// TODO: filled param
+class CloverLeafWFFunc extends VariationShaderFunc2D {
+    getCode(variation: RenderVariation): string {
         return `{
-                  float amount = ${this.evalP(variation.amount)};
+          float amount = ${variation.amount};
+          float a = _phi;
+
+          float r = (sin(2.0 * a) + 0.25 * sin(6.0 * a));
+
+          float filled = 0.85;
+
+          if (filled > 0.0 && filled > rand2(tex)) {
+            r *= rand3(tex);
+          }
+
+          float nx = sin(a) * r;
+          float ny = cos(a) * r;
+    
+          _vx += amount * nx;
+          _vy += amount * ny;
+        }`;
+    }
+
+    get name(): string {
+        return "cloverleaf_wf";
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D, VariationTypes.VARTYPE_BLUR];
+    }
+}
+
+class CrossFunc extends VariationShaderFunc2D {
+    getCode(variation: RenderVariation): string {
+        return `{
+                  float amount = ${variation.amount};
                   float s = _tx * _tx - _ty * _ty;
                   float r = amount * sqrt(1.0 / (s * s + EPSILON));
                   _vx += _tx * r;
@@ -134,9 +166,9 @@ class CrossFunc extends VariationShaderFunc2D {
 }
 
 class CylinderFunc extends VariationShaderFunc2D {
-    getCode(variation: Variation): string {
+    getCode(variation: RenderVariation): string {
         return `{
-                  float amount = ${this.evalP(variation.amount)};
+                  float amount = ${variation.amount};
                    _vx += amount * sin(_tx);
                    _vy += amount * _ty;
                 }`;
@@ -152,12 +184,12 @@ class CylinderFunc extends VariationShaderFunc2D {
 }
 
 class ExpFunc extends VariationShaderFunc2D {
-    getCode(variation: Variation): string {
+    getCode(variation: RenderVariation): string {
         /* complex vars by cothe */
         /* exp log sin cos tan sec csc cot sinh cosh tanh sech csch coth */
         //Exponential EXP
         return `{
-            float amount = ${this.evalP(variation.amount)};
+            float amount = ${variation.amount};
             float expe = exp(_tx);
             float expsin = sin(_ty);
             float expcos = cos(_ty);
@@ -176,9 +208,9 @@ class ExpFunc extends VariationShaderFunc2D {
 }
 
 class JuliaFunc extends VariationShaderFunc2D {
-    getCode(variation: Variation): string {
+    getCode(variation: RenderVariation): string {
         return `{
-           float amount = ${this.evalP(variation.amount)};
+           float amount = ${variation.amount};
            float a = atan2(_tx, _ty) * 0.5 + M_PI * floor(2.0 * rand2(tex));
            float sina = sin(a);
            float cosa = cos(a);
@@ -202,9 +234,9 @@ class JuliaFunc extends VariationShaderFunc2D {
 }
 
 class LinearFunc extends VariationShaderFunc2D {
-    getCode(variation: Variation): string {
+    getCode(variation: RenderVariation): string {
         return `{
-          float amount = ${this.evalP(variation.amount)};
+          float amount = ${variation.amount};
           _vx += amount * _tx; 
           _vy += amount * _ty;
         }`;
@@ -220,10 +252,10 @@ class LinearFunc extends VariationShaderFunc2D {
 }
 
 class PetalFunc extends VariationShaderFunc2D {
-    getCode(variation: Variation): string {
+    getCode(variation: RenderVariation): string {
         // petal by Raykoid666, http://raykoid666.deviantart.com/art/re-pack-1-new-plugins-100092186
         return `{
-          float amount = ${this.evalP(variation.amount)};
+          float amount = ${variation.amount};
           float a = cos(_tx);
           float bx = (cos(_tx) * cos(_ty)) * (cos(_tx) * cos(_ty)) * (cos(_tx) * cos(_ty));
           float by = (sin(_tx) * cos(_ty)) * (sin(_tx) * cos(_ty)) * (sin(_tx) * cos(_ty));
@@ -242,9 +274,9 @@ class PetalFunc extends VariationShaderFunc2D {
 }
 
 class PolarFunc extends VariationShaderFunc2D {
-    getCode(variation: Variation): string {
+    getCode(variation: RenderVariation): string {
         return `{
-          float amount = ${this.evalP(variation.amount)};
+          float amount =${variation.amount};
           float R_PI = 0.31830989;
           float ny = sqrt(_tx * _tx + _ty * _ty) - 1.0;
           _vx += amount * (_phi * R_PI);
@@ -262,10 +294,10 @@ class PolarFunc extends VariationShaderFunc2D {
 }
 
 class Polar2Func extends VariationShaderFunc2D {
-    getCode(variation: Variation): string {
+    getCode(variation: RenderVariation): string {
         /* polar2 from the apophysis plugin pack */
         return `{
-          float amount = ${this.evalP(variation.amount)};
+          float amount = ${variation.amount};
           float R_PI = 0.31830989;
           float p2v = amount / M_PI;
           _vx += p2v * _phi;
@@ -283,10 +315,10 @@ class Polar2Func extends VariationShaderFunc2D {
 }
 
 class RaysFunc extends VariationShaderFunc2D {
-    getCode(variation: Variation): string {
+    getCode(variation: RenderVariation): string {
         /* Z+ variation Jan 07 */
         return `{
-          float amount = ${this.evalP(variation.amount)};
+          float amount = ${variation.amount};
           float ang = amount * rand2(tex) * M_PI;
           float r = amount / (_r2 + EPSILON);
           float tanr = amount * tan(ang) * r;
@@ -305,10 +337,10 @@ class RaysFunc extends VariationShaderFunc2D {
 }
 
 class Rays1Func extends VariationShaderFunc2D {
-    getCode(variation: Variation): string {
+    getCode(variation: RenderVariation): string {
         // rays by Raykoid666, http://raykoid666.deviantart.com/art/re-pack-1-new-plugins-100092186
         return `{
-          float amount = ${this.evalP(variation.amount)};
+          float amount = ${variation.amount};
           float t = sqr(_tx) + sqr(_ty);
           float u = 1.0 / tan(sqrt(t)) + (amount * sqr((2.0 / M_PI)));
           _vx = amount * u * t / _tx;
@@ -326,9 +358,9 @@ class Rays1Func extends VariationShaderFunc2D {
 }
 
 class SphericalFunc extends VariationShaderFunc2D {
-    getCode(variation: Variation): string {
+    getCode(variation: RenderVariation): string {
         return `{
-          float amount = ${this.evalP(variation.amount)};
+          float amount = ${variation.amount};
           float lr = amount / (_tx * _tx + _ty * _ty + EPSILON);
           _vx += _tx * lr;
           _vy += _ty * lr;
@@ -345,9 +377,9 @@ class SphericalFunc extends VariationShaderFunc2D {
 }
 
 class SpiralFunc extends VariationShaderFunc2D {
-    getCode(variation: Variation): string {
+    getCode(variation: RenderVariation): string {
         return `{
-          float amount = ${this.evalP(variation.amount)};
+          float amount = ${variation.amount};
           float sinA = _tx / _r;
           float cosA = _ty / _r;
           float r = _r;
@@ -369,9 +401,9 @@ class SpiralFunc extends VariationShaderFunc2D {
 }
 
 class SwirlFunc extends VariationShaderFunc2D {
-    getCode(variation: Variation): string {
+    getCode(variation: RenderVariation): string {
          return `{
-          float amount = ${this.evalP(variation.amount)};
+          float amount = ${variation.amount};
           float r2 = _tx * _tx + _ty * _ty;
           float c1 = sin(r2);
           float c2 = cos(r2);
@@ -390,9 +422,9 @@ class SwirlFunc extends VariationShaderFunc2D {
 }
 
 class TangentFunc extends VariationShaderFunc2D {
-    getCode(variation: Variation): string {
+    getCode(variation: RenderVariation): string {
         return `{
-          float amount = ${this.evalP(variation.amount)};
+          float amount = ${variation.amount};
           float d = cos(_ty);
           if (d != 0.0) {
             _vx += amount * sin(_tx) / d;
@@ -411,9 +443,9 @@ class TangentFunc extends VariationShaderFunc2D {
 }
 // 3D
 class CylinderApoFunc extends VariationShaderFunc3D {
-    getCode(variation: Variation): string {
+    getCode(variation: RenderVariation): string {
         return `{
-          float amount = ${this.evalP(variation.amount)};
+          float amount = ${variation.amount};
           _vx += amount * sin(_tx);
           _vy += amount * _ty;
           _vz += amount * cos(_tx);
@@ -430,9 +462,9 @@ class CylinderApoFunc extends VariationShaderFunc3D {
 }
 
 class Linear3DFunc extends VariationShaderFunc3D {
-    getCode(variation: Variation): string {
+    getCode(variation: RenderVariation): string {
         return `{
-          float amount = ${this.evalP(variation.amount)};
+          float amount = ${variation.amount};
           _vx += amount * _tx; 
           _vy += amount * _ty;
           _vz += amount * _tz;
@@ -449,9 +481,9 @@ class Linear3DFunc extends VariationShaderFunc3D {
 }
 
 class Spherical3DFunc extends VariationShaderFunc2D {
-    getCode(variation: Variation): string {
+    getCode(variation: RenderVariation): string {
         return `{
-          float amount = ${this.evalP(variation.amount)};
+          float amount = ${variation.amount};
           float lr = amount / (_tx * _tx + _ty * _ty + _tz * _tz + EPSILON);
           _vx += _tx * lr;
           _vy += _ty * lr;
@@ -469,9 +501,9 @@ class Spherical3DFunc extends VariationShaderFunc2D {
 }
 
 class Tangent3DFunc extends VariationShaderFunc2D {
-    getCode(variation: Variation): string {
+    getCode(variation: RenderVariation): string {
         return `{
-          float amount = ${this.evalP(variation.amount)};
+          float amount = ${variation.amount};
           _vx += amount * sin(_tx) / cos(_ty);
           _vy += amount * tan(_ty);
           _vz += amount * tan(_tx);
@@ -493,6 +525,7 @@ export function registerVars() {
     VariationShaders.registerVar(new BentFunc())
     VariationShaders.registerVar(new BiLinearFunc())
     VariationShaders.registerVar(new BlurFunc())
+    VariationShaders.registerVar(new CloverLeafWFFunc())
     VariationShaders.registerVar(new CrossFunc())
     VariationShaders.registerVar(new CylinderFunc())
     VariationShaders.registerVar(new ExpFunc())
