@@ -86,8 +86,7 @@ export class ExampleView extends View {
       
       <div id="todo">
         <h2>TODO's</h2>
-        <p>20 variations without params/5</p>
-        <p>post affine trans</p>
+        <p>variations with params</p>
         <p>random flame</p>
         <p>basic camera stuff</p>
         <p>user settings</p>
@@ -99,6 +98,7 @@ export class ExampleView extends View {
         <p>implement tranforms weights</p>
         <p>error-handling for the backend (e.g. flame parsing)</p>
         <p>frontend-store for flames</p>
+        <p>display version number</p>
       </div>
 `;
   }
