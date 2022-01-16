@@ -68,6 +68,6 @@ export class MainLayout extends Layout {
   }
 
   private getMenuRoutes(): RouteInfo[] {
-    return views.filter((route) => route.title) as RouteInfo[];
+    return views.filter((route) => route.title === 'Examples') as RouteInfo[];
   }
 }

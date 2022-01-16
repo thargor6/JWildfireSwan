@@ -31,3 +31,11 @@ export abstract class VariationShaderFunc {
         return param.value
     }
 }
+
+export abstract class VariationShaderFunc2D extends VariationShaderFunc {
+
+}
+
+export abstract class VariationShaderFunc3D extends VariationShaderFunc {
+
+}

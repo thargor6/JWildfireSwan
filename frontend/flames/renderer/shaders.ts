@@ -57,9 +57,10 @@ function addVariations(xForm: XForm, xFormIdx: number) {
 
 function addXForm(xForm: XForm, xFormIdx: number) {
     return ` if(xFormIdx==${xFormIdx}) {
-                  vx = vy = 0.0;
-				  tx = ${xForm.c00.value} * point.x + ${xForm.c10.value} * point.y + ${xForm.c20.value};
-                  ty = ${xForm.c01.value} * point.x + ${xForm.c11.value} * point.y + ${xForm.c21.value};
+                  _vx = _vy = 0.0;
+				  _tx = ${xForm.c00.value} * point.x + ${xForm.c10.value} * point.y + ${xForm.c20.value};
+                  _ty = ${xForm.c01.value} * point.x + ${xForm.c11.value} * point.y + ${xForm.c21.value};
+                  float _phi = atan2(_tx, _ty);
                   ${addVariations(xForm, xFormIdx)}
 				}
 				
@@ -134,20 +135,19 @@ function createCompPointsShader(flame: Flame) {
 			void main(void) {
 				vec2 tex = gl_FragCoord.xy / <%= RESOLUTION %>;
 
-				vec2 point = texture2D(uTexSamp, tex).xy;
+				vec3 point = texture2D(uTexSamp, tex).xyz;
 
 				float l = length(point);
 				float r = rand(tex);
 
-                float tx, ty;
-                float vx = 0.0, vy = 0.0;
+                float _tx, _ty, _tz;
+                float _vx = 0.0, _vy = 0.0, _vz = 0.0;
 
 				${addXForms(flame)}
-				//point = vec2(tx*0.5, ty*0.5);
-				point = vec2(vx, vy);
+				point = vec3(_vx, _vy, _vz);
 				
 
-				gl_FragColor = vec4(point, 0.0, 1.0);
+				gl_FragColor = vec4(point, 1.0);
 			}
 			`;
 }
