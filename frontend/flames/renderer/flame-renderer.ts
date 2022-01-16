@@ -12,20 +12,20 @@ import {Flame} from "Frontend/flames/model/flame";
 
 export class FlameRenderer {
     frames = 0;
-    grid_size: number = 512;
-    canvas_size = this.grid_size;
-    points_size = 128;
-
+    canvas_size = 0;
     ctx: FlameRenderContext;
     settings: FlameRenderSettings;
     iterator: FlameIterator;
     display: FlameRendererDisplay;
 
-    constructor(private canvas: HTMLCanvasElement,
+    constructor(private grid_size: number,
+                private points_size: number,
+                private canvas: HTMLCanvasElement,
                 private flame: Flame,
                 private brightnessElement: HTMLElement,
                 private radioButtonElements: any, private param1Element: HTMLElement) {
 
+        this.canvas_size = this.grid_size;
         canvas.width = this.canvas_size;
         canvas.height = this.canvas_size;
 
