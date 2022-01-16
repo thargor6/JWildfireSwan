@@ -93,7 +93,7 @@ function addXForms(flame: Flame) {
 
 function createCompPointsShader(flame: Flame) {
     return `
-  #ifdef GL_ES
+            #ifdef GL_ES
 				precision highp float;
 			#endif
 

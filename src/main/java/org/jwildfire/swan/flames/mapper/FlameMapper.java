@@ -31,9 +31,9 @@ public class FlameMapper {
     Flame res = new Flame();
     res.setBrightness(source.getBrightness());
     source.getFirstLayer().getXForms().stream()
-        .forEach(xForm -> res.getXforms().add(xFormMapper.mapFromJwildfire(xForm)));
+        .forEach(xForm -> res.getXforms().add(xFormMapper.mapFromJwildfire(source, xForm)));
     source.getFirstLayer().getFinalXForms().stream()
-        .forEach(xForm -> res.getFinalXforms().add(xFormMapper.mapFromJwildfire(xForm)));
+        .forEach(xForm -> res.getFinalXforms().add(xFormMapper.mapFromJwildfire(source, xForm)));
     return res;
   }
 }

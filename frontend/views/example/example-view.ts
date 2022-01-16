@@ -74,7 +74,7 @@ export class ExampleView extends View {
           <canvasx id="screen1" width="512" height="512"></canvasx>
         </div>
   
-        </div>
+      
 
       <div style="display: none;">
         <paper-slider id="brightness" step="0.0001" value="2.2" min="0" max="4"></paper-slider>
@@ -86,19 +86,26 @@ export class ExampleView extends View {
       
       <div id="todo">
         <h2>TODO's</h2>
+        <p>optimization of affine/post-affine tx</p>
         <p>variations with params</p>
-        <p>random flame</p>
+        <p>random flames</p>
         <p>basic camera stuff</p>
         <p>user settings</p>
+        <p>color-iteration-stuff</p>
+          <p>support for dc variations</p>
         <p>optional dark theme</p>
-        <p>deploy on heroku</p>
-        <p>lifeclye (init/initOnce) for variations</p>
+        <p>lifecycle (init/initOnce) for variations</p>
         <p>display shader code in browser</p>
-        <p>line codes for shader display</p>
+          <p>line codes for shader display</p>
         <p>implement tranforms weights</p>
         <p>error-handling for the backend (e.g. flame parsing)</p>
         <p>frontend-store for flames</p>
-        <p>display version number</p>
+        <p>display version number of app</p>
+        <p>deploy j-wildfire-lib on Maven repository</p>
+          <p>deploy on heroku</p>
+        <p>dynamic param evaluation stuff</p>
+      </div>
+
       </div>
 `;
   }
@@ -133,6 +140,7 @@ export class ExampleView extends View {
     this.canvasContainer.appendChild(canvas);
 
     FlamesEndpoint.getExampleFlame(this.flameName).then( flame=> {
+      console.log("FLAME", flame)
       const renderer = new FlameRenderer(this.imageSize, this.pointsSize, canvas, FlameMapper.mapFromBackend(flame), brightnessElement, radioButtonElements, param1Element);
       renderer.drawScene()
     })
@@ -217,6 +225,7 @@ export class ExampleView extends View {
                     this.canvasContainer.appendChild(canvas);
           
                     FlamesEndpoint.parseFlame(this.flameXml).then( flame=> {
+                      console.log("FLAME", flame)
                       const renderer = new FlameRenderer(this.imageSize, this.pointsSize, canvas, FlameMapper.mapFromBackend(flame), brightnessElement, radioButtonElements, param1Element);
                       renderer.drawScene()
                     })

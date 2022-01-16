@@ -25,6 +25,7 @@ export class FlameRenderer {
                 private brightnessElement: HTMLElement,
                 private radioButtonElements: any, private param1Element: HTMLElement) {
 
+        flame.refreshModWeightTables()
         this.canvas_size = this.grid_size;
         canvas.width = this.canvas_size;
         canvas.height = this.canvas_size;

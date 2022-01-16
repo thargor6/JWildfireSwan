@@ -41,6 +41,15 @@ class XFormMapper {
         const res = new XForm();
 
         res.weight = Parameters.dNumber(source.weight);
+        for(let i=0;i<source.modifiedWeights.length;i++) {
+            if(i>=res.modifiedWeights.length) {
+                res.modifiedWeights.push(source.modifiedWeights[i])
+            }
+            else {
+                res.modifiedWeights[i] = source.modifiedWeights[i]
+            }
+        }
+
         res.color = Parameters.dNumber(source.color);
         res.colorSymmetry = Parameters.dNumber(source.colorSymmetry);
 
