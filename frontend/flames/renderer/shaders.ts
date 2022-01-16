@@ -43,8 +43,6 @@ interface ShowRawBufferProgram extends WebGLProgram {
     uTexSamp: WebGLUniformLocation;
 }
 
-// https://www.shaderific.com/glsl-functions
-
 function addVariation(variation: RenderVariation) {
     return VariationShaders.getVariationCode(variation)
 }
@@ -55,19 +53,44 @@ function addVariations(xForm: RenderXForm, xFormIdx: number) {
     }`
 }
 
-function addXForm(xForm: RenderXForm, xFormIdx: number) {
-    return `if(xFormIdx==${xFormIdx}) {
-               _vx = _vy = 0.0;
-		       _tx = ${xForm.c00} * point.x + ${xForm.c10} * point.y + ${xForm.c20};
-               _ty = ${xForm.c01} * point.x + ${xForm.c11} * point.y + ${xForm.c21};
-               float _phi = atan2(_tx, _ty);
-               float _r2 = _tx * _tx + _ty * _ty;
-               float _r = sqrt(_tx * _tx + _ty * _ty) + EPSILON;                  
-               ${addVariations(xForm, xFormIdx)}
+function addAffineTx(xForm: RenderXForm) {
+    if(xForm.c00 != 1.0 || xForm.c01 != 0.0 || xForm.c11 != 1.0 || xForm.c10 != 0.0 || xForm.c20 != 0.0 || xForm.c21 != 0.0) {
+        return `
+              _tx = ${xForm.c00} * point.x + ${xForm.c10} * point.y + ${xForm.c20};
+              _ty = ${xForm.c01} * point.x + ${xForm.c11} * point.y + ${xForm.c21};
+        `
+    }
+    else {
+        return `
+             _tx = point.x;
+             _ty = point.y;
+         `
+    }
+}
+
+function addPostAffineTx(xForm: RenderXForm) {
+    if(xForm.p00 != 1.0 || xForm.p01 != 0.0 || xForm.p11 != 1.0 || xForm.p10 != 0.0 || xForm.p20 != 0.0 || xForm.p21 != 0.0) {
+        return `
                float _px = ${xForm.p00} * _vx + ${xForm.p10} * _vy + ${xForm.p20};
                float _py = ${xForm.p01} * _vx + ${xForm.p11} * _vy + ${xForm.p21};
                _vx = _px;
                _vy = _py;
+        `
+    }
+    else {
+        return ``
+    }
+}
+
+function addXForm(xForm: RenderXForm, xFormIdx: number) {
+    return `if(xFormIdx==${xFormIdx}) {
+               _vx = _vy = 0.0;
+               ${addAffineTx(xForm)}
+               float _phi = atan2(_tx, _ty);
+               float _r2 = _tx * _tx + _ty * _ty;
+               float _r = sqrt(_tx * _tx + _ty * _ty) + EPSILON;                  
+               ${addVariations(xForm, xFormIdx)}
+               ${addPostAffineTx(xForm)}
 			}	
 	`;
 }
