@@ -56,14 +56,19 @@ function addVariations(xForm: XForm, xFormIdx: number) {
 }
 
 function addXForm(xForm: XForm, xFormIdx: number) {
-    return ` if(xFormIdx==${xFormIdx}) {
-                  _vx = _vy = 0.0;
-				  _tx = ${xForm.c00.value} * point.x + ${xForm.c10.value} * point.y + ${xForm.c20.value};
-                  _ty = ${xForm.c01.value} * point.x + ${xForm.c11.value} * point.y + ${xForm.c21.value};
-                  float _phi = atan2(_tx, _ty);
-                  ${addVariations(xForm, xFormIdx)}
-				}
-				
+    return `if(xFormIdx==${xFormIdx}) {
+               _vx = _vy = 0.0;
+		       _tx = ${xForm.c00.value} * point.x + ${xForm.c10.value} * point.y + ${xForm.c20.value};
+               _ty = ${xForm.c01.value} * point.x + ${xForm.c11.value} * point.y + ${xForm.c21.value};
+               float _phi = atan2(_tx, _ty);
+               float _r2 = _tx * _tx + _ty * _ty;
+               float _r = sqrt(_tx * _tx + _ty * _ty) + EPSILON;                  
+               ${addVariations(xForm, xFormIdx)}
+               float _px = ${xForm.p00.value} * _vx + ${xForm.p10.value} * _vy + ${xForm.p20.value};
+               float _py = ${xForm.p01.value} * _vx + ${xForm.p11.value} * _vy + ${xForm.p21.value};
+               _vx = _px;
+               _vy = _py;
+			}	
 	`;
 }
 
@@ -123,13 +128,20 @@ function createCompPointsShader(flame: Flame) {
                 return x == 0.0 ? sign(y)*M_PI * 0.5 : atan(y, x);
             }
 
+			float sqr(in float x) {
+                return x * x;
+            }
+
 			float rand(vec2 co) {
 			    return fract(sin(dot(co, vec2(12.9898 * seed, 78.233 * seed))) * 43758.5453);
 			}
 
 			float rand2(vec2 co) {
-			   // return fract(sin(dot(co, vec2(12.9898 * seed + seed, 78.233 * seed))) * 43758.5453);
-			   return gold_noise(co, seed2);
+			   	return fract(sin(dot(co, vec2(12.9898 * seed2, 78.233 * seed2))) * 43758.5453);
+			}
+
+			float rand3(vec2 co) {
+		     	return fract(sin(dot(co, vec2(12.9898 * seed3, 78.233 * seed3))) * 43758.5453);
 			}
 
 			void main(void) {

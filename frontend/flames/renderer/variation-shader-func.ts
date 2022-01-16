@@ -18,6 +18,18 @@
 import {Variation} from '../model/flame'
 import {FlameParameter} from '../model/parameters'
 
+export enum VariationTypes {
+    VARTYPE_BLUR,
+    VARTYPE_2D,
+    VARTYPE_ZTRANSFORM,
+    VARTYPE_3D,
+    VARTYPE_DC ,
+    VARTYPE_BASE_SHAPE,
+    VARTYPE_PRE,
+    VARTYPE_POST,
+    VARTYPE_CROP
+}
+
 export abstract class VariationShaderFunc {
     abstract getCode(variation: Variation): string
 
@@ -26,6 +38,8 @@ export abstract class VariationShaderFunc {
     get dependencies(): string[] {
         return []
     }
+
+    abstract get variationTypes(): VariationTypes[]
 
     evalP(param: FlameParameter): number {
         return param.value

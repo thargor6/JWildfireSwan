@@ -86,7 +86,7 @@ export class ExampleView extends View {
       
       <div id="todo">
         <h2>TODO's</h2>
-        <p>20 variations without params/4</p>
+        <p>20 variations without params/5</p>
         <p>post affine trans</p>
         <p>random flame</p>
         <p>basic camera stuff</p>
@@ -94,7 +94,6 @@ export class ExampleView extends View {
         <p>optional dark theme</p>
         <p>deploy on heroku</p>
         <p>lifeclye (init/initOnce) for variations</p>
-        <p>input window for params</p>
         <p>display shader code in browser</p>
         <p>line codes for shader display</p>
         <p>implement tranforms weights</p>
