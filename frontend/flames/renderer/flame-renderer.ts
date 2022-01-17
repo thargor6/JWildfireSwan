@@ -28,7 +28,6 @@ export class FlameRenderer {
                 private radioButtonElements: any, private param1Element: HTMLElement) {
 
         const renderFlame = FlameMapper.mapForRendering(flame)
-        renderFlame.refreshModWeightTables()
         console.log("PREPARED FLAME:", renderFlame)
 
         this.canvas_size = this.grid_size

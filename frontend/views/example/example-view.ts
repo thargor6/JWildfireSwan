@@ -76,7 +76,7 @@ export class ExampleView extends View {
   
       
 
-      <div style="display: none;">
+      <div style="display: block;">
         <paper-slider id="brightness" step="0.0001" value="2.2" min="0" max="4"></paper-slider>
         <paper-slider  id="param1" step="0.1" value="2.5" min="0" max="10.0"></paper-slider>
         <label><input type="radio" name="displayMode" value="flame" checked="checked">Flame</label>

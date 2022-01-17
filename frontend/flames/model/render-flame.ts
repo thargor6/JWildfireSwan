@@ -1,7 +1,19 @@
+/*
+  JWildfire Swan - fractal flames the playful way, GPU accelerated
+  Copyright (C) 2021-2022 Andreas Maschke
 
+  This is free software; you can redistribute it and/or modify it under the terms of the GNU Lesser
+  General Public License as published by the Free Software Foundation; either version 2.1 of the
+  License, or (at your option) any later version.
 
-const MAX_MOD_WEIGHT_COUNT = 100
-const NEXT_APPLIED_XFORM_TABLE_SIZE = 1024
+  This software is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+  even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+  Lesser General Public License for more details.
+
+  You should have received a copy of the GNU Lesser General Public License along with this software;
+  if not, write to the Free Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+  02110-1301 USA, or see the FSF site: http://www.fsf.org.
+*/
 
 export class RenderVariation {
     public name = ''
@@ -36,11 +48,6 @@ export class RenderXForm {
         return this._modifiedWeights
     }
 
-    private _nextAppliedXFormTable: (number | undefined)[] = new Array<number | undefined>(NEXT_APPLIED_XFORM_TABLE_SIZE)
-    public get nextAppliedXFormTable() {
-        return this._nextAppliedXFormTable
-    }
-
     private _variations = new Array<RenderVariation>();
     public get variations() {
         return this._variations
@@ -60,51 +67,16 @@ export class RenderFlame {
         return this._finalXforms;
     }
 
-    public refreshModWeightTables() {
-        // init xforms
-        for (let xForm of this.xforms) {
-            //  xForm.initTransform();
-            for(let variation of xForm.variations) {
-                // var.getFunc().init(pFlameTransformationContext, this, xForm, var.getAmount());
-            }
-        }
-        // init final xforms
-        for (let xForm of this.finalXforms) {
-            // xForm.initTransform();
-            for (let variation of xForm.variations) {
-                // var.getFunc().init(pFlameTransformationContext, this, xForm, var.getAmount());
-            }
-        }
-        // refresh weights
-        let tp: number[] = new Array<number>(MAX_MOD_WEIGHT_COUNT);
-        const n = this.xforms.length
-        for (let k = 0; k < n; k++) {
-            const xform = this.xforms[k];
-            let totValue = 0;
-            for (let i = 0; i < n; i++) {
-                tp[i] = this.xforms[i].weight * this.xforms[k].modifiedWeights[i];
-                totValue = totValue + tp[i];
-            }
-
-            if (totValue > 0) {
-                let loopValue = 0.0;
-                for (let i = 0; i < xform.nextAppliedXFormTable.length; i++) {
-                    let totalProb = 0.0;
-                    let j = -1;
-                    do {
-                        j++;
-                        totalProb = totalProb + tp[j];
-                    }
-                    while (!((totalProb > loopValue) || (j == n - 1)));
-                    xform.nextAppliedXFormTable[i] = j;
-                    loopValue = loopValue + totValue / xform.nextAppliedXFormTable.length;
-                }
-            }
-            else {
-                for (let i = 0; i < xform.nextAppliedXFormTable.length; i++) {
-                    xform.nextAppliedXFormTable[i] = undefined;
+    public get hasModifiedWeights() {
+        for(let i=0;i<this.xforms.length;i++) {
+            const xForm = this.xforms[i]
+            for(let j=0;j<this.xforms.length;j++) {
+                if(xForm.modifiedWeights[j]!=1) {
+                    return true
                 }
             }
         }
+        return false
     }
+
 }

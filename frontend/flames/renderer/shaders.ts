@@ -95,20 +95,58 @@ function addXForm(xForm: RenderXForm, xFormIdx: number) {
 	`;
 }
 
+function addCalcedWeights(weights: number[]) {
+    let offset = 0
+    let expressions = new Array<string>()
+    for(let i=0;i<weights.length;i++) {
+        const expr = `  ${i==0 ? 'if' : 'else if'} (r<float(${offset+weights[i]})) {
+                          xFormIdx = ${i};
+                        }`
+        offset += weights[i]
+        expressions.push(expr)
+    }
+    return expressions.join('')
+}
+
+function addCalcXFormIndexWithModWeights(flame: RenderFlame, xForm: RenderXForm, xFormIdx: number, xFormCount: number) {
+    const weights = new Array<number>()
+    let wsum = 0.0
+    for(let i=0;i<xFormCount;i++) {
+        const w = flame.xforms[i].weight * xForm.modifiedWeights[i]
+        wsum += w
+        weights.push(w)
+    }
+    wsum = Math.max(wsum, 1.0e-06)
+    for(let i=0;i<xFormCount;i++) {
+       weights[i] /= wsum;
+    }
+    return `${xFormIdx==0 ? 'if' : 'else if'} (xFormIdx==${xFormIdx}) {
+              ${addCalcedWeights(weights)}
+            }
+    `;
+}
+
+function addCalcXFormIndexWithoutModWeights(flame: RenderFlame) {
+    const weights = new Array<number>()
+    let wsum = 0.0
+    for(let i=0;i<flame.xforms.length;i++) {
+        const w = flame.xforms[i].weight
+        wsum += w
+        weights.push(w)
+    }
+    wsum = Math.max(wsum, 1.0e-06)
+    for(let i=0;i<flame.xforms.length;i++) {
+        weights[i] /= wsum;
+    }
+    return addCalcedWeights(weights)
+}
+
 function addXForms(flame: RenderFlame) {
     return `
-       int xFormIdx;
-       if(r < 0.3) {
-         xFormIdx =0;
-       }
-       else if(r<0.5) {
-         xFormIdx = 1;
-       }
-       else if (r<0.75) {
-         xFormIdx = 3;
-       }
-       else {
-                xFormIdx = 2;
+       float r = rand(tex);
+       ${flame.hasModifiedWeights 
+         ? flame.xforms.map( xForm => addCalcXFormIndexWithModWeights(flame, xForm, flame.xforms.indexOf(xForm), flame.xforms.length) ).join('') 
+         : addCalcXFormIndexWithoutModWeights(flame)               
        }
        ${flame.xforms.map( xForm => addXForm(xForm, flame.xforms.indexOf(xForm)) ).join('')}  
     `;
@@ -137,6 +175,7 @@ function createCompPointsShader(flame: RenderFlame) {
 			// - use with indicated seeding method. 
 			
 			float PHI = 1.61803398874989484820459;  // Φ = Golden Ratio   
+			int xFormIdx = 0;
 			
 			float gold_noise(in vec2 xy, in float seed){
 				   return fract(tan(distance(xy*PHI, xy)*seed)*xy.x);
@@ -166,22 +205,14 @@ function createCompPointsShader(flame: RenderFlame) {
 			float rand3(vec2 co) {
 		     	return fract(sin(dot(co, vec2(12.9898 * seed3, 78.233 * seed3))) * 43758.5453);
 			}
-
+           
 			void main(void) {
 				vec2 tex = gl_FragCoord.xy / <%= RESOLUTION %>;
-
 				vec3 point = texture2D(uTexSamp, tex).xyz;
-
-				float l = length(point);
-				float r = rand(tex);
-
-                float _tx, _ty, _tz;
+	            float _tx, _ty, _tz;
                 float _vx = 0.0, _vy = 0.0, _vz = 0.0;
-
 				${addXForms(flame)}
 				point = vec3(_vx, _vy, _vz);
-				
-
 				gl_FragColor = vec4(point, 1.0);
 			}
 			`;
@@ -213,7 +244,6 @@ export class Shaders {
         this.prog_comp.seed2 = gl.getUniformLocation(this.prog_comp, "seed2")!;
         this.prog_comp.seed3 = gl.getUniformLocation(this.prog_comp, "seed3")!;
         this.prog_comp.time = gl.getUniformLocation(this.prog_comp, "time")!;
-
 
         this.prog_comp_col = compileShaderDirect(gl, shader_direct_vs, shader_comp_col_fs, {RESOLUTION: points_size}) as ComputeColorsProgram;
         this.prog_comp_col.vertexPositionAttribute = gl.getAttribLocation(this.prog_comp_col, "aVertexPosition");
