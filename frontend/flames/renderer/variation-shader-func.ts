@@ -38,6 +38,7 @@ export enum VariationParamType {
 export interface VariationParam {
     name: string;
     type: VariationParamType;
+    initialValue: number;
 }
 
 export abstract class VariationShaderFunc {
@@ -45,7 +46,7 @@ export abstract class VariationShaderFunc {
 
     abstract get name(): string
 
-    get dependencies(): string[] {
+    get funcDependencies(): string[] {
         return []
     }
 

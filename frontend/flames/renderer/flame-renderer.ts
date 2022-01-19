@@ -9,7 +9,6 @@ import {FlameRenderSettings} from "./render_settings";
 import {FlameRendererDisplay} from "./display";
 import {FlameIterator} from "./iterator";
 import {Flame} from "Frontend/flames/model/flame";
-import {RenderFlame} from "Frontend/flames/model/render-flame";
 import {FlameMapper} from "Frontend/flames/model/mapper/flame-mapper";
 
 export class FlameRenderer {

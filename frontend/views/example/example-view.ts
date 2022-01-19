@@ -94,7 +94,6 @@ export class ExampleView extends View {
         <p>optional dark theme</p>
         <p>display shader code in browser</p>
           <p>line codes for shader display</p>
-        <p>implement tranforms weights</p>
         <p>error-handling for the backend (e.g. flame parsing)</p>
         <p>frontend-store for flames</p>
         <p>display version number of app</p>
