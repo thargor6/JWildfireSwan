@@ -8,6 +8,7 @@ import {shader_show_raw_fs} from '../shaders/shader-show-raw-fs'
 import {VariationShaders} from "Frontend/flames/renderer/variation-shaders";
 import {registerVars} from "Frontend/flames/renderer/basic-variation-shaders";
 import {RenderFlame, RenderXForm, RenderVariation} from "Frontend/flames/model/render-flame";
+import {VariationMathFunctions} from "Frontend/flames/renderer/variation-math-functions";
 
 interface ComputePointsProgram extends WebGLProgram {
     vertexPositionAttribute: GLint;
@@ -152,6 +153,24 @@ function addXForms(flame: RenderFlame) {
     `;
 }
 
+function addDepFunction(func: string) {
+    return VariationMathFunctions.getCode(func);
+}
+
+function addDepFunctions(flame: RenderFlame) {
+  let functions = new Array<string>()
+  flame.xforms.forEach(xform=> {
+      xform.variations.forEach(variation=>{
+          VariationShaders.getVariationDepFunctions(variation).forEach(func=>{
+              if(functions.indexOf(func)<0) {
+                  functions.push(func)
+              }
+          })
+      })
+  })
+  return functions.map(func=>addDepFunction(func)).join('')
+}
+
 function createCompPointsShader(flame: RenderFlame) {
     return `
             #ifdef GL_ES
@@ -205,6 +224,12 @@ function createCompPointsShader(flame: RenderFlame) {
 			float rand3(vec2 co) {
 		     	return fract(sin(dot(co, vec2(12.9898 * seed3, 78.233 * seed3))) * 43758.5453);
 			}
+           
+             float sqrt_safe(in float x) {
+                return (x < EPSILON) ? 0.0 : sqrt(x);
+             }
+                 
+           ${addDepFunctions(flame)}
            
 			void main(void) {
 				vec2 tex = gl_FragCoord.xy / <%= RESOLUTION %>;

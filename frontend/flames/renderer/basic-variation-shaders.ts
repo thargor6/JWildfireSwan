@@ -24,6 +24,7 @@ import {
 } from "./variation-shader-func";
 import {VariationShaders} from "Frontend/flames/renderer/variation-shaders";
 import {RenderVariation} from "Frontend/flames/model/render-flame";
+import {FUNC_SQRT1PM1} from "Frontend/flames/renderer/variation-math-functions";
 
 // https://www.shaderific.com/glsl-functions
 
@@ -97,6 +98,28 @@ class BiLinearFunc extends VariationShaderFunc2D {
     }
 }
 
+class BladeFunc extends VariationShaderFunc2D {
+    getCode(variation: RenderVariation): string {
+        /* Z+ variation Jan 07 */
+        return `{
+          float amount = ${variation.amount};
+          float r = rand2(tex) * amount * sqrt(_tx * _tx + _ty * _ty);
+          float sinr = sin(r);
+          float cosr = cos(r);
+          _vx += amount * _tx * (cosr + sinr);
+          _vy += amount * _tx * (cosr - sinr);
+        }`;
+    }
+
+    get name(): string {
+        return "blade";
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
 class BlurFunc extends VariationShaderFunc2D {
     getCode(variation: RenderVariation): string {
         return `{
@@ -119,12 +142,11 @@ class BlurFunc extends VariationShaderFunc2D {
     }
 }
 
-// TODO: filled param
 class CloverLeafWFFunc extends VariationShaderFunc2D {
     PARAM_FILLED = "filled"
 
     get params(): VariationParam[] {
-      return [{ name: this.PARAM_FILLED, type: VariationParamType.VP_NUMBER }]
+      return [{ name: this.PARAM_FILLED, type: VariationParamType.VP_NUMBER, initialValue: 0.85 }]
     }
 
     getCode(variation: RenderVariation): string {
@@ -192,6 +214,64 @@ class CylinderFunc extends VariationShaderFunc2D {
 
     get variationTypes(): VariationTypes[] {
         return [VariationTypes.VARTYPE_2D];
+    }
+}
+
+class EllipticFunc extends VariationShaderFunc2D {
+    MODE_ORIGINAL = 0; // Original Apophysis plugin
+    MODE_MIRRORY = 1; // Mirror y result; legacy JWildfire behavior
+    MODE_PRECISION = 2; // Alternate calculation to avoid precision loss by Claude Heiland-Allen; see https://mathr.co.uk/blog/2017-11-01_a_more_accurate_elliptic_variation.html
+
+    PARAM_MODE = "mode"
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_MODE, type: VariationParamType.VP_NUMBER, initialValue: this.MODE_MIRRORY }]
+    }
+
+    get funcDependencies(): string[] {
+        return [FUNC_SQRT1PM1]
+    }
+
+    getCode(variation: RenderVariation): string {
+        return `{
+          float amount = ${variation.amount};
+          int mode = int(${variation.params.get(this.PARAM_MODE)});
+          float _v = amount * 2.0 / M_PI;
+          
+          if (mode == ${this.MODE_PRECISION}) {
+             float sq = _ty * _ty + _tx * _tx;
+             float x2 = 2.0 * _tx;
+             float xmaxm1 = 0.5 * (sqrt1pm1(sq + x2) + sqrt1pm1(sq - x2));
+             float ssx = (xmaxm1 < 0.0) ? 0.0 : sqrt(xmaxm1);
+             float a = _tx / (1.0 + xmaxm1);
+              
+             int sign = (_ty > 0.0) ? 1 : -1;
+             _vx += _v * asin(max(-1.0, min(1.0, a)));  
+             _vy += float(sign) * _v * log(xmaxm1 + ssx+1.0);
+          } else {  
+             float tmp = _ty * _ty + _tx * _tx + 1.0;
+             float x2 = 2.0 * _tx;
+             float xmax = 0.5 * (sqrt(tmp + x2) + sqrt(tmp - x2));
+          
+             float a = _tx / xmax;
+             float b = sqrt_safe(1.0 - a * a);
+             
+             int sign = (_ty > 0.0) ? 1 : -1;
+             if (mode == ${this.MODE_MIRRORY}) {
+               sign = (rand2(tex) < 0.5) ? 1 : -1;
+             }
+             _vx += _v * atan2(a, b);
+             _vy += float(sign) * _v * log(xmax + sqrt_safe(xmax - 1.0));
+          }
+        }`;
+    }
+
+    get name(): string {
+        return "elliptic";
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D, VariationTypes.VARTYPE_BLUR];
     }
 }
 
@@ -326,6 +406,25 @@ class Polar2Func extends VariationShaderFunc2D {
     }
 }
 
+class PowerFunc extends VariationShaderFunc2D {
+    getCode(variation: RenderVariation): string {
+        return `{
+          float amount =${variation.amount};
+          float r = amount * pow(_r, _tx / _r);
+          _vx += r * _ty / _r;
+          _vy += r * _tx / _r;
+        }`;
+    }
+
+    get name(): string {
+        return "power";
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
 class RaysFunc extends VariationShaderFunc2D {
     getCode(variation: RenderVariation): string {
         /* Z+ variation Jan 07 */
@@ -412,6 +511,100 @@ class SpiralFunc extends VariationShaderFunc2D {
     }
 }
 
+class SplitFunc extends VariationShaderFunc2D {
+    PARAM_XSIZE = "xsize"
+    PARAM_YSIZE = "ysize"
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_XSIZE, type: VariationParamType.VP_NUMBER, initialValue: 0.4 },
+                { name: this.PARAM_YSIZE, type: VariationParamType.VP_NUMBER, initialValue: 0.6 }]
+    }
+
+    getCode(variation: RenderVariation): string {
+        /* Split from apo plugins pack */
+        return `{
+          float amount = ${variation.amount};
+         
+          float xSize = ${variation.params.get(this.PARAM_XSIZE)};
+          if (cos(_tx * xSize * M_PI) >= 0.0) {
+            _vy += amount * _ty;
+          } else {
+            _vy -= amount * _ty;
+          }
+          float ySize = ${variation.params.get(this.PARAM_YSIZE)};
+          if (cos(_ty * ySize * M_PI) >= 0.0) {
+            _vx += amount * _tx;
+          } else {
+            _vx -= amount * _tx;
+          };
+        }`;
+    }
+
+    get name(): string {
+        return "split";
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
+class SplitsFunc extends VariationShaderFunc2D {
+    PARAM_X = "x"
+    PARAM_Y = "y"
+    PARAM_LSHEAR = "lshear"
+    PARAM_RSHEAR = "rshear"
+    PARAM_USHEAR = "ushear"
+    PARAM_DSHEAR = "dshear"
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_X, type: VariationParamType.VP_NUMBER, initialValue: 0.4 },
+                { name: this.PARAM_Y, type: VariationParamType.VP_NUMBER, initialValue: 0.6 },
+                { name: this.PARAM_LSHEAR, type: VariationParamType.VP_NUMBER, initialValue: 0.0 },
+                { name: this.PARAM_RSHEAR, type: VariationParamType.VP_NUMBER, initialValue: 0.0 },
+                { name: this.PARAM_USHEAR, type: VariationParamType.VP_NUMBER, initialValue: 0.0 },
+                { name: this.PARAM_DSHEAR, type: VariationParamType.VP_NUMBER, initialValue: 0.0 }
+        ]
+    }
+
+    getCode(variation: RenderVariation): string {
+        /* Splits from apo plugins pack; shears added by DarkBeam 2018 to emulate splits.dll */
+        return `{
+          float amount = ${variation.amount};
+          float x = ${variation.params.get(this.PARAM_X)};
+          float y = ${variation.params.get(this.PARAM_Y)};
+          
+          if (_tx >= 0.0) {
+            _vx += amount * (_tx + x);
+            float rshear = ${variation.params.get(this.PARAM_RSHEAR)};
+            _vy += amount * (rshear);
+          } else {
+            _vx += amount * (_tx - x);
+            float lshear = ${variation.params.get(this.PARAM_LSHEAR)};
+            _vy -= amount * (lshear);
+          }
+    
+          if (_ty >= 0.0) {
+             _vy += amount * (_ty + y);
+             float ushear = ${variation.params.get(this.PARAM_USHEAR)};
+             _vx += amount * (ushear);
+           } else {
+             _vy += amount * (_ty - y);
+             float dshear = ${variation.params.get(this.PARAM_DSHEAR)};
+             _vx -= amount * (dshear);
+           }
+        }`;
+    }
+
+    get name(): string {
+        return "splits";
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
 class SwirlFunc extends VariationShaderFunc2D {
     getCode(variation: RenderVariation): string {
          return `{
@@ -454,6 +647,52 @@ class TangentFunc extends VariationShaderFunc2D {
     }
 }
 // 3D
+class BubbleFunc extends VariationShaderFunc3D {
+    getCode(variation: RenderVariation): string {
+        return `{
+          float amount = ${variation.amount};
+          float r = ((_tx * _tx + _ty * _ty) / 4.0 + 1.0);
+          float t = amount / r;
+          _vx += t * _tx;
+          _vy += t * _ty;
+          _vz += amount * (2.0 / r - 1.0);
+        }`;
+    }
+
+    get name(): string {
+        return "bubble";
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_3D];
+    }
+}
+
+class BubbleWFFunc extends VariationShaderFunc3D {
+    getCode(variation: RenderVariation): string {
+        return `{
+          float amount = ${variation.amount};
+          float r = ((_tx * _tx + _ty * _ty) / 4.0 + 1.0);
+          float t = amount / r;
+          _vx += t * _tx;
+          _vy += t * _ty;
+          if (rand2(tex) < 0.5) {
+           _vz -= amount * (2.0 / r - 1.0);
+          } else {
+           _vz += amount * (2.0 / r - 1.0);
+          }
+        }`;
+    }
+
+    get name(): string {
+        return "bubble_wf";
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_3D];
+    }
+}
+
 class CylinderApoFunc extends VariationShaderFunc3D {
     getCode(variation: RenderVariation): string {
         return `{
@@ -536,23 +775,30 @@ export function registerVars() {
     VariationShaders.registerVar(new ArchFunc())
     VariationShaders.registerVar(new BentFunc())
     VariationShaders.registerVar(new BiLinearFunc())
+    VariationShaders.registerVar(new BladeFunc())
     VariationShaders.registerVar(new BlurFunc())
     VariationShaders.registerVar(new CloverLeafWFFunc())
     VariationShaders.registerVar(new CrossFunc())
     VariationShaders.registerVar(new CylinderFunc())
+    VariationShaders.registerVar(new EllipticFunc())
     VariationShaders.registerVar(new ExpFunc())
     VariationShaders.registerVar(new JuliaFunc())
     VariationShaders.registerVar(new LinearFunc())
     VariationShaders.registerVar(new PetalFunc())
     VariationShaders.registerVar(new PolarFunc())
     VariationShaders.registerVar(new Polar2Func())
+    VariationShaders.registerVar(new PowerFunc())
     VariationShaders.registerVar(new RaysFunc())
     VariationShaders.registerVar(new Rays1Func())
     VariationShaders.registerVar(new SphericalFunc())
     VariationShaders.registerVar(new SpiralFunc())
+    VariationShaders.registerVar(new SplitFunc())
+    VariationShaders.registerVar(new SplitsFunc())
     VariationShaders.registerVar(new SwirlFunc())
     VariationShaders.registerVar(new TangentFunc())
     // 3D
+    VariationShaders.registerVar(new BubbleFunc())
+    VariationShaders.registerVar(new BubbleWFFunc())
     VariationShaders.registerVar(new CylinderApoFunc())
     VariationShaders.registerVar(new Linear3DFunc())
     VariationShaders.registerVar(new Spherical3DFunc())

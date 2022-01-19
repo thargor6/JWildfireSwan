@@ -13,6 +13,14 @@ export class VariationShaders {
         return vsFunc.getCode(variation)
     }
 
+    static getVariationDepFunctions(variation: RenderVariation): string[] {
+        const vsFunc = this.variations.get(variation.name)
+        if(!vsFunc) {
+            return [];
+        }
+        return vsFunc.funcDependencies
+    }
+
     public static registerVar(varFunc: VariationShaderFunc) {
         this.variations.set(varFunc.name, varFunc)
     }
