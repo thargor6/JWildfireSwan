@@ -24,7 +24,7 @@ import {
 } from "./variation-shader-func";
 import {VariationShaders} from "Frontend/flames/renderer/variation-shaders";
 import {RenderVariation} from "Frontend/flames/model/render-flame";
-import {FUNC_SQRT1PM1} from "Frontend/flames/renderer/variation-math-functions";
+import {FUNC_COSH, FUNC_SINH, FUNC_SQRT1PM1, FUNC_TANH} from "Frontend/flames/renderer/variation-math-functions";
 
 // https://www.shaderific.com/glsl-functions
 
@@ -80,6 +80,41 @@ class BentFunc extends VariationShaderFunc2D {
     }
 }
 
+class Bent2Func extends VariationShaderFunc2D {
+    PARAM_X = "x"
+    PARAM_Y = "y"
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_X, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
+                { name: this.PARAM_Y, type: VariationParamType.VP_NUMBER, initialValue: 1.0 }]
+    }
+
+    getCode(variation: RenderVariation): string {
+        /* Bent2 in the Apophysis Plugin Pack */
+        return `{
+          float amount = ${variation.amount};
+          float x = ${variation.params.get(this.PARAM_X)};
+          float y = ${variation.params.get(this.PARAM_Y)};
+          float nx = _tx;
+          float ny = _ty;
+          if (nx < 0.0)
+            nx = nx * x;
+          if (ny < 0.0)
+            ny = ny * y;
+          _vx += amount * nx;
+          _vy += amount * ny;
+        }`;
+    }
+
+    get name(): string {
+        return "bent2";
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
 class BiLinearFunc extends VariationShaderFunc2D {
     getCode(variation: RenderVariation): string {
         return `{
@@ -91,6 +126,50 @@ class BiLinearFunc extends VariationShaderFunc2D {
 
     get name(): string {
         return "bi_linear";
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
+class BipolarFunc extends VariationShaderFunc2D {
+    PARAM_SHIFT = "shift"
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_SHIFT, type: VariationParamType.VP_NUMBER, initialValue: 0.0 }]
+    }
+
+    getCode(variation: RenderVariation): string {
+        /* Bipolar in the Apophysis Plugin Pack */
+        return `{
+          float amount = ${variation.amount};
+          float x2y2 = (_tx * _tx + _ty * _ty);
+          float t = x2y2 + 1.0;
+          float x2 = 2.0 * _tx;
+          float shift = ${variation.params.get(this.PARAM_SHIFT)};
+          float ps = -(M_PI*0.5) * shift;
+          float y = 0.5 * atan2(2.0 * _ty, x2y2 - 1.0) + ps;
+
+          if (y > (M_PI*0.5)) {
+            y = -(M_PI*0.5) + mod(y + (M_PI*0.5), M_PI);
+          } 
+          else if (y < -(M_PI*0.5)) {
+            y = (M_PI*0.5) - mod((M_PI*0.5) - y, M_PI);
+          }
+
+          float f = t + x2;
+          float g = t - x2;
+        
+          if ((g != 0.0) && (f / g > 0.0)) {
+            _vx += amount * 0.25 * (2.0 / M_PI) * log((t + x2) / (t - x2));
+            _vy += amount * (2.0 / M_PI) * y;
+          }  
+        }`;
+    }
+
+    get name(): string {
+        return "bipolar";
     }
 
     get variationTypes(): VariationTypes[] {
@@ -175,7 +254,7 @@ class CloverLeafWFFunc extends VariationShaderFunc2D {
     }
 
     get variationTypes(): VariationTypes[] {
-        return [VariationTypes.VARTYPE_2D, VariationTypes.VARTYPE_BLUR];
+        return [VariationTypes.VARTYPE_2D, VariationTypes.VARTYPE_BASE_SHAPE];
     }
 }
 
@@ -425,6 +504,41 @@ class PowerFunc extends VariationShaderFunc2D {
     }
 }
 
+class RadialBlurFunc extends VariationShaderFunc2D {
+    PARAM_ANGLE = "angle"
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_ANGLE, type: VariationParamType.VP_NUMBER, initialValue: 0.5 }]
+    }
+
+    getCode(variation: RenderVariation): string {
+        return `{
+          float amount = ${variation.amount};    
+          float rndG = rand(tex)+rand2(tex)+rand3(tex)+rand4(tex)-2.0;
+          float angle = ${variation.params.get(this.PARAM_ANGLE)};
+          float a = angle * M_PI * 0.5;
+          float sina = sin(a);
+          float cosa = cos(a);
+          float spin = amount * sina;
+          float zoom = amount * cosa;
+          float  alpha = atan2(_ty, _tx) + spin * rndG;
+          sina = sin(alpha);
+          cosa = cos(alpha);
+          float rz = zoom * rndG - 1.0;
+          _vx += _r * cosa + rz * _tx;
+          _vy += _r * sina + rz * _ty;
+        }`;
+    }
+
+    get name(): string {
+        return "radial_blur";
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D, VariationTypes.VARTYPE_BLUR];
+    }
+}
+
 class RaysFunc extends VariationShaderFunc2D {
     getCode(variation: RenderVariation): string {
         /* Z+ variation Jan 07 */
@@ -467,6 +581,71 @@ class Rays1Func extends VariationShaderFunc2D {
         return [VariationTypes.VARTYPE_2D];
     }
 }
+
+class SecFunc extends VariationShaderFunc2D {
+    getCode(variation: RenderVariation): string {
+        /* complex vars by cothe */
+        /* exp log sin cos tan sec csc cot sinh cosh tanh sech csch coth */
+        //Secant SEC
+        return `{
+          float amount = ${variation.amount};
+           float secsin = sin(_tx);
+           float seccos = cos(_tx);
+           float secsinh = sinh(_ty);
+           float seccosh = cosh(_ty);
+           float d = (cos(2.0 * _tx) + cosh(2.0 * _ty));
+           if (d != 0.0) {
+             float secden = 2.0 / d;
+             _vx += amount * secden * seccos * seccosh;
+             _vy += amount * secden * secsin * secsinh;
+           }
+        }`;
+    }
+
+    get name(): string {
+        return "sec";
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+
+
+    get funcDependencies(): string[] {
+        return [FUNC_SINH, FUNC_COSH];
+    }
+}
+
+class SinFunc extends VariationShaderFunc2D {
+    getCode(variation: RenderVariation): string {
+        /* complex vars by cothe */
+        /* exp log sin cos tan sec csc cot sinh cosh tanh sech csch coth */
+        //Sine SIN
+        return `{
+          float amount = ${variation.amount};
+          float sinsin = sin(_tx);
+          float sincos = cos(_tx);
+          float sinsinh = sinh(_ty);
+          float sincosh = cosh(_ty);
+          _vx += amount * sinsin * sincosh;
+          _vy += amount * sincos * sinsinh;
+        }`;
+    }
+
+    get name(): string {
+        return "sin";
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+
+
+    get funcDependencies(): string[] {
+        return [FUNC_SINH, FUNC_COSH];
+    }
+}
+
 
 class SphericalFunc extends VariationShaderFunc2D {
     getCode(variation: RenderVariation): string {
@@ -646,7 +825,89 @@ class TangentFunc extends VariationShaderFunc2D {
         return [VariationTypes.VARTYPE_2D];
     }
 }
+
+class TanFunc extends VariationShaderFunc2D {
+    getCode(variation: RenderVariation): string {
+        /* complex vars by cothe */
+        /* exp log sin cos tan sec csc cot sinh cosh tanh sech csch coth */
+        //Tangent TAN
+        return `{
+          float amount = ${variation.amount};
+          float tansin = sin(2.0 * _tx);
+          float tancos = cos(2.0 * _tx);
+          float tansinh = sinh(2.0 * _ty);
+          float tancosh = cosh(2.0 * _ty);
+          float d = (tancos + tancosh);
+          if (d != 0.0) {
+            float tanden = 1.0 / d;
+            _vx += amount * tanden * tansin;
+            _vy += amount * tanden * tansinh;       
+          }
+        }`;
+    }
+
+    get name(): string {
+        return "tan";
+    }
+
+    get funcDependencies(): string[] {
+        return [FUNC_SINH, FUNC_COSH];
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
+class TanCosFunc extends VariationShaderFunc2D {
+    getCode(variation: RenderVariation): string {
+        // tancos by Raykoid666, http://raykoid666.deviantart.com/art/plugin-pack-3-100510461?q=gallery%3ARaykoid666%2F11060240&qo=16
+        return `{
+          float amount = ${variation.amount};
+          float d1 = EPSILON + sqr(_tx) + sqr(_ty);
+          float d2 = amount / d1;
+          _vx += d2 * (tanh(d1) * (2.0 * _tx));
+          _vy += d2 * (cos(d1) * (2.0 * _ty));
+        }`;
+    }
+
+    get name(): string {
+        return "tancos";
+    }
+
+    get funcDependencies(): string[] {
+        return [FUNC_TANH];
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
 // 3D
+class Blade3DFunc extends VariationShaderFunc2D {
+    getCode(variation: RenderVariation): string {
+        /* Z+ variation Jan 07 */
+        return `{
+          float amount = ${variation.amount};
+          float r = rand2(tex) * amount * sqrt(_tx * _tx + _ty * _ty);
+          float sinr = sin(r);
+          float cosr = cos(r);
+          _vx += amount * _tx * (cosr + sinr);
+          _vy += amount * _tx * (cosr - sinr);
+          _vz += amount * _ty * (sinr - cosr);
+        }`;
+    }
+
+    get name(): string {
+        return "blade3D";
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_3D];
+    }
+}
+
+
 class BubbleFunc extends VariationShaderFunc3D {
     getCode(variation: RenderVariation): string {
         return `{
@@ -705,6 +966,26 @@ class CylinderApoFunc extends VariationShaderFunc3D {
 
     get name(): string {
         return "cylinder_apo";
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_3D];
+    }
+}
+
+class HemisphereFunc extends VariationShaderFunc3D {
+    getCode(variation: RenderVariation): string {
+        return `{
+          float amount = ${variation.amount};
+          float r = amount / sqrt(_tx * _tx + _ty * _ty + 1.0);
+          _vx += _tx * r;
+          _vy += _ty * r;
+          _vz += r;
+        }`;
+    }
+
+    get name(): string {
+        return "hemisphere";
     }
 
     get variationTypes(): VariationTypes[] {
@@ -774,7 +1055,9 @@ export function registerVars() {
     // 2D
     VariationShaders.registerVar(new ArchFunc())
     VariationShaders.registerVar(new BentFunc())
+    VariationShaders.registerVar(new Bent2Func())
     VariationShaders.registerVar(new BiLinearFunc())
+    VariationShaders.registerVar(new BipolarFunc())
     VariationShaders.registerVar(new BladeFunc())
     VariationShaders.registerVar(new BlurFunc())
     VariationShaders.registerVar(new CloverLeafWFFunc())
@@ -788,18 +1071,25 @@ export function registerVars() {
     VariationShaders.registerVar(new PolarFunc())
     VariationShaders.registerVar(new Polar2Func())
     VariationShaders.registerVar(new PowerFunc())
+    VariationShaders.registerVar(new RadialBlurFunc())
     VariationShaders.registerVar(new RaysFunc())
     VariationShaders.registerVar(new Rays1Func())
+    VariationShaders.registerVar(new SecFunc())
+    VariationShaders.registerVar(new SinFunc())
     VariationShaders.registerVar(new SphericalFunc())
     VariationShaders.registerVar(new SpiralFunc())
     VariationShaders.registerVar(new SplitFunc())
     VariationShaders.registerVar(new SplitsFunc())
     VariationShaders.registerVar(new SwirlFunc())
+    VariationShaders.registerVar(new TanFunc())
+    VariationShaders.registerVar(new TanCosFunc())
     VariationShaders.registerVar(new TangentFunc())
     // 3D
+    VariationShaders.registerVar(new Blade3DFunc())
     VariationShaders.registerVar(new BubbleFunc())
     VariationShaders.registerVar(new BubbleWFFunc())
     VariationShaders.registerVar(new CylinderApoFunc())
+    VariationShaders.registerVar(new HemisphereFunc())
     VariationShaders.registerVar(new Linear3DFunc())
     VariationShaders.registerVar(new Spherical3DFunc())
     VariationShaders.registerVar(new Tangent3DFunc())
