@@ -15,7 +15,10 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 */
 
+export const FUNC_COSH = 'cosh'
+export const FUNC_SINH = 'sinh'
 export const FUNC_SQRT1PM1 = 'sqrt1pm1';
+export const FUNC_TANH = 'tanh'
 
 export class VariationMathFunctions {
     static functions = new Map<string, string>()
@@ -29,6 +32,22 @@ export class VariationMathFunctions {
     }
 
     static init() {
+         this.registerFunction(FUNC_COSH,
+             // COSH Function (Hyperbolic Cosine) http://machinesdontcare.wordpress.com/2008/03/10/glsl-cosh-sinh-tanh/
+             `
+            float cosh(float val) {
+			  float tmp = exp(val);
+		   	  float cosH = (tmp + 1.0 / tmp) / 2.0;
+		       return cosH;
+			}`);
+        this.registerFunction(FUNC_SINH,
+            // SINH Function (Hyperbolic Sine) http://machinesdontcare.wordpress.com/2008/03/10/glsl-cosh-sinh-tanh/
+            `
+           	float sinh(float val) {
+				float tmp = exp(val);
+				float sinH = (tmp - 1.0 / tmp) / 2.0;
+				return sinH;
+			}`);
         this.registerFunction(FUNC_SQRT1PM1,
             `
                float sqrt1pm1(in float x) {
@@ -58,11 +77,16 @@ export class VariationMathFunctions {
                   return num / den;
                 }
                 return sqrt(1.0 + x) - 1.0;
-             }
+             }`)
+        this.registerFunction(FUNC_TANH,
+            // TANH Function (Hyperbolic Tangent) http://machinesdontcare.wordpress.com/2008/03/10/glsl-cosh-sinh-tanh/
             `
-            )
+            float tanh(float val) {
+				float tmp = exp(val);
+				float tanH = (tmp - 1.0 / tmp) / (tmp + 1.0 / tmp);
+				return tanH;
+			}`);
     }
 }
 
 VariationMathFunctions.init()
-

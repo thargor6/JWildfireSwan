@@ -224,6 +224,10 @@ function createCompPointsShader(flame: RenderFlame) {
 			float rand3(vec2 co) {
 		     	return fract(sin(dot(co, vec2(12.9898 * seed3, 78.233 * seed3))) * 43758.5453);
 			}
+			
+			float rand4(vec2 co) {
+		     	return fract(sin(dot(co, vec2(12.9798 * (seed3*seed2), 78.231 * (seed+seed2)))) * 33758.5453);
+			}
            
              float sqrt_safe(in float x) {
                 return (x < EPSILON) ? 0.0 : sqrt(x);
