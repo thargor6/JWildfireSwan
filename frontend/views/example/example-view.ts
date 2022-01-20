@@ -43,7 +43,7 @@ export class ExampleView extends View {
   @state()
   flameName = 'example08'
 
-  flameNames = ['example01', 'example02', 'example03', 'example04', 'example05', 'example06', 'example07', 'example08', 'example09', 'example10']
+  flameNames = ['example01', 'example02', 'example03', 'example04', 'example05', 'example06', 'example07', 'example08', 'example09', 'example10', 'example11', 'example12',   flameNames = ['example01', 'example02', 'example03', 'example04', 'example05', 'example06', 'example07', 'example08', 'example09', 'example10', 'example11', 'example12', 'example14', 'example16']
 
   @state()
   imageSize = 512
@@ -51,7 +51,7 @@ export class ExampleView extends View {
   imageSizes = [256, 512, 1024, 2048]
 
   @state()
-  pointsSize = 128
+  pointsSize = 512
 
   pointsSizes = [64, 128, 256, 512 ]
 
