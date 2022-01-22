@@ -209,6 +209,68 @@ function createCompPointsShader(flame: RenderFlame) {
                 return x == 0.0 ? sign(y)*M_PI * 0.5 : atan(y, x);
             }
 
+
+// https://www.dsprelated.com/showarticle/1052.php
+float ApproxAtan(float z)
+{
+    const float n1 = 0.97239411;
+    const float n2 = -0.19194795;
+    return (n1 + n2 * z * z) * z;
+}
+
+
+float atan2f(float y, float x)
+{
+    if (x != 0.0)
+    {
+        if (abs(x) > abs(y))
+        {
+            float z = y / x;
+            if (x > 0.0)
+            {
+                // atan2(y,x) = atan(y/x) if x > 0
+                return ApproxAtan(z);
+            }
+            else if (y >= 0.0)
+            {
+                // atan2(y,x) = atan(y/x) + PI if x < 0, y >= 0
+                return ApproxAtan(z) + M_PI;
+            }
+            else
+            {
+                // atan2(y,x) = atan(y/x) - PI if x < 0, y < 0
+                return ApproxAtan(z) - M_PI;
+            }
+        }
+        else // Use property atan(y/x) = M_PI/2 - atan(x/y) if |y/x| > 1.
+        {
+             float z = x / y;
+            if (y > 0.0)
+            {
+                // atan2(y,x) = PI/2 - atan(x/y) if |y/x| > 1, y > 0
+                return -ApproxAtan(z) + M_PI / 2.0;
+            }
+            else
+            {
+                // atan2(y,x) = -PI/2 - atan(x/y) if |y/x| > 1, y < 0
+                return -ApproxAtan(z) - M_PI / 2.0;
+            }
+        }
+    }
+    else
+    {
+        if (y > 0.0) // x = 0, y > 0
+        {
+            return M_PI / 2.0;
+        }
+        else if (y < 0.0) // x = 0, y < 0
+        {
+            return -M_PI/2.0;
+        }
+    }
+    return 0.0; // x,y = 0. Could return NaN instead.
+}
+
 			float sqr(in float x) {
                 return x * x;
             }
@@ -219,6 +281,10 @@ function createCompPointsShader(flame: RenderFlame) {
 
 			float rand2(vec2 co) {
 			   	return fract(sin(dot(co, vec2(12.9898 * seed2, 78.233 * seed2))) * 43758.5453);
+			}
+			
+		    int iRand2(vec2 co, int maxValue) {
+			   	return int(floor(float(maxValue) * fract(sin(dot(co, vec2(12.9898 * seed2 + 345.6, 78.233 * seed2))) * 43758.5453)));
 			}
 
 			float rand3(vec2 co) {

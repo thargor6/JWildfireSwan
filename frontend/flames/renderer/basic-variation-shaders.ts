@@ -278,6 +278,37 @@ class CrossFunc extends VariationShaderFunc2D {
     }
 }
 
+class CurlFunc extends VariationShaderFunc2D {
+    PARAM_C1 = "c1"
+    PARAM_C2 = "c2"
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_C1, type: VariationParamType.VP_NUMBER, initialValue: 0.1 },
+                { name: this.PARAM_C2, type: VariationParamType.VP_NUMBER, initialValue: 0.0 }]
+    }
+
+    getCode(variation: RenderVariation): string {
+        return `{
+          float amount = ${variation.amount};
+          float c1 = ${variation.params.get(this.PARAM_C1)};
+          float c2 = ${variation.params.get(this.PARAM_C2)};
+          float re = 1.0 + c1 * _tx + c2 * (sqr(_tx) - sqr(_ty));
+          float im = c1 * _ty + c2 * 2.0 * _tx * _ty;
+          float r = amount / (sqr(re) + sqr(im));
+          _vx += (_tx * re + _ty * im) * r;
+          _vy += (_ty * re - _tx * im) * r;
+        }`;
+    }
+
+    get name(): string {
+        return "curl";
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
 class CylinderFunc extends VariationShaderFunc2D {
     getCode(variation: RenderVariation): string {
         return `{
@@ -382,7 +413,7 @@ class JuliaFunc extends VariationShaderFunc2D {
     getCode(variation: RenderVariation): string {
         return `{
            float amount = ${variation.amount};
-           float a = atan2(_tx, _ty) * 0.5 + M_PI * floor(2.0 * rand2(tex));
+           float a = atan2(_tx, _ty) * 0.5 + M_PI * floor(2.0 * rand2(tex)*rand3(tex));
            float sina = sin(a);
            float cosa = cos(a);
            float r = amount * sqrt(sqrt(_tx * _tx + _ty * _ty));
@@ -395,8 +426,40 @@ class JuliaFunc extends VariationShaderFunc2D {
         return "julia";
     }
 
-    get dependencies(): string[] {
-        return ['atan2', 'rand2'];
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
+class JuliaNFunc extends VariationShaderFunc2D {
+    PARAM_POWER = "power"
+    PARAM_DIST = "dist"
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_POWER, type: VariationParamType.VP_NUMBER, initialValue: 3 },
+            { name: this.PARAM_DIST, type: VariationParamType.VP_NUMBER, initialValue: 1.0}]
+    }
+
+    getCode(variation: RenderVariation): string {
+        return `{
+          float amount = ${variation.amount};
+          int power = int(${variation.params.get(this.PARAM_POWER)});
+          float dist = ${variation.params.get(this.PARAM_DIST)};
+              
+          int absPower = power > 0 ? power : -power;
+          float cPower = dist / float(power) * 0.5; 
+
+          float a = (atan2(_ty, _tx) + 2.0 * M_PI * floor(float(absPower) * rand2(tex))) / float(power);
+          float sina = sin(a);
+          float cosa = cos(a);
+          float r = amount * pow(sqr(_tx) + sqr(_ty), cPower);
+          _vx = _vx + r * cosa;
+          _vy = _vy + r * sina;
+        }`;
+    }
+
+    get name(): string {
+        return "julian";
     }
 
     get variationTypes(): VariationTypes[] {
@@ -581,6 +644,48 @@ class Rays1Func extends VariationShaderFunc2D {
         return [VariationTypes.VARTYPE_2D];
     }
 }
+
+class RoseWFFunc extends VariationShaderFunc2D {
+    PARAM_AMP = "amp"
+    PARAM_WAVES = "waves"
+    PARAM_FILLED = "filled"
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_AMP, type: VariationParamType.VP_NUMBER, initialValue: 0.5 },
+            { name: this.PARAM_WAVES, type: VariationParamType.VP_NUMBER, initialValue: 4 },
+            { name: this.PARAM_FILLED, type: VariationParamType.VP_NUMBER, initialValue: 0.85 }]
+    }
+
+    getCode(variation: RenderVariation): string {
+         return `{
+          float amount = ${variation.amount};
+          float a = _phi;
+          int waves = int(${variation.params.get(this.PARAM_WAVES)});
+          float filled = ${variation.params.get(this.PARAM_FILLED)};
+          float amp = ${variation.params.get(this.PARAM_AMP)};
+          float r = amp * cos(float(waves) * a);
+        
+          if (filled > 0.0 && filled > rand2(tex)) {
+             r *= rand3(tex);
+          }
+        
+          float nx = sin(a) * r;
+          float ny = cos(a) * r;
+        
+          _vx += amount * nx;
+          _vy += amount * ny;
+        }`;
+    }
+
+    get name(): string {
+        return "rose_wf";
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D, VariationTypes.VARTYPE_BASE_SHAPE];
+    }
+}
+
 
 class SecFunc extends VariationShaderFunc2D {
     getCode(variation: RenderVariation): string {
@@ -954,6 +1059,50 @@ class BubbleWFFunc extends VariationShaderFunc3D {
     }
 }
 
+class Curl3DFunc extends VariationShaderFunc2D {
+    PARAM_CX = "cx"
+    PARAM_CY = "cy"
+    PARAM_CZ = "cz"
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_CX, type: VariationParamType.VP_NUMBER, initialValue: 0.0 },
+            { name: this.PARAM_CY, type: VariationParamType.VP_NUMBER, initialValue: 0.05 },
+            { name: this.PARAM_CZ, type: VariationParamType.VP_NUMBER, initialValue: 0.05 }]
+    }
+
+    getCode(variation: RenderVariation): string {
+        return `{
+          float amount = ${variation.amount};
+          float cx = ${variation.params.get(this.PARAM_CX)};
+          float cy = ${variation.params.get(this.PARAM_CY)};
+          float cz = ${variation.params.get(this.PARAM_CZ)};
+           
+          float c2x = 2.0 * cx;
+          float c2y = 2.0 * cy;
+          float c2z = 2.0 * cz;
+    
+          float cx2 = sqr(cx);
+          float cy2 = sqr(cy);
+          float cz2 = sqr(cz);
+          float c2 = cx2 + cy2 + cz2;
+          float r2 = sqr(_tx) + sqr(_ty) + sqr(_tz);
+          float r = amount / (r2 * c2 + c2x * _tx - c2y * _ty + c2z * _tz + 1.0);
+    
+          _vx += r * (_tx + cx * r2);
+          _vy += r * (_ty - cy * r2);
+          _vz += r * (_tz + cz * r2);
+        }`;
+    }
+
+    get name(): string {
+        return "curl3D";
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_3D];
+    }
+}
+
 class CylinderApoFunc extends VariationShaderFunc3D {
     getCode(variation: RenderVariation): string {
         return `{
@@ -1062,10 +1211,12 @@ export function registerVars() {
     VariationShaders.registerVar(new BlurFunc())
     VariationShaders.registerVar(new CloverLeafWFFunc())
     VariationShaders.registerVar(new CrossFunc())
+    VariationShaders.registerVar(new CurlFunc())
     VariationShaders.registerVar(new CylinderFunc())
     VariationShaders.registerVar(new EllipticFunc())
     VariationShaders.registerVar(new ExpFunc())
     VariationShaders.registerVar(new JuliaFunc())
+    VariationShaders.registerVar(new JuliaNFunc())
     VariationShaders.registerVar(new LinearFunc())
     VariationShaders.registerVar(new PetalFunc())
     VariationShaders.registerVar(new PolarFunc())
@@ -1074,6 +1225,7 @@ export function registerVars() {
     VariationShaders.registerVar(new RadialBlurFunc())
     VariationShaders.registerVar(new RaysFunc())
     VariationShaders.registerVar(new Rays1Func())
+    VariationShaders.registerVar(new RoseWFFunc())
     VariationShaders.registerVar(new SecFunc())
     VariationShaders.registerVar(new SinFunc())
     VariationShaders.registerVar(new SphericalFunc())
@@ -1088,6 +1240,7 @@ export function registerVars() {
     VariationShaders.registerVar(new Blade3DFunc())
     VariationShaders.registerVar(new BubbleFunc())
     VariationShaders.registerVar(new BubbleWFFunc())
+    VariationShaders.registerVar(new Curl3DFunc())
     VariationShaders.registerVar(new CylinderApoFunc())
     VariationShaders.registerVar(new HemisphereFunc())
     VariationShaders.registerVar(new Linear3DFunc())
