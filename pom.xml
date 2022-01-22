@@ -22,7 +22,12 @@
     </parent>
 
     <repositories>
+
         <!-- The order of definitions matters. Explicitly defining central here to make sure it has the highest priority. -->
+        <repository>
+            <id>github</id>
+            <url>https://raw.github.com/thargor6/artifacts/mvn-repo</url>
+        </repository>
 
         <!-- Main Maven repository -->
         <repository>
@@ -32,6 +37,7 @@
                 <enabled>false</enabled>
             </snapshots>
         </repository>
+
         <repository>
             <id>vaadin-prereleases</id>
             <url>
@@ -46,6 +52,8 @@
                 <enabled>false</enabled>
             </snapshots>
         </repository>
+
+
     </repositories>
 
     <pluginRepositories>
@@ -140,11 +148,18 @@
             <version>4.4.0</version>
             <scope>test</scope>
         </dependency>
-
+<!--
         <dependency>
             <groupId>com.jwildfire</groupId>
             <artifactId>j-wildfire-lib</artifactId>
             <version>7.30.0</version>
+        </dependency>
+-->
+
+        <dependency>
+            <groupId>org.jwildfire</groupId>
+            <artifactId>jwildfire-lib</artifactId>
+            <version>7.40.0-SNAPSHOT</version>
         </dependency>
 
             <dependency>
