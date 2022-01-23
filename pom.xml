@@ -13,6 +13,8 @@
         <java.version>11</java.version>
         <vaadin.version>22.0.2</vaadin.version>
         <mapstruct.version>1.4.2.Final</mapstruct.version>
+            <build.timestamp>${maven.build.timestamp}</build.timestamp>
+            <maven.build.timestamp.format>yyyy-MM-dd HH:mm</maven.build.timestamp.format>
     </properties>
 
     <parent>
@@ -185,6 +187,14 @@
 
     <build>
         <defaultGoal>spring-boot:run</defaultGoal>
+
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
+
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
