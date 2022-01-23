@@ -40,13 +40,13 @@ export class AboutView extends View {
   render() {
     return html`
       
-      <vaadin-details>
+      <vaadin-details opened="${true}">
         <h2 slot="summary">${appStore.applicationName}</h2>
-        <h3>Version: ${until(AppInfoEndpoint.getAppVersion().then((data) =>  html`<span>${data}</span>`), html`<span>${appStore.loadingText}</span>`)}</h3>
-        <h3>Build date: ${until(AppInfoEndpoint.getAppBuildDate().then((data) =>  html`<span>${data}</span>`), html`<span>${appStore.loadingText}</span>`)}</h3>
+        <p><b>Version</b>: ${until(AppInfoEndpoint.getAppVersion().then((data) =>  html`<span>${data}</span>`), html`<span>${appStore.loadingText}</span>`)}</p>
+        <p><b>Build date</b>: ${until(AppInfoEndpoint.getAppBuildDate().then((data) =>  html`<span>${data}</span>`), html`<span>${appStore.loadingText}</span>`)}</p>
       </vaadin-details>
 
-      <vaadin-details>
+      <vaadin-details opened="${true}">
         <h2 slot="summary">Current TODO's</h2>
         <p>random flames</p>
         <p>basic camera stuff</p>

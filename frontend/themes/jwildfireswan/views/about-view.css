@@ -5,3 +5,6 @@ about-view {
   margin: 1em;
 }
 
+about-view > vaadin-details >p {
+  margin-left: 2em;
+}
