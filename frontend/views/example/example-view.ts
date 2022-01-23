@@ -17,6 +17,7 @@
 
 import {html, PropertyValues, render} from 'lit';
 import { guard } from 'lit/directives/guard.js';
+import { until } from 'lit/directives/until.js';
 import {customElement, property, query, state} from 'lit/decorators.js';
 import { View } from '../../views/view';
 
@@ -30,7 +31,7 @@ import '@vaadin/text-field';
 import '@vaadin/vertical-layout';
 
 import {FlameRenderer} from '../../flames/renderer/flame-renderer'
-import {FlamesEndpoint} from "Frontend/generated/endpoints";
+import {AppInfoEndpoint, FlamesEndpoint} from "Frontend/generated/endpoints";
 import {FlameMapper} from '../../flames/model/mapper/flame-mapper'
 import {HasValue} from "@vaadin/form";
 import '@vaadin/vaadin-combo-box';
@@ -43,7 +44,7 @@ export class ExampleView extends View {
   @state()
   flameName = 'example08'
 
-  flameNames = ['example01', 'example02', 'example03', 'example04', 'example05', 'example06', 'example07', 'example08', 'example09', 'example10', 'example11', 'example12', 'example14', 'example16']
+  flameNames = ['example01', 'example02', 'example03', 'example04', 'example05', 'example06', 'example07', 'example08', 'example10', 'example11', 'example12', 'example14', 'example16']
 
   @state()
   imageSize = 512
@@ -59,11 +60,10 @@ export class ExampleView extends View {
   render() {
     return html`
       ${this.renderFlameImportDialog()}
-      
-      <div style="display: flex; align-items: center;">
-        <div style="display: flex; flex-direction: column; margin-right: 1em;">
-           <div></div>
-            <vaadin-button @click="${() => (this.dialogOpened = true)}">Import flame...</vaadin-button>
+        
+      <div style="display: flex; flex-direction: column; align-items: center;">
+        <div style="display: flex; flex-direction: row; align-items: flex-end; margin-right: 1em;">
+            <vaadin-button disabled="{true}" @click="${() => (this.dialogOpened = true)}">Import flame...</vaadin-button>
             <vaadin-combo-box label="Image size" .items="${this.imageSizes}" value="${this.imageSize}" @change="${(event: Event)=>this.imageSizeChanged(event)}"></vaadin-combo-box>
             <vaadin-combo-box label="Flame" .items="${this.flameNames}" value="${this.flameName}" @change="${(event: Event)=>this.flameNameChanged(event)}"></vaadin-combo-box>
             <vaadin-button @click="${this.onClick}">Refresh</vaadin-button>
@@ -76,48 +76,16 @@ export class ExampleView extends View {
   
       
 
-      <div style="display: block;">
-        <paper-slider id="brightness" step="0.0001" value="2.2" min="0" max="4"></paper-slider>
+      <div style="display: none;">
+        <paper-slider id="brightness" step="0.0001" value="1.6" min="0" max="4"></paper-slider>
         <paper-slider  id="param1" step="0.1" value="2.5" min="0" max="10.0"></paper-slider>
         <label><input type="radio" name="displayMode" value="flame" checked="checked">Flame</label>
         <label><input type="radio" name="displayMode" value="position">Position Iteration</label>
         <label><input type="radio" name="displayMode" value="colour">Color Iteration</label>
       </div>    
-      
-      <div id="todo">
-        <h2>TODO's</h2>
-        <p>random flames</p>
-        <p>basic camera stuff</p>
-        <p>user settings</p>
-        <p>color-iteration-stuff</p>
-          <p>support for dc variations</p>
-        <p>optional dark theme</p>
-        <p>display shader code in browser</p>
-          <p>line codes for shader display</p>
-        <p>error-handling for the backend (e.g. flame parsing)</p>
-        <p>frontend-store for flames</p>
-        <p>display version number of app</p>
-        <p>deploy j-wildfire-lib on Maven repository</p>
-          <p>deploy on heroku</p>
-        <p>dynamic param evaluation stuff</p>
-      </div>
-
+        
       </div>
 `;
-  }
-
-  connectedCallback() {
-    super.connectedCallback();
-    this.classList.add(
-      'flex',
-      'flex-col',
-      'h-full',
-      'items-center',
-      'justify-center',
-      'p-l',
-      'text-center',
-      'box-border'
-    );
   }
 
   initFlag = false;

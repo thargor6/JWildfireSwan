@@ -4,6 +4,8 @@ import { makeAutoObservable } from 'mobx';
 export class AppStore {
   applicationName = 'JWildfire Swan';
 
+  loadingText = 'Loading...'
+
   // The location, relative to the base path, e.g. "hello" when viewing "/hello"
   location = '';
 
