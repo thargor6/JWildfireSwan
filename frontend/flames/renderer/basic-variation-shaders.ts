@@ -369,6 +369,39 @@ class CrossFunc extends VariationShaderFunc2D {
     }
 }
 
+class CschFunc extends VariationShaderFunc2D {
+    getCode(variation: RenderVariation): string {
+        /* complex vars by cothe */
+        /* exp log sin cos tan sec csc cot sinh cosh tanh sech csch coth */
+        //Hyperbolic Cosecant CSCH
+        return `{
+                  float amount = ${variation.amount};
+                  float cschsin = sin(_ty);
+                  float cschcos = cos(_ty);
+                  float cschsinh = sinh(_tx);
+                  float cschcosh = cosh(_tx);
+                  float d = (cosh(2.0 * _tx) - cos(2.0 * _ty));
+                  if (d != 0.0) {
+                    float cschden = 2.0 / d;
+                    _vx += amount * cschden * cschsinh * cschcos;
+                    _vy -= amount * cschden * cschcosh * cschsin;  
+                  }
+                }`;
+    }
+
+    get funcDependencies(): string[] {
+        return [FUNC_SINH, FUNC_COSH];
+    }
+
+    get name(): string {
+        return "csch";
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
 class CosFunc extends VariationShaderFunc2D {
     getCode(variation: RenderVariation): string {
         /* complex vars by cothe */
@@ -678,6 +711,55 @@ class EyefishFunc extends VariationShaderFunc2D {
 
     get name(): string {
         return "eyefish";
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
+class Fan2Func extends VariationShaderFunc2D {
+    PARAM_X = "x"
+    PARAM_Y = "y"
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_X, type: VariationParamType.VP_NUMBER, initialValue: 0.5 },
+            { name: this.PARAM_Y, type: VariationParamType.VP_NUMBER, initialValue: 1.2 }]
+    }
+
+    getCode(variation: RenderVariation): string {
+        return `{
+            float amount = ${variation.amount};
+            float x = ${variation.params.get(this.PARAM_X)};
+            float y = ${variation.params.get(this.PARAM_Y)};
+            float r = sqrt(_tx * _tx + _ty * _ty);
+            float angle;
+            if ((_tx < -EPSILON) || (_tx > EPSILON) || (_ty < -EPSILON) || (_ty > EPSILON)) {
+              angle = atan2(_tx, _ty);
+            } else {
+              angle = 0.0;
+            }
+        
+            float dy = y;
+            float dx = M_PI * (x * x) + EPSILON;
+            float dx2 = dx * 0.5;
+        
+            float t = angle + dy - floor((angle + dy) / dx) * dx;
+            float a;
+            if (t > dx2) {
+              a = angle - dx2;
+            } else {
+              a = angle + dx2;
+            }
+        
+            _vx += amount * r * sin(a);
+            _vy += amount * r * cos(a);
+
+        }`;
+    }
+
+    get name(): string {
+        return "fan2";
     }
 
     get variationTypes(): VariationTypes[] {
@@ -1643,6 +1725,7 @@ export function registerVars() {
     VariationShaders.registerVar(new CotFunc())
     VariationShaders.registerVar(new CothFunc())
     VariationShaders.registerVar(new CrossFunc())
+    VariationShaders.registerVar(new CschFunc())
     VariationShaders.registerVar(new CurlFunc())
     VariationShaders.registerVar(new CylinderFunc())
     VariationShaders.registerVar(new DiscFunc())
@@ -1650,6 +1733,7 @@ export function registerVars() {
     VariationShaders.registerVar(new EllipticFunc())
     VariationShaders.registerVar(new ExpFunc())
     VariationShaders.registerVar(new EyefishFunc())
+    VariationShaders.registerVar(new Fan2Func())
     VariationShaders.registerVar(new FisheyeFunc())
     VariationShaders.registerVar(new JuliaFunc())
     VariationShaders.registerVar(new JuliaNFunc())
