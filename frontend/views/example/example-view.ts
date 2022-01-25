@@ -63,7 +63,7 @@ export class ExampleView extends View {
         
       <div style="display: flex; flex-direction: column; align-items: center;">
         <div style="display: flex; flex-direction: row; align-items: flex-end; margin-right: 1em;">
-            <vaadin-button disabled="{true}" @click="${() => (this.dialogOpened = true)}">Import flame...</vaadin-button>
+            <vaadin-button ?disabled="{false}" @click="${() => (this.dialogOpened = true)}">Import flame...</vaadin-button>
             <vaadin-combo-box label="Image size" .items="${this.imageSizes}" value="${this.imageSize}" @change="${(event: Event)=>this.imageSizeChanged(event)}"></vaadin-combo-box>
             <vaadin-combo-box label="Flame" .items="${this.flameNames}" value="${this.flameName}" @change="${(event: Event)=>this.flameNameChanged(event)}"></vaadin-combo-box>
             <vaadin-button @click="${this.onClick}">Refresh</vaadin-button>
