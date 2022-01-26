@@ -369,6 +369,39 @@ class CrossFunc extends VariationShaderFunc2D {
     }
 }
 
+class CscFunc extends VariationShaderFunc2D {
+    getCode(variation: RenderVariation): string {
+        /* complex vars by cothe */
+        /* exp log sin cos tan sec csc cot sinh cosh tanh sech csch coth */
+        //Cosecant CSC
+        return `{
+                  float amount = ${variation.amount};
+                  float cscsin = sin(_tx);
+                  float csccos = cos(_tx);
+                  float cscsinh = sinh(_ty);
+                  float csccosh = cosh(_ty);
+                  float d = (cosh(2.0 * _ty) - cos(2.0 * _tx));
+                  if (d != 0.0) {
+                    float cscden = 2.0 / d;
+                    _vx += amount * cscden * cscsin * csccosh;
+                    _vy -= amount * cscden * csccos * cscsinh;  
+                  }
+                }`;
+    }
+
+    get funcDependencies(): string[] {
+        return [FUNC_SINH, FUNC_COSH];
+    }
+
+    get name(): string {
+        return "csc";
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
 class CschFunc extends VariationShaderFunc2D {
     getCode(variation: RenderVariation): string {
         /* complex vars by cothe */
@@ -420,6 +453,35 @@ class CosFunc extends VariationShaderFunc2D {
 
     get name(): string {
         return "cos";
+    }
+
+    get funcDependencies(): string[] {
+        return [FUNC_SINH, FUNC_COSH];
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
+class CoshFunc extends VariationShaderFunc2D {
+    getCode(variation: RenderVariation): string {
+        /* complex vars by cothe */
+        /* exp log sin cos tan sec csc cot sinh cosh tanh sech csch coth */
+        //Hyperbolic Cosine COSH
+        return `{
+                  float amount = ${variation.amount};
+                  float coshsin = sin(_ty);
+                  float coshcos = cos(_ty);
+                  float coshsinh = sinh(_tx);
+                  float coshcosh = cosh(_tx);
+                  _vx += amount * coshcosh * coshcos;
+                  _vy += amount * coshsinh * coshsin;
+                }`;
+    }
+
+    get name(): string {
+        return "cosh";
     }
 
     get funcDependencies(): string[] {
@@ -543,6 +605,28 @@ class CylinderFunc extends VariationShaderFunc2D {
     }
 }
 
+class DiamondFunc extends VariationShaderFunc2D {
+    getCode(variation: RenderVariation): string {
+        return `{
+                  float amount = ${variation.amount};
+                  float sinA = _tx / _r;
+                  float cosA = _ty / _r;
+                  float sinr = sin(_r);
+                  float cosr = cos(_r);
+                  _vx += amount * sinA * cosr;
+                  _vy += amount * cosA * sinr;
+                }`;
+    }
+
+    get name(): string {
+        return "diamond";
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
 class DiscFunc extends VariationShaderFunc2D {
     getCode(variation: RenderVariation): string {
         return `{
@@ -618,7 +702,7 @@ class Disc2Func extends VariationShaderFunc2D {
 }
 
 class EllipticFunc extends VariationShaderFunc2D {
-    MODE_ORIGINAL = 0; // Original Apophysis plugin
+    //MODE_ORIGINAL = 0; // Original Apophysis plugin
     MODE_MIRRORY = 1; // Mirror y result; legacy JWildfire behavior
     MODE_PRECISION = 2; // Alternate calculation to avoid precision loss by Claude Heiland-Allen; see https://mathr.co.uk/blog/2017-11-01_a_more_accurate_elliptic_variation.html
 
@@ -780,6 +864,61 @@ class FisheyeFunc extends VariationShaderFunc2D {
 
     get name(): string {
         return "fisheye";
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
+class FluxFunc extends VariationShaderFunc2D {
+    PARAM_SPREAD = "spread"
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_SPREAD, type: VariationParamType.VP_NUMBER, initialValue: 0.3 }]
+    }
+
+    getCode(variation: RenderVariation): string {
+        // Flux, by meckie
+        return `{
+            float amount = ${variation.amount};
+            float spread = ${variation.params.get(this.PARAM_SPREAD)};
+         
+            float xpw = _tx + amount;
+            float xmw = _tx - amount;
+            float avgr = amount * (2.0 + spread) * sqrt(sqrt(_ty * _ty + xpw * xpw) / sqrt(_ty * _ty + xmw * xmw));
+            float avga = (atan2(_ty, xmw) - atan2(_ty, xpw)) * 0.5;
+        
+            _vx += avgr * cos(avga);
+            _vy += avgr * sin(avga);
+        }`;
+    }
+
+    get name(): string {
+        return "flux";
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
+class HeartFunc extends VariationShaderFunc2D {
+    getCode(variation: RenderVariation): string {
+        return `{
+            float amount = ${variation.amount};
+            float r = sqrt(_tx * _tx + _ty * _ty);
+            float angle = _phi;
+            float sinr = sin(r * angle);
+            float cosr = cos(r * angle);
+            r *= amount;
+            _vx += r * sinr;
+            _vy -= r * cosr;
+        }`;
+    }
+
+    get name(): string {
+        return "heart";
     }
 
     get variationTypes(): VariationTypes[] {
@@ -1151,6 +1290,35 @@ class SinFunc extends VariationShaderFunc2D {
     }
 }
 
+class SinhFunc extends VariationShaderFunc2D {
+    getCode(variation: RenderVariation): string {
+        /* complex vars by cothe */
+        /* exp log sin cos tan sec csc cot sinh cosh tanh sech csch coth */
+        //Hyperbolic Sine SINH
+        return `{
+                  float amount = ${variation.amount};
+                  float sinhsin = sin(_ty);
+                  float sinhcos = cos(_ty);
+                  float sinhsinh = sinh(_tx);
+                  float sinhcosh = cosh(_tx);
+                  _vx += amount * sinhsinh * sinhcos;
+                  _vy += amount * sinhcosh * sinhsin;
+                }`;
+    }
+
+    get name(): string {
+        return "sinh";
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+
+
+    get funcDependencies(): string[] {
+        return [FUNC_SINH, FUNC_COSH];
+    }
+}
 
 class SphericalFunc extends VariationShaderFunc2D {
     getCode(variation: RenderVariation): string {
@@ -1722,12 +1890,15 @@ export function registerVars() {
     VariationShaders.registerVar(new CellFunc())
     VariationShaders.registerVar(new CloverLeafWFFunc())
     VariationShaders.registerVar(new CosFunc())
+    VariationShaders.registerVar(new CoshFunc())
     VariationShaders.registerVar(new CotFunc())
     VariationShaders.registerVar(new CothFunc())
     VariationShaders.registerVar(new CrossFunc())
+    VariationShaders.registerVar(new CscFunc())
     VariationShaders.registerVar(new CschFunc())
     VariationShaders.registerVar(new CurlFunc())
     VariationShaders.registerVar(new CylinderFunc())
+    VariationShaders.registerVar(new DiamondFunc())
     VariationShaders.registerVar(new DiscFunc())
     VariationShaders.registerVar(new Disc2Func())
     VariationShaders.registerVar(new EllipticFunc())
@@ -1735,6 +1906,8 @@ export function registerVars() {
     VariationShaders.registerVar(new EyefishFunc())
     VariationShaders.registerVar(new Fan2Func())
     VariationShaders.registerVar(new FisheyeFunc())
+    VariationShaders.registerVar(new FluxFunc())
+    VariationShaders.registerVar(new HeartFunc())
     VariationShaders.registerVar(new JuliaFunc())
     VariationShaders.registerVar(new JuliaNFunc())
     VariationShaders.registerVar(new LinearFunc())
@@ -1749,6 +1922,7 @@ export function registerVars() {
     VariationShaders.registerVar(new RoseWFFunc())
     VariationShaders.registerVar(new SecFunc())
     VariationShaders.registerVar(new SinFunc())
+    VariationShaders.registerVar(new SinhFunc())
     VariationShaders.registerVar(new SphericalFunc())
     VariationShaders.registerVar(new SpiralFunc())
     VariationShaders.registerVar(new SplitFunc())
