@@ -16,7 +16,7 @@
 */
 
 import {FlameParameter} from '../model/parameters'
-import {RenderVariation} from "Frontend/flames/model/render-flame";
+import {RenderVariation, RenderXForm} from "Frontend/flames/model/render-flame";
 
 export enum VariationTypes {
     VARTYPE_BLUR,
@@ -42,7 +42,7 @@ export interface VariationParam {
 }
 
 export abstract class VariationShaderFunc {
-    abstract getCode(variation: RenderVariation): string
+    abstract getCode(xform: RenderXForm, variation: RenderVariation): string
 
     abstract get name(): string
 

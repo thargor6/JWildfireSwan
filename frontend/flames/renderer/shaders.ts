@@ -44,13 +44,13 @@ interface ShowRawBufferProgram extends WebGLProgram {
     uTexSamp: WebGLUniformLocation;
 }
 
-function addVariation(variation: RenderVariation) {
-    return VariationShaders.getVariationCode(variation)
+function addVariation(xform: RenderXForm, variation: RenderVariation) {
+    return VariationShaders.getVariationCode(xform, variation)
 }
 
-function addVariations(xForm: RenderXForm, xFormIdx: number) {
+function addVariations(xform: RenderXForm, xformIdx: number) {
     return `{
-          ${xForm.variations.map(variation => addVariation(variation)).join('')}
+          ${xform.variations.map(variation => addVariation(xform, variation)).join('')}
     }`
 }
 
