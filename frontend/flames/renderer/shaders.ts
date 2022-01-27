@@ -307,6 +307,7 @@ float atan2f(float y, float x)
 	            float _tx, _ty, _tz;
                 float _vx = 0.0, _vy = 0.0, _vz = 0.0;
 				${addXForms(flame)}
+				
 				point = vec3(_vx, _vy, _vz);
 				gl_FragColor = vec4(point, 1.0);
 			}

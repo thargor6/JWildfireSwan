@@ -15,6 +15,15 @@ void main(void) {
     vec4 color = texture2D(uTexSamp_Colors, tex);
 
     fragColor = color;
-    gl_Position = vec4(point.xy, 0.0, 1.0);
+    // TODO camera here!
+    float _px = point.x;
+    float _py = point.y;
+    
+    float alpha = 3.1415 / 6.0;
+    float zoom = 0.75;
+    float _cx = _px * zoom * sin(alpha) + _py * zoom * cos(alpha);
+    float _cy = -_px * zoom * cos(alpha) + _py * zoom * sin(alpha);
+    
+    gl_Position = vec4(_cx, _cy, 0.0, 1.0);
 }
 `;
