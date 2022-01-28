@@ -3,14 +3,14 @@
   Copyright (C) 2021-2022 Andreas Maschke
 
   This is free software; you can redistribute it and/or modify it under the terms of the GNU Lesser
-  General Public License as published by the Free Software Foundation; either version 2.1 of the
+  General License as published by the Free Software Foundation; either version 2.1 of the
   License, or (at your option) any later version.
 
   This software is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
   even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
-  Lesser General Public License for more details.
+  Lesser General License for more details.
 
-  You should have received a copy of the GNU Lesser General Public License along with this software;
+  You should have received a copy of the GNU Lesser General License along with this software;
   if not, write to the Free Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 */
@@ -30,6 +30,54 @@ public class Flame {
 
   @Nonnull
   private double brightness;
+
+  @Nonnull
+  private double pixelsPerUnit;
+
+  @Nonnull
+  private double camZoom;
+
+  @Nonnull
+  private double centreX;
+
+  @Nonnull
+  private double centreY;
+
+  @Nonnull
+  private double camYaw;
+
+  @Nonnull
+  private double camPitch;
+
+  @Nonnull
+  private double camRoll;
+
+  @Nonnull
+  private double camBank;
+
+  @Nonnull
+  private double camDOF;
+
+  @Nonnull
+  private double camDOFArea;
+
+  @Nonnull
+  private double camPerspective;
+
+  @Nonnull
+  private double diminishZ;
+
+  @Nonnull
+  private double camPosX;
+
+  @Nonnull
+  private double camPosY;
+
+  @Nonnull
+  private double camPosZ;
+
+  @Nonnull
+  private boolean newCamDOF = false;
 
   @Nonnull
   private final List<@Nonnull XForm> xforms = new ArrayList<>();

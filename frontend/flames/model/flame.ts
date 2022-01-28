@@ -59,6 +59,25 @@ export class XForm {
 
 export class Flame {
     public brightness = Parameters.dNumber(1.0);
+    public pixelsPerUnit = Parameters.dNumber(100.)
+    public camZoom = Parameters.dNumber(1.0)
+    public centreX = Parameters.dNumber(0.0)
+    public centreY = Parameters.dNumber(0.0)
+    public camYaw = Parameters.dNumber(0.0)
+    public camPitch = Parameters.dNumber(0.0)
+    public camRoll = Parameters.dNumber(0.0)
+    public camBank = Parameters.dNumber(0.0)
+    public camDOF = Parameters.dNumber(0.0)
+    public camDOFArea = Parameters.dNumber(0.0)
+    public camPerspective = Parameters.dNumber(0.0)
+    public diminishZ = Parameters.dNumber(0.0)
+    public camPosX = Parameters.dNumber(0.0)
+    public camPosY = Parameters.dNumber(0.0)
+    public camPosZ = Parameters.dNumber(0.0)
+    public newCamDOF = false
+
+
+
     private _xforms = new Array<XForm>();
     private _finalXforms = new Array<XForm>();
     public get xforms() {

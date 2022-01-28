@@ -55,7 +55,23 @@ export class RenderXForm {
 }
 
 export class RenderFlame {
-    public brightness = 1.0;
+    public brightness = 1.0
+    public pixelsPerUnit = 100
+    public camZoom = 1.0
+    public centreX = 0.0
+    public centreY = 0.0
+    public camYaw = 0.0
+    public camPitch = 0.0
+    public camRoll = 0.0
+    public camBank = 0.0
+    public camDOF = 0.0
+    public camDOFArea = 0.0
+    public camPerspective = 0.0
+    public diminishZ = 0.0
+    public camPosX = 0.0
+    public camPosY = 0.0
+    public camPosZ = 0.0
+    public newCamDOF = false
 
     private _xforms = new Array<RenderXForm>();
     public get xforms() {

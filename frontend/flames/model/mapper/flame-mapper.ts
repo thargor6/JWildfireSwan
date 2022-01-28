@@ -124,7 +124,25 @@ class XFormMapper {
 export class FlameMapper {
     public static mapFromBackend(source: SourceFlame): Flame {
         const res = new Flame()
-        res.brightness = Parameters.dNumber(source.brightness);
+        res.brightness = Parameters.dNumber(source.brightness)
+
+        res.pixelsPerUnit = Parameters.dNumber(source.pixelsPerUnit)
+        res.camZoom = Parameters.dNumber(source.camZoom)
+        res.centreX = Parameters.dNumber(source.centreX)
+        res.centreY = Parameters.dNumber(source.centreY)
+        res.camYaw = Parameters.dNumber(source.camYaw)
+        res.camPitch = Parameters.dNumber(source.camPitch)
+        res.camRoll = Parameters.dNumber(source.camRoll)
+        res.camBank = Parameters.dNumber(source.camBank)
+        res.camDOF = Parameters.dNumber(source.camDOF)
+        res.camDOFArea = Parameters.dNumber(source.camDOFArea)
+        res.camPerspective = Parameters.dNumber(source.camPerspective)
+        res.diminishZ = Parameters.dNumber(source.diminishZ)
+        res.camPosX = Parameters.dNumber(source.camPosX)
+        res.camPosY = Parameters.dNumber(source.camPosY)
+        res.camPosZ = Parameters.dNumber(source.camPosZ)
+        res.newCamDOF = source.newCamDOF
+
         source.xforms.map(sxf => {
             res.xforms.push(XFormMapper.mapFromBackend(sxf))
         })
@@ -137,6 +155,24 @@ export class FlameMapper {
     public static mapForRendering(source: Flame): RenderFlame {
         const res = new RenderFlame();
         res.brightness = source.brightness.value;
+
+        res.pixelsPerUnit = source.pixelsPerUnit.value
+        res.camZoom = source.camZoom.value
+        res.centreX = source.centreX.value
+        res.centreY = source.centreY.value
+        res.camYaw = source.camYaw.value
+        res.camPitch = source.camPitch.value
+        res.camRoll = source.camRoll.value
+        res.camBank = source.camBank.value
+        res.camDOF = source.camDOF.value
+        res.camDOFArea = source.camDOFArea.value
+        res.camPerspective = source.camPerspective.value
+        res.diminishZ = source.diminishZ.value
+        res.camPosX = source.camPosX.value
+        res.camPosY = source.camPosY.value
+        res.camPosZ = source.camPosZ.value
+        res.newCamDOF = source.newCamDOF
+
         source.xforms.map(sxf => {
             res.xforms.push(XFormMapper.mapForRendering(sxf))
         })

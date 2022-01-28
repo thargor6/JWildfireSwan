@@ -9,12 +9,14 @@ import {VariationShaders} from "Frontend/flames/renderer/variation-shaders";
 import {registerVars} from "Frontend/flames/renderer/basic-variation-shaders";
 import {RenderFlame, RenderXForm, RenderVariation} from "Frontend/flames/model/render-flame";
 import {VariationMathFunctions} from "Frontend/flames/renderer/variation-math-functions";
+import {FlameRenderView} from "Frontend/flames/renderer/flame-render-view";
 
 interface ComputePointsProgram extends WebGLProgram {
     vertexPositionAttribute: GLint;
     color: WebGLUniformLocation;
     uTexSamp_Points: WebGLUniformLocation;
     uTexSamp_Colors: WebGLUniformLocation;
+    time: WebGLUniformLocation;
 }
 
 interface IteratePointsProgram extends WebGLProgram {
@@ -314,6 +316,43 @@ float atan2f(float y, float x)
 			`;
 }
 
+function createProgPointsVsShader(flame: RenderFlame, points_size: number) {
+    const view = new FlameRenderView(flame, points_size, points_size)
+console.log("VIEW", view)
+    console.log("FLAME:", flame)
+    return  `
+attribute vec3 aVertexPosition;
+
+uniform sampler2D uTexSamp_Points;
+uniform sampler2D uTexSamp_Colors;
+			
+uniform float time;
+			
+varying vec4 fragColor;		
+
+void main(void) {
+    gl_PointSize = 1.0;
+
+    vec2 tex = aVertexPosition.xy;
+
+    vec2 point = texture2D(uTexSamp_Points, tex).rg;
+    vec4 color = texture2D(uTexSamp_Colors, tex);
+
+    fragColor = color;
+    // TODO camera here!
+    float _px = point.x;
+    float _py = point.y;
+    
+    float alpha = 3.1415 / 6.0 ;
+    float zoom = 0.75;
+    float _cx = _px * zoom * sin(alpha) + _py * zoom * cos(alpha);
+    float _cy = -_px * zoom * cos(alpha) + _py * zoom * sin(alpha);
+    
+    gl_Position = vec4(_cx, _cy, 0.0, 1.0);
+}
+`
+}
+
 export class Shaders {
     prog_points: ComputePointsProgram;
     prog_comp: IteratePointsProgram;
@@ -322,13 +361,14 @@ export class Shaders {
     prog_show_raw: ShowRawBufferProgram;
 
     constructor(gl: WebGLRenderingContext, canvas: HTMLCanvasElement, points_size: number, flame: RenderFlame) {
-        this.prog_points = compileShaderDirect(gl, shader_points_vs, shader_points_fs, {}) as ComputePointsProgram;
+        const progPointsVsShader = createProgPointsVsShader(flame, points_size);
+        this.prog_points = compileShaderDirect(gl, progPointsVsShader, shader_points_fs, {}) as ComputePointsProgram;
         this.prog_points.vertexPositionAttribute = gl.getAttribLocation(this.prog_points, "aVertexPosition");
         gl.enableVertexAttribArray(this.prog_points.vertexPositionAttribute);
         this.prog_points.color = gl.getUniformLocation(this.prog_points, "color")!;
         this.prog_points.uTexSamp_Points = gl.getUniformLocation(this.prog_points, "uTexSamp_Points")!;
         this.prog_points.uTexSamp_Colors = gl.getUniformLocation(this.prog_points, "uTexSamp_Colors")!;
-
+        this.prog_points.time = gl.getUniformLocation(this.prog_points, "time")!;
 
         const compPointsShader = createCompPointsShader(flame);
         console.log(compPointsShader);

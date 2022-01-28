@@ -14,31 +14,7 @@
   if not, write to the Free Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 */
-package org.jwildfire.swan.flames.endpoint;
 
-import com.vaadin.flow.server.auth.AnonymousAllowed;
-import com.vaadin.fusion.Endpoint;
-import com.vaadin.fusion.Nonnull;
-import lombok.extern.slf4j.Slf4j;
+export const M_PI = Math.PI
 
-import org.springframework.beans.factory.annotation.Value;
-
-@Endpoint
-@AnonymousAllowed
-@Slf4j
-public class AppInfoEndpoint {
-  @Value("${swan.appVersion}")
-  private String appVersion;
-
-  @Value("${swan.appBuildDate}")
-  private String appBuildDate;
-
-  public @Nonnull String getAppVersion() {
-    return appVersion;
-  }
-
-  public @Nonnull String getAppBuildDate() {
-    return appBuildDate;
-  }
-
-}
+export const EPSILON = 0.000001

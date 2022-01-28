@@ -3,7 +3,9 @@ attribute vec3 aVertexPosition;
 
 uniform sampler2D uTexSamp_Points;
 uniform sampler2D uTexSamp_Colors;
-
+			
+uniform float time;
+			
 varying vec4 fragColor;		
 
 void main(void) {
@@ -19,7 +21,7 @@ void main(void) {
     float _px = point.x;
     float _py = point.y;
     
-    float alpha = 3.1415 / 6.0;
+    float alpha = 3.1415 / 6.0 + time * 0.1;
     float zoom = 0.75;
     float _cx = _px * zoom * sin(alpha) + _py * zoom * cos(alpha);
     float _cy = -_px * zoom * cos(alpha) + _py * zoom * sin(alpha);

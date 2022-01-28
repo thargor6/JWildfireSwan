@@ -30,6 +30,23 @@ public class FlameMapper {
   public Flame mapFromJwildfire(org.jwildfire.create.tina.base.Flame source) {
     Flame res = new Flame();
     res.setBrightness(source.getBrightness());
+    res.setPixelsPerUnit(source.getPixelsPerUnit());
+    res.setCamZoom(source.getCamZoom());
+    res.setCentreX(source.getCentreX());
+    res.setCentreY(source.getCentreY());
+    res.setCamYaw(source.getCamYaw());
+    res.setCamPitch(source.getCamPitch());
+    res.setCamRoll(source.getCamRoll());
+    res.setCamBank(source.getCamBank());
+    res.setCamDOF(source.getCamDOF());
+    res.setCamDOFArea(source.getCamDOFArea());
+    res.setCamPerspective(source.getCamPerspective());
+    res.setDiminishZ(source.getDimishZ());
+    res.setCamPosX(source.getCamPosX());
+    res.setCamPosY(source.getCamPosY());
+    res.setCamPosZ(source.getCamPosZ());
+    res.setNewCamDOF(source.isNewCamDOF());
+
     source.getFirstLayer().getXForms().stream()
         .forEach(xForm -> res.getXforms().add(xFormMapper.mapFromJwildfire(source, xForm)));
     source.getFirstLayer().getFinalXForms().stream()
