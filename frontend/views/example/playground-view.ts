@@ -17,7 +17,6 @@
 
 import {html, PropertyValues, render} from 'lit';
 import { guard } from 'lit/directives/guard.js';
-import { until } from 'lit/directives/until.js';
 import {customElement, property, query, state} from 'lit/decorators.js';
 import { View } from '../../views/view';
 
@@ -29,15 +28,18 @@ import '@vaadin/horizontal-layout';
 import '@vaadin/text-area';
 import '@vaadin/text-field';
 import '@vaadin/vertical-layout';
+import '@vaadin/icon';
+import '@vaadin/icons';
+import '@vaadin/tabs';
 
 import {FlameRenderer} from '../../flames/renderer/flame-renderer'
-import {AppInfoEndpoint, FlamesEndpoint} from "Frontend/generated/endpoints";
+import {FlamesEndpoint} from "Frontend/generated/endpoints";
 import {FlameMapper} from '../../flames/model/mapper/flame-mapper'
 import {HasValue} from "@vaadin/form";
 import '@vaadin/vaadin-combo-box';
 
-@customElement('example-view')
-export class ExampleView extends View {
+@customElement('playground-view')
+export class PlaygroundView extends View {
   @query("#canvas-container")
   canvasContainer!: HTMLDivElement;
 
@@ -56,6 +58,11 @@ export class ExampleView extends View {
 
   pointsSizes = [64, 128, 256, 512 ]
 
+    @state()
+    private content = '';
+
+    @state()
+    private pages = ['Dashboard', 'Payment', 'Shipping'];
 
   render() {
     return html`
@@ -73,8 +80,24 @@ export class ExampleView extends View {
         <div id="canvas-container">
           <canvasx id="screen1" width="512" height="512"></canvasx>
         </div>
-  
-      
+
+          <vaadin-tabs @selected-changed="${this.selectedChanged}">
+              <vaadin-tab theme="icon-on-top">
+                  <vaadin-icon icon="vaadin:user"></vaadin-icon>
+                  <span>Profile</span>
+              </vaadin-tab>
+              <vaadin-tab theme="icon-on-top">
+                  <vaadin-icon icon="vaadin:cog"></vaadin-icon>
+                  <span>Settings</span>
+              </vaadin-tab>
+              <vaadin-tab theme="icon-on-top">
+                  <vaadin-icon icon="vaadin:bell"></vaadin-icon>
+                  <span>Notifications</span>
+              </vaadin-tab>
+          </vaadin-tabs>
+          <vaadin-vertical-layout theme="padding">
+              <p>${this.content}</p>
+          </vaadin-vertical-layout>
 
       <div style="display: block;">
         <paper-slider id="brightness" step="0.0001" value="1.6" min="0" max="4"></paper-slider>
@@ -87,6 +110,10 @@ export class ExampleView extends View {
       </div>
 `;
   }
+
+    selectedChanged(e: CustomEvent) {
+        this.content = `This is the ${this.pages[e.detail.value]} tab`;
+    }
 
   initFlag = false;
 

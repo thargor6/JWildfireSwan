@@ -1,4 +1,4 @@
-import {WebglShaders} from "./variations/shaders/webgl-shaders";
+import {WebglShaders} from "./shadergen/webgl-shaders";
 import {Buffers} from "./buffers";
 import {Framebuffers} from "./framebuffers";
 import {Textures} from "./textures";

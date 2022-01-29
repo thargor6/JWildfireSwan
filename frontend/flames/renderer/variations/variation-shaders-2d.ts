@@ -32,6 +32,9 @@ import {
 } from "Frontend/flames/renderer/variations/variation-math-functions";
 import {M_PI} from "Frontend/flames/renderer/mathlib";
 
+/*
+  be sure to import this class somewhere and call register2DVars()
+ */
 class ArchFunc extends VariationShaderFunc2D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         return `{

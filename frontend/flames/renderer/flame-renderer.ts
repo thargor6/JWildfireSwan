@@ -1,6 +1,6 @@
 
-import {initGL} from './variations/shaders/webgl-shader-utils'
-import {WebglShaders} from './variations/shaders/webgl-shaders'
+import {initGL} from './shadergen/webgl-shader-utils'
+import {WebglShaders} from './shadergen/webgl-shaders'
 import {Buffers} from "./buffers";
 import {Textures} from './textures'
 import {Framebuffers} from './framebuffers'

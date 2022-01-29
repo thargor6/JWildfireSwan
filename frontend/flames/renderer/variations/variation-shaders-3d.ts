@@ -25,6 +25,9 @@ import {VariationShaders} from "Frontend/flames/renderer/variations/variation-sh
 import {RenderVariation, RenderXForm} from "Frontend/flames/model/render-flame";
 import {M_PI} from "Frontend/flames/renderer/mathlib";
 
+/*
+  be sure to import this class somewhere and call register3DVars()
+ */
 class Blade3DFunc extends VariationShaderFunc3D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         /* Z+ variation Jan 07 */

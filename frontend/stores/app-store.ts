@@ -1,5 +1,8 @@
 import { RouterLocation } from '@vaadin/router';
 import { makeAutoObservable } from 'mobx';
+import {register2DVars} from "Frontend/flames/renderer/variations/variation-shaders-2d";
+import {register3DVars} from "Frontend/flames/renderer/variations/variation-shaders-3d";
+import {VariationShaders} from "Frontend/flames/renderer/variations/variation-shaders";
 
 export class AppStore {
   applicationName = 'JWildfire Swan';
@@ -11,8 +14,15 @@ export class AppStore {
 
   currentViewTitle = '';
 
+  variations: string[] = []
+
   constructor() {
     makeAutoObservable(this);
+    this.initVariations();
+  }
+
+  async initVariations() {
+    this.variations = VariationShaders.varNameList
   }
 
   setLocation(location: RouterLocation) {
@@ -26,4 +36,8 @@ export class AppStore {
     this.currentViewTitle = (location?.route as any)?.title || '';
   }
 }
+
+register2DVars()
+register3DVars()
+
 export const appStore = new AppStore();

@@ -1,5 +1,5 @@
 import { Route } from '@vaadin/router';
-import './views/example/example-view';
+import './views/example/playground-view';
 import './views/main-layout';
 
 export type ViewRoute = Route & {
@@ -12,16 +12,16 @@ export const views: ViewRoute[] = [
   // place routes below (more info https://vaadin.com/docs/latest/fusion/routing/overview)
   {
     path: '',
-    component: 'example-view',
+    component: 'playground-view',
     icon: '',
     title: '',
   },
 
   {
-    path: 'example',
-    component: 'example-view',
+    path: 'playground',
+    component: 'playground-view',
     icon: 'la la-file',
-    title: 'Examples',
+    title: 'Playground',
   },
 
   {

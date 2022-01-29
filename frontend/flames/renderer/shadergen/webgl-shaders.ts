@@ -16,16 +16,14 @@
 */
 
 import {compileShaderDirect} from './webgl-shader-utils'
-import {shader_points_fs} from '../../../shaders/shader-points-fs'
-import {shader_direct_vs} from '../../../shaders/shader-direct-vs'
-import {shader_comp_col_fs} from '../../../shaders/shader-comp-col-fs'
-import {shader_show_fs} from '../../../shaders/shader-show-fs'
-import {shader_show_raw_fs} from '../../../shaders/shader-show-raw-fs'
-import {register2DVars} from "Frontend/flames/renderer/variations/variation-shaders-2d";
-import {RenderFlame, RenderXForm, RenderVariation} from "Frontend/flames/model/render-flame";
-import {register3DVars} from "Frontend/flames/renderer/variations/variation-shaders-3d";
-import {CompPointsFragmentShaderGenerator} from "Frontend/flames/renderer/variations/shaders/comp-points-fs-gen";
-import {ProgPointsVertexShaderGenerator} from "Frontend/flames/renderer/variations/shaders/prog-points-vs.gen";
+import {shader_points_fs} from '../shaders/shader-points-fs'
+import {shader_direct_vs} from '../shaders/shader-direct-vs'
+import {shader_comp_col_fs} from '../shaders/shader-comp-col-fs'
+import {shader_show_fs} from '../shaders/shader-show-fs'
+import {shader_show_raw_fs} from '../shaders/shader-show-raw-fs'
+import {RenderFlame} from "Frontend/flames/model/render-flame";
+import {CompPointsFragmentShaderGenerator} from "Frontend/flames/renderer/shadergen/comp-points-fs-gen";
+import {ProgPointsVertexShaderGenerator} from "Frontend/flames/renderer/shadergen/prog-points-vs.gen";
 
 interface ComputePointsProgram extends WebGLProgram {
     vertexPositionAttribute: GLint;
@@ -109,6 +107,3 @@ export class WebglShaders {
     }
 
 }
-
-register2DVars()
-register3DVars()

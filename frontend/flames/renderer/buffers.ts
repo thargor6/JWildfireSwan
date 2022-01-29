@@ -1,4 +1,4 @@
-import {WebglShaders} from "./variations/shaders/webgl-shaders";
+import {WebglShaders} from "./shadergen/webgl-shaders";
 
 interface PositionBuffer extends WebGLBuffer {
     itemSize: number;

@@ -40,4 +40,10 @@ export class VariationShaders {
     public static registerVar(varFunc: VariationShaderFunc) {
         this.variations.set(varFunc.name, varFunc)
     }
+
+    public static get varNameList() {
+        let res = new Array<string>()
+        this.variations.forEach((_value, key) => res.push(key))
+        return res
+    }
 }
