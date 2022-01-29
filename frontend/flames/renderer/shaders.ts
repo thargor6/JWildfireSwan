@@ -317,7 +317,7 @@ float atan2f(float y, float x)
 }
 
 function addCamera(view: FlameRenderView) {
-    if (!view.doProject3D) {
+    if (view.doProject3D) {
         return `
           float _px = point.x;
           float _py = point.y;
@@ -380,14 +380,14 @@ function addCamera(view: FlameRenderView) {
     
           float prjX = _px * float(${view.cosa}) + _py * float(${view.sina}) + float(${view.rcX});
           float prjY = _py * float(${view.cosa}) - _px * float(${view.sina}) + float(${view.rcY});
-          gl_Position = vec4(prjX, prjY, 0.0, 1.0);
+          gl_Position = vec4(prjX * float(${view.bws}), prjY * float(${view.bhs}), 0.0, 1.0);
     `
     }
     else {
         return ` 
             float prjX =  point.x * float(${view.cosa})+ point.y * float(${view.sina}) + float(${view.rcX});
             float prjY = point.y * float(${view.cosa}) -  point.x * float(${view.sina}) + float(${view.rcY});
-            gl_Position = vec4(prjX, prjY, 0.0, 1.0);
+            gl_Position = vec4(prjX * float(${view.bws}), prjY * float(${view.bhs}), 0.0, 1.0);
         
         `
     }
@@ -396,7 +396,7 @@ function addCamera(view: FlameRenderView) {
 
 function createProgPointsVsShader(flame: RenderFlame, points_size: number) {
     const view = new FlameRenderView(flame, points_size, points_size)
-
+console.log("VIEW:", view);
     return  `
 attribute vec3 aVertexPosition;
 

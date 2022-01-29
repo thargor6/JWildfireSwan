@@ -58,10 +58,10 @@ export class FlameRenderView {
 
     private init3D() {
         {
-            const yaw = -this._flame.camYaw * Math.PI / 180.0;
-            const pitch = this._flame.camPitch * Math.PI / 180.0;
-            const roll = this._flame.camRoll * Math.PI / 180.0;
-            const bank = this._flame.camBank * Math.PI / 180.0;
+            const yaw = -this._flame.camYaw * M_PI / 180.0;
+            const pitch = this._flame.camPitch * M_PI / 180.0;
+            const roll = this._flame.camRoll * M_PI / 180.0;
+            const bank = this._flame.camBank * M_PI / 180.0;
             this.createProjectionMatrix(yaw, pitch, bank, roll);
         }
         this._useDOF = this.isDOFActive();
@@ -87,8 +87,8 @@ export class FlameRenderView {
         this._camW = this._camX1 - this._camX0;
         this._camH = this._camY1 - this._camY0;
 
-        this._bws = this._rasterWidth / this._camW;
-        this._bhs = this._rasterHeight / this._camH;
+        this._bws = this._rasterWidth / this._camW / this._imageWidth;
+        this._bhs = this._rasterHeight / this._camH / this._imageHeight;
 
         if (!this._doProject3D) {
             this._cosa = Math.cos(-M_PI * (this._flame.camRoll) / 180.0);
@@ -124,7 +124,7 @@ export class FlameRenderView {
     }
 
     private isDOFActive() {
-        return Math.abs(this._flame.camDOF) > EPSILON;
+        return false // Math.abs(this._flame.camDOF) > EPSILON;
     }
 
     public get doProject3D() {
@@ -169,5 +169,13 @@ export class FlameRenderView {
 
     public get useDOF() {
         return this._useDOF
+    }
+
+    public get bws() {
+        return this._bws
+    }
+
+    public get bhs() {
+        return this._bhs
     }
 }
