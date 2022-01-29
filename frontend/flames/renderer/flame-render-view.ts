@@ -127,4 +127,47 @@ export class FlameRenderView {
         return Math.abs(this._flame.camDOF) > EPSILON;
     }
 
+    public get doProject3D() {
+        return this._doProject3D
+    }
+
+    public get flame() {
+        return this._flame
+    }
+
+    public get sina() {
+        return this._sina
+    }
+
+    public get cosa(){
+        return this._cosa
+    }
+
+    public get rcX() {
+        return this._rcX
+    }
+
+    public get rcY() {
+        return this._rcY
+    }
+
+    public get m() {
+        return this._m
+    }
+
+    public get area() {
+        return this._area
+    }
+
+    public get areaMinusFade() {
+        return this._areaMinusFade
+    }
+
+    public get legacyDOF() {
+        return this._legacyDOF
+    }
+
+    public get useDOF() {
+        return this._useDOF
+    }
 }

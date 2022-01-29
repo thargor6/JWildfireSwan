@@ -46,6 +46,12 @@ public class FlameMapper {
     res.setCamPosY(source.getCamPosY());
     res.setCamPosZ(source.getCamPosZ());
     res.setNewCamDOF(source.isNewCamDOF());
+    res.setDimZDistance(source.getDimZDistance());
+    res.setCamZ(source.getCamZ());
+    res.setFocusX(source.getFocusX());
+    res.setFocusY(source.getFocusY());
+    res.setFocusZ(source.getFocusZ());
+    res.setCamDOFExponent(source.getCamDOFExponent());
 
     source.getFirstLayer().getXForms().stream()
         .forEach(xForm -> res.getXforms().add(xFormMapper.mapFromJwildfire(source, xForm)));

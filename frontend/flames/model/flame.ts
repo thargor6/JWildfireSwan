@@ -75,8 +75,12 @@ export class Flame {
     public camPosY = Parameters.dNumber(0.0)
     public camPosZ = Parameters.dNumber(0.0)
     public newCamDOF = false
-
-
+    public dimZDistance = Parameters.dNumber(0.0)
+    public camZ = Parameters.dNumber(0.0)
+    public focusX = Parameters.dNumber(0.0)
+    public focusY = Parameters.dNumber(0.0)
+    public focusZ = Parameters.dNumber(0.0)
+    public camDOFExponent = Parameters.dNumber(0.0)
 
     private _xforms = new Array<XForm>();
     private _finalXforms = new Array<XForm>();

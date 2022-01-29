@@ -316,10 +316,87 @@ float atan2f(float y, float x)
 			`;
 }
 
+function addCamera(view: FlameRenderView) {
+    if (!view.doProject3D) {
+        return `
+          float _px = point.x;
+          float _py = point.y;
+          float _pz = point.z;
+             
+          float _cx = float(${view.m[0][0]}) * _px + float(${view.m[1][0]}) * _py + float(${view.m[2][0]}) * _pz;
+          float _cy = float(${view.m[0][1]}) * _px + float(${view.m[1][1]}) * _py + float(${view.m[2][1]}) * _pz;
+          float _cz = float(${view.m[0][2]}) * _px + float(${view.m[1][2]}) * _py + float(${view.m[2][2]}) * _pz;
+          _cx += float(${view.flame.camPosX});
+          _cy += float(${view.flame.camPosY});
+          _cz += float(${view.flame.camPosZ});
+
+          float zr = 1.0 - float(${view.flame.camPerspective}) * _cz + float(${view.flame.camPosZ});
+          if (zr < 1.0e-6) {
+              zr = 1.0e-6;
+          }
+          
+          float prjZ = _cz;
+          float prjIntensity = 1.0;
+          if (float(${view.flame.diminishZ}) > 1.0e-6) {
+            float zdist = (float(${view.flame.dimZDistance}) - _cz);
+            if (zdist > 0.0) {
+                prjIntensity = exp(-zdist * zdist * float(${view.flame.diminishZ}));
+            }
+          }
+        
+          if (${view.useDOF}) {
+            if (${view.legacyDOF}) {
+              float zdist = float(${view.flame.camZ}) - _cz;
+              if (zdist > 0.0) {
+                  //    dofBlurShape.applyDOFAndCamera(camPoint, pPoint, zdist, zr);
+              }
+              else {
+                 // dofBlurShape.applyOnlyCamera(camPoint, pPoint, zdist, zr);
+              }
+            }
+            else {
+               float xdist = (_cx - float(${view.flame.focusX}));
+               float ydist = (_cy - float(${view.flame.focusY}));
+               float zdist = (_cz - float(${view.flame.focusZ}));
+    
+               float dist = pow(xdist * xdist + ydist * ydist + zdist * zdist, 1.0 / float(${view.flame.camDOFExponent}));
+               if (dist > float(${view.area})) {
+                  //  dofBlurShape.applyDOFAndCamera(camPoint, pPoint, dist, zr);
+               }
+               else if (dist > float(${view.areaMinusFade})) {
+                 // float scl = GfxMathLib.smootherstep(0.0, 1.0, (dist - areaMinusFade) / fade);
+                 // float sclDist = scl * dist;
+                 // dofBlurShape.applyDOFAndCamera(camPoint, pPoint, sclDist, zr);
+               }
+               else {
+                  // dofBlurShape.applyOnlyCamera(camPoint, pPoint, zdist, zr);
+               }
+            }
+          }  
+          else {
+            _px = _cx / zr;
+            _py = _cy / zr;
+          }
+    
+          float prjX = _px * float(${view.cosa}) + _py * float(${view.sina}) + float(${view.rcX});
+          float prjY = _py * float(${view.cosa}) - _px * float(${view.sina}) + float(${view.rcY});
+          gl_Position = vec4(prjX, prjY, 0.0, 1.0);
+    `
+    }
+    else {
+        return ` 
+            float prjX =  point.x * float(${view.cosa})+ point.y * float(${view.sina}) + float(${view.rcX});
+            float prjY = point.y * float(${view.cosa}) -  point.x * float(${view.sina}) + float(${view.rcY});
+            gl_Position = vec4(prjX, prjY, 0.0, 1.0);
+        
+        `
+    }
+
+}
+
 function createProgPointsVsShader(flame: RenderFlame, points_size: number) {
     const view = new FlameRenderView(flame, points_size, points_size)
-console.log("VIEW", view)
-    console.log("FLAME:", flame)
+
     return  `
 attribute vec3 aVertexPosition;
 
@@ -335,10 +412,11 @@ void main(void) {
 
     vec2 tex = aVertexPosition.xy;
 
-    vec2 point = texture2D(uTexSamp_Points, tex).rg;
+    vec3 point = texture2D(uTexSamp_Points, tex).rgb;
     vec4 color = texture2D(uTexSamp_Colors, tex);
 
     fragColor = color;
+  /*
     // TODO camera here!
     float _px = point.x;
     float _py = point.y;
@@ -349,6 +427,9 @@ void main(void) {
     float _cy = -_px * zoom * cos(alpha) + _py * zoom * sin(alpha);
     
     gl_Position = vec4(_cx, _cy, 0.0, 1.0);
+    */
+    
+    ${addCamera(view)}
 }
 `
 }
@@ -362,6 +443,9 @@ export class Shaders {
 
     constructor(gl: WebGLRenderingContext, canvas: HTMLCanvasElement, points_size: number, flame: RenderFlame) {
         const progPointsVsShader = createProgPointsVsShader(flame, points_size);
+
+        console.log(progPointsVsShader)
+
         this.prog_points = compileShaderDirect(gl, progPointsVsShader, shader_points_fs, {}) as ComputePointsProgram;
         this.prog_points.vertexPositionAttribute = gl.getAttribLocation(this.prog_points, "aVertexPosition");
         gl.enableVertexAttribArray(this.prog_points.vertexPositionAttribute);
@@ -371,7 +455,7 @@ export class Shaders {
         this.prog_points.time = gl.getUniformLocation(this.prog_points, "time")!;
 
         const compPointsShader = createCompPointsShader(flame);
-        console.log(compPointsShader);
+      //  console.log(compPointsShader);
         this.prog_comp = compileShaderDirect(gl, shader_direct_vs, compPointsShader /*shader_comp_fs*/, {RESOLUTION: points_size}) as IteratePointsProgram;
         this.prog_comp.vertexPositionAttribute = gl.getAttribLocation(this.prog_comp, "aVertexPosition");
         gl.enableVertexAttribArray(this.prog_comp.vertexPositionAttribute);

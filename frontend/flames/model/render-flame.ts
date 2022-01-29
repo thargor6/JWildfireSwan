@@ -72,6 +72,12 @@ export class RenderFlame {
     public camPosY = 0.0
     public camPosZ = 0.0
     public newCamDOF = false
+    public dimZDistance = 0.0
+    public camZ = 0.0
+    public focusX = 0.0
+    public focusY = 0.0
+    public focusZ = 0.0
+    public camDOFExponent = 0.0
 
     private _xforms = new Array<RenderXForm>();
     public get xforms() {

@@ -142,6 +142,12 @@ export class FlameMapper {
         res.camPosY = Parameters.dNumber(source.camPosY)
         res.camPosZ = Parameters.dNumber(source.camPosZ)
         res.newCamDOF = source.newCamDOF
+        res.dimZDistance = Parameters.dNumber(source.dimZDistance)
+        res.camZ = Parameters.dNumber(source.camZ)
+        res.focusX = Parameters.dNumber(source.focusX)
+        res.focusY = Parameters.dNumber(source.focusY)
+        res.focusZ = Parameters.dNumber(source.focusZ)
+        res.camDOFExponent = Parameters.dNumber(source.camDOFExponent)
 
         source.xforms.map(sxf => {
             res.xforms.push(XFormMapper.mapFromBackend(sxf))
@@ -172,6 +178,12 @@ export class FlameMapper {
         res.camPosY = source.camPosY.value
         res.camPosZ = source.camPosZ.value
         res.newCamDOF = source.newCamDOF
+        res.dimZDistance = source.dimZDistance.value
+        res.camZ = source.camZ.value
+        res.focusX = source.focusX.value
+        res.focusY = source.focusY.value
+        res.focusZ = source.focusZ.value
+        res.camDOFExponent = source.camDOFExponent.value
 
         source.xforms.map(sxf => {
             res.xforms.push(XFormMapper.mapForRendering(sxf))

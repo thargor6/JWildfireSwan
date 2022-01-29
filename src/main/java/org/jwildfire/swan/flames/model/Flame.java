@@ -80,6 +80,24 @@ public class Flame {
   private boolean newCamDOF = false;
 
   @Nonnull
+  private double dimZDistance;
+
+  @Nonnull
+  private double camZ;
+
+  @Nonnull
+  private double focusX;
+
+  @Nonnull
+  private double focusY;
+
+  @Nonnull
+  private double focusZ;
+
+  @Nonnull
+  private double camDOFExponent;
+
+  @Nonnull
   private final List<@Nonnull XForm> xforms = new ArrayList<>();
 
   @Nonnull
