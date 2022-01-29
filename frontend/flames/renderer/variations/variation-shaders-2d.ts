@@ -23,7 +23,13 @@ import {
 } from "./variation-shader-func";
 import {VariationShaders} from "Frontend/flames/renderer/variations/variation-shaders";
 import {RenderVariation, RenderXForm} from "Frontend/flames/model/render-flame";
-import {FUNC_COSH, FUNC_SINH, FUNC_SQRT1PM1, FUNC_TANH} from "Frontend/flames/renderer/variations/variation-math-functions";
+import {
+    FUNC_COSH,
+    FUNC_LOG10,
+    FUNC_SINH,
+    FUNC_SQRT1PM1,
+    FUNC_TANH
+} from "Frontend/flames/renderer/variations/variation-math-functions";
 import {M_PI} from "Frontend/flames/renderer/mathlib";
 
 class ArchFunc extends VariationShaderFunc2D {
@@ -1176,6 +1182,52 @@ class LogFunc extends VariationShaderFunc2D {
     }
 }
 
+class NGonFunc extends VariationShaderFunc2D {
+    PARAM_CIRCLE = "circle"
+    PARAM_CORNERS = "corners"
+    PARAM_POWER = "power"
+    PARAM_SIDES = "sides"
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_CIRCLE, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
+            { name: this.PARAM_CORNERS, type: VariationParamType.VP_NUMBER, initialValue: 2.0 },
+            { name: this.PARAM_POWER, type: VariationParamType.VP_NUMBER, initialValue: 3.0 },
+            { name: this.PARAM_SIDES, type: VariationParamType.VP_NUMBER, initialValue: 5.0 }]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        /* ngon by Joel Faber (09/06) */
+        return `{
+          float amount = float(${variation.amount});
+          float circle = float(${variation.params.get(this.PARAM_CIRCLE)});
+          float corners = float(${variation.params.get(this.PARAM_CORNERS)});
+          float power = float(${variation.params.get(this.PARAM_POWER)});
+          float sides = float(${variation.params.get(this.PARAM_SIDES)});
+
+          float r_factor = pow(_r2, power / 2.0);
+          float theta = atan2(_ty, _tx);
+          float b = 2.0 * M_PI / sides;
+          float phi = theta - (b * floor(theta / b));
+          if (phi > b / 2.0)
+            phi -= b;
+        
+          float amp = corners * (1.0 / (cos(phi) + EPSILON) - 1.0) + circle;
+          amp /= (r_factor + EPSILON);
+        
+          _vx += amount * _tx * amp;
+          _vy += amount * _ty * amp;
+        }`;
+    }
+
+    get name(): string {
+        return "ngon";
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
 class ParabolaFunc extends VariationShaderFunc2D {
     PARAM_WIDTH = "width"
     PARAM_HEIGHT = "height"
@@ -1530,7 +1582,6 @@ class SinhFunc extends VariationShaderFunc2D {
         return [VariationTypes.VARTYPE_2D];
     }
 
-
     get funcDependencies(): string[] {
         return [FUNC_SINH, FUNC_COSH];
     }
@@ -1806,6 +1857,39 @@ class TangentFunc extends VariationShaderFunc2D {
     }
 }
 
+class TwintrianFunc extends VariationShaderFunc2D {
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        /* Z+ variation Jan 07 */
+        return `{
+          float amount = float(${variation.amount});
+          float r = rand2(tex) * amount * _r;
+        
+          float sinr = sin(r);
+          float cosr = cos(r);
+          float diff = log10(sinr * sinr) + cosr;
+        
+          if (abs(diff) < EPSILON) {
+            diff = -30.0;
+          }
+                  
+          _vx += amount * _tx * diff;
+          _vy += amount * _tx * (diff - sinr * M_PI);
+        }`;
+    }
+
+    get funcDependencies(): string[] {
+        return [FUNC_LOG10];
+    }
+
+    get name(): string {
+        return "twintrian";
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
 class WavesFunc extends VariationShaderFunc2D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         return `{
@@ -1897,6 +1981,7 @@ export function register2DVars() {
     VariationShaders.registerVar(new LazySusanFunc())
     VariationShaders.registerVar(new LinearFunc())
     VariationShaders.registerVar(new LogFunc())
+    VariationShaders.registerVar(new NGonFunc())
     VariationShaders.registerVar(new ParabolaFunc())
     VariationShaders.registerVar(new PetalFunc())
     VariationShaders.registerVar(new PolarFunc())
@@ -1919,6 +2004,7 @@ export function register2DVars() {
     VariationShaders.registerVar(new TanhFunc())
     VariationShaders.registerVar(new TanCosFunc())
     VariationShaders.registerVar(new TangentFunc())
+    VariationShaders.registerVar(new TwintrianFunc())
     VariationShaders.registerVar(new WavesFunc())
     VariationShaders.registerVar(new Waves2Func())
 }

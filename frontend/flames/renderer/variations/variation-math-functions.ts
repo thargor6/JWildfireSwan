@@ -16,8 +16,9 @@
 */
 
 export const FUNC_COSH = 'cosh'
+export const FUNC_LOG10 = 'log10'
 export const FUNC_SINH = 'sinh'
-export const FUNC_SQRT1PM1 = 'sqrt1pm1';
+export const FUNC_SQRT1PM1 = 'sqrt1pm1'
 export const FUNC_TANH = 'tanh'
 
 // https://www.shaderific.com/glsl-functions
@@ -42,6 +43,13 @@ export class VariationMathFunctions {
 		   	  float cosH = (tmp + 1.0 / tmp) / 2.0;
 		       return cosH;
 			}`);
+        this.registerFunction(FUNC_LOG10,
+            // COSH Function (Hyperbolic Cosine) http://machinesdontcare.wordpress.com/2008/03/10/glsl-cosh-sinh-tanh/
+            `            
+            float log10(float val) {
+		       return log(val) / 2.30258509299; // log(10)
+			}`);
+
         this.registerFunction(FUNC_SINH,
             // SINH Function (Hyperbolic Sine) http://machinesdontcare.wordpress.com/2008/03/10/glsl-cosh-sinh-tanh/
             `
