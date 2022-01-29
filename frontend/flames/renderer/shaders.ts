@@ -60,8 +60,8 @@ function addVariations(xform: RenderXForm, xformIdx: number) {
 function addAffineTx(xForm: RenderXForm) {
     if(xForm.c00 != 1.0 || xForm.c01 != 0.0 || xForm.c11 != 1.0 || xForm.c10 != 0.0 || xForm.c20 != 0.0 || xForm.c21 != 0.0) {
         return `
-              _tx = ${xForm.c00} * point.x + ${xForm.c10} * point.y + ${xForm.c20};
-              _ty = ${xForm.c01} * point.x + ${xForm.c11} * point.y + ${xForm.c21};
+              _tx = float(${xForm.c00}) * point.x + float(${xForm.c10}) * point.y + float(${xForm.c20});
+              _ty = float(${xForm.c01}) * point.x + float(${xForm.c11}) * point.y + float(${xForm.c21});
         `
     }
     else {
@@ -75,8 +75,8 @@ function addAffineTx(xForm: RenderXForm) {
 function addPostAffineTx(xForm: RenderXForm) {
     if(xForm.p00 != 1.0 || xForm.p01 != 0.0 || xForm.p11 != 1.0 || xForm.p10 != 0.0 || xForm.p20 != 0.0 || xForm.p21 != 0.0) {
         return `
-               float _px = ${xForm.p00} * _vx + ${xForm.p10} * _vy + ${xForm.p20};
-               float _py = ${xForm.p01} * _vx + ${xForm.p11} * _vy + ${xForm.p21};
+               float _px = float(${xForm.p00}) * _vx + float(${xForm.p10}) * _vy + float(${xForm.p20});
+               float _py = float(${xForm.p01}) * _vx + float(${xForm.p11}) * _vy + float(${xForm.p21});
                _vx = _px;
                _vy = _py;
         `

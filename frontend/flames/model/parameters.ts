@@ -30,9 +30,9 @@ class NumberParameter implements FlameParameter {
 
 export class Parameters {
     public static dNumber(value: number) {
-        return new NumberParameter(value+0.001);
+        return new NumberParameter(value);
     }
     public static iNumber(value: number) {
-        return new NumberParameter(value+0.0001);
+        return new NumberParameter(value);
     }
 }

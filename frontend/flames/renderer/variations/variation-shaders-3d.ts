@@ -29,7 +29,7 @@ class Blade3DFunc extends VariationShaderFunc3D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         /* Z+ variation Jan 07 */
         return `{
-          float amount = ${variation.amount};
+          float amount = float(${variation.amount});
           float r = rand2(tex) * amount * sqrt(_tx * _tx + _ty * _ty);
           float sinr = sin(r);
           float cosr = cos(r);
@@ -61,9 +61,9 @@ class Blob3DFunc extends VariationShaderFunc3D {
 
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         return `{
-          float amount = ${variation.amount};
-          float low = ${variation.params.get(this.PARAM_LOW)};
-          float high = ${variation.params.get(this.PARAM_HIGH)};
+          float amount = float(${variation.amount});
+          float low = float(${variation.params.get(this.PARAM_LOW)});
+          float high = float(${variation.params.get(this.PARAM_HIGH)});
           int waves = int(${variation.params.get(this.PARAM_WAVES)});
           float a = atan2(_tx, _ty);
           float r = sqrt(_tx * _tx + _ty * _ty);
@@ -89,7 +89,7 @@ class Blob3DFunc extends VariationShaderFunc3D {
 class BubbleFunc extends VariationShaderFunc3D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         return `{
-          float amount = ${variation.amount};
+          float amount = float(${variation.amount});
           float r = ((_tx * _tx + _ty * _ty) / 4.0 + 1.0);
           float t = amount / r;
           _vx += t * _tx;
@@ -121,10 +121,10 @@ class Bubble2Func extends VariationShaderFunc3D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         /* bubble2 from FracFx, http://fracfx.deviantart.com/art/FracFx-Plugin-Pack-171806681 */
         return `{
-          float amount = ${variation.amount};
-          float x = ${variation.params.get(this.PARAM_X)};
-          float y = ${variation.params.get(this.PARAM_Y)};
-          float z = ${variation.params.get(this.PARAM_Z)};
+          float amount = float(${variation.amount});
+          float x = float(${variation.params.get(this.PARAM_X)});
+          float y = float(${variation.params.get(this.PARAM_Y)});
+          float z = float(${variation.params.get(this.PARAM_Z)});
           float T = ((sqr(_tx) + sqr(_ty) + sqr(_tz)) / 4.0 + 1.0);
           float r = amount / T;
           _vx += _tx * r * x;
@@ -149,7 +149,7 @@ class Bubble2Func extends VariationShaderFunc3D {
 class BubbleWFFunc extends VariationShaderFunc3D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         return `{
-          float amount = ${variation.amount};
+          float amount = float(${variation.amount});
           float r = ((_tx * _tx + _ty * _ty) / 4.0 + 1.0);
           float t = amount / r;
           _vx += t * _tx;
@@ -184,10 +184,10 @@ class Curl3DFunc extends VariationShaderFunc3D {
 
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         return `{
-          float amount = ${variation.amount};
-          float cx = ${variation.params.get(this.PARAM_CX)};
-          float cy = ${variation.params.get(this.PARAM_CY)};
-          float cz = ${variation.params.get(this.PARAM_CZ)};
+          float amount = float(${variation.amount});
+          float cx = float(${variation.params.get(this.PARAM_CX)});
+          float cy = float(${variation.params.get(this.PARAM_CY)});
+          float cz = float(${variation.params.get(this.PARAM_CZ)});
            
           float c2x = 2.0 * cx;
           float c2y = 2.0 * cy;
@@ -218,7 +218,7 @@ class Curl3DFunc extends VariationShaderFunc3D {
 class CylinderApoFunc extends VariationShaderFunc3D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         return `{
-          float amount = ${variation.amount};
+          float amount = float(${variation.amount});
           _vx += amount * sin(_tx);
           _vy += amount * _ty;
           _vz += amount * cos(_tx);
@@ -237,7 +237,7 @@ class CylinderApoFunc extends VariationShaderFunc3D {
 class HemisphereFunc extends VariationShaderFunc3D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         return `{
-          float amount = ${variation.amount};
+          float amount = float(${variation.amount});
           float r = amount / sqrt(_tx * _tx + _ty * _ty + 1.0);
           _vx += _tx * r;
           _vy += _ty * r;
@@ -257,7 +257,7 @@ class HemisphereFunc extends VariationShaderFunc3D {
 class Linear3DFunc extends VariationShaderFunc3D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         return `{
-          float amount = ${variation.amount};
+          float amount = float(${variation.amount});
           _vx += amount * _tx; 
           _vy += amount * _ty;
           _vz += amount * _tz;
@@ -276,7 +276,7 @@ class Linear3DFunc extends VariationShaderFunc3D {
 class Spherical3DFunc extends VariationShaderFunc3D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         return `{
-          float amount = ${variation.amount};
+          float amount = float(${variation.amount});
           float lr = amount / (_tx * _tx + _ty * _ty + _tz * _tz + EPSILON);
           _vx += _tx * lr;
           _vy += _ty * lr;
@@ -296,7 +296,7 @@ class Spherical3DFunc extends VariationShaderFunc3D {
 class Tangent3DFunc extends VariationShaderFunc3D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         return `{
-          float amount = ${variation.amount};
+          float amount = float(${variation.amount});
           _vx += amount * sin(_tx) / cos(_ty);
           _vy += amount * tan(_ty);
           _vz += amount * tan(_tx);
