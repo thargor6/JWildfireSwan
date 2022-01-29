@@ -15,7 +15,7 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 */
 
-import {FlameParameter} from '../model/parameters'
+import {FlameParameter} from '../../model/parameters'
 import {RenderVariation, RenderXForm} from "Frontend/flames/model/render-flame";
 
 export enum VariationTypes {

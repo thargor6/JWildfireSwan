@@ -20,6 +20,8 @@ export const FUNC_SINH = 'sinh'
 export const FUNC_SQRT1PM1 = 'sqrt1pm1';
 export const FUNC_TANH = 'tanh'
 
+// https://www.shaderific.com/glsl-functions
+
 export class VariationMathFunctions {
     static functions = new Map<string, string>()
 

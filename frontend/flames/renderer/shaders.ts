@@ -5,11 +5,12 @@ import {shader_direct_vs} from '../shaders/shader-direct-vs'
 import {shader_comp_col_fs} from '../shaders/shader-comp-col-fs'
 import {shader_show_fs} from '../shaders/shader-show-fs'
 import {shader_show_raw_fs} from '../shaders/shader-show-raw-fs'
-import {VariationShaders} from "Frontend/flames/renderer/variation-shaders";
-import {registerVars} from "Frontend/flames/renderer/basic-variation-shaders";
+import {VariationShaders} from "Frontend/flames/renderer/variations/variation-shaders";
+import {register2DVars} from "Frontend/flames/renderer/variations/variation-shaders-2d";
 import {RenderFlame, RenderXForm, RenderVariation} from "Frontend/flames/model/render-flame";
-import {VariationMathFunctions} from "Frontend/flames/renderer/variation-math-functions";
+import {VariationMathFunctions} from "Frontend/flames/renderer/variations/variation-math-functions";
 import {FlameRenderView} from "Frontend/flames/renderer/flame-render-view";
+import {register3DVars} from "Frontend/flames/renderer/variations/variation-shaders-3d";
 
 interface ComputePointsProgram extends WebGLProgram {
     vertexPositionAttribute: GLint;
@@ -484,4 +485,5 @@ export class Shaders {
 
 }
 
-registerVars()
+register2DVars()
+register3DVars()
