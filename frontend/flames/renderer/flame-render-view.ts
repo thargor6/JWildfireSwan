@@ -124,7 +124,7 @@ export class FlameRenderView {
     }
 
     private isDOFActive() {
-        return false // Math.abs(this._flame.camDOF) > EPSILON;
+        return Math.abs(this._flame.camDOF) > EPSILON;
     }
 
     public get doProject3D() {

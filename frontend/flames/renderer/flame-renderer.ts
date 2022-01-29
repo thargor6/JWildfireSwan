@@ -1,11 +1,11 @@
 
-import {initGL} from './shader_utils'
-import {Shaders} from './shaders'
+import {initGL} from './variations/shaders/webgl-shader-utils'
+import {WebglShaders} from './variations/shaders/webgl-shaders'
 import {Buffers} from "./buffers";
 import {Textures} from './textures'
 import {Framebuffers} from './framebuffers'
-import {FlameRenderContext} from "./render_context";
-import {FlameRenderSettings} from "./render_settings";
+import {FlameRenderContext} from "./render-context";
+import {FlameRenderSettings} from "./render-settings";
 import {FlameRendererDisplay} from "./display";
 import {FlameIterator} from "./iterator";
 import {Flame} from "Frontend/flames/model/flame";
@@ -35,7 +35,7 @@ export class FlameRenderer {
 
         const gl = initGL(canvas);
 
-        const shaders = new Shaders(gl, canvas, this.points_size, renderFlame);
+        const shaders = new WebglShaders(gl, canvas, this.points_size, renderFlame);
         const buffers = new Buffers(gl, shaders, this.points_size);
         const textures = new Textures(gl, this.points_size, this.grid_size);
         const framebuffers = new Framebuffers(gl, textures);

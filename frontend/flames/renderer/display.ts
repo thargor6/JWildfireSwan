@@ -1,6 +1,6 @@
 
-import {FlameRenderContext} from "./render_context";
-import {FlameRenderSettings} from "./render_settings";
+import {FlameRenderContext} from "./render-context";
+import {FlameRenderSettings} from "./render-settings";
 
 export class FlameRendererDisplay {
     constructor(public ctx: FlameRenderContext, public settings: FlameRenderSettings) {}

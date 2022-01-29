@@ -1,4 +1,4 @@
-import {Shaders} from "./shaders";
+import {WebglShaders} from "./variations/shaders/webgl-shaders";
 import {Buffers} from "./buffers";
 import {Framebuffers} from "./framebuffers";
 import {Textures} from "./textures";
@@ -6,7 +6,7 @@ import {Textures} from "./textures";
 export class FlameRenderContext {
     constructor(
         public gl: WebGLRenderingContext,
-        public shaders: Shaders,
+        public shaders: WebglShaders,
         public buffers: Buffers,
         public textures: Textures,
         public framebuffers: Framebuffers) {}

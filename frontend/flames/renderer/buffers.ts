@@ -1,4 +1,4 @@
-import {Shaders} from "./shaders";
+import {WebglShaders} from "./variations/shaders/webgl-shaders";
 
 interface PositionBuffer extends WebGLBuffer {
     itemSize: number;
@@ -9,7 +9,7 @@ export class Buffers {
     pointsVertexPositionBuffer: PositionBuffer;
     quadVertexPositionBuffer: PositionBuffer;
 
-    constructor(gl: WebGLRenderingContext, shaders: Shaders, points_size: number) {
+    constructor(gl: WebGLRenderingContext, shaders: WebglShaders, points_size: number) {
         this.pointsVertexPositionBuffer = gl.createBuffer()! as PositionBuffer;
         gl.bindBuffer(gl.ARRAY_BUFFER, this.pointsVertexPositionBuffer);
         var vertices = [];
