@@ -1,7 +1,5 @@
 import { RouterLocation } from '@vaadin/router';
 import { makeAutoObservable } from 'mobx';
-import {register2DVars} from "Frontend/flames/renderer/variations/variation-shaders-2d";
-import {register3DVars} from "Frontend/flames/renderer/variations/variation-shaders-3d";
 import {VariationShaders} from "Frontend/flames/renderer/variations/variation-shaders";
 
 export class AppStore {
@@ -36,8 +34,5 @@ export class AppStore {
     this.currentViewTitle = (location?.route as any)?.title || '';
   }
 }
-
-register2DVars()
-register3DVars()
 
 export const appStore = new AppStore();

@@ -17,6 +17,8 @@
 
 import { makeAutoObservable } from 'mobx';
 import {VariationShaders} from "Frontend/flames/renderer/variations/variation-shaders";
+import {register2DVars} from "Frontend/flames/renderer/variations/variation-shaders-2d";
+import {register3DVars} from "Frontend/flames/renderer/variations/variation-shaders-3d";
 
 type OnInitCallback = () => void
 
@@ -32,6 +34,7 @@ export class PlaygroundStore {
 
   async initialize() {
     this.variations = VariationShaders.varNameList
+    console.log("VAR", this.variations, VariationShaders.varNameList)
   }
 
   notifyInit(tagName: string) {
@@ -62,5 +65,9 @@ export class PlaygroundStore {
   }
 
 }
+
+
+register2DVars()
+register3DVars()
 
 export const playgroundStore = new PlaygroundStore()

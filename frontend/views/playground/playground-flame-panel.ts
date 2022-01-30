@@ -86,10 +86,10 @@ FECCB3FECCB3FECCB3FECCB3FECCB3FECCB3840802840802840802840802840802840802
     return html`
       <div style="${this.visible ? `display:block; width: 100%;`: `display:none;`}">
         <div style="display:flex; flex-direction: column;">
-          <vaadin-combo-box label="Select example flame" .items="${this.flameNames}" value="${this.flameName}"
+          <vaadin-combo-box label="Example flame" .items="${this.flameNames}" value="${this.flameName}"
                             @change="${(event: Event) => this.flameNameChanged(event)}"></vaadin-combo-box>
           <br>
-           <vaadin-text-area style="max-width:100em; max-height: 16em; font-size: xx-small;" label="Arbitrary flame xml" value="${this.flameXml}" @change="${(event: Event)=>this.flameXmlChanged(event)}"></vaadin-text-area>
+           <vaadin-text-area style="max-width:100em; max-height: 16em; font-size: xx-small;" label="Flame xml" value="${this.flameXml}" @change="${(event: Event)=>this.flameXmlChanged(event)}"></vaadin-text-area>
           <vaadin-button theme="primary" @click="${this.onImport}">Import flame from xml</vaadin-button>
         </div>
       </div>

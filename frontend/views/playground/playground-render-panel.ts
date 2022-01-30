@@ -16,7 +16,7 @@
 */
 
 import {html} from 'lit';
-import {customElement, property} from 'lit/decorators.js';
+import {customElement, property, state} from 'lit/decorators.js';
 
 import '@polymer/paper-slider/paper-slider'
 import '@vaadin/vaadin-button'
@@ -24,14 +24,28 @@ import '@vaadin/vaadin-combo-box';
 import {playgroundStore} from "Frontend/stores/playground-store";
 
 import {MobxLitElement} from "@adobe/lit-mobx";
+import {HasValue} from "@vaadin/form";
 
-@customElement('playground-view-opts-panel')
-export class PlaygroundViewOptsPanel extends MobxLitElement {
+@customElement('playground-render-panel')
+export class PlaygroundRenderPanel extends MobxLitElement {
   @property({type: Boolean})
   visible = true
 
-  @property( {attribute: false})
+  @property()
   onRefresh = ()=>{}
+
+  @property()
+  onImageSizeChanged: ()=>void = ()=>{}
+
+  @state()
+  imageSize = 512
+
+  imageSizes = [256, 512, 1024, 2048]
+
+  @state()
+  pointsSize = 512
+
+  pointsSizes = [64, 128, 256, 512]
 
   brightnessElement!: any
   param1Element!: any
@@ -40,7 +54,11 @@ export class PlaygroundViewOptsPanel extends MobxLitElement {
   render() {
     return html`
       <div style="${this.visible ? `display:block;`: `display:none;`}">
+        <vaadin-combo-box label="Image size" .items="${this.imageSizes}" value="${this.imageSize}"
+                          @change="${(event: Event) => this.imageSizeChanged(event)}"></vaadin-combo-box>
+
         <vaadin-button @click="${this.onRefresh}">Refresh</vaadin-button>
+        
         <paper-slider id="brightness" step="0.0001" value="1.6" min="0" max="4"></paper-slider>
         <paper-slider  id="param1" step="0.1" value="2.5" min="0" max="10.0"></paper-slider>
         <label><input type="radio" id="displayMode" name="displayMode" value="flame" checked="checked">Flame</label>
@@ -50,6 +68,13 @@ export class PlaygroundViewOptsPanel extends MobxLitElement {
 `;
   }
 
+
+  private imageSizeChanged(event: Event) {
+    if ((event.target as HasValue<string>).value) {
+      this.imageSize = parseInt((event.target as HasValue<string>).value!)
+      this.onImageSizeChanged()
+    }
+  }
   protected firstUpdated() {
     this.brightnessElement = this.shadowRoot!.querySelector("#brightness") as HTMLElement
     this.param1Element = this.shadowRoot!.querySelector("#param1") as HTMLElement

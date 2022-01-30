@@ -37,11 +37,12 @@ import {FlamesEndpoint} from "Frontend/generated/endpoints";
 import {FlameMapper} from '../../flames/model/mapper/flame-mapper'
 import {HasValue} from "@vaadin/form";
 import '@vaadin/vaadin-combo-box';
-import './playground-view-opts-panel'
+import './playground-render-panel'
 import './playground-flame-panel'
+import './playground-variations-panel'
 import '@vaadin/split-layout';
 
-import {PlaygroundViewOptsPanel} from "Frontend/views/playground/playground-view-opts-panel";
+import {PlaygroundRenderPanel} from "Frontend/views/playground/playground-render-panel";
 import {playgroundStore} from "Frontend/stores/playground-store";
 import {PlaygroundFlamePanel} from "Frontend/views/playground/playground-flame-panel";
 
@@ -50,19 +51,9 @@ export class PlaygroundView extends View {
     canvasContainer!: HTMLDivElement;
 
     @state()
-    imageSize = 512
-
-    imageSizes = [256, 512, 1024, 2048]
-
-    @state()
-    pointsSize = 512
-
-    pointsSizes = [64, 128, 256, 512]
-
-    @state()
     selectedTab = 0
 
-    viewOptsPanel!: PlaygroundViewOptsPanel
+    viewOptsPanel!: PlaygroundRenderPanel
     flamePanel!: PlaygroundFlamePanel
 
     render() {
@@ -75,9 +66,7 @@ export class PlaygroundView extends View {
                 <div style="display: flex; flex-direction: column; padding: 1em;">
 
                     <div style="display: flex; flex-direction: row; align-items: flex-end; margin-right: 1em;">
-                        <vaadin-combo-box label="Image size" .items="${this.imageSizes}" value="${this.imageSize}"
-                                          @change="${(event: Event) => this.imageSizeChanged(event)}"></vaadin-combo-box>
-                      </div>
+                       </div>
 
                     <vaadin-tabs @selected-changed="${this.selectedChanged}">
                         <vaadin-tab theme="icon-on-top">
@@ -86,7 +75,11 @@ export class PlaygroundView extends View {
                         </vaadin-tab>
                         <vaadin-tab theme="icon-on-top">
                             <vaadin-icon icon="vaadin:cog"></vaadin-icon>
-                            <span>Render settings</span>
+                            <span>Render</span>
+                        </vaadin-tab>
+                        <vaadin-tab theme="icon-on-top">
+                            <vaadin-icon icon="vaadin:bell"></vaadin-icon>
+                            <span>Supported variations</span>
                         </vaadin-tab>
                         <vaadin-tab theme="icon-on-top">
                             <vaadin-icon icon="vaadin:bell"></vaadin-icon>
@@ -94,10 +87,12 @@ export class PlaygroundView extends View {
                         </vaadin-tab>
                     </vaadin-tabs>
                     <div style="display: flex; flex-direction: column; width: 100%;">
-                        <playground-flame-panel id='flamePnl' .visible=${this.selectedTab === 0}
-                                                .onImport="${this.importFlameFromXml}" .onFlameNameChanged="${this.renderFlame}"></playground-flame-panel>
-                        <playground-view-opts-panel id='viewOptsPnl' .onRefresh="${this.renderFlame}"
-                                                    .visible=${this.selectedTab === 1}></playground-view-opts-panel>
+                        <playground-flame-panel id='flamePnl' 
+                          .visible=${this.selectedTab === 0}
+                          .onImport="${this.importFlameFromXml}" .onFlameNameChanged="${this.renderFlame}"></playground-flame-panel>
+                        <playground-render-panel id='viewOptsPnl' .onRefresh="${this.renderFlame}"
+                          .visible=${this.selectedTab === 1} .onImageSizeChanged="${this.renderFlame}"></playground-render-panel>
+                        <playground-variations-panel .visible=${this.selectedTab === 2}></playground-variations-panel>
                     </div>
                 </div>
             </vaadin-split-layout>
@@ -122,7 +117,7 @@ export class PlaygroundView extends View {
 
         FlamesEndpoint.getExampleFlame(this.flamePanel.flameName).then(flame => {
             console.log("FLAME", flame)
-            const renderer = new FlameRenderer(this.imageSize, this.pointsSize, canvas, FlameMapper.mapFromBackend(flame), brightnessElement, radioButtonElements, param1Element);
+            const renderer = new FlameRenderer(this.viewOptsPanel.imageSize, this.viewOptsPanel.pointsSize, canvas, FlameMapper.mapFromBackend(flame), brightnessElement, radioButtonElements, param1Element);
             renderer.drawScene()
         })
     }
@@ -133,13 +128,6 @@ export class PlaygroundView extends View {
         this.viewOptsPanel = document.querySelector('#viewOptsPnl')!
         this.flamePanel = document.querySelector('#flamePnl')!
         playgroundStore.registerInitCallback([this.flamePanel.tagName, this.viewOptsPanel.tagName], this.renderFlame)
-    }
-
-    private imageSizeChanged(event: Event) {
-        if ((event.target as HasValue<string>).value) {
-            this.imageSize = parseInt((event.target as HasValue<string>).value!)
-            this.renderFlame()
-        }
     }
 
     private getTabStyle(ownTabIdx: number, selectedTab: number) {
@@ -164,7 +152,7 @@ export class PlaygroundView extends View {
 
         FlamesEndpoint.parseFlame(this.flamePanel.flameXml).then(flame => {
             console.log("FLAME", flame)
-            const renderer = new FlameRenderer(this.imageSize, this.pointsSize, canvas, FlameMapper.mapFromBackend(flame), brightnessElement, radioButtonElements, param1Element);
+            const renderer = new FlameRenderer(this.viewOptsPanel.imageSize, this.viewOptsPanel.pointsSize, canvas, FlameMapper.mapFromBackend(flame), brightnessElement, radioButtonElements, param1Element);
             renderer.drawScene()
         })
     }
