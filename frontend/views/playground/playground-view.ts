@@ -70,20 +70,16 @@ export class PlaygroundView extends View {
 
                     <vaadin-tabs @selected-changed="${this.selectedChanged}">
                         <vaadin-tab theme="icon-on-top">
-                            <vaadin-icon icon="vaadin:user"></vaadin-icon>
+                            <vaadin-icon icon="vaadin:fire"></vaadin-icon>
                             <span>Flame</span>
                         </vaadin-tab>
                         <vaadin-tab theme="icon-on-top">
-                            <vaadin-icon icon="vaadin:cog"></vaadin-icon>
+                            <vaadin-icon icon="vaadin:eye"></vaadin-icon>
                             <span>Render</span>
                         </vaadin-tab>
                         <vaadin-tab theme="icon-on-top">
-                            <vaadin-icon icon="vaadin:bell"></vaadin-icon>
+                            <vaadin-icon icon="vaadin:info-circle-o"></vaadin-icon>
                             <span>Supported variations</span>
-                        </vaadin-tab>
-                        <vaadin-tab theme="icon-on-top">
-                            <vaadin-icon icon="vaadin:bell"></vaadin-icon>
-                            <span>Shader code</span>
                         </vaadin-tab>
                     </vaadin-tabs>
                     <div style="display: flex; flex-direction: column; width: 100%;">

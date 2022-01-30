@@ -43,9 +43,9 @@ export class PlaygroundRenderPanel extends MobxLitElement {
   imageSizes = [256, 512, 1024, 2048]
 
   @state()
-  pointsSize = 512
+  pointsSize = 256
 
-  pointsSizes = [64, 128, 256, 512]
+  pointsSizes = [8, 16, 32, 64, 128, 256, 512]
 
   brightnessElement!: any
   param1Element!: any
@@ -54,16 +54,24 @@ export class PlaygroundRenderPanel extends MobxLitElement {
   render() {
     return html`
       <div style="${this.visible ? `display:block;`: `display:none;`}">
-        <vaadin-combo-box label="Image size" .items="${this.imageSizes}" value="${this.imageSize}"
-                          @change="${(event: Event) => this.imageSizeChanged(event)}"></vaadin-combo-box>
-
-        <vaadin-button @click="${this.onRefresh}">Refresh</vaadin-button>
+        <div style="display: flex; flex-direction: column;">
         
-        <paper-slider id="brightness" step="0.0001" value="1.6" min="0" max="4"></paper-slider>
-        <paper-slider  id="param1" step="0.1" value="2.5" min="0" max="10.0"></paper-slider>
+        <vaadin-combo-box style="max-width: 10em;" label="Image size" .items="${this.imageSizes}" value="${this.imageSize}"
+                          @change="${(event: Event) => this.imageSizeChanged(event)}"></vaadin-combo-box>
+        <vaadin-combo-box style="max-width: 10em;" label="Swarm size" .items="${this.pointsSizes}" value="${this.pointsSize}"
+                          @change="${(event: Event) => this.pointsSizeChanged(event)}"></vaadin-combo-box>
+
+        <vaadin-button style="max-width: 10em;" @click="${this.onRefresh}">Refresh</vaadin-button>
+        
+        <div style="display: flex;">
+        <label>brightness</label><paper-slider id="brightness" step="0.0001" value="1.6" min="0" max="4"></paper-slider>
+        <paper-slider style="display: none;" id="param1" step="0.1" value="2.5" min="0" max="10.0"></paper-slider>
+        </div>
         <label><input type="radio" id="displayMode" name="displayMode" value="flame" checked="checked">Flame</label>
         <label><input type="radio" id="displayMode" name="displayMode" value="position">Position Iteration</label>
         <label><input type="radio" id="displayMode" name="displayMode" value="colour">Color Iteration</label>
+
+        </div>
       </div>
 `;
   }
@@ -75,6 +83,14 @@ export class PlaygroundRenderPanel extends MobxLitElement {
       this.onImageSizeChanged()
     }
   }
+
+  private pointsSizeChanged(event: Event) {
+    if ((event.target as HasValue<string>).value) {
+      this.pointsSize = parseInt((event.target as HasValue<string>).value!)
+      this.onImageSizeChanged()
+    }
+  }
+
   protected firstUpdated() {
     this.brightnessElement = this.shadowRoot!.querySelector("#brightness") as HTMLElement
     this.param1Element = this.shadowRoot!.querySelector("#param1") as HTMLElement

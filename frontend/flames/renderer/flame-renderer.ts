@@ -35,7 +35,7 @@ export class FlameRenderer {
 
         const gl = initGL(canvas);
 
-        const shaders = new WebglShaders(gl, canvas, this.points_size, renderFlame);
+        const shaders = new WebglShaders(gl, canvas, this.grid_size, this.points_size, renderFlame);
         const buffers = new Buffers(gl, shaders, this.points_size);
         const textures = new Textures(gl, this.points_size, this.grid_size);
         const framebuffers = new Framebuffers(gl, textures);

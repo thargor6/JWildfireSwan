@@ -19,8 +19,8 @@ import {RenderFlame} from "Frontend/flames/model/render-flame";
 import {FlameRenderView} from "Frontend/flames/renderer/flame-render-view";
 
 export class ProgPointsVertexShaderGenerator {
-    public createShader(flame: RenderFlame, points_size: number) {
-        const view = new FlameRenderView(flame, points_size, points_size)
+    public createShader(flame: RenderFlame, grid_size:number, points_size: number) {
+        const view = new FlameRenderView(flame, grid_size, grid_size)
         return  `
         attribute vec3 aVertexPosition;
         

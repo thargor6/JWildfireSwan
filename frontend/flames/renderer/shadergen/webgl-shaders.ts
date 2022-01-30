@@ -69,8 +69,8 @@ export class WebglShaders {
     progPointsVertexShader: string
     compPointsFragmentShader: string
 
-    constructor(gl: WebGLRenderingContext, canvas: HTMLCanvasElement, points_size: number, flame: RenderFlame) {
-        this.progPointsVertexShader = new ProgPointsVertexShaderGenerator().createShader(flame, points_size);
+    constructor(gl: WebGLRenderingContext, canvas: HTMLCanvasElement, grid_size: number, points_size: number, flame: RenderFlame) {
+        this.progPointsVertexShader = new ProgPointsVertexShaderGenerator().createShader(flame, grid_size, points_size);
         this.prog_points = compileShaderDirect(gl, this.progPointsVertexShader, shader_points_fs, {}) as ComputePointsProgram;
         this.prog_points.vertexPositionAttribute = gl.getAttribLocation(this.prog_points, "aVertexPosition");
         gl.enableVertexAttribArray(this.prog_points.vertexPositionAttribute);
