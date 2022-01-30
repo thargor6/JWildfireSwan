@@ -47,196 +47,125 @@ import {PlaygroundFlamePanel} from "Frontend/views/playground/playground-flame-p
 
 @customElement('playground-view')
 export class PlaygroundView extends View {
-  canvasContainer!: HTMLDivElement;
+    canvasContainer!: HTMLDivElement;
 
-  @state()
-  flameName = 'example08'
+    @state()
+    imageSize = 512
 
-  flameNames = ['example01', 'example02', 'example03', 'example04', 'example05', 'example06', 'example07', 'example08', 'example10', 'example11', 'example12', 'example14', 'example16', 'example17', 'example20']
+    imageSizes = [256, 512, 1024, 2048]
 
-  @state()
-  imageSize = 512
+    @state()
+    pointsSize = 512
 
-  imageSizes = [256, 512, 1024, 2048]
+    pointsSizes = [64, 128, 256, 512]
 
-  @state()
-  pointsSize = 512
+    @state()
+    selectedTab = 0
 
-  pointsSizes = [64, 128, 256, 512 ]
+    viewOptsPanel!: PlaygroundViewOptsPanel
+    flamePanel!: PlaygroundFlamePanel
 
-   @state()
-   selectedTab = 0
+    render() {
+        return html`
+            <vaadin-split-layout>
+                <div style="display: flex; align-items: center; justify-content: center;"
+                     stylex="max-height: 70em;max-width:70em;overflow: scroll;" id="canvas-container">
+                    <canvasx id="screen1" width="512" height="512"></canvasx>
+                </div>
+                <div style="display: flex; flex-direction: column; padding: 1em;">
 
-   viewOptsPanel!: PlaygroundViewOptsPanel
-   flamePanel!: PlaygroundFlamePanel
+                    <div style="display: flex; flex-direction: row; align-items: flex-end; margin-right: 1em;">
+                        <vaadin-combo-box label="Image size" .items="${this.imageSizes}" value="${this.imageSize}"
+                                          @change="${(event: Event) => this.imageSizeChanged(event)}"></vaadin-combo-box>
+                      </div>
 
-
-  render() {
-    return html`
-      ${this.renderFlameImportDialog()}
-        
-      <vaadin-split-layout>
-          <div style="display: flex; align-items: center; justify-content: center;" stylex="max-height: 70em;max-width:70em;overflow: scroll;" id="canvas-container">
-              <canvasx id="screen1" width="512" height="512"></canvasx>
-          </div>
-          <div style="display: flex; flex-direction: column;">
-          
-          <div style="display: flex; flex-direction: row; align-items: flex-end; margin-right: 1em;">
-            <vaadin-button ?disabled="{false}" @click="${() => (this.dialogOpened = true)}">Import flame...</vaadin-button>
-            <vaadin-combo-box label="Image size" .items="${this.imageSizes}" value="${this.imageSize}" @change="${(event: Event)=>this.imageSizeChanged(event)}"></vaadin-combo-box>
-            <vaadin-combo-box label="Flame" .items="${this.flameNames}" value="${this.flameName}" @change="${(event: Event)=>this.flameNameChanged(event)}"></vaadin-combo-box>
-          </div>
-              
-          <vaadin-tabs @selected-changed="${this.selectedChanged}">
-              <vaadin-tab theme="icon-on-top">
-                  <vaadin-icon icon="vaadin:user"></vaadin-icon>
-                  <span>Flame</span>
-              </vaadin-tab>
-              <vaadin-tab theme="icon-on-top">
-                  <vaadin-icon icon="vaadin:cog"></vaadin-icon>
-                  <span>Render settings</span>
-              </vaadin-tab>
-              <vaadin-tab theme="icon-on-top">
-                  <vaadin-icon icon="vaadin:bell"></vaadin-icon>
-                  <span>Shader code</span>
-              </vaadin-tab>
-          </vaadin-tabs>
-          <vaadin-vertical-layout theme="padding">
-              <playground-flame-panel id='flamePnl' .visible=${this.selectedTab === 0}></playground-flame-panel>
-              <playground-view-opts-panel id='viewOptsPnl' .onRefresh="${this.renderFlame}" .visible=${this.selectedTab === 1}></playground-view-opts-panel>
-          </vaadin-vertical-layout>
-          </div>
-      </vaadin-split-layout>
-`;
-  }
+                    <vaadin-tabs @selected-changed="${this.selectedChanged}">
+                        <vaadin-tab theme="icon-on-top">
+                            <vaadin-icon icon="vaadin:user"></vaadin-icon>
+                            <span>Flame</span>
+                        </vaadin-tab>
+                        <vaadin-tab theme="icon-on-top">
+                            <vaadin-icon icon="vaadin:cog"></vaadin-icon>
+                            <span>Render settings</span>
+                        </vaadin-tab>
+                        <vaadin-tab theme="icon-on-top">
+                            <vaadin-icon icon="vaadin:bell"></vaadin-icon>
+                            <span>Shader code</span>
+                        </vaadin-tab>
+                    </vaadin-tabs>
+                    <div style="display: flex; flex-direction: column; width: 100%;">
+                        <playground-flame-panel id='flamePnl' .visible=${this.selectedTab === 0}
+                                                .onImport="${this.importFlameFromXml}" .onFlameNameChanged="${this.renderFlame}"></playground-flame-panel>
+                        <playground-view-opts-panel id='viewOptsPnl' .onRefresh="${this.renderFlame}"
+                                                    .visible=${this.selectedTab === 1}></playground-view-opts-panel>
+                    </div>
+                </div>
+            </vaadin-split-layout>
+        `;
+    }
 
     selectedChanged(e: CustomEvent) {
         this.selectedTab = e.detail.value;
     }
 
-  renderFlame = (): void => {
-    this.canvasContainer.innerHTML = '';
-    var brightnessElement = this.viewOptsPanel.brightnessElement // document.querySelector("#brightness") as HTMLElement;
-    var param1Element = this.viewOptsPanel.param1Element // document.querySelector("#param1") as HTMLElement;
-    var radioButtonElements =  this.viewOptsPanel.displayModeElements // document.getElementsByName('displayMode') ;
-    var canvas = document.createElement('canvas');
+    renderFlame = (): void => {
+        this.canvasContainer.innerHTML = '';
+        var brightnessElement = this.viewOptsPanel.brightnessElement // document.querySelector("#brightness") as HTMLElement;
+        var param1Element = this.viewOptsPanel.param1Element // document.querySelector("#param1") as HTMLElement;
+        var radioButtonElements = this.viewOptsPanel.displayModeElements // document.getElementsByName('displayMode') ;
+        var canvas = document.createElement('canvas');
 
-    canvas.id = "screen1";
-    canvas.width = 512;
-    canvas.height = 512;
-    this.canvasContainer.appendChild(canvas);
+        canvas.id = "screen1";
+        canvas.width = 512;
+        canvas.height = 512;
+        this.canvasContainer.appendChild(canvas);
 
-    FlamesEndpoint.getExampleFlame(this.flameName).then( flame=> {
-      console.log("FLAME", flame)
-      const renderer = new FlameRenderer(this.imageSize, this.pointsSize, canvas, FlameMapper.mapFromBackend(flame), brightnessElement, radioButtonElements, param1Element);
-      renderer.drawScene()
-    })
-  }
-
-  protected firstUpdated(_changedProperties: PropertyValues) {
-    super.firstUpdated(_changedProperties);
-    this.canvasContainer = document.querySelector('#canvas-container')!
-    this.viewOptsPanel = document.querySelector('#viewOptsPnl')!
-    this.flamePanel = document.querySelector('#flamePnl')!
-    playgroundStore.registerInitCallback([this.flamePanel.tagName, this.viewOptsPanel.tagName], this.renderFlame)
-
-  }
-
-  onClick = ()=> {
-    this.renderFlame()
-    //FlamesEndpoint.getExampleFlame("example04").then( f=> console.log("FLAME:",  FlameMapper.mapFromBackend(f)))
-  }
-
-  private flameNameChanged(event: Event) {
-    if((event.target as HasValue<string>).value) {
-      this.flameName = (event.target as HasValue<string>).value!
-      this.renderFlame()
+        FlamesEndpoint.getExampleFlame(this.flamePanel.flameName).then(flame => {
+            console.log("FLAME", flame)
+            const renderer = new FlameRenderer(this.imageSize, this.pointsSize, canvas, FlameMapper.mapFromBackend(flame), brightnessElement, radioButtonElements, param1Element);
+            renderer.drawScene()
+        })
     }
-  }
 
-  private imageSizeChanged(event: Event) {
-    if((event.target as HasValue<string>).value) {
-      this.imageSize = parseInt( (event.target as HasValue<string>).value!)
-      this.renderFlame()
+    protected firstUpdated(_changedProperties: PropertyValues) {
+        super.firstUpdated(_changedProperties);
+        this.canvasContainer = document.querySelector('#canvas-container')!
+        this.viewOptsPanel = document.querySelector('#viewOptsPnl')!
+        this.flamePanel = document.querySelector('#flamePnl')!
+        playgroundStore.registerInitCallback([this.flamePanel.tagName, this.viewOptsPanel.tagName], this.renderFlame)
     }
-  }
 
-  @state()
-  private dialogOpened = false
-
-  @state()
-  private flameXml = ''
-
-  private renderFlameImportDialog() {
-    return html`
-      <vaadin-dialog
-          aria-label="Import flame"
-          draggable
-          modeless
-          .opened="${this.dialogOpened}"
-          @opened-changed="${(e: CustomEvent) => (this.dialogOpened = e.detail.value)}"
-          .renderer="${guard([], () => (root: HTMLElement) => {
-            render(
-                html`
-              <vaadin-vertical-layout
-                theme="spacing"
-                style="width: 300px; max-width: 100%; align-items: stretch;"
-              >
-                <vaadin-horizontal-layout
-                  class="draggable"
-                  style="border-bottom: 1px solid var(--lumo-contrast-20pct); cursor: move; padding: var(--lumo-space-m) var(--lumo-space-l); margin: calc(var(--lumo-space-s) * -1) calc(var(--lumo-space-l) * -1) 0"
-                >
-                  <h2 style="margin: 0; font-size: 1.5em; font-weight: bold;">Add note</h2>
-                </vaadin-horizontal-layout>
-                <vaadin-vertical-layout style="align-items: stretch;">
-                  <vaadin-text-area label="Flame" value="${this.flameXml}" @change="${(event: Event)=>this.flameXmlChanged(event)}"></vaadin-text-area>
-                </vaadin-vertical-layout>
-                <vaadin-horizontal-layout theme="spacing" style="justify-content: flex-end">
-                  <vaadin-button @click="${() => (this.dialogOpened = false)}">
-                    Cancel
-                  </vaadin-button>
-                  <vaadin-button theme="primary" @click="${() => {
-                    console.log("Importing...", this.flameXml);
-
-                    this.canvasContainer.innerHTML = '';
-
-                    var brightnessElement = document.querySelector("#brightness") as HTMLElement;
-                    var param1Element = document.querySelector("#param1") as HTMLElement;
-                    var radioButtonElements = document.getElementsByName('displayMode') ;
-                    var canvas = document.createElement('canvas');
-
-                    canvas.id = "screen1";
-                    canvas.width = 512;
-                    canvas.height = 512;
-                    this.canvasContainer.appendChild(canvas);
-          
-                    FlamesEndpoint.parseFlame(this.flameXml).then( flame=> {
-                      console.log("FLAME", flame)
-                      const renderer = new FlameRenderer(this.imageSize, this.pointsSize, canvas, FlameMapper.mapFromBackend(flame), brightnessElement, radioButtonElements, param1Element);
-                      renderer.drawScene()
-                    })
-                    
-                    this.dialogOpened = false
-                  }}">
-                    Import flame
-                  </vaadin-button>
-                </vaadin-horizontal-layout>
-              </vaadin-vertical-layout>
-            `,
-                root
-            );
-          })}"
-      ></vaadin-dialog>
-    `
-  }
-
-  private flameXmlChanged(event: Event) {
-    if((event.target as HasValue<string>).value) {
-      this.flameXml = (event.target as HasValue<string>).value!
+    private imageSizeChanged(event: Event) {
+        if ((event.target as HasValue<string>).value) {
+            this.imageSize = parseInt((event.target as HasValue<string>).value!)
+            this.renderFlame()
+        }
     }
-  }
 
     private getTabStyle(ownTabIdx: number, selectedTab: number) {
-        return ownTabIdx === selectedTab ? html `display: block;` : html `display: none;`;
+        return ownTabIdx === selectedTab ? html`display: block;` : html`display: none;`;
+    }
+
+    importFlameFromXml = () => {
+        console.log("Importing...", this.flamePanel.flameXml);
+
+        this.canvasContainer.innerHTML = '';
+
+        var brightnessElement = this.viewOptsPanel.brightnessElement // document.querySelector("#brightness") as HTMLElement;
+        var param1Element = this.viewOptsPanel.param1Element // document.querySelector("#param1") as HTMLElement;
+        var radioButtonElements = this.viewOptsPanel.displayModeElements // document.getElementsByName('displayMode') ;
+
+        var canvas = document.createElement('canvas');
+
+        canvas.id = "screen1";
+        canvas.width = 512;
+        canvas.height = 512;
+        this.canvasContainer.appendChild(canvas);
+
+        FlamesEndpoint.parseFlame(this.flamePanel.flameXml).then(flame => {
+            console.log("FLAME", flame)
+            const renderer = new FlameRenderer(this.imageSize, this.pointsSize, canvas, FlameMapper.mapFromBackend(flame), brightnessElement, radioButtonElements, param1Element);
+            renderer.drawScene()
+        })
     }
 }
