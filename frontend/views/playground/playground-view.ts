@@ -17,7 +17,7 @@
 
 import {html, nothing, PropertyValues, render} from 'lit';
 import { guard } from 'lit/directives/guard.js';
-import {customElement, property, query, state} from 'lit/decorators.js';
+import {customElement, state} from 'lit/decorators.js';
 import { View } from '../../views/view';
 
 import '@polymer/paper-slider/paper-slider'
@@ -39,6 +39,8 @@ import {HasValue} from "@vaadin/form";
 import '@vaadin/vaadin-combo-box';
 import './playground-view-opts-panel'
 import './playground-flame-panel'
+import '@vaadin/split-layout';
+
 import {PlaygroundViewOptsPanel} from "Frontend/views/playground/playground-view-opts-panel";
 import {playgroundStore} from "Frontend/stores/playground-store";
 import {PlaygroundFlamePanel} from "Frontend/views/playground/playground-flame-panel";
@@ -73,19 +75,18 @@ export class PlaygroundView extends View {
     return html`
       ${this.renderFlameImportDialog()}
         
-      <div style="display: flex; flex-direction: row; align-items: flex-start;">
-          <div style="max-height: 70em;max-width:70em;overflow: scroll;" id="canvas-container">
+      <vaadin-split-layout>
+          <div style="display: flex; align-items: center; justify-content: center;" stylex="max-height: 70em;max-width:70em;overflow: scroll;" id="canvas-container">
               <canvasx id="screen1" width="512" height="512"></canvasx>
           </div>
+          <div style="display: flex; flex-direction: column;">
           
           <div style="display: flex; flex-direction: row; align-items: flex-end; margin-right: 1em;">
             <vaadin-button ?disabled="{false}" @click="${() => (this.dialogOpened = true)}">Import flame...</vaadin-button>
             <vaadin-combo-box label="Image size" .items="${this.imageSizes}" value="${this.imageSize}" @change="${(event: Event)=>this.imageSizeChanged(event)}"></vaadin-combo-box>
             <vaadin-combo-box label="Flame" .items="${this.flameNames}" value="${this.flameName}" @change="${(event: Event)=>this.flameNameChanged(event)}"></vaadin-combo-box>
-            
           </div>
-             
-
+              
           <vaadin-tabs @selected-changed="${this.selectedChanged}">
               <vaadin-tab theme="icon-on-top">
                   <vaadin-icon icon="vaadin:user"></vaadin-icon>
@@ -104,8 +105,8 @@ export class PlaygroundView extends View {
               <playground-flame-panel id='flamePnl' .visible=${this.selectedTab === 0}></playground-flame-panel>
               <playground-view-opts-panel id='viewOptsPnl' .onRefresh="${this.renderFlame}" .visible=${this.selectedTab === 1}></playground-view-opts-panel>
           </vaadin-vertical-layout>
-          
-      </div>
+          </div>
+      </vaadin-split-layout>
 `;
   }
 

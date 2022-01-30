@@ -41,7 +41,9 @@ export class PlaygroundFlamePanel extends MobxLitElement {
     return html`
       <div style="${this.visible ? `display:block;`: `display:none;`}">
 
-       </div>
+        
+        
+      </div>
 `;
   }
 

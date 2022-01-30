@@ -20,13 +20,6 @@ import {customElement, property} from 'lit/decorators.js';
 
 import '@polymer/paper-slider/paper-slider'
 import '@vaadin/vaadin-button'
-import '@vaadin/vaadin-text-field'
-import '@vaadin/dialog';
-import '@vaadin/horizontal-layout';
-import '@vaadin/text-area';
-import '@vaadin/text-field';
-import '@vaadin/vertical-layout';
-import '@vaadin/vaadin-details'
 import '@vaadin/vaadin-combo-box';
 import {playgroundStore} from "Frontend/stores/playground-store";
 
