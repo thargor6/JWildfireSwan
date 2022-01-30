@@ -15,7 +15,7 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 */
 
-import {html, PropertyValues, render} from 'lit';
+import {html, nothing, PropertyValues, render} from 'lit';
 import { guard } from 'lit/directives/guard.js';
 import {customElement, property, query, state} from 'lit/decorators.js';
 import { View } from '../../views/view';
@@ -37,6 +37,8 @@ import {FlamesEndpoint} from "Frontend/generated/endpoints";
 import {FlameMapper} from '../../flames/model/mapper/flame-mapper'
 import {HasValue} from "@vaadin/form";
 import '@vaadin/vaadin-combo-box';
+import './playground-view-opts-panel'
+import {PlaygroundViewOptsPanel} from "Frontend/views/playground/playground-view-opts-panel";
 
 @customElement('playground-view')
 export class PlaygroundView extends View {
@@ -64,6 +66,13 @@ export class PlaygroundView extends View {
     @state()
     private pages = ['Dashboard', 'Payment', 'Shipping'];
 
+   @state()
+   selectedTab = 0
+
+   @query('#viewOptsPnl')
+   viewOptsPanel!: PlaygroundViewOptsPanel
+
+
   render() {
     return html`
       ${this.renderFlameImportDialog()}
@@ -75,11 +84,12 @@ export class PlaygroundView extends View {
             <vaadin-combo-box label="Flame" .items="${this.flameNames}" value="${this.flameName}" @change="${(event: Event)=>this.flameNameChanged(event)}"></vaadin-combo-box>
             <vaadin-button @click="${this.onClick}">Refresh</vaadin-button>
          </div>
+
   
-        
-        <div id="canvas-container">
+        <div style="max-height: 70em;max-width:70em;overflow: scroll;" id="canvas-container">
           <canvasx id="screen1" width="512" height="512"></canvasx>
         </div>
+             
 
           <vaadin-tabs @selected-changed="${this.selectedChanged}">
               <vaadin-tab theme="icon-on-top">
@@ -96,15 +106,10 @@ export class PlaygroundView extends View {
               </vaadin-tab>
           </vaadin-tabs>
           <vaadin-vertical-layout theme="padding">
-              <p>${this.content}</p>
+              <playground-view-opts-panel id='viewOptsPnl' .visible=${this.selectedTab === 0}></playground-view-opts-panel>
           </vaadin-vertical-layout>
 
       <div style="display: block;">
-        <paper-slider id="brightness" step="0.0001" value="1.6" min="0" max="4"></paper-slider>
-        <paper-slider  id="param1" step="0.1" value="2.5" min="0" max="10.0"></paper-slider>
-        <label><input type="radio" name="displayMode" value="flame" checked="checked">Flame</label>
-        <label><input type="radio" name="displayMode" value="position">Position Iteration</label>
-        <label><input type="radio" name="displayMode" value="colour">Color Iteration</label>
       </div>    
         
       </div>
@@ -112,17 +117,16 @@ export class PlaygroundView extends View {
   }
 
     selectedChanged(e: CustomEvent) {
-        this.content = `This is the ${this.pages[e.detail.value]} tab`;
+        this.selectedTab = e.detail.value;
     }
 
   initFlag = false;
 
   renderFlame() {
     this.canvasContainer.innerHTML = '';
-
-    var brightnessElement = document.querySelector("#brightness") as HTMLElement;
-    var param1Element = document.querySelector("#param1") as HTMLElement;
-    var radioButtonElements = document.getElementsByName('displayMode') ;
+    var brightnessElement = this.viewOptsPanel.brightnessElement // document.querySelector("#brightness") as HTMLElement;
+    var param1Element = this.viewOptsPanel.param1Element // document.querySelector("#param1") as HTMLElement;
+    var radioButtonElements =  this.viewOptsPanel.displayModeElements // document.getElementsByName('displayMode') ;
     var canvas = document.createElement('canvas');
 
     canvas.id = "screen1";
@@ -140,11 +144,10 @@ export class PlaygroundView extends View {
   protected firstUpdated(_changedProperties: PropertyValues) {
     super.firstUpdated(_changedProperties);
 
-    if(!this.initFlag && this.canvasContainer) {
+    if(!this.initFlag && this.canvasContainer && this.viewOptsPanel) {
       this.initFlag = true;
       this.renderFlame()
     }
-
   }
 
   onClick = ()=> {
@@ -240,4 +243,8 @@ export class PlaygroundView extends View {
       this.flameXml = (event.target as HasValue<string>).value!
     }
   }
+
+    private getTabStyle(ownTabIdx: number, selectedTab: number) {
+        return ownTabIdx === selectedTab ? html `display: block;` : html `display: none;`;
+    }
 }

@@ -1,5 +1,5 @@
 import { Route } from '@vaadin/router';
-import './views/example/playground-view';
+import './views/playground/playground-view';
 import './views/main-layout';
 
 export type ViewRoute = Route & {

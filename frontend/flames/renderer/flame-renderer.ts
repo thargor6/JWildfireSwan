@@ -82,6 +82,8 @@ export class FlameRenderer {
             case "colour":
                 this.display.displayColour();
                 break;
+            default:
+                this.display.displayFlame();
         }
 
         this.frames++;
