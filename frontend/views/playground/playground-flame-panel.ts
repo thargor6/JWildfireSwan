@@ -32,35 +32,21 @@ import {playgroundStore} from "Frontend/stores/playground-store";
 
 import {MobxLitElement} from "@adobe/lit-mobx";
 
-@customElement('playground-view-opts-panel')
-export class PlaygroundViewOptsPanel extends MobxLitElement {
+@customElement('playground-flame-panel')
+export class PlaygroundFlamePanel extends MobxLitElement {
   @property({type: Boolean})
   visible = true
-
-  @property( {attribute: false})
-  onRefresh = ()=>{}
-
-  brightnessElement!: any
-  param1Element!: any
-  displayModeElements!: any
 
   render() {
     return html`
       <div style="${this.visible ? `display:block;`: `display:none;`}">
-        <vaadin-button @click="${this.onRefresh}">Refresh</vaadin-button>
-        <paper-slider id="brightness" step="0.0001" value="1.6" min="0" max="4"></paper-slider>
-        <paper-slider  id="param1" step="0.1" value="2.5" min="0" max="10.0"></paper-slider>
-        <label><input type="radio" id="displayMode" name="displayMode" value="flame" checked="checked">Flame</label>
-        <label><input type="radio" id="displayMode" name="displayMode" value="position">Position Iteration</label>
-        <label><input type="radio" id="displayMode" name="displayMode" value="colour">Color Iteration</label>
-      </div>
+
+       </div>
 `;
   }
 
   protected firstUpdated() {
-    this.brightnessElement = this.shadowRoot!.querySelector("#brightness") as HTMLElement
-    this.param1Element = this.shadowRoot!.querySelector("#param1") as HTMLElement
-    this.displayModeElements = this.shadowRoot!.querySelectorAll('#displayMode')
+
     playgroundStore.notifyInit(this.tagName)
   }
 

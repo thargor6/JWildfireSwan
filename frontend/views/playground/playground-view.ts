@@ -38,8 +38,10 @@ import {FlameMapper} from '../../flames/model/mapper/flame-mapper'
 import {HasValue} from "@vaadin/form";
 import '@vaadin/vaadin-combo-box';
 import './playground-view-opts-panel'
+import './playground-flame-panel'
 import {PlaygroundViewOptsPanel} from "Frontend/views/playground/playground-view-opts-panel";
 import {playgroundStore} from "Frontend/stores/playground-store";
+import {PlaygroundFlamePanel} from "Frontend/views/playground/playground-flame-panel";
 
 @customElement('playground-view')
 export class PlaygroundView extends View {
@@ -60,58 +62,49 @@ export class PlaygroundView extends View {
 
   pointsSizes = [64, 128, 256, 512 ]
 
-    @state()
-    private content = '';
-
-    @state()
-    private pages = ['Dashboard', 'Payment', 'Shipping'];
-
    @state()
    selectedTab = 0
 
-   @query('#viewOptsPnl')
    viewOptsPanel!: PlaygroundViewOptsPanel
+   flamePanel!: PlaygroundFlamePanel
 
 
   render() {
     return html`
       ${this.renderFlameImportDialog()}
         
-      <div style="display: flex; flex-direction: column; align-items: center;">
-        <div style="display: flex; flex-direction: row; align-items: flex-end; margin-right: 1em;">
+      <div style="display: flex; flex-direction: row; align-items: flex-start;">
+          <div style="max-height: 70em;max-width:70em;overflow: scroll;" id="canvas-container">
+              <canvasx id="screen1" width="512" height="512"></canvasx>
+          </div>
+          
+          <div style="display: flex; flex-direction: row; align-items: flex-end; margin-right: 1em;">
             <vaadin-button ?disabled="{false}" @click="${() => (this.dialogOpened = true)}">Import flame...</vaadin-button>
             <vaadin-combo-box label="Image size" .items="${this.imageSizes}" value="${this.imageSize}" @change="${(event: Event)=>this.imageSizeChanged(event)}"></vaadin-combo-box>
             <vaadin-combo-box label="Flame" .items="${this.flameNames}" value="${this.flameName}" @change="${(event: Event)=>this.flameNameChanged(event)}"></vaadin-combo-box>
-            <vaadin-button @click="${this.onClick}">Refresh</vaadin-button>
-         </div>
-
-  
-        <div style="max-height: 70em;max-width:70em;overflow: scroll;" id="canvas-container">
-          <canvasx id="screen1" width="512" height="512"></canvasx>
-        </div>
+            
+          </div>
              
 
           <vaadin-tabs @selected-changed="${this.selectedChanged}">
               <vaadin-tab theme="icon-on-top">
                   <vaadin-icon icon="vaadin:user"></vaadin-icon>
-                  <span>Profile</span>
+                  <span>Flame</span>
               </vaadin-tab>
               <vaadin-tab theme="icon-on-top">
                   <vaadin-icon icon="vaadin:cog"></vaadin-icon>
-                  <span>Settings</span>
+                  <span>Render settings</span>
               </vaadin-tab>
               <vaadin-tab theme="icon-on-top">
                   <vaadin-icon icon="vaadin:bell"></vaadin-icon>
-                  <span>Notifications</span>
+                  <span>Shader code</span>
               </vaadin-tab>
           </vaadin-tabs>
           <vaadin-vertical-layout theme="padding">
-              <playground-view-opts-panel id='viewOptsPnl' .visible=${this.selectedTab === 0}></playground-view-opts-panel>
+              <playground-flame-panel id='flamePnl' .visible=${this.selectedTab === 0}></playground-flame-panel>
+              <playground-view-opts-panel id='viewOptsPnl' .onRefresh="${this.renderFlame}" .visible=${this.selectedTab === 1}></playground-view-opts-panel>
           </vaadin-vertical-layout>
-
-      <div style="display: block;">
-      </div>    
-        
+          
       </div>
 `;
   }
@@ -142,10 +135,10 @@ export class PlaygroundView extends View {
   protected firstUpdated(_changedProperties: PropertyValues) {
     super.firstUpdated(_changedProperties);
     this.canvasContainer = document.querySelector('#canvas-container')!
+    this.viewOptsPanel = document.querySelector('#viewOptsPnl')!
+    this.flamePanel = document.querySelector('#flamePnl')!
+    playgroundStore.registerInitCallback([this.flamePanel.tagName, this.viewOptsPanel.tagName], this.renderFlame)
 
-    if(this.canvasContainer && this.viewOptsPanel) {
-        playgroundStore.registerInitCallback([this.viewOptsPanel.tagName], this.renderFlame)
-    }
   }
 
   onClick = ()=> {
