@@ -39,10 +39,10 @@ import {HasValue} from "@vaadin/form";
 import '@vaadin/vaadin-combo-box';
 import './playground-view-opts-panel'
 import {PlaygroundViewOptsPanel} from "Frontend/views/playground/playground-view-opts-panel";
+import {playgroundStore} from "Frontend/stores/playground-store";
 
 @customElement('playground-view')
 export class PlaygroundView extends View {
-  @query("#canvas-container")
   canvasContainer!: HTMLDivElement;
 
   @state()
@@ -120,9 +120,7 @@ export class PlaygroundView extends View {
         this.selectedTab = e.detail.value;
     }
 
-  initFlag = false;
-
-  renderFlame() {
+  renderFlame = (): void => {
     this.canvasContainer.innerHTML = '';
     var brightnessElement = this.viewOptsPanel.brightnessElement // document.querySelector("#brightness") as HTMLElement;
     var param1Element = this.viewOptsPanel.param1Element // document.querySelector("#param1") as HTMLElement;
@@ -143,10 +141,10 @@ export class PlaygroundView extends View {
 
   protected firstUpdated(_changedProperties: PropertyValues) {
     super.firstUpdated(_changedProperties);
+    this.canvasContainer = document.querySelector('#canvas-container')!
 
-    if(!this.initFlag && this.canvasContainer && this.viewOptsPanel) {
-      this.initFlag = true;
-      this.renderFlame()
+    if(this.canvasContainer && this.viewOptsPanel) {
+        playgroundStore.registerInitCallback([this.viewOptsPanel.tagName], this.renderFlame)
     }
   }
 

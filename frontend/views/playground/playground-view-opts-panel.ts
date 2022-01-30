@@ -15,10 +15,8 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 */
 
-import {html, LitElement} from 'lit';
-import { until } from 'lit/directives/until.js';
-import {customElement, property, query} from 'lit/decorators.js';
-import { View } from '../../views/view';
+import {html} from 'lit';
+import {customElement, property} from 'lit/decorators.js';
 
 import '@polymer/paper-slider/paper-slider'
 import '@vaadin/vaadin-button'
@@ -29,10 +27,9 @@ import '@vaadin/text-area';
 import '@vaadin/text-field';
 import '@vaadin/vertical-layout';
 import '@vaadin/vaadin-details'
-
-import {AppInfoEndpoint} from "Frontend/generated/endpoints";
 import '@vaadin/vaadin-combo-box';
-import {appStore} from "Frontend/stores/app-store";
+import {playgroundStore} from "Frontend/stores/playground-store";
+
 import {MobxLitElement} from "@adobe/lit-mobx";
 
 @customElement('playground-view-opts-panel')
@@ -67,8 +64,8 @@ export class PlaygroundViewOptsPanel extends MobxLitElement {
     this.brightnessElement = this.shadowRoot!.querySelector("#brightness") as HTMLElement
     this.param1Element = this.shadowRoot!.querySelector("#param1") as HTMLElement
     this.displayModeElements = this.shadowRoot!.querySelectorAll('#displayMode')
-    console.log("UPDSHIT", this.brightnessElement, this.param1Element, this.displayModeElements)
-  }
+    playgroundStore.notifyInit(this.tagName)
+   }
 
 
 }
