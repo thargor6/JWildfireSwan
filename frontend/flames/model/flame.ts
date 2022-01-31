@@ -58,8 +58,10 @@ export class XForm {
 }
 
 export class Flame {
-    public brightness = Parameters.dNumber(1.0);
-    public pixelsPerUnit = Parameters.dNumber(100.)
+    public brightness = Parameters.dNumber(1.0)
+    public pixelsPerUnit = Parameters.dNumber(100.0)
+    public width = Parameters.dNumber(512)
+    public height = Parameters.dNumber(512)
     public camZoom = Parameters.dNumber(1.0)
     public centreX = Parameters.dNumber(0.0)
     public centreY = Parameters.dNumber(0.0)

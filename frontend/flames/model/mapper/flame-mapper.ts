@@ -125,8 +125,9 @@ export class FlameMapper {
     public static mapFromBackend(source: SourceFlame): Flame {
         const res = new Flame()
         res.brightness = Parameters.dNumber(source.brightness)
-
         res.pixelsPerUnit = Parameters.dNumber(source.pixelsPerUnit)
+        res.width = Parameters.dNumber(source.width)
+        res.height = Parameters.dNumber(source.height)
         res.camZoom = Parameters.dNumber(source.camZoom)
         res.centreX = Parameters.dNumber(source.centreX)
         res.centreY = Parameters.dNumber(source.centreY)
@@ -163,6 +164,8 @@ export class FlameMapper {
         res.brightness = source.brightness.value;
 
         res.pixelsPerUnit = source.pixelsPerUnit.value
+        res.width = source.width.value
+        res.height = source.height.value
         res.camZoom = source.camZoom.value
         res.centreX = source.centreX.value
         res.centreY = source.centreY.value

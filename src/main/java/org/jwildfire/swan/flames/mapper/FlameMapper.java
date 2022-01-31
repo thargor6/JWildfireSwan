@@ -31,6 +31,8 @@ public class FlameMapper {
     Flame res = new Flame();
     res.setBrightness(source.getBrightness());
     res.setPixelsPerUnit(source.getPixelsPerUnit());
+    res.setWidth(source.getWidth());
+    res.setHeight(source.getHeight());
     res.setCamZoom(source.getCamZoom());
     res.setCentreX(source.getCentreX());
     res.setCentreY(source.getCentreY());

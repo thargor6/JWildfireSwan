@@ -35,6 +35,12 @@ public class Flame {
   private double pixelsPerUnit;
 
   @Nonnull
+  private int width;
+
+  @Nonnull
+  private int height;
+
+  @Nonnull
   private double camZoom;
 
   @Nonnull

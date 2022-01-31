@@ -40,19 +40,6 @@ export class ProgPointsVertexShaderGenerator {
             vec4 color = texture2D(uTexSamp_Colors, tex);
         
             fragColor = color;
-          /*
-            // TODO camera here!
-            float _px = point.x;
-            float _py = point.y;
-            
-            float alpha = 3.1415 / 6.0 ;
-            float zoom = 0.75;
-            float _cx = _px * zoom * sin(alpha) + _py * zoom * cos(alpha);
-            float _cy = -_px * zoom * cos(alpha) + _py * zoom * sin(alpha);
-            
-            gl_Position = vec4(_cx, _cy, 0.0, 1.0);
-            */
-            
             ${this.addCamera(view)}
         }
      `
@@ -129,10 +116,11 @@ export class ProgPointsVertexShaderGenerator {
             return ` 
             float prjX =  point.x * float(${view.cosa})+ point.y * float(${view.sina}) + float(${view.rcX});
             float prjY = point.y * float(${view.cosa}) -  point.x * float(${view.sina}) + float(${view.rcY});
-            gl_Position = vec4(prjX * float(${view.bws}), prjY * float(${view.bhs}), 0.0, 1.0);
+            gl_Position = vec4(prjX * float(${view.bws}), -prjY * float(${view.bhs}), 0.0, 1.0);
         
         `
         }
 
     }
 }
+

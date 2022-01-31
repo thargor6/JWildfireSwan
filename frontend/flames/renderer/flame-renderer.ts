@@ -27,18 +27,25 @@ export class FlameRenderer {
                 private radioButtonElements: any, private param1Element: HTMLElement) {
 
         const renderFlame = FlameMapper.mapForRendering(flame)
-        console.log("PREPARED FLAME:", renderFlame)
+
+        const imageWidth = grid_size
+        const imageHeight = grid_size
+        const wScl = imageWidth / renderFlame.width
+        const hScl = imageHeight / renderFlame.height
+        renderFlame.pixelsPerUnit = (wScl + hScl) * 0.5 * renderFlame.pixelsPerUnit
+        renderFlame.width = imageWidth
+        renderFlame.height = imageHeight
 
         this.canvas_size = this.grid_size
         canvas.width = this.canvas_size
         canvas.height = this.canvas_size
 
-        const gl = initGL(canvas);
+        const gl = initGL(canvas)
 
-        const shaders = new WebglShaders(gl, canvas, this.grid_size, this.points_size, renderFlame);
-        const buffers = new Buffers(gl, shaders, this.points_size);
-        const textures = new Textures(gl, this.points_size, this.grid_size);
-        const framebuffers = new Framebuffers(gl, textures);
+        const shaders = new WebglShaders(gl, canvas, this.grid_size, this.points_size, renderFlame)
+        const buffers = new Buffers(gl, shaders, this.points_size)
+        const textures = new Textures(gl, this.points_size, this.grid_size)
+        const framebuffers = new Framebuffers(gl, textures)
         this.ctx = new FlameRenderContext(gl, shaders, buffers, textures, framebuffers)
         this.settings = new FlameRenderSettings(1.2, this.canvas_size, this.points_size, 1, 0.0)
         this.display = new FlameRendererDisplay(this.ctx, this.settings)

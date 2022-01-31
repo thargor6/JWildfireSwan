@@ -56,6 +56,8 @@ export class RenderXForm {
 
 export class RenderFlame {
     public brightness = 1.0
+    public width = 512
+    public height = 512
     public pixelsPerUnit = 100
     public camZoom = 1.0
     public centreX = 0.0
