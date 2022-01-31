@@ -263,6 +263,44 @@ class BlurFunc extends VariationShaderFunc2D {
     }
 }
 
+class CannabisCurveWFFunc extends VariationShaderFunc2D {
+    PARAM_FILLED = "filled"
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_FILLED, type: VariationParamType.VP_NUMBER, initialValue: 0.85 }]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        // cannabis curve (http://mathworld.wolfram.com/CannabisCurve.html)
+        return `{
+          float amount = float(${variation.amount});
+          float a = _phi;
+          
+          float r = (1.0 + 9.0 / 10.0 * cos(8.0 * a)) * (1.0 + 1.0 / 10.0 * cos(24.0 * a)) * (9.0 / 10.0 + 1.0 / 10.0 * cos(200.0 * a)) * (1.0 + sin(a));
+          a += M_PI / 2.0;
+        
+          float filled = float(${variation.params.get(this.PARAM_FILLED)});
+          if (filled > 0.0 && filled > rand2(tex)) {
+            r *= rand3(tex);
+          }
+        
+          float nx = sin(a) * r;
+          float ny = cos(a) * r;
+        
+          _vx += amount * nx;
+          _vy += amount * ny;
+        }`;
+    }
+
+    get name(): string {
+        return "cannabiscurve_wf";
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D, VariationTypes.VARTYPE_BASE_SHAPE];
+    }
+}
+
 class CellFunc extends VariationShaderFunc2D {
     PARAM_SIZE = "size"
 
@@ -707,6 +745,47 @@ class Disc2Func extends VariationShaderFunc2D {
     }
 }
 
+class EDiscFunc extends VariationShaderFunc2D {
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        /* Edisc in the Apophysis Plugin Pack */
+        return `{
+          float amount = float(${variation.amount});
+          float tmp = _r2 + 1.0;
+          float tmp2 = 2.0 * _tx;
+          float r1 = sqrt(tmp + tmp2);
+          float r2 = sqrt(tmp - tmp2);
+          float xmax = (r1 + r2) * 0.5;
+          float a1 = log(xmax + sqrt(xmax - 1.0));
+          float a2 = -acos(_tx / xmax);
+          float w = amount / 11.57034632;
+        
+          float snv = sin(a1);
+          float csv = cos(a1);
+          float snhu = sinh(a2);
+          float cshu = cosh(a2);
+        
+          if (_ty > 0.0) {
+            snv = -snv;
+          }
+        
+          _vx += w * cshu * csv;
+          _vy += w * snhu * snv;
+        }`;
+    }
+
+    get name(): string {
+        return "edisc";
+    }
+
+    get funcDependencies(): string[] {
+        return [FUNC_SINH, FUNC_COSH];
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
 class EllipticFunc extends VariationShaderFunc2D {
     //MODE_ORIGINAL = 0; // Original Apophysis plugin
     MODE_MIRRORY = 1; // Mirror y result; legacy JWildfire behavior
@@ -903,6 +982,34 @@ class EyefishFunc extends VariationShaderFunc2D {
 
     get name(): string {
         return "eyefish";
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
+class FanFunc extends VariationShaderFunc2D {
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        return `{
+            float amount = float(${variation.amount});
+            float dx = M_PI * float(${xform.c20}) * float(${xform.c20}) + EPSILON;
+            float dx2 = dx / 2.0;
+            float a;
+            if ((_phi + float(${xform.c21}) - (floor((_phi + float(${xform.c21})) / dx)) * dx) > dx2)
+              a = _phi - dx2;
+            else
+              a = _phi + dx2;
+            float sinr = sin(a);
+            float cosr = cos(a);
+            float r = amount * sqrt(_tx * _tx + _ty * _ty);
+            _vx += r * cosr;
+            _vy += r * sinr;
+        }`;
+    }
+
+    get name(): string {
+        return "fan";
     }
 
     get variationTypes(): VariationTypes[] {
@@ -1531,6 +1638,57 @@ class SechFunc extends VariationShaderFunc2D {
     }
 }
 
+class SeparationFunc extends VariationShaderFunc2D {
+    PARAM_X = "x"
+    PARAM_XINSIDE = "xinside"
+    PARAM_Y = "y"
+    PARAM_YINSIDE = "yinside"
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_X, type: VariationParamType.VP_NUMBER, initialValue: 0.5 },
+            { name: this.PARAM_XINSIDE, type: VariationParamType.VP_NUMBER, initialValue: 0.05 },
+            { name: this.PARAM_Y, type: VariationParamType.VP_NUMBER, initialValue: 0.25 },
+            { name: this.PARAM_YINSIDE, type: VariationParamType.VP_NUMBER, initialValue: 0.025 }]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        /* separation from the apophysis plugin pack */
+        return `{
+          float amount = float(${variation.amount});
+          float x = float(${variation.params.get(this.PARAM_X)});
+          float xinside = float(${variation.params.get(this.PARAM_XINSIDE)});
+          float y = float(${variation.params.get(this.PARAM_Y)});
+          float yinside = float(${variation.params.get(this.PARAM_YINSIDE)});
+          float sx2 = x * x;
+          float sy2 = y * y;
+
+          if (_tx > 0.0) {
+            _vx += amount * (sqrt(_tx * _tx + sx2) - _tx * xinside);
+          } else {
+            _vx -= amount * (sqrt(_tx * _tx + sx2) + _tx * xinside);
+          }
+        
+          if (_ty > 0.0) {
+            _vy += amount * (sqrt(_ty * _ty + sy2) - _ty * yinside);
+          } else {
+            _vy -= amount * (sqrt(_ty * _ty + sy2) + _ty * yinside);
+          }
+        }`;
+    }
+
+    get name(): string {
+        return "separation";
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+
+    get funcDependencies(): string[] {
+        return [FUNC_SINH, FUNC_COSH];
+    }
+}
+
 class SinFunc extends VariationShaderFunc2D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         /* complex vars by cothe */
@@ -1946,6 +2104,57 @@ class Waves2Func extends VariationShaderFunc2D {
     }
 }
 
+class WedgeFunc extends VariationShaderFunc2D {
+    PARAM_ANGLE = "angle"
+    PARAM_HOLE = "hole"
+    PARAM_COUNT= "count"
+    PARAM_SWIRL = "swirl"
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_ANGLE, type: VariationParamType.VP_NUMBER, initialValue: M_PI * 0.5 },
+            { name: this.PARAM_HOLE, type: VariationParamType.VP_NUMBER, initialValue: 0.0 },
+            { name: this.PARAM_COUNT, type: VariationParamType.VP_NUMBER, initialValue: 1 },
+            { name: this.PARAM_SWIRL, type: VariationParamType.VP_NUMBER, initialValue: 0.1 }]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        /* Wedge from apo plugins pack */
+        return `{
+          float amount = float(${variation.amount});
+          float angle = float(${variation.params.get(this.PARAM_ANGLE)});
+          float hole = float(${variation.params.get(this.PARAM_HOLE)});
+          int count = int(${variation.params.get(this.PARAM_COUNT)});
+          float swirl = float(${variation.params.get(this.PARAM_SWIRL)});
+          
+          float r = _r;
+          float _theta = atan2(_ty, _tx);
+          float a = _theta + swirl * r;
+          float c = floor((float(count) * a + M_PI) * (1.0 / M_PI) * 0.5);
+        
+          float comp_fac = 1.0 - angle * float(count) * (1.0 / M_PI) * 0.5;
+        
+          a = a * comp_fac + c * angle;
+        
+          float sa = sin(a);
+          float ca = cos(a);
+        
+          r = amount * (r + hole);
+        
+          _vx += r * ca;
+          _vy += r * sa;
+          
+        }`;
+    }
+
+    get name(): string {
+        return "wedge";
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
 export function register2DVars() {
     VariationShaders.registerVar(new ArchFunc())
     VariationShaders.registerVar(new BentFunc())
@@ -1955,6 +2164,7 @@ export function register2DVars() {
     VariationShaders.registerVar(new BladeFunc())
     VariationShaders.registerVar(new BlobFunc())
     VariationShaders.registerVar(new BlurFunc())
+    VariationShaders.registerVar(new CannabisCurveWFFunc())
     VariationShaders.registerVar(new CellFunc())
     VariationShaders.registerVar(new CloverLeafWFFunc())
     VariationShaders.registerVar(new CosFunc())
@@ -1969,12 +2179,14 @@ export function register2DVars() {
     VariationShaders.registerVar(new DiamondFunc())
     VariationShaders.registerVar(new DiscFunc())
     VariationShaders.registerVar(new Disc2Func())
+    VariationShaders.registerVar(new EDiscFunc())
     VariationShaders.registerVar(new EllipticFunc())
     VariationShaders.registerVar(new EpispiralFunc())
     VariationShaders.registerVar(new EpispiralWFFunc())
     VariationShaders.registerVar(new ExpFunc())
     VariationShaders.registerVar(new ExponentialFunc())
     VariationShaders.registerVar(new EyefishFunc())
+    VariationShaders.registerVar(new FanFunc())
     VariationShaders.registerVar(new Fan2Func())
     VariationShaders.registerVar(new FisheyeFunc())
     VariationShaders.registerVar(new FluxFunc())
@@ -1996,6 +2208,7 @@ export function register2DVars() {
     VariationShaders.registerVar(new RoseWFFunc())
     VariationShaders.registerVar(new SecFunc())
     VariationShaders.registerVar(new SechFunc())
+    VariationShaders.registerVar(new SeparationFunc())
     VariationShaders.registerVar(new SinFunc())
     VariationShaders.registerVar(new SinhFunc())
     VariationShaders.registerVar(new SphericalFunc())
@@ -2010,4 +2223,5 @@ export function register2DVars() {
     VariationShaders.registerVar(new TwintrianFunc())
     VariationShaders.registerVar(new WavesFunc())
     VariationShaders.registerVar(new Waves2Func())
+    VariationShaders.registerVar(new WedgeFunc())
 }

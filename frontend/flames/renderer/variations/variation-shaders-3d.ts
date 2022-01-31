@@ -89,6 +89,35 @@ class Blob3DFunc extends VariationShaderFunc3D {
     }
 }
 
+class Blur3DFunc extends VariationShaderFunc3D {
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        return `{
+          float amount = float(${variation.amount});
+          float angle = rand2(tex) * 2.0 * M_PI;
+          float sina = sin(angle);
+          float cosa = cos(angle);
+     
+          float r = amount * (rand(tex)+rand2(tex)+rand3(tex)+rand4(tex)-2.0);
+           
+          angle = rand3(tex) * M_PI;
+          float sinb = sin(angle);
+          float cosb = cos(angle);
+          
+          _vx += r * sinb * cosa;
+          _vy += r * sinb * sina;
+          _vz += r * cosb;
+        }`;
+    }
+
+    get name(): string {
+        return "blur3D";
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_3D];
+    }
+}
+
 class BubbleFunc extends VariationShaderFunc3D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         return `{
@@ -318,6 +347,7 @@ class Tangent3DFunc extends VariationShaderFunc3D {
 export function register3DVars() {
     VariationShaders.registerVar(new Blade3DFunc())
     VariationShaders.registerVar(new Blob3DFunc())
+    VariationShaders.registerVar(new Blur3DFunc())
     VariationShaders.registerVar(new BubbleFunc())
     VariationShaders.registerVar(new Bubble2Func())
     VariationShaders.registerVar(new BubbleWFFunc())
