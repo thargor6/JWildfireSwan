@@ -22,11 +22,13 @@ import com.vaadin.fusion.Endpoint;
 import com.vaadin.fusion.Nonnull;
 import lombok.extern.slf4j.Slf4j;
 import org.jwildfire.swan.flames.model.Flame;
+import org.jwildfire.swan.flames.model.RandomFlame;
 import org.jwildfire.swan.flames.service.FlamesService;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 
 @Endpoint
 @AnonymousAllowed
@@ -61,5 +63,9 @@ public class FlamesEndpoint {
       log.error("Error parsing flame", ex);
       return null;
     }
+  }
+
+  public @Nonnull RandomFlame generateRandomFlame(@Nonnull List<@Nonnull String> supportedVariations) {
+    return service.generateRandomFlame(supportedVariations);
   }
 }

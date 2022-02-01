@@ -73,6 +73,9 @@ FECCB3FECCB3FECCB3FECCB3FECCB3FECCB3840802840802840802840802840802840802
   @property()
   onImport: ()=>void = ()=> {}
 
+  @property()
+  onRandomFlame: ()=>void = ()=> {}
+
   @state()
   flameName = 'example08'
 
@@ -90,7 +93,10 @@ FECCB3FECCB3FECCB3FECCB3FECCB3FECCB3840802840802840802840802840802840802
                             @change="${(event: Event) => this.flameNameChanged(event)}"></vaadin-combo-box>
           <br>
            <vaadin-text-area style="max-width:100em; max-height: 16em; font-size: xx-small;" label="Flame xml" value="${this.flameXml}" @change="${(event: Event)=>this.flameXmlChanged(event)}"></vaadin-text-area>
-          <vaadin-button theme="primary" @click="${this.onImport}">Import flame from xml</vaadin-button>
+          <vaadin-button @click="${this.onImport}">Import flame from xml</vaadin-button>
+          <br>
+          <vaadin-button theme="primary" @click="${this.onRandomFlame}">Generate random flame</vaadin-button>
+          
         </div>
       </div>
 `;

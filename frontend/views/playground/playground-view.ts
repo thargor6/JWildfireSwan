@@ -85,7 +85,8 @@ export class PlaygroundView extends View {
                     <div style="display: flex; flex-direction: column; width: 100%;">
                         <playground-flame-panel id='flamePnl' 
                           .visible=${this.selectedTab === 0}
-                          .onImport="${this.importFlameFromXml}" .onFlameNameChanged="${this.renderFlame}"></playground-flame-panel>
+                          .onImport="${this.importFlameFromXml}" .onRandomFlame="${this.createRandomFlame}"
+                        .onFlameNameChanged="${this.renderFlame}"></playground-flame-panel>
                         <playground-render-panel id='viewOptsPnl' .onRefresh="${this.renderFlame}"
                           .visible=${this.selectedTab === 1} .onImageSizeChanged="${this.renderFlame}"></playground-render-panel>
                         <playground-variations-panel .visible=${this.selectedTab === 2}></playground-variations-panel>
@@ -128,6 +129,31 @@ export class PlaygroundView extends View {
 
     private getTabStyle(ownTabIdx: number, selectedTab: number) {
         return ownTabIdx === selectedTab ? html`display: block;` : html`display: none;`;
+    }
+
+    createRandomFlame = () => {
+        this.canvasContainer.innerHTML = '';
+
+        var brightnessElement = this.viewOptsPanel.brightnessElement // document.querySelector("#brightness") as HTMLElement;
+        var param1Element = this.viewOptsPanel.param1Element // document.querySelector("#param1") as HTMLElement;
+        var radioButtonElements = this.viewOptsPanel.displayModeElements // document.getElementsByName('displayMode') ;
+
+        var canvas = document.createElement('canvas');
+
+        canvas.id = "screen1";
+        canvas.width = 512;
+        canvas.height = 512;
+        this.canvasContainer.appendChild(canvas);
+
+
+        FlamesEndpoint.generateRandomFlame(playgroundStore.variations).then(
+            randomFlame => {
+                this.flamePanel.flameXml = randomFlame.flameXml
+                const renderer = new FlameRenderer(this.viewOptsPanel.imageSize, this.viewOptsPanel.pointsSize, canvas, FlameMapper.mapFromBackend(randomFlame.flame), brightnessElement, radioButtonElements, param1Element);
+                renderer.drawScene()
+            }
+        )
+
     }
 
     importFlameFromXml = () => {
