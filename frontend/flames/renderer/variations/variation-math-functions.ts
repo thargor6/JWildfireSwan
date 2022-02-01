@@ -17,6 +17,8 @@
 
 export const FUNC_COSH = 'cosh'
 export const FUNC_LOG10 = 'log10'
+export const FUNC_MODULO = 'modulo'
+export const FUNC_SGN = 'sgn'
 export const FUNC_SINH = 'sinh'
 export const FUNC_SQRT1PM1 = 'sqrt1pm1'
 export const FUNC_TANH = 'tanh'
@@ -49,6 +51,21 @@ export class VariationMathFunctions {
             float log10(float val) {
 		       return log(val) / 2.30258509299; // log(10)
 			}`);
+
+        this.registerFunction(FUNC_MODULO,
+            // https://stackoverflow.com/questions/33908644/get-accurate-integer-modulo-in-webgl-shader
+            `int modulo(int a,int b) {
+                     float m=float(a)-floor((float(a)+0.5)/float(b))*float(b);
+                     return int(floor(m+0.5));
+                   }`)
+
+        this.registerFunction(FUNC_SGN,
+            `float sgn(float arg) {
+                      if (arg > 0.0)
+                        return 1.0;
+                      else
+                        return -1.0;
+                    }`)
 
         this.registerFunction(FUNC_SINH,
             // SINH Function (Hyperbolic Sine) http://machinesdontcare.wordpress.com/2008/03/10/glsl-cosh-sinh-tanh/

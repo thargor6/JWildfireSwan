@@ -17,13 +17,13 @@
 
 import {
     VariationParam,
-    VariationParamType,
+    VariationParamType, VariationShaderFunc2D,
     VariationShaderFunc3D,
     VariationTypes
 } from "./variation-shader-func";
 import {VariationShaders} from "Frontend/flames/renderer/variations/variation-shaders";
 import {RenderVariation, RenderXForm} from "Frontend/flames/model/render-flame";
-import {M_PI} from "Frontend/flames/renderer/mathlib";
+import {FUNC_SGN} from "Frontend/flames/renderer/variations/variation-math-functions";
 
 /*
   be sure to import this class somewhere and call register3DVars()
@@ -286,6 +286,79 @@ class HemisphereFunc extends VariationShaderFunc3D {
     }
 }
 
+class Julia3DFunc extends VariationShaderFunc3D {
+    PARAM_POWER = "power"
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_POWER, type: VariationParamType.VP_NUMBER, initialValue: 3 }]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        return `{
+          float amount = float(${variation.amount});
+          int power = int(${variation.params.get(this.PARAM_POWER)});
+         
+          float absPower = abs(float(power));
+          float cPower = (1.0 / float(power) - 1.0) * 0.5; 
+          float z = _tz / absPower;
+          float r2d = _tx * _tx + _ty * _ty;
+          float r = amount * pow(r2d + z * z, cPower);
+          float r2 = r * sqrt(r2d);
+          int rnd = int(rand2(tex) * absPower);
+          float angle = (atan2(_ty, _tx) + 2.0 * M_PI * float(rnd)) / float(power);
+          float sina = sin(angle);
+          float cosa = cos(angle);     
+          _vx += r2 * cosa;
+          _vy += r2 * sina;
+          _vz += r * z;
+        }`;
+    }
+
+    get name(): string {
+        return "julia3D";
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_3D];
+    }
+}
+
+class Julia3DZFunc extends VariationShaderFunc3D {
+    PARAM_POWER = "power"
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_POWER, type: VariationParamType.VP_NUMBER, initialValue: 3 }]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        return `{
+          float amount = float(${variation.amount});
+          int power = int(${variation.params.get(this.PARAM_POWER)});
+         
+          float absPower = abs(float(power));
+          float cPower = 1.0 / float(power) * 0.5;
+          float r2d = _tx * _tx + _ty * _ty;
+          float r = amount * pow(r2d, cPower);
+        
+          int rnd = int(rand2(tex) * absPower);
+          float angle = (atan2(_ty, _tx) + 2.0 * M_PI * float(rnd)) / float(power);
+          float sina = sin(angle);
+          float cosa = cos(angle);
+          _vx += r * cosa;
+          _vy += r * sina;
+          _vz += r * _tz / (sqrt(r2d) * absPower);
+        }`;
+    }
+
+    get name(): string {
+        return "julia3Dz";
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_3D];
+    }
+}
+
 class Linear3DFunc extends VariationShaderFunc3D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         return `{
@@ -298,6 +371,43 @@ class Linear3DFunc extends VariationShaderFunc3D {
 
     get name(): string {
         return "linear3D";
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_3D];
+    }
+}
+
+class LinearT3DFunc extends VariationShaderFunc3D {
+    PARAM_POW_X = "powX"
+    PARAM_POW_Y= "powY"
+    PARAM_POW_Z= "powZ"
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_POW_X, type: VariationParamType.VP_NUMBER, initialValue: 1.35 },
+            { name: this.PARAM_POW_Y, type: VariationParamType.VP_NUMBER, initialValue: 0.85},
+            { name: this.PARAM_POW_Z, type: VariationParamType.VP_NUMBER, initialValue: 1.15}]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        // linearT3D by FractalDesire, http://fractaldesire.deviantart.com/journal/linearT-plugin-219864320
+        return `{
+          float amount = float(${variation.amount});
+          float powX = float(${variation.params.get(this.PARAM_POW_X)});
+          float powY = float(${variation.params.get(this.PARAM_POW_Y)});
+          float powZ = float(${variation.params.get(this.PARAM_POW_Z)});
+          _vx += sgn(_tx) * pow(abs(_tx), powX) * amount;
+          _vy += sgn(_ty) * pow(abs(_ty), powY) * amount;
+          _vz += sgn(_tz) * pow(abs(_tz), powZ) * amount;
+        }`;
+    }
+
+    get name(): string {
+        return "linearT3D";
+    }
+
+    get funcDependencies(): string[] {
+        return [FUNC_SGN];
     }
 
     get variationTypes(): VariationTypes[] {
@@ -354,7 +464,10 @@ export function register3DVars() {
     VariationShaders.registerVar(new Curl3DFunc())
     VariationShaders.registerVar(new CylinderApoFunc())
     VariationShaders.registerVar(new HemisphereFunc())
+    VariationShaders.registerVar(new Julia3DFunc())
+    VariationShaders.registerVar(new Julia3DZFunc())
     VariationShaders.registerVar(new Linear3DFunc())
+    VariationShaders.registerVar(new LinearT3DFunc())
     VariationShaders.registerVar(new Spherical3DFunc())
     VariationShaders.registerVar(new Tangent3DFunc())
 }

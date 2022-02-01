@@ -33,8 +33,9 @@ export class PlaygroundStore {
   }
 
   async initialize() {
-    this.variations = VariationShaders.varNameList
-    console.log("VAR", this.variations, VariationShaders.varNameList)
+    let vars = [... VariationShaders.varNameList]
+    vars.sort()
+    this.variations = vars
   }
 
   notifyInit(tagName: string) {

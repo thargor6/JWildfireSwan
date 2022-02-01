@@ -25,7 +25,7 @@ import {VariationShaders} from "Frontend/flames/renderer/variations/variation-sh
 import {RenderVariation, RenderXForm} from "Frontend/flames/model/render-flame";
 import {
     FUNC_COSH,
-    FUNC_LOG10,
+    FUNC_LOG10, FUNC_MODULO, FUNC_SGN,
     FUNC_SINH,
     FUNC_SQRT1PM1,
     FUNC_TANH
@@ -1141,6 +1141,65 @@ class HeartFunc extends VariationShaderFunc2D {
     }
 }
 
+class HeartWFFunc extends VariationShaderFunc2D {
+    PARAM_SCALE_X = "scale_x"
+    PARAM_SCALE_T = "scale_t"
+    PARAM_SHIFT_T = "shift_t"
+    PARAM_SCALE_R_LEFT = "scale_r_left"
+    PARAM_SCALE_R_RIGHT = "scale_r_right"
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_SCALE_X, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
+            { name: this.PARAM_SCALE_T, type: VariationParamType.VP_NUMBER, initialValue: 1.0},
+            { name: this.PARAM_SHIFT_T, type: VariationParamType.VP_NUMBER, initialValue: 0.0},
+            { name: this.PARAM_SCALE_R_LEFT, type: VariationParamType.VP_NUMBER, initialValue: 1.0},
+            { name: this.PARAM_SCALE_R_RIGHT, type: VariationParamType.VP_NUMBER, initialValue: 1.0}
+        ]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        return `{
+            float amount = float(${variation.amount});
+            float scale_x = float(${variation.params.get(this.PARAM_SCALE_X)});
+            float scale_t = float(${variation.params.get(this.PARAM_SCALE_T)});
+            float shift_t = float(${variation.params.get(this.PARAM_SHIFT_T)});
+            float scale_r_left = float(${variation.params.get(this.PARAM_SCALE_R_LEFT)});
+            float scale_r_right = float(${variation.params.get(this.PARAM_SCALE_R_RIGHT)}); 
+          
+            float T_MAX = 60.0;
+            float a = atan2(_tx, _ty);
+            float r = sqrt(_tx * _tx + _ty * _ty);
+            float nx, t;
+            if (a < 0.0) {
+              t = -a / M_PI * T_MAX * scale_r_left - shift_t;
+              if (t > T_MAX) {
+                t = T_MAX;
+              }
+              nx = -0.001 * (-t * t + 40.0 * t + 1200.0) * sin(M_PI * t / 180.0) * r;
+            } 
+            else {
+              t = a / M_PI * T_MAX * scale_r_right - shift_t;
+              if (t > T_MAX) {
+                t = T_MAX;
+              }
+              nx = 0.001 * (-t * t + 40.0 * t + 1200.0) * sin(M_PI * t / 180.0) * r;
+            }
+            float ny = -0.001 * (-t * t + 40.0 * t + 400.0) * cos(M_PI * t / 180.0) * r;
+            nx *= scale_x;
+            _vx += amount * nx;
+            _vy += amount * ny;
+        }`;
+    }
+
+    get name(): string {
+        return "heart_wf";
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
 class JuliaFunc extends VariationShaderFunc2D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         return `{
@@ -1192,6 +1251,52 @@ class JuliaNFunc extends VariationShaderFunc2D {
 
     get name(): string {
         return "julian";
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
+class JuliascopeFunc extends VariationShaderFunc2D {
+    PARAM_POWER = "power"
+    PARAM_DIST = "dist"
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_POWER, type: VariationParamType.VP_NUMBER, initialValue: 3 },
+            { name: this.PARAM_DIST, type: VariationParamType.VP_NUMBER, initialValue: 1.0}]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        return `{
+          float amount = float(${variation.amount});
+          int power = int(${variation.params.get(this.PARAM_POWER)});
+          float dist = float(${variation.params.get(this.PARAM_DIST)});
+              
+          int absPower = power > 0 ? power : -power;
+          float cPower = dist / float(power) * 0.5; 
+
+          int rnd = int(rand2(tex)*float(absPower));
+          float a;
+          if (modulo(rnd, 2) == 0)
+            a = (2.0 * M_PI * float(rnd) + atan2(_ty, _tx)) / float(power);
+          else
+            a = (2.0 * M_PI * float(rnd) - atan2(_ty, _tx)) / float(power);
+          float sina = sin(a);
+          float cosa = cos(a);
+        
+          float r = amount * pow(sqr(_tx) + sqr(_ty), cPower);
+          _vx = _vx + r * cosa;
+          _vy = _vy + r * sina;
+        }`;
+    }
+
+    get name(): string {
+        return "juliascope";
+    }
+
+    get funcDependencies(): string[] {
+        return [FUNC_MODULO];
     }
 
     get variationTypes(): VariationTypes[] {
@@ -1262,6 +1367,39 @@ class LinearFunc extends VariationShaderFunc2D {
 
     get name(): string {
         return "linear";
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
+class LinearTFunc extends VariationShaderFunc2D {
+    PARAM_POW_X = "powX"
+    PARAM_POW_Y= "powY"
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_POW_X, type: VariationParamType.VP_NUMBER, initialValue: 1.2 },
+            { name: this.PARAM_POW_Y, type: VariationParamType.VP_NUMBER, initialValue: 0.9}]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        // linearT by FractalDesire, http://fractaldesire.deviantart.com/journal/linearT-plugin-219864320
+        return `{
+          float amount = float(${variation.amount});
+          float powX = float(${variation.params.get(this.PARAM_POW_X)});
+          float powY = float(${variation.params.get(this.PARAM_POW_Y)});
+          _vx += sgn(_tx) * pow(abs(_tx), powX) * amount;
+          _vy += sgn(_ty) * pow(abs(_ty), powY) * amount;
+        }`;
+    }
+
+    get name(): string {
+        return "linearT";
+    }
+
+    get funcDependencies(): string[] {
+        return [FUNC_SGN];
     }
 
     get variationTypes(): VariationTypes[] {
@@ -2191,10 +2329,13 @@ export function register2DVars() {
     VariationShaders.registerVar(new FisheyeFunc())
     VariationShaders.registerVar(new FluxFunc())
     VariationShaders.registerVar(new HeartFunc())
+    VariationShaders.registerVar(new HeartWFFunc())
     VariationShaders.registerVar(new JuliaFunc())
     VariationShaders.registerVar(new JuliaNFunc())
+    VariationShaders.registerVar(new JuliascopeFunc())
     VariationShaders.registerVar(new LazySusanFunc())
     VariationShaders.registerVar(new LinearFunc())
+    VariationShaders.registerVar(new LinearTFunc())
     VariationShaders.registerVar(new LogFunc())
     VariationShaders.registerVar(new NGonFunc())
     VariationShaders.registerVar(new ParabolaFunc())
