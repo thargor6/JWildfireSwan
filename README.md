@@ -26,7 +26,9 @@ Some concepts, especially the WebGL buffer setup, are inspired by
 https://github.com/richardassar/ElectricSheep_WebGL by Richard Assar.
 
 
+![Example](example3.jpg?raw=true)
 ## Build
+
 
 ### Install j-wildfire-lib into project repository
 

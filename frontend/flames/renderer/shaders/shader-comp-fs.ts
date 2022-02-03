@@ -1,3 +1,25 @@
+/*
+  JWildfire Swan - fractal flames the playful way, GPU accelerated
+  Copyright (C) 2021-2022 Andreas Maschke
+
+  This is free software; you can redistribute it and/or modify it under the terms of the GNU Lesser
+  General Public License as published by the Free Software Foundation; either version 2.1 of the
+  License, or (at your option) any later version.
+
+  This software is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+  even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+  Lesser General Public License for more details.
+
+  You should have received a copy of the GNU Lesser General Public License along with this software;
+  if not, write to the Free Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+  02110-1301 USA, or see the FSF site: http://www.fsf.org.
+*/
+
+/**
+ Fragment shader for point iteration.
+ This is just an example for demonstration/understanding, it is not used in the actual application.
+ It is taken from the code originally created by Richard Assar ( https://github.com/richardassar/ElectricSheep_WebGL )
+ */
 export const shader_comp_fs = `
   #ifdef GL_ES
 				precision highp float;
@@ -10,35 +32,10 @@ export const shader_comp_fs = `
 			uniform float time;
 
 			const float PI = 3.141592;
-
-			// https://stackoverflow.com/questions/4200224/random-noise-functions-for-glsl
-			// Gold Noise ©2015 dcerisano@standard3d.com
-			// - based on the Golden Ratio
-			// - uniform normalized distribution
-			// - fastest static noise generator function (also runs at low precision)
-			// - use with indicated seeding method. 
-			
-			float PHI = 1.61803398874989484820459;  // Φ = Golden Ratio   
-			
-			float gold_noise(in vec2 xy, in float seed){
-				   float r = fract(tan(distance(xy*PHI, xy)*seed)*xy.x);
-				   if( r < 0.0) return  -r; else return r;
-			}
-
 			
 			// Rand
 			float rand(vec2 co) {
 			    float r = fract(sin(dot(co, vec2(12.9898 * seed, 78.233 * seed))) * 43758.5453);
-			     if( r < 0.0) return  -r; else return r;
-			}
-
-			float rand2(vec2 co) {
-			    float r = fract(sin(dot(co, vec2(12.9898 * seed, 78.233 * seed2))) * 43758.5453);
-			     if( r < 0.0) return  -r; else return r;
-			}
-			
-			float rand3(vec2 co) {
-			    float r = fract(sin(dot(co, vec2(12.9898 * seed, 78.233 * seed3))) * 43758.5453);
 			     if( r < 0.0) return  -r; else return r;
 			}
 
@@ -104,22 +101,6 @@ export const shader_comp_fs = `
 					point = point = 1.0 / (r * r) * point;
 				} 
 				
-				else  {		
-                  //  point = vec2(point.x * 0.5, point.y * 0.5 - 1.0);
-                    
-                    float amount = 0.25 + time * 0.1;
-                  
-                       
-                     float r = (gold_noise(tex, seed) + rand2(tex)) * (PI + PI);
-                     float sina = sin(r);
-                     float cosa = cos(r);
-                     float r2 = amount * gold_noise(tex, seed3);
-                     point.x = r2 * cosa + 0.5;
-                     point.y = r2 * sina - 0.5;
-
-				} 
-
-
 				//l = length(point);
 				//point = exp(point.x - 1.0) * vec2(cos(l * point.y), sin(l * point.y));
 
