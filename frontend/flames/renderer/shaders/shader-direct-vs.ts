@@ -20,9 +20,9 @@
  Based on the code originally created by Richard Assar ( https://github.com/richardassar/ElectricSheep_WebGL )
  */
 export const shader_direct_vs = `
-			attribute vec3 aVertexPosition;
+			attribute vec4 aVertexPosition;
 
 			void main(void) {
-				gl_Position = vec4(aVertexPosition, 1.0);
+				gl_Position = vec4(aVertexPosition);
 			}
             `;

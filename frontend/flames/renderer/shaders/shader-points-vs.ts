@@ -35,7 +35,7 @@ void main(void) {
 
     vec2 tex = aVertexPosition.xy;
 
-    vec2 point = texture2D(uTexSamp_Points, tex).rgb;
+    vec3 point = texture2D(uTexSamp_Points, tex).rgb;
     vec4 color = texture2D(uTexSamp_Colors, tex);
 
     fragColor = color;

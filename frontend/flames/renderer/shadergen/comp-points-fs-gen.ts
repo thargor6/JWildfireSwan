@@ -244,6 +244,7 @@ export class CompPointsFragmentShaderGenerator {
 				vec3 point = texture2D(uTexSamp, tex).xyz;
 	            float _tx, _ty, _tz;
                 float _vx = 0.0, _vy = 0.0, _vz = 0.0;
+                _tz = point.z;
 				${this.addXForms(flame)}
 				
 				point = vec3(_vx, _vy, _vz);
