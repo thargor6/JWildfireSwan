@@ -97,7 +97,7 @@ class Blur3DFunc extends VariationShaderFunc3D {
           float sina = sin(angle);
           float cosa = cos(angle);
      
-          float r = amount * (rand(tex)+rand2(tex)+rand3(tex)+rand4(tex)-2.0);
+          float r = amount * (rand5(tex)+rand2(tex)+rand3(tex)+rand4(tex)-2.0);
            
           angle = rand3(tex) * M_PI;
           float sinb = sin(angle);

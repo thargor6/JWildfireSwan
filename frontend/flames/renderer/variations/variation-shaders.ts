@@ -29,6 +29,14 @@ export class VariationShaders {
         return vsFunc.getCode(xform, variation)
     }
 
+    static getVariationPriority(variation: RenderVariation): number {
+        const vsFunc = this.variations.get(variation.name)
+        if(!vsFunc) {
+            return 0;
+        }
+        return vsFunc.priority
+    }
+
     static getVariationDepFunctions(variation: RenderVariation): string[] {
         const vsFunc = this.variations.get(variation.name)
         if(!vsFunc) {

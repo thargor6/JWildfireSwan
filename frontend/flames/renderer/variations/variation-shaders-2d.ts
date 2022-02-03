@@ -15,17 +15,14 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 */
 
-import {
-    VariationParam,
-    VariationParamType,
-    VariationShaderFunc2D,
-    VariationTypes
-} from "./variation-shader-func";
+import {VariationParam, VariationParamType, VariationShaderFunc2D, VariationTypes} from "./variation-shader-func";
 import {VariationShaders} from "Frontend/flames/renderer/variations/variation-shaders";
 import {RenderVariation, RenderXForm} from "Frontend/flames/model/render-flame";
 import {
     FUNC_COSH,
-    FUNC_LOG10, FUNC_MODULO, FUNC_SGN,
+    FUNC_LOG10,
+    FUNC_MODULO,
+    FUNC_SGN,
     FUNC_SINH,
     FUNC_SQRT1PM1,
     FUNC_TANH
@@ -1666,6 +1663,33 @@ class PowerFunc extends VariationShaderFunc2D {
     }
 }
 
+class PreBlurFunc extends VariationShaderFunc2D {
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        return `{
+          float amount = float(${variation.amount});
+          float r = rand3(tex) * 2.0 * M_PI;
+          float sina = sin(r);
+          float cosa = cos(r);
+          r =  amount * (rand2(tex) + rand3(tex) + rand4(tex) + rand5(tex) + rand6(tex) + rand7(tex) - 3.0);
+          _tx += r * cosa;
+          _ty += r * sina;
+        }`;
+    }
+
+    get name(): string {
+        return "pre_blur"
+    }
+
+
+    get priority(): number {
+        return -1
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D, VariationTypes.VARTYPE_BLUR, VariationTypes.VARTYPE_PRE];
+    }
+}
+
 class RadialBlurFunc extends VariationShaderFunc2D {
     PARAM_ANGLE = "angle"
 
@@ -1676,7 +1700,7 @@ class RadialBlurFunc extends VariationShaderFunc2D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         return `{
           float amount = float(${variation.amount});    
-          float rndG = rand(tex)+rand2(tex)+rand3(tex)+rand4(tex)-2.0;
+          float rndG = rand5(tex)+rand2(tex)+rand3(tex)+rand4(tex)-2.0;
           float angle = float(${variation.params.get(this.PARAM_ANGLE)});
           float a = angle * M_PI * 0.5;
           float sina = sin(a);
@@ -2421,6 +2445,7 @@ export function register2DVars() {
     VariationShaders.registerVar(new PolarFunc())
     VariationShaders.registerVar(new Polar2Func())
     VariationShaders.registerVar(new PowerFunc())
+    VariationShaders.registerVar(new PreBlurFunc())
     VariationShaders.registerVar(new RadialBlurFunc())
     VariationShaders.registerVar(new RaysFunc())
     VariationShaders.registerVar(new Rays1Func())
