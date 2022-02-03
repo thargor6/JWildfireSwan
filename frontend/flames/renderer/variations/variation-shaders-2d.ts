@@ -1603,6 +1603,42 @@ class PetalFunc extends VariationShaderFunc2D {
     }
 }
 
+class PieFunc extends VariationShaderFunc2D {
+    PARAM_SLICES = "slices"
+    PARAM_ROTATION = "rotation"
+    PARAM_THICKNESS = "thickness"
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_SLICES, type: VariationParamType.VP_NUMBER, initialValue: 6.0 },
+            { name: this.PARAM_ROTATION, type: VariationParamType.VP_NUMBER, initialValue: 0.0 },
+            { name: this.PARAM_THICKNESS, type: VariationParamType.VP_NUMBER, initialValue: 0.5 }]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+          return `{
+          float amount = float(${variation.amount});
+          float slices = float(${variation.params.get(this.PARAM_SLICES)});
+          float rotation = float(${variation.params.get(this.PARAM_ROTATION)});
+          float thickness = float(${variation.params.get(this.PARAM_THICKNESS)});
+          int sl = int(rand2(tex) * slices + 0.5);
+          float a = rotation + 2.0 * M_PI * (float(sl) + rand3(tex) * thickness) / slices;
+          float r = amount * rand4(tex);
+          float sina = sin(a);
+          float cosa = cos(a);
+          _vx += r * cosa;
+          _vy += r * sina;
+        }`;
+    }
+
+    get name(): string {
+        return "pie";
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
 class PolarFunc extends VariationShaderFunc2D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         return `{
@@ -2289,6 +2325,29 @@ class TwintrianFunc extends VariationShaderFunc2D {
     }
 }
 
+class UnpolarFunc extends VariationShaderFunc2D {
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        return `{
+          float amount = float(${variation.amount});
+          float vvar = amount / M_PI;
+          float vvar_2 = vvar * 0.5;
+          float r = exp(_ty);
+          float s = sin(_tx);
+          float c = cos(_tx);
+          _vy += vvar_2 * r * c;
+          _vx += vvar_2 * r * s;  
+        }`;
+    }
+
+    get name(): string {
+        return "unpolar";
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
 class WavesFunc extends VariationShaderFunc2D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         return `{
@@ -2393,6 +2452,44 @@ class WedgeFunc extends VariationShaderFunc2D {
     }
 }
 
+class WhorlFunc extends VariationShaderFunc2D {
+    PARAM_INSIDE = "inside"
+    PARAM_OUTSIDE = "outside"
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_INSIDE, type: VariationParamType.VP_NUMBER, initialValue: 0.10 },
+            { name: this.PARAM_OUTSIDE, type: VariationParamType.VP_NUMBER, initialValue: 0.20 }]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        /* whorl from apo plugins pack */
+        return `{
+          float amount = float(${variation.amount});
+          float inside = float(${variation.params.get(this.PARAM_INSIDE)});
+          float outside = float(${variation.params.get(this.PARAM_OUTSIDE)});
+          float r = _r;
+          float a;
+          float _theta = atan2(_ty, _tx);
+          if (r < amount)
+            a = _theta + inside / (amount - r);
+          else
+            a = _theta + outside / (amount - r);
+          float sa = sin(a);
+          float ca = cos(a);    
+          _vx += amount * r * ca;
+          _vy += amount * r * sa;
+        }`;
+    }
+
+    get name(): string {
+        return "whorl";
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
 export function register2DVars() {
     VariationShaders.registerVar(new ArchFunc())
     VariationShaders.registerVar(new BentFunc())
@@ -2442,6 +2539,7 @@ export function register2DVars() {
     VariationShaders.registerVar(new NGonFunc())
     VariationShaders.registerVar(new ParabolaFunc())
     VariationShaders.registerVar(new PetalFunc())
+    VariationShaders.registerVar(new PieFunc())
     VariationShaders.registerVar(new PolarFunc())
     VariationShaders.registerVar(new Polar2Func())
     VariationShaders.registerVar(new PowerFunc())
@@ -2465,7 +2563,9 @@ export function register2DVars() {
     VariationShaders.registerVar(new TanCosFunc())
     VariationShaders.registerVar(new TangentFunc())
     VariationShaders.registerVar(new TwintrianFunc())
+    VariationShaders.registerVar(new UnpolarFunc())
     VariationShaders.registerVar(new WavesFunc())
     VariationShaders.registerVar(new Waves2Func())
     VariationShaders.registerVar(new WedgeFunc())
+    VariationShaders.registerVar(new WhorlFunc())
 }

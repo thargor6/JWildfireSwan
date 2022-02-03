@@ -35,11 +35,11 @@ void main(void) {
 
     vec2 tex = aVertexPosition.xy;
 
-    vec2 point = texture2D(uTexSamp_Points, tex).rg;
+    vec2 point = texture2D(uTexSamp_Points, tex).rgb;
     vec4 color = texture2D(uTexSamp_Colors, tex);
 
     fragColor = color;
 
-    gl_Position = vec4(point.x, point.y, 0.0, 1.0);
+    gl_Position = vec4(point.x, point.y, point.z, 1.0);
 }
 `;

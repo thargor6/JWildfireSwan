@@ -48,7 +48,43 @@ class FlattenFunc extends VariationShaderFunc3D {
     }
 }
 
+class ZConeFunc extends VariationShaderFunc3D {
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        return `{
+           float amount = float(${variation.amount});
+           _vz += amount * sqrt(_tx * _tx + _ty * _ty);
+        }`;
+    }
+
+    get name(): string {
+        return "zcone";
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_ZTRANSFORM];
+    }
+}
+
+class ZTranslateFunc extends VariationShaderFunc3D {
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        return `{
+           float amount = float(${variation.amount});
+          _vz += amount;
+        }`;
+    }
+
+    get name(): string {
+        return "ztranslate";
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_ZTRANSFORM];
+    }
+}
+
 
 export function registerZTransformVars() {
     VariationShaders.registerVar(new FlattenFunc())
+    VariationShaders.registerVar(new ZConeFunc())
+    VariationShaders.registerVar(new ZTranslateFunc())
 }

@@ -209,7 +209,7 @@ export class CompPointsFragmentShaderGenerator {
 			}
 			
 			float rand3(vec2 co) {
-			    return fract(sin(dot(co, vec2(12.9898 * (seed+3.0), 78.233 * (seed+5.0)))) * 43758.5453);
+			    return fract(sin(dot(co, vec2(12.9898 * (seed+29.0), 78.233 * (seed+7.0)))) * 43758.5453);
 			}
 			
 	    	float rand4(vec2 co) {

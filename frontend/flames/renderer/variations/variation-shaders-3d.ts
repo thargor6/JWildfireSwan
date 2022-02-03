@@ -415,6 +415,43 @@ class LinearT3DFunc extends VariationShaderFunc3D {
     }
 }
 
+class Pie3DFunc extends VariationShaderFunc2D {
+    PARAM_SLICES = "slices"
+    PARAM_ROTATION = "rotation"
+    PARAM_THICKNESS = "thickness"
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_SLICES, type: VariationParamType.VP_NUMBER, initialValue: 6.0 },
+            { name: this.PARAM_ROTATION, type: VariationParamType.VP_NUMBER, initialValue: 0.0 },
+            { name: this.PARAM_THICKNESS, type: VariationParamType.VP_NUMBER, initialValue: 0.5 }]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        return `{
+          float amount = float(${variation.amount});
+          float slices = float(${variation.params.get(this.PARAM_SLICES)});
+          float rotation = float(${variation.params.get(this.PARAM_ROTATION)});
+          float thickness = float(${variation.params.get(this.PARAM_THICKNESS)});
+          int sl = int(rand2(tex) * slices + 0.5);
+          float a = rotation + 2.0 * M_PI * (float(sl) + rand3(tex) * thickness) / slices;
+          float r = amount * rand4(tex);
+          float sina = sin(a);
+          float cosa = cos(a);
+          _vx += r * cosa;
+          _vy += r * sina;
+          _vz += r * sin(r);
+        }`;
+    }
+
+    get name(): string {
+        return "pie3D";
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_3D];
+    }
+}
+
 class Spherical3DFunc extends VariationShaderFunc3D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         return `{
@@ -428,6 +465,49 @@ class Spherical3DFunc extends VariationShaderFunc3D {
 
     get name(): string {
         return "spherical3D";
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_3D];
+    }
+}
+
+class Spherical3DWFFunc extends VariationShaderFunc3D {
+    PARAM_INVERT = "invert"
+    PARAM_EXPONENT = "exponent"
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_INVERT, type: VariationParamType.VP_NUMBER, initialValue: 0 },
+            { name: this.PARAM_EXPONENT, type: VariationParamType.VP_NUMBER, initialValue: 2.0 }]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        return `{
+          float amount = float(${variation.amount});
+          int invert = int(${variation.params.get(this.PARAM_INVERT)});
+          float exponent = float(${variation.params.get(this.PARAM_EXPONENT)});
+          
+          bool _regularForm = abs(exponent - 2.0) < EPSILON;
+          float r;
+          if (_regularForm) {
+              r = amount / (_tx * _tx + _ty * _ty + _tz * _tz + EPSILON);
+            } else {
+              r = amount / pow(_tx * _tx + _ty * _ty + _tz * _tz + EPSILON, exponent / 2.0);
+            }
+            if (invert == 0) {
+              _vx += _tx * r;
+              _vy += _ty * r;
+              _vz += _tz * r;
+            } else {
+              _vx -= _tx * r;
+              _vy -= _ty * r;
+              _vz -= _tz * r;
+            }
+        }`;
+    }
+
+    get name(): string {
+        return "spherical3D_wf";
     }
 
     get variationTypes(): VariationTypes[] {
@@ -468,6 +548,8 @@ export function register3DVars() {
     VariationShaders.registerVar(new Julia3DZFunc())
     VariationShaders.registerVar(new Linear3DFunc())
     VariationShaders.registerVar(new LinearT3DFunc())
+    VariationShaders.registerVar(new Pie3DFunc())
     VariationShaders.registerVar(new Spherical3DFunc())
+    VariationShaders.registerVar(new Spherical3DWFFunc())
     VariationShaders.registerVar(new Tangent3DFunc())
 }
