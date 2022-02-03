@@ -15,60 +15,40 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 */
 
-import {FlameParameter} from '../../model/parameters'
+import {
+    VariationParam,
+    VariationParamType, VariationShaderFunc2D,
+    VariationShaderFunc3D,
+    VariationTypes
+} from "./variation-shader-func";
+import {VariationShaders} from "Frontend/flames/renderer/variations/variation-shaders";
 import {RenderVariation, RenderXForm} from "Frontend/flames/model/render-flame";
+import {FUNC_SGN} from "Frontend/flames/renderer/variations/variation-math-functions";
 
-export enum VariationTypes {
-    VARTYPE_BLUR,
-    VARTYPE_2D,
-    VARTYPE_ZTRANSFORM,
-    VARTYPE_3D,
-    VARTYPE_DC ,
-    VARTYPE_BASE_SHAPE,
-    VARTYPE_PRE,
-    VARTYPE_POST,
-    VARTYPE_CROP
-}
-
-export enum VariationParamType {
-    VP_NUMBER,
-    VP_BOOLEAN
-}
-
-export interface VariationParam {
-    name: string;
-    type: VariationParamType;
-    initialValue: number;
-}
-
-export abstract class VariationShaderFunc {
-    abstract getCode(xform: RenderXForm, variation: RenderVariation): string
-
-    abstract get name(): string
-
-    get funcDependencies(): string[] {
-        return []
+/*
+  be sure to import this class somewhere and call registerZTransformVars()
+ */
+class FlattenFunc extends VariationShaderFunc3D {
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        return `{
+          _vz = 0.0;
+        }`;
     }
 
-    get params(): VariationParam[] {
-        return []
+    get name(): string {
+        return "flatten";
     }
 
     get priority(): number {
-        return 0;
+        return 1;
     }
 
-    abstract get variationTypes(): VariationTypes[]
-
-    evalP(param: FlameParameter): number {
-        return param.value
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_ZTRANSFORM, VariationTypes.VARTYPE_POST];
     }
 }
 
-export abstract class VariationShaderFunc2D extends VariationShaderFunc {
 
-}
-
-export abstract class VariationShaderFunc3D extends VariationShaderFunc {
-
+export function registerZTransformVars() {
+    VariationShaders.registerVar(new FlattenFunc())
 }

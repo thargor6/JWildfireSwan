@@ -19,6 +19,7 @@ import { makeAutoObservable } from 'mobx';
 import {VariationShaders} from "Frontend/flames/renderer/variations/variation-shaders";
 import {register2DVars} from "Frontend/flames/renderer/variations/variation-shaders-2d";
 import {register3DVars} from "Frontend/flames/renderer/variations/variation-shaders-3d";
+import {registerZTransformVars} from "Frontend/flames/renderer/variations/variation-shaders-ztransform";
 
 type OnInitCallback = () => void
 
@@ -70,5 +71,6 @@ export class PlaygroundStore {
 
 register2DVars()
 register3DVars()
+registerZTransformVars()
 
 export const playgroundStore = new PlaygroundStore()

@@ -1222,6 +1222,46 @@ class JuliaFunc extends VariationShaderFunc2D {
     }
 }
 
+class JuliaCFunc extends VariationShaderFunc2D {
+    PARAM_RE = "re"
+    PARAM_IM = "im"
+    PARAM_DIST = "dist"
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_RE, type: VariationParamType.VP_NUMBER, initialValue: 3.5 },
+            { name: this.PARAM_IM, type: VariationParamType.VP_NUMBER, initialValue: 0.5 },
+            { name: this.PARAM_DIST, type: VariationParamType.VP_NUMBER, initialValue: 1.0}]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        // juliac by David Young, http://sc0t0ma.deviantart.com/
+        return `{
+          float amount = float(${variation.amount});
+          float _re = float(${variation.params.get(this.PARAM_RE)});
+          float _im = float(${variation.params.get(this.PARAM_IM)});
+          float dist = float(${variation.params.get(this.PARAM_DIST)});
+          float re = 1.0 / (_re + EPSILON);
+          float im = _im / 100.0;
+          float arg = atan2(_ty, _tx) + mod(rand2(tex)*32768.0, _re) * 2.0 * M_PI;
+          float lnmod = dist * 0.5 * log(_tx * _tx + _ty * _ty);
+          float a = arg * re + lnmod * im;
+          float s = sin(a);
+          float c = cos(a);
+          float mod2 = exp(lnmod * re - arg * im);
+          _vx += amount * mod2 * c;
+          _vy += amount * mod2 * s;
+        }`;
+    }
+
+    get name(): string {
+        return "juliac";
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
 class JuliaNFunc extends VariationShaderFunc2D {
     PARAM_POWER = "power"
     PARAM_DIST = "dist"
@@ -1251,6 +1291,42 @@ class JuliaNFunc extends VariationShaderFunc2D {
 
     get name(): string {
         return "julian";
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
+class JuliaQFunc extends VariationShaderFunc2D {
+    PARAM_POWER = "power"
+    PARAM_DIVISOR = "divisor"
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_POWER, type: VariationParamType.VP_NUMBER, initialValue: 3 },
+            { name: this.PARAM_DIVISOR, type: VariationParamType.VP_NUMBER, initialValue: 2 }]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        // juliaq by Zueuk, http://zueuk.deviantart.com/art/juliaq-Apophysis-plugins-340813357
+        return `{
+          float amount = float(${variation.amount});
+          int power = int(${variation.params.get(this.PARAM_POWER)});
+          int divisor = int(${variation.params.get(this.PARAM_DIVISOR)});
+          float half_inv_power = 0.5 * float(divisor) / float(power);
+          float inv_power = float(divisor) / float(power);
+          float inv_power_2pi = (2.0*M_PI) / float(power);
+          float a = atan2(_ty, _tx) * inv_power + rand2(tex)*32768.0 * inv_power_2pi;
+          float sina = sin(a);
+          float cosa = cos(a);
+          float r = amount * pow(sqr(_tx) + sqr(_ty), half_inv_power);
+          _vx += r * cosa;
+          _vy += r * sina;
+        }`;
+    }
+
+    get name(): string {
+        return "juliaq";
     }
 
     get variationTypes(): VariationTypes[] {
@@ -2331,7 +2407,9 @@ export function register2DVars() {
     VariationShaders.registerVar(new HeartFunc())
     VariationShaders.registerVar(new HeartWFFunc())
     VariationShaders.registerVar(new JuliaFunc())
+    VariationShaders.registerVar(new JuliaCFunc())
     VariationShaders.registerVar(new JuliaNFunc())
+    VariationShaders.registerVar(new JuliaQFunc())
     VariationShaders.registerVar(new JuliascopeFunc())
     VariationShaders.registerVar(new LazySusanFunc())
     VariationShaders.registerVar(new LinearFunc())
