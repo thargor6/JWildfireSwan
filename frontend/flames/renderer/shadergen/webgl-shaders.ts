@@ -45,6 +45,7 @@ interface IteratePointsProgram extends WebGLProgram {
 interface ComputeColorsProgram extends WebGLProgram {
     vertexPositionAttribute: GLint;
     uTexSamp: WebGLUniformLocation;
+    pTexSamp: WebGLUniformLocation;
     seed: WebGLUniformLocation;
     seed2: WebGLUniformLocation;
     seed3: WebGLUniformLocation;
@@ -93,6 +94,7 @@ export class WebglShaders {
         this.prog_comp_col.vertexPositionAttribute = gl.getAttribLocation(this.prog_comp_col, "aVertexPosition");
         gl.enableVertexAttribArray(this.prog_comp_col.vertexPositionAttribute);
         this.prog_comp_col.uTexSamp = gl.getUniformLocation(this.prog_comp_col, "uTexSamp")!;
+        this.prog_comp_col.pTexSamp = gl.getUniformLocation(this.prog_comp_col, "pTexSamp")!;
         this.prog_comp_col.seed = gl.getUniformLocation(this.prog_comp_col, "seed")!;
         this.prog_comp_col.seed2 = gl.getUniformLocation(this.prog_comp_col, "seed2")!;
         this.prog_comp_col.seed3 = gl.getUniformLocation(this.prog_comp_col, "seed3")!;

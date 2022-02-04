@@ -102,7 +102,10 @@ export class CompPointsFragmentShaderGenerator {
                ${this.addAffineTx(xForm)}
                float _phi = atan2(_tx, _ty);
                float _r2 = _tx * _tx + _ty * _ty;
-               float _r = sqrt(_tx * _tx + _ty * _ty) + EPSILON;       
+               float _r = sqrt(_tx * _tx + _ty * _ty) + EPSILON;    
+               
+               _color = _color * float(${xForm.c1}) + float(${xForm.c2});
+                  
                ${this.hasPreVariations(xForm) ? `
                  ${this.addVariations(xForm, xFormIdx, -1)}    
                  _phi = atan2(_tx, _ty);
@@ -113,6 +116,7 @@ export class CompPointsFragmentShaderGenerator {
                ${this.addVariations(xForm, xFormIdx, 0)}
                ${this.addVariations(xForm, xFormIdx, 1)}
                ${this.addPostAffineTx(xForm)}
+               
 			}	
 	`;
     }
@@ -242,13 +246,13 @@ export class CompPointsFragmentShaderGenerator {
 			void main(void) {
 				vec2 tex = gl_FragCoord.xy / <%= RESOLUTION %>;
 				vec3 point = texture2D(uTexSamp, tex).xyz;
+				float _color = texture2D(uTexSamp, tex).w;
 	            float _tx, _ty, _tz;
                 float _vx = 0.0, _vy = 0.0, _vz = 0.0;
                 _tz = point.z;
 				${this.addXForms(flame)}
-				
 				point = vec3(_vx, _vy, _vz);
-				gl_FragColor = vec4(point, 1.0);
+				gl_FragColor = vec4(point, _color);
 			}
 			`;
     }

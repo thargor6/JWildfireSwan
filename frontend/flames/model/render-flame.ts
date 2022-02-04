@@ -41,6 +41,8 @@ export class RenderXForm {
 
     public color = 0.0
     public colorSymmetry = 0.0
+    public c1 = 0.0
+    public c2 = 0.0
     public weight = 0.0
 
     private _modifiedWeights: number[] = [];

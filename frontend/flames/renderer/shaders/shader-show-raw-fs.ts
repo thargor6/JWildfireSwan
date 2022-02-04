@@ -27,8 +27,12 @@ precision highp float;
 uniform sampler2D uTexSamp;
 
 void main(void) {
-    vec3 texel = texture2D(uTexSamp, gl_FragCoord.xy / <%= RESOLUTION %>).rgb;
-
-    gl_FragColor = vec4(texel, 1.0);
+   // vec3 texel = texture2D(uTexSamp, gl_FragCoord.xy / <%= RESOLUTION %>).rgb;
+   // gl_FragColor = vec4(texel, 1.0);
+    
+   // float a = texture2D(uTexSamp, gl_FragCoord.xy / <%= RESOLUTION %>).a;
+   //  gl_FragColor = vec4(a, a, a, 1.0);
+   
+    gl_FragColor = texture2D(uTexSamp, gl_FragCoord.xy / <%= RESOLUTION %>).rgba;
 }
 `;

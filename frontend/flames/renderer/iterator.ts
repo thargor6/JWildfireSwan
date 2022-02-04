@@ -68,13 +68,20 @@ export class FlameIterator {
         gl.uniform1f(this.ctx.shaders.prog_comp_col.seed2, seed2);
         gl.uniform1f(this.ctx.shaders.prog_comp_col.seed3, seed3);
         gl.uniform1i(this.ctx.shaders.prog_comp_col.uTexSamp, 0);
+        gl.uniform1i(this.ctx.shaders.prog_comp_col.pTexSamp, 1);
 
         if(this.flag) {
             gl.bindFramebuffer(gl.FRAMEBUFFER, this.ctx.framebuffers._FBO1);
+            gl.activeTexture(gl.TEXTURE0);
             gl.bindTexture(gl.TEXTURE_2D, this.ctx.textures._texture0);
+            gl.activeTexture(gl.TEXTURE1);
+            gl.bindTexture(gl.TEXTURE_2D, this.ctx.textures.texture0);
         } else {
             gl.bindFramebuffer(gl.FRAMEBUFFER, this.ctx.framebuffers._FBO0);
+            gl.activeTexture(gl.TEXTURE0);
             gl.bindTexture(gl.TEXTURE_2D, this.ctx.textures._texture1);
+            gl.activeTexture(gl.TEXTURE1);
+            gl.bindTexture(gl.TEXTURE_2D, this.ctx.textures.texture1);
         }
 
         gl.bindBuffer(gl.ARRAY_BUFFER, this.ctx.buffers.quadVertexPositionBuffer);

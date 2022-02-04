@@ -10,6 +10,7 @@ import {FlameRendererDisplay} from "./display";
 import {FlameIterator} from "./iterator";
 import {Flame} from "Frontend/flames/model/flame";
 import {FlameMapper} from "Frontend/flames/model/mapper/flame-mapper";
+import {RenderFlame} from "Frontend/flames/model/render-flame";
 
 export class FlameRenderer {
     frames = 0;
@@ -27,6 +28,7 @@ export class FlameRenderer {
                 private radioButtonElements: any, private param1Element: HTMLElement) {
 
         const renderFlame = FlameMapper.mapForRendering(flame)
+        this.prepareFlame(renderFlame)
 
         const imageWidth = grid_size
         const imageHeight = grid_size
@@ -50,6 +52,13 @@ export class FlameRenderer {
         this.settings = new FlameRenderSettings(1.2, this.canvas_size, this.points_size, 1, 0.0)
         this.display = new FlameRendererDisplay(this.ctx, this.settings)
         this.iterator = new FlameIterator(this.ctx, this.settings)
+    }
+
+    private prepareFlame(renderFlame: RenderFlame) {
+       renderFlame.xforms.forEach(xform => {
+           xform.c1 = (1.0 + xform.colorSymmetry) * 0.5;
+           xform.c2 = xform.color * (1 - xform.colorSymmetry) * 0.5;
+       })
     }
 
     private getRadioValue() {
