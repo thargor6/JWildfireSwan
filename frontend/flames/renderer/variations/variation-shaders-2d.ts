@@ -260,6 +260,28 @@ class BlurFunc extends VariationShaderFunc2D {
     }
 }
 
+class ButterflyFunc extends VariationShaderFunc2D {
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        /* wx is weight*4/sqrt(3*pi) */
+        return `{
+          float amount = float(${variation.amount});
+          float wx = amount * 1.3029400317411197908970256609023;
+          float y2 = _ty * 2.0;
+          float r = wx * sqrt(abs(_ty * _tx) / (EPSILON + _tx * _tx + y2 * y2));
+          _vx += r * _tx;
+          _vy += r * y2;
+        }`;
+    }
+
+    get name(): string {
+        return "butterfly";
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
 class CannabisCurveWFFunc extends VariationShaderFunc2D {
     PARAM_FILLED = "filled"
 
@@ -1355,6 +1377,24 @@ class HorseshoeFunc extends VariationShaderFunc2D {
     }
 }
 
+class HyperbolicFunc extends VariationShaderFunc2D {
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        return `{
+           float amount = float(${variation.amount});
+           _vx += amount * _tx / _r2;
+           _vy += amount * _ty;
+        }`;
+    }
+
+    get name(): string {
+        return "hyperbolic";
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
 class JuliaFunc extends VariationShaderFunc2D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         return `{
@@ -1707,6 +1747,28 @@ class NGonFunc extends VariationShaderFunc2D {
     }
 }
 
+class NoiseFunc extends VariationShaderFunc2D {
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        return `{
+          float amount = float(${variation.amount});
+          float r = rand2(tex) * 2.0 * M_PI;
+          float sinr = sin(r);
+          float cosr = cos(r);
+          r = amount * rand3(tex);
+          _vx += _tx * r * cosr;
+          _vy += _ty * r * sinr;
+        }`;
+    }
+
+    get name(): string {
+        return "noise";
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D, VariationTypes.VARTYPE_BLUR];
+    }
+}
+
 class NPolarFunc extends VariationShaderFunc2D {
     PARAM_PARITY = "parity"
     PARAM_N = "n"
@@ -2054,6 +2116,42 @@ class Rays3Func extends VariationShaderFunc2D {
     }
 }
 
+class RectanglesFunc extends VariationShaderFunc2D {
+    PARAM_X = "x"
+    PARAM_Y = "y"
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_X, type: VariationParamType.VP_NUMBER, initialValue: 0.3 },
+            { name: this.PARAM_Y, type: VariationParamType.VP_NUMBER, initialValue: 0.2 }]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        return `{
+          float amount = float(${variation.amount});
+          float x =float(${variation.params.get(this.PARAM_X)});
+          float y = float(${variation.params.get(this.PARAM_Y)});
+          if (abs(x) < EPSILON) {
+            _vx += amount * _tx;
+          } else {
+            _vx += amount * ((2.0 * floor(_tx / x) + 1.0) * x - _tx);
+          }
+          if (abs(y) < EPSILON) {
+            _vy += amount * _ty;
+          } else {
+            _vy += amount * ((2.0 * floor(_ty / y) + 1.0) * y - _ty);
+          }
+        }`;
+    }
+
+    get name(): string {
+        return "rectangles";
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
 class RoseWFFunc extends VariationShaderFunc2D {
     PARAM_AMP = "amp"
     PARAM_WAVES = "waves"
@@ -2094,7 +2192,6 @@ class RoseWFFunc extends VariationShaderFunc2D {
         return [VariationTypes.VARTYPE_2D, VariationTypes.VARTYPE_BASE_SHAPE];
     }
 }
-
 
 class SecFunc extends VariationShaderFunc2D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
@@ -2749,6 +2846,7 @@ export function register2DVars() {
     VariationShaders.registerVar(new BladeFunc())
     VariationShaders.registerVar(new BlobFunc())
     VariationShaders.registerVar(new BlurFunc())
+    VariationShaders.registerVar(new ButterflyFunc())
     VariationShaders.registerVar(new CannabisCurveWFFunc())
     VariationShaders.registerVar(new CellFunc())
     VariationShaders.registerVar(new CloverLeafWFFunc())
@@ -2782,6 +2880,7 @@ export function register2DVars() {
     VariationShaders.registerVar(new HeartFunc())
     VariationShaders.registerVar(new HeartWFFunc())
     VariationShaders.registerVar(new HorseshoeFunc())
+    VariationShaders.registerVar(new HyperbolicFunc())
     VariationShaders.registerVar(new JuliaFunc())
     VariationShaders.registerVar(new JuliaCFunc())
     VariationShaders.registerVar(new JuliaNFunc())
@@ -2792,6 +2891,7 @@ export function register2DVars() {
     VariationShaders.registerVar(new LinearTFunc())
     VariationShaders.registerVar(new LogFunc())
     VariationShaders.registerVar(new NGonFunc())
+    VariationShaders.registerVar(new NoiseFunc())
     VariationShaders.registerVar(new NPolarFunc())
     VariationShaders.registerVar(new ParabolaFunc())
     VariationShaders.registerVar(new PetalFunc())
@@ -2805,6 +2905,7 @@ export function register2DVars() {
     VariationShaders.registerVar(new Rays1Func())
     VariationShaders.registerVar(new Rays2Func())
     VariationShaders.registerVar(new Rays3Func())
+    VariationShaders.registerVar(new RectanglesFunc())
     VariationShaders.registerVar(new RoseWFFunc())
     VariationShaders.registerVar(new SecFunc())
     VariationShaders.registerVar(new SechFunc())
