@@ -8,9 +8,10 @@ import {FlameRenderContext} from "./render-context";
 import {FlameRenderSettings} from "./render-settings";
 import {FlameRendererDisplay} from "./display";
 import {FlameIterator} from "./iterator";
-import {Flame} from "Frontend/flames/model/flame";
+import {Flame, GRADIENT_SIZE} from "Frontend/flames/model/flame";
 import {FlameMapper} from "Frontend/flames/model/mapper/flame-mapper";
-import {RenderFlame} from "Frontend/flames/model/render-flame";
+import {RenderColor, RenderFlame} from "Frontend/flames/model/render-flame";
+import {render} from "lit";
 
 export class FlameRenderer {
     frames = 0;
@@ -29,6 +30,8 @@ export class FlameRenderer {
 
         const renderFlame = FlameMapper.mapForRendering(flame)
         this.prepareFlame(renderFlame)
+
+        console.log("FINAL FLAME", renderFlame)
 
         const imageWidth = grid_size
         const imageHeight = grid_size
@@ -59,6 +62,9 @@ export class FlameRenderer {
            xform.c1 = (1.0 + xform.colorSymmetry) * 0.5;
            xform.c2 = xform.color * (1 - xform.colorSymmetry) * 0.5;
        })
+       while(renderFlame.gradient.length<GRADIENT_SIZE) {
+           renderFlame.gradient.push(new RenderColor(0, 0, 0))
+       }
     }
 
     private getRadioValue() {

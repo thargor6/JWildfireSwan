@@ -15,6 +15,11 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 */
 
+export class RenderColor {
+  constructor(public r: number, public g: number, public b: number) {
+  }
+}
+
 export class RenderVariation {
     public name = ''
     public amount = 0.0
@@ -83,14 +88,20 @@ export class RenderFlame {
     public focusZ = 0.0
     public camDOFExponent = 0.0
 
-    private _xforms = new Array<RenderXForm>();
+    private _xforms = new Array<RenderXForm>()
+    private _gradient = new Array<RenderColor>()
+
     public get xforms() {
-        return this._xforms;
+        return this._xforms
+    }
+
+    public get gradient() {
+        return this._gradient
     }
 
     private _finalXforms = new Array<RenderXForm>();
     public get finalXforms() {
-        return this._finalXforms;
+        return this._finalXforms
     }
 
     public get hasModifiedWeights() {

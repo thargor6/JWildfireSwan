@@ -17,6 +17,13 @@
 
 import {FlameParameter, Parameters} from "Frontend/flames/model/parameters";
 
+export const GRADIENT_SIZE = 256
+
+export class Color {
+    constructor(public r: number, public g: number, public b: number) {
+       //
+    }
+}
 
 export class Variation {
     public name = 'linear';
@@ -83,6 +90,7 @@ export class Flame {
     public focusY = Parameters.dNumber(0.0)
     public focusZ = Parameters.dNumber(0.0)
     public camDOFExponent = Parameters.dNumber(0.0)
+    public gradient = new Array<Color>(GRADIENT_SIZE);
 
     private _xforms = new Array<XForm>();
     private _finalXforms = new Array<XForm>();

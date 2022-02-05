@@ -16,6 +16,8 @@
 */
 package org.jwildfire.swan.flames.mapper;
 
+import org.jwildfire.create.tina.palette.RGBColor;
+import org.jwildfire.swan.flames.model.Color;
 import org.jwildfire.swan.flames.model.Flame;
 import org.springframework.stereotype.Service;
 
@@ -54,6 +56,11 @@ public class FlameMapper {
     res.setFocusY(source.getFocusY());
     res.setFocusZ(source.getFocusZ());
     res.setCamDOFExponent(source.getCamDOFExponent());
+
+    for(int i=0;i<source.getFirstLayer().getPalette().getSize();i++) {
+      RGBColor color = source.getFirstLayer().getPalette().getColor(i);
+      res.getGradient().add(new Color(color.getRed(), color.getGreen(), color.getBlue()));
+    }
 
     source.getFirstLayer().getXForms().stream()
         .forEach(xForm -> res.getXforms().add(xFormMapper.mapFromJwildfire(source, xForm)));

@@ -18,9 +18,9 @@
 import {default as SourceXForm} from '../../../generated/org/jwildfire/swan/flames/model/XForm'
 import {default as SourceFlame} from '../../../generated/org/jwildfire/swan/flames/model/Flame'
 import {default as SourceVariation} from '../../../generated/org/jwildfire/swan/flames/model/Variation'
-import {Flame, XForm, Variation} from "../flame";
+import {Flame, XForm, Variation, Color} from "../flame";
 import {Parameters} from "Frontend/flames/model/parameters";
-import {RenderFlame, RenderVariation, RenderXForm} from "Frontend/flames/model/render-flame";
+import {RenderColor, RenderFlame, RenderVariation, RenderXForm} from "Frontend/flames/model/render-flame";
 
 class VariationMapper {
     static mapFromBackend(source: SourceVariation): Variation {
@@ -121,6 +121,12 @@ class XFormMapper {
     }
 }
 
+class ColorMapper {
+    static mapForRendering(color: Color): RenderColor {
+        return new RenderColor(color.r, color.g, color.b);
+    }
+}
+
 export class FlameMapper {
     public static mapFromBackend(source: SourceFlame): Flame {
         const res = new Flame()
@@ -149,6 +155,11 @@ export class FlameMapper {
         res.focusY = Parameters.dNumber(source.focusY)
         res.focusZ = Parameters.dNumber(source.focusZ)
         res.camDOFExponent = Parameters.dNumber(source.camDOFExponent)
+
+        res.gradient = []
+        source.gradient.forEach(color => res.gradient.push(
+            // TODO whitelevel
+            new Color(color.r / 200.0, color.g / 200.0, color.b / 200.0)))
 
         source.xforms.map(sxf => {
             res.xforms.push(XFormMapper.mapFromBackend(sxf))
@@ -187,7 +198,9 @@ export class FlameMapper {
         res.focusY = source.focusY.value
         res.focusZ = source.focusZ.value
         res.camDOFExponent = source.camDOFExponent.value
-
+        source.gradient.map(color => {
+            res.gradient.push(ColorMapper.mapForRendering(color))
+        })
         source.xforms.map(sxf => {
             res.xforms.push(XFormMapper.mapForRendering(sxf))
         })

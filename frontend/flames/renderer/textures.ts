@@ -33,9 +33,9 @@ export class Textures {
         for(var i = 0; i < gradSize; i++) {
             for(var j = 0; j < gradSize; j++) {
                 grad.push(
-                    j / gradSize,
-                    j / gradSize,
-                    0.0,
+                    flame.gradient[j].r,
+                    flame.gradient[j].g,
+                    flame.gradient[j].b,
                     0
                 );
             }

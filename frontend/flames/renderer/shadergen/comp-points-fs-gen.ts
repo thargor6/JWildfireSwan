@@ -104,8 +104,7 @@ export class CompPointsFragmentShaderGenerator {
                float _r2 = _tx * _tx + _ty * _ty;
                float _r = sqrt(_tx * _tx + _ty * _ty) + EPSILON;    
                
-               _color = _color * float(${xForm.c1}) + float(${xForm.c2});
-                  
+               _color = _color * float(${xForm.c1}) + float(${xForm.c2});   
                ${this.hasPreVariations(xForm) ? `
                  ${this.addVariations(xForm, xFormIdx, -1)}    
                  _phi = atan2(_tx, _ty);
@@ -116,7 +115,12 @@ export class CompPointsFragmentShaderGenerator {
                ${this.addVariations(xForm, xFormIdx, 0)}
                ${this.addVariations(xForm, xFormIdx, 1)}
                ${this.addPostAffineTx(xForm)}
-               
+               if(_color<0.0) {
+                 _color = 0.0;
+               }
+               else if(_color>1.0) {
+                 _color = 1.0;
+               }
 			}	
 	`;
     }

@@ -15,27 +15,16 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 */
 
-/**
- Fragment shader to calculate the final colors.
- Based on the code originally created by Richard Assar ( https://github.com/richardassar/ElectricSheep_WebGL )
- */
-export const shader_show_fs = `
-#ifdef GL_ES
-precision highp float;
-#endif
+package org.jwildfire.swan.flames.model;
 
-uniform sampler2D uTexSamp;
-uniform float frames;
-uniform float brightness;
+import com.vaadin.fusion.Nonnull;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 
-void main(void) {
-vec3 colorTexel = texture2D(uTexSamp, gl_FragCoord.xy / <%= RESOLUTION %>).rgb;
-float alpha = texture2D(uTexSamp, gl_FragCoord.xy / <%= RESOLUTION %>).a;
-
-vec3 col = colorTexel * log(alpha) / (log(alpha) * frames) * 0.5;
-
-col = vec3(pow(col.r, 1.0 / brightness), pow(col.g, 1.0 / brightness), pow(col.b, 1.0 / brightness)); // Brightness correction
-
-gl_FragColor = vec4(col, 1.0);
+@Data
+@AllArgsConstructor
+public class Color {
+  @Nonnull private int r;
+  @Nonnull private int g;
+  @Nonnull private int b;
 }
-`;
