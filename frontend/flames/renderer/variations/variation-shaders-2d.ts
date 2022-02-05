@@ -921,6 +921,72 @@ class EpispiralWFFunc extends VariationShaderFunc2D {
     }
 }
 
+class EscherFunc extends VariationShaderFunc2D {
+    PARAM_BETA = "beta"
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_BETA, type: VariationParamType.VP_NUMBER, initialValue: 0.3 }]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        /* Escher in the Apophysis Plugin Pack */
+        return `{
+          float amount = float(${variation.amount});
+          float beta = float(${variation.params.get(this.PARAM_BETA)});
+          float _theta = atan2(_ty, _tx);
+          float a = _theta;
+          float lnr = 0.5 * log(_r2);
+        
+          float seb = sin(beta);
+          float ceb = cos(beta);
+        
+          float vc = 0.5 * (1.0 + ceb);
+          float vd = 0.5 * seb;
+        
+          float m = amount * exp(vc * lnr - vd * a);
+          float n = vc * a + vd * lnr;
+        
+          float sn = sin(n);
+          float cn = cos(n);
+        
+          _vx += m * cn;
+          _vy += m * sn;
+        }`;
+    }
+
+    get name(): string {
+        return "escher";
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
+class Ex extends VariationShaderFunc2D {
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        return `{
+            float amount = float(${variation.amount});
+            float r = sqrt(_tx * _tx + _ty * _ty);
+            float n0 = sin(_phi + r);
+            float n1 = cos(_phi - r);
+            float m0 = n0 * n0 * n0;
+            float m1 = n1 * n1 * n1;
+            r = r * amount;
+            _vx += r * (m0 + m1);
+            _vy += r * (m0 - m1);
+        }`;
+    }
+
+    get name(): string {
+        return "ex";
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
 class ExpFunc extends VariationShaderFunc2D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         /* complex vars by cothe */
@@ -1542,6 +1608,56 @@ class NGonFunc extends VariationShaderFunc2D {
 
     get name(): string {
         return "ngon";
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
+class NPolarFunc extends VariationShaderFunc2D {
+    PARAM_PARITY = "parity"
+    PARAM_N = "n"
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_PARITY, type: VariationParamType.VP_NUMBER, initialValue: 0 },
+            { name: this.PARAM_N, type: VariationParamType.VP_NUMBER, initialValue: 1 }]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        return `{
+          float amount = float(${variation.amount});
+          int parity = int(${variation.params.get(this.PARAM_PARITY)});
+          int n = int(${variation.params.get(this.PARAM_N)});
+
+          int _nnz = (n == 0) ? 1 : n;
+          float _vvar = amount / M_PI;
+          float _vvar_2 = _vvar * 0.5;
+          float _absn = abs(float(_nnz));
+          float _cn = 1.0 / float(_nnz) / 2.0;
+          int _isodd = modulo((parity > 0 ? parity: -parity), 2); 
+          float x = (_isodd != 0) ? _tx : _vvar * atan2(_tx, _ty);
+          float y = (_isodd != 0) ? _ty : _vvar_2 * log(_tx * _tx + _ty * _ty);
+          float angle = (atan2(y, x) + (2.0*M_PI) * float(modulo( int(rand3(tex)*32768.0), int(_absn)))) / float(_nnz);
+          float r = amount * pow(sqr(x) + sqr(y), _cn) * ((_isodd == 0) ? 1.0 : float(parity));
+          float sina = sin(angle);
+          float cosa = cos(angle);
+          cosa *= r;
+          sina *= r;
+          x = (_isodd != 0) ? cosa : (_vvar_2 * log(cosa * cosa + sina * sina));
+          y = (_isodd != 0) ? sina : (_vvar * atan2(cosa, sina));
+          _vx += x;
+          _vy += y;
+        }`;
+    }
+
+    get name(): string {
+        return "npolar";
+    }
+
+
+    get funcDependencies(): string[] {
+        return [FUNC_MODULO];
     }
 
     get variationTypes(): VariationTypes[] {
@@ -2518,6 +2634,8 @@ export function register2DVars() {
     VariationShaders.registerVar(new EllipticFunc())
     VariationShaders.registerVar(new EpispiralFunc())
     VariationShaders.registerVar(new EpispiralWFFunc())
+    VariationShaders.registerVar(new EscherFunc())
+    VariationShaders.registerVar(new Ex())
     VariationShaders.registerVar(new ExpFunc())
     VariationShaders.registerVar(new ExponentialFunc())
     VariationShaders.registerVar(new EyefishFunc())
@@ -2537,6 +2655,7 @@ export function register2DVars() {
     VariationShaders.registerVar(new LinearTFunc())
     VariationShaders.registerVar(new LogFunc())
     VariationShaders.registerVar(new NGonFunc())
+    VariationShaders.registerVar(new NPolarFunc())
     VariationShaders.registerVar(new ParabolaFunc())
     VariationShaders.registerVar(new PetalFunc())
     VariationShaders.registerVar(new PieFunc())
