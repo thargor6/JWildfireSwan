@@ -1149,6 +1149,41 @@ class FisheyeFunc extends VariationShaderFunc2D {
     }
 }
 
+class FlowerFunc extends VariationShaderFunc2D {
+    PARAM_HOLES = "holes"
+    PARAM_PETALS = "petals"
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_HOLES, type: VariationParamType.VP_NUMBER, initialValue: 0.4 },
+            { name: this.PARAM_PETALS, type: VariationParamType.VP_NUMBER, initialValue: 7.0 }]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        /* cyberxaos, 4/2007 */
+        return `{
+            float amount = float(${variation.amount});
+            float holes = float(${variation.params.get(this.PARAM_HOLES)});
+            float petals = float(${variation.params.get(this.PARAM_PETALS)});
+            float _theta = atan2(_ty, _tx);
+            float theta = _theta;
+            float d = _r;
+            if (d != 0.0) {
+              float r = amount * (rand2(tex) - holes) * cos(petals * theta) / d;
+              _vx += r * _tx;
+              _vy += r * _ty;
+             }
+        }`;
+    }
+
+    get name(): string {
+        return "flower";
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D, VariationTypes.VARTYPE_BASE_SHAPE];
+    }
+}
+
 class FluxFunc extends VariationShaderFunc2D {
     PARAM_SPREAD = "spread"
 
@@ -1256,6 +1291,26 @@ class HeartWFFunc extends VariationShaderFunc2D {
 
     get name(): string {
         return "heart_wf";
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
+class HorseshoeFunc extends VariationShaderFunc2D {
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        return `{
+           float amount = float(${variation.amount});
+           float sinA = _tx / _r;
+           float cosA = _ty / _r;
+           _vx += amount * (sinA * _tx - cosA * _ty);
+           _vy += amount * (cosA * _tx + sinA * _ty);
+        }`;
+    }
+
+    get name(): string {
+        return "horseshoe";
     }
 
     get variationTypes(): VariationTypes[] {
@@ -1913,6 +1968,48 @@ class Rays1Func extends VariationShaderFunc2D {
 
     get name(): string {
         return "rays1";
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
+class Rays2Func extends VariationShaderFunc2D {
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        // rays2 by Raykoid666, http://raykoid666.deviantart.com/art/re-pack-1-new-plugins-100092186
+        return `{
+          float amount = float(${variation.amount});
+          float t = sqr(_tx) + sqr(_ty);
+          float u = 1.0 / cos((t + EPSILON) * tan(1.0 / t + EPSILON)); 
+          _vx = (amount / 10.0) * u * t / _tx;
+          _vy = (amount / 10.0) * u * t / _ty;
+        }`;
+    }
+
+    get name(): string {
+        return "rays2";
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
+class Rays3Func extends VariationShaderFunc2D {
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        // rays3 by Raykoid666, http://raykoid666.deviantart.com/art/re-pack-1-new-plugins-100092186
+        return `{
+          float amount = float(${variation.amount});
+          float t = sqr(_tx) + sqr(_ty);
+          float u = 1.0 / sqrt(cos(sin(sqr(t) + EPSILON) * sin(1.0 / sqr(t) + EPSILON)));
+          _vx = (amount / 10.0) * u * cos(t) * t / _tx;
+          _vy = (amount / 10.0) * u * tan(t) * t / _ty;
+        }`;
+    }
+
+    get name(): string {
+        return "rays3";
     }
 
     get variationTypes(): VariationTypes[] {
@@ -2642,9 +2739,11 @@ export function register2DVars() {
     VariationShaders.registerVar(new FanFunc())
     VariationShaders.registerVar(new Fan2Func())
     VariationShaders.registerVar(new FisheyeFunc())
+    VariationShaders.registerVar(new FlowerFunc())
     VariationShaders.registerVar(new FluxFunc())
     VariationShaders.registerVar(new HeartFunc())
     VariationShaders.registerVar(new HeartWFFunc())
+    VariationShaders.registerVar(new HorseshoeFunc())
     VariationShaders.registerVar(new JuliaFunc())
     VariationShaders.registerVar(new JuliaCFunc())
     VariationShaders.registerVar(new JuliaNFunc())
@@ -2666,6 +2765,8 @@ export function register2DVars() {
     VariationShaders.registerVar(new RadialBlurFunc())
     VariationShaders.registerVar(new RaysFunc())
     VariationShaders.registerVar(new Rays1Func())
+    VariationShaders.registerVar(new Rays2Func())
+    VariationShaders.registerVar(new Rays3Func())
     VariationShaders.registerVar(new RoseWFFunc())
     VariationShaders.registerVar(new SecFunc())
     VariationShaders.registerVar(new SechFunc())
