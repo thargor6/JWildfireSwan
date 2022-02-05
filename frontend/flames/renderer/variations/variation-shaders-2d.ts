@@ -646,6 +646,43 @@ class CylinderFunc extends VariationShaderFunc2D {
     }
 }
 
+class DCLinearFunc extends VariationShaderFunc2D {
+    PARAM_OFFSET = "offset"
+    PARAM_ANGLE = "angle"
+    PARAM_SCALE = "scale"
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_OFFSET, type: VariationParamType.VP_NUMBER, initialValue: 0.0},
+            { name: this.PARAM_ANGLE, type: VariationParamType.VP_NUMBER, initialValue: 0.30},
+            { name: this.PARAM_SCALE, type: VariationParamType.VP_NUMBER, initialValue: 0.80}
+        ]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        /* dc_linear by Xyrus02, http://apophysis-7x.org/extensions */
+        return `{
+          float amount = float(${variation.amount});
+          float offset = float(${variation.params.get(this.PARAM_OFFSET)});
+          float angle = float(${variation.params.get(this.PARAM_ANGLE)});
+          float scale = float(${variation.params.get(this.PARAM_SCALE)});
+          float ldcs = 1.0 / (scale == 0.0 ? 1.0E-5 : scale); 
+          _vx += amount * _tx;
+          _vy += amount * _ty;
+          float s = sin(angle);
+          float c = cos(angle);
+          _color = mod(abs(0.5 * (ldcs * ((c * _vx + s * _vy + offset)) + 1.0)), 1.0);
+        }`;
+    }
+
+    get name(): string {
+        return "dc_linear";
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D, VariationTypes.VARTYPE_DC];
+    }
+}
+
 class DiamondFunc extends VariationShaderFunc2D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         return `{
@@ -2724,6 +2761,7 @@ export function register2DVars() {
     VariationShaders.registerVar(new CschFunc())
     VariationShaders.registerVar(new CurlFunc())
     VariationShaders.registerVar(new CylinderFunc())
+    VariationShaders.registerVar(new DCLinearFunc())
     VariationShaders.registerVar(new DiamondFunc())
     VariationShaders.registerVar(new DiscFunc())
     VariationShaders.registerVar(new Disc2Func())
