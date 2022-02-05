@@ -46,6 +46,7 @@ interface ComputeColorsProgram extends WebGLProgram {
     vertexPositionAttribute: GLint;
     uTexSamp: WebGLUniformLocation;
     pTexSamp: WebGLUniformLocation;
+    gradTexSamp: WebGLUniformLocation;
     seed: WebGLUniformLocation;
     seed2: WebGLUniformLocation;
     seed3: WebGLUniformLocation;
@@ -59,6 +60,8 @@ interface ShowHistogramProgram extends WebGLProgram {
 
 interface ShowRawBufferProgram extends WebGLProgram {
     uTexSamp: WebGLUniformLocation;
+    pTexSamp: WebGLUniformLocation;
+    gradTexSamp: WebGLUniformLocation;
 }
 
 export class WebglShaders {
@@ -95,6 +98,7 @@ export class WebglShaders {
         gl.enableVertexAttribArray(this.prog_comp_col.vertexPositionAttribute);
         this.prog_comp_col.uTexSamp = gl.getUniformLocation(this.prog_comp_col, "uTexSamp")!;
         this.prog_comp_col.pTexSamp = gl.getUniformLocation(this.prog_comp_col, "pTexSamp")!;
+        this.prog_comp_col.gradTexSamp = gl.getUniformLocation(this.prog_comp_col, "gradTexSamp")!;
         this.prog_comp_col.seed = gl.getUniformLocation(this.prog_comp_col, "seed")!;
         this.prog_comp_col.seed2 = gl.getUniformLocation(this.prog_comp_col, "seed2")!;
         this.prog_comp_col.seed3 = gl.getUniformLocation(this.prog_comp_col, "seed3")!;
@@ -106,6 +110,8 @@ export class WebglShaders {
 
         this.prog_show_raw = compileShaderDirect(gl, shader_direct_vs, shader_show_raw_fs, {RESOLUTION: canvas.width}) as ShowRawBufferProgram;
         this.prog_show_raw.uTexSamp = gl.getUniformLocation(this.prog_show_raw, "uTexSamp")!;
+        this.prog_show_raw.pTexSamp = gl.getUniformLocation(this.prog_show_raw, "pTexSamp")!;
+        this.prog_show_raw.gradTexSamp = gl.getUniformLocation(this.prog_show_raw, "gradTexSamp")!;
     }
 
 }

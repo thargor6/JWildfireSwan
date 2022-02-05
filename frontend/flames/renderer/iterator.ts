@@ -64,11 +64,13 @@ export class FlameIterator {
         // C += Ci
         gl.useProgram(this.ctx.shaders.prog_comp_col);
 
+        // TODO remove seed
         gl.uniform1f(this.ctx.shaders.prog_comp_col.seed, seed);
         gl.uniform1f(this.ctx.shaders.prog_comp_col.seed2, seed2);
         gl.uniform1f(this.ctx.shaders.prog_comp_col.seed3, seed3);
         gl.uniform1i(this.ctx.shaders.prog_comp_col.uTexSamp, 0);
         gl.uniform1i(this.ctx.shaders.prog_comp_col.pTexSamp, 1);
+        gl.uniform1i(this.ctx.shaders.prog_comp_col.gradTexSamp, 2);
 
         if(this.flag) {
             gl.bindFramebuffer(gl.FRAMEBUFFER, this.ctx.framebuffers._FBO1);
@@ -83,6 +85,8 @@ export class FlameIterator {
             gl.activeTexture(gl.TEXTURE1);
             gl.bindTexture(gl.TEXTURE_2D, this.ctx.textures.texture1);
         }
+        gl.activeTexture(gl.TEXTURE2);
+        gl.bindTexture(gl.TEXTURE_2D, this.ctx.textures.gradient);
 
         gl.bindBuffer(gl.ARRAY_BUFFER, this.ctx.buffers.quadVertexPositionBuffer);
         gl.vertexAttribPointer(this.ctx.shaders.prog_comp_col.vertexPositionAttribute, this.ctx.buffers.quadVertexPositionBuffer.itemSize, gl.FLOAT, false, 0, 0);
