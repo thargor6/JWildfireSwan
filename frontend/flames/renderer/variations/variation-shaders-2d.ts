@@ -412,6 +412,37 @@ class CloverLeafWFFunc extends VariationShaderFunc2D {
     }
 }
 
+class ConicFunc extends VariationShaderFunc2D {
+    PARAM_ECCENTRICITY = "eccentricity"
+    PARAM_HOLES = "holes"
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_ECCENTRICITY, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
+            { name: this.PARAM_HOLES, type: VariationParamType.VP_NUMBER, initialValue: 0.0 }]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        /* cyberxaos, 4/2007 */
+        return `{
+          float amount = float(${variation.amount});
+          float eccentricity = float(${variation.params.get(this.PARAM_ECCENTRICITY)});
+          float holes = float(${variation.params.get(this.PARAM_HOLES)});
+          float ct = _tx / _r;
+          float r = amount * (rand2(tex) - holes) * eccentricity / (1.0 + eccentricity * ct) / _r;
+         _vx += r * _tx;
+         _vy += r * _ty;
+        }`;
+    }
+
+    get name(): string {
+        return "conic";
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
 class CrossFunc extends VariationShaderFunc2D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         return `{
@@ -1275,6 +1306,35 @@ class FluxFunc extends VariationShaderFunc2D {
     }
 }
 
+class FociFunc extends VariationShaderFunc2D {
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        /* Foci in the Apophysis Plugin Pack */
+        return `{
+            float amount = float(${variation.amount});
+            float expx = exp(_tx) * 0.5;
+            float expnx = 0.25 / expx;
+            if (expx > EPSILON && expnx > EPSILON) {
+                float siny = sin(_ty);
+                float cosy = cos(_ty);
+                float tmp = (expx + expnx - cosy);
+                if (tmp != 0.0) {
+                    tmp = amount / tmp;   
+                    _vx += (expx - expnx) * tmp;
+                    _vy += siny * tmp;
+                }   
+            }
+        }`;
+    }
+
+    get name(): string {
+        return "foci";
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
 class HeartFunc extends VariationShaderFunc2D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         return `{
@@ -1701,6 +1761,61 @@ class LogFunc extends VariationShaderFunc2D {
     }
 }
 
+class MobiusFunc extends VariationShaderFunc2D {
+    PARAM_RE_A = "re_a"
+    PARAM_RE_B = "re_b"
+    PARAM_RE_C = "re_c"
+    PARAM_RE_D = "re_d"
+    PARAM_IM_A = "im_a"
+    PARAM_IM_B = "im_b"
+    PARAM_IM_C = "im_c"
+    PARAM_IM_D = "im_d"
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_RE_A, type: VariationParamType.VP_NUMBER, initialValue: 0.10 },
+            { name: this.PARAM_RE_B, type: VariationParamType.VP_NUMBER, initialValue: 0.20 },
+            { name: this.PARAM_RE_C, type: VariationParamType.VP_NUMBER, initialValue: -0.15 },
+            { name: this.PARAM_RE_C, type: VariationParamType.VP_NUMBER, initialValue: 0.21 },
+            { name: this.PARAM_IM_A, type: VariationParamType.VP_NUMBER, initialValue: 0.20 },
+            { name: this.PARAM_IM_B, type: VariationParamType.VP_NUMBER, initialValue: -0.12 },
+            { name: this.PARAM_IM_C, type: VariationParamType.VP_NUMBER, initialValue: -0.15 },
+            { name: this.PARAM_IM_C, type: VariationParamType.VP_NUMBER, initialValue: 0.10 }
+        ]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        // Mobius, by eralex
+        return `{
+          float amount = float(${variation.amount});
+          float re_a = float(${variation.params.get(this.PARAM_RE_A)});
+          float re_b = float(${variation.params.get(this.PARAM_RE_B)});
+          float re_c = float(${variation.params.get(this.PARAM_RE_C)});
+          float re_d = float(${variation.params.get(this.PARAM_RE_D)});
+          float im_a = float(${variation.params.get(this.PARAM_IM_A)});
+          float im_b = float(${variation.params.get(this.PARAM_IM_B)});
+          float im_c = float(${variation.params.get(this.PARAM_IM_C)});
+          float im_d = float(${variation.params.get(this.PARAM_IM_D)});
+          float re_u = re_a * _tx - im_a * _ty + re_b;
+          float im_u = re_a * _ty + im_a * _tx + im_b;
+          float re_v = re_c * _tx - im_c * _ty + re_d;
+          float im_v = re_c * _ty + im_c * _tx + im_d;
+          float d = (re_v * re_v + im_v * im_v);
+          if (d != 0.0) {
+            float rad_v = amount / d;
+            _vx += rad_v * (re_u * re_v + im_u * im_v);
+            _vy += rad_v * (im_u * re_v - re_u * im_v);       
+          }
+        }`;
+    }
+
+    get name(): string {
+        return "mobius";
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
 class NGonFunc extends VariationShaderFunc2D {
     PARAM_CIRCLE = "circle"
     PARAM_CORNERS = "corners"
@@ -1844,6 +1959,40 @@ class ParabolaFunc extends VariationShaderFunc2D {
 
     get name(): string {
         return "parabola";
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
+class PDJFunc extends VariationShaderFunc2D {
+    PARAM_A = "a"
+    PARAM_B = "b"
+    PARAM_C = "c"
+    PARAM_D = "d"
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_A, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
+            { name: this.PARAM_B, type: VariationParamType.VP_NUMBER, initialValue: 2.0 },
+            { name: this.PARAM_C, type: VariationParamType.VP_NUMBER, initialValue: 3.5 },
+            { name: this.PARAM_C, type: VariationParamType.VP_NUMBER, initialValue: 4.5 }]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        return `{
+          float amount = float(${variation.amount});
+          float a = float(${variation.params.get(this.PARAM_A)});
+          float b = float(${variation.params.get(this.PARAM_B)});
+          float c = float(${variation.params.get(this.PARAM_C)});
+          float d = float(${variation.params.get(this.PARAM_D)});
+          _vx += amount * (sin(a * _ty) - cos(b * _tx));
+          _vy += amount * (sin(c * _tx) - cos(d * _ty));
+        }`;
+    }
+
+    get name(): string {
+        return "pdj";
     }
 
     get variationTypes(): VariationTypes[] {
@@ -2850,6 +2999,7 @@ export function register2DVars() {
     VariationShaders.registerVar(new CannabisCurveWFFunc())
     VariationShaders.registerVar(new CellFunc())
     VariationShaders.registerVar(new CloverLeafWFFunc())
+    VariationShaders.registerVar(new ConicFunc())
     VariationShaders.registerVar(new CosFunc())
     VariationShaders.registerVar(new CoshFunc())
     VariationShaders.registerVar(new CotFunc())
@@ -2877,6 +3027,7 @@ export function register2DVars() {
     VariationShaders.registerVar(new FisheyeFunc())
     VariationShaders.registerVar(new FlowerFunc())
     VariationShaders.registerVar(new FluxFunc())
+    VariationShaders.registerVar(new FociFunc())
     VariationShaders.registerVar(new HeartFunc())
     VariationShaders.registerVar(new HeartWFFunc())
     VariationShaders.registerVar(new HorseshoeFunc())
@@ -2890,10 +3041,12 @@ export function register2DVars() {
     VariationShaders.registerVar(new LinearFunc())
     VariationShaders.registerVar(new LinearTFunc())
     VariationShaders.registerVar(new LogFunc())
+    VariationShaders.registerVar(new MobiusFunc())
     VariationShaders.registerVar(new NGonFunc())
     VariationShaders.registerVar(new NoiseFunc())
     VariationShaders.registerVar(new NPolarFunc())
     VariationShaders.registerVar(new ParabolaFunc())
+    VariationShaders.registerVar(new PDJFunc())
     VariationShaders.registerVar(new PetalFunc())
     VariationShaders.registerVar(new PieFunc())
     VariationShaders.registerVar(new PolarFunc())
