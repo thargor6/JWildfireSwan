@@ -2848,8 +2848,8 @@ class WavesFunc extends VariationShaderFunc2D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         return `{
           float amount = float(${variation.amount});
-          _vx += amount * (_tx + ${xform.c10} * sin(_ty / (${xform.c20} * ${xform.c20} + EPSILON)));
-          _vy += amount * (_ty + ${xform.c11} * sin(_tx / (${xform.c21} * ${xform.c21} + EPSILON)));
+          _vx += amount * (_tx + float(${xform.c10}) * sin(_ty / (float(${xform.c20}) * float(${xform.c20}) + EPSILON)));
+          _vy += amount * (_ty + float(${xform.c11}) * sin(_tx / (float(${xform.c21}) * float(${xform.c21}) + EPSILON)));
         }`;
     }
 
