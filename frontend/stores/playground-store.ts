@@ -20,6 +20,7 @@ import {VariationShaders} from "Frontend/flames/renderer/variations/variation-sh
 import {register2DVars} from "Frontend/flames/renderer/variations/variation-shaders-2d";
 import {register3DVars} from "Frontend/flames/renderer/variations/variation-shaders-3d";
 import {registerZTransformVars} from "Frontend/flames/renderer/variations/variation-shaders-ztransform";
+import {Flame} from "Frontend/flames/model/flame";
 
 type OnInitCallback = () => void
 
@@ -27,6 +28,9 @@ export class PlaygroundStore {
   variations: string[] = []
   initState = new Set<string>()
   onInitCallbacks = new Map<string[], OnInitCallback>()
+  calculating = false
+  lastError = ''
+  flame = new Flame()
 
   constructor() {
     makeAutoObservable(this);

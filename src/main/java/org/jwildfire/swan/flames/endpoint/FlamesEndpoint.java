@@ -50,22 +50,29 @@ public class FlamesEndpoint {
     try {
       String flameXml = Resources.toString(url, StandardCharsets.UTF_8);
       return service.parseFlame(flameXml);
-    } catch (Exception ex) {
+    } catch (Throwable ex) {
       log.error(String.format("Error reading file %s", url), ex);
-      return null;
+      throw new RuntimeException(ex);
     }
   }
 
   public @Nonnull Flame parseFlame(String flameXml) {
     try {
       return service.parseFlame(flameXml);
-    } catch (Exception ex) {
+    } catch (Throwable ex) {
       log.error("Error parsing flame", ex);
-      return null;
+      throw new RuntimeException(ex);
     }
   }
 
   public @Nonnull RandomFlame generateRandomFlame(@Nonnull List<@Nonnull String> supportedVariations) {
-    return service.generateRandomFlame(supportedVariations);
+    try {
+      System.err.println("START GEN");
+      return service.generateRandomFlame(supportedVariations);
+    } catch (Throwable ex) {
+      System.err.println("  ERR GEN");
+      log.error("Error generating random flame", ex);
+      throw new RuntimeException(ex);
+    }
   }
 }

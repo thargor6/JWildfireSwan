@@ -96,10 +96,12 @@ FECCB3FECCB3FECCB3FECCB3FECCB3FECCB3840802840802840802840802840802840802
                             @change="${(event: Event) => this.flameNameChanged(event)}"></vaadin-combo-box>
           <br>
            <vaadin-text-area style="max-width:100em; max-height: 16em; font-size: xx-small;" label="Flame xml" value="${this.flameXml}" @change="${(event: Event)=>this.flameXmlChanged(event)}"></vaadin-text-area>
-          <vaadin-button @click="${this.onImport}">Import flame from xml</vaadin-button>
+          <vaadin-button ?disabled=${playgroundStore.calculating} theme="primary" @click="${this.onImport}">Import flame from xml</vaadin-button>
           <br>
-          <vaadin-button theme="primary" @click="${this.onRandomFlame}">Generate random flame</vaadin-button>
-          
+          <vaadin-button ?disabled=${playgroundStore.calculating} theme="primary" @click="${this.onRandomFlame}">Generate random flame</vaadin-button>
+
+          <swan-loading-indicator .loading=${playgroundStore.calculating} caption="Calculating..."></swan-loading-indicator>
+
         </div>
       </div>
 `;
@@ -119,7 +121,6 @@ FECCB3FECCB3FECCB3FECCB3FECCB3FECCB3840802840802840802840802840802840802
   }
 
   protected firstUpdated() {
-
     playgroundStore.notifyInit(this.tagName)
   }
 

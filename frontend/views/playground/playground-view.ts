@@ -16,7 +16,6 @@
 */
 
 import {html, nothing, PropertyValues, render} from 'lit';
-import { guard } from 'lit/directives/guard.js';
 import {customElement, state} from 'lit/decorators.js';
 import { View } from '../../views/view';
 
@@ -45,6 +44,8 @@ import '@vaadin/split-layout';
 import {PlaygroundRenderPanel} from "Frontend/views/playground/playground-render-panel";
 import {playgroundStore} from "Frontend/stores/playground-store";
 import {PlaygroundFlamePanel} from "Frontend/views/playground/playground-flame-panel";
+import '../../components/swan-loading-indicator'
+import '../../components/swan-error-panel'
 
 @customElement('playground-view')
 export class PlaygroundView extends View {
@@ -58,7 +59,8 @@ export class PlaygroundView extends View {
 
     render() {
         return html`
-            <vaadin-split-layout>
+            <swan-error-panel .errorMessage=${playgroundStore.lastError}></swan-error-panel>
+             <vaadin-split-layout>
                 <div style="display: flex; align-items: center; justify-content: center;"
                      stylex="max-height: 70em;max-width:70em;overflow: scroll;" id="canvas-container">
                     <canvasx id="screen1" width="512" height="512"></canvasx>
@@ -86,9 +88,9 @@ export class PlaygroundView extends View {
                         <playground-flame-panel id='flamePnl' 
                           .visible=${this.selectedTab === 0}
                           .onImport="${this.importFlameFromXml}" .onRandomFlame="${this.createRandomFlame}"
-                        .onFlameNameChanged="${this.renderFlame}"></playground-flame-panel>
-                        <playground-render-panel id='viewOptsPnl' .onRefresh="${this.renderFlame}"
-                          .visible=${this.selectedTab === 1} .onImageSizeChanged="${this.renderFlame}"></playground-render-panel>
+                        .onFlameNameChanged="${this.importExampleFlame}"></playground-flame-panel>
+                        <playground-render-panel id='viewOptsPnl' .onRefresh="${this.rerenderFlame}"
+                          .visible=${this.selectedTab === 1} .onImageSizeChanged="${this.rerenderFlame}"></playground-render-panel>
                         <playground-variations-panel .visible=${this.selectedTab === 2}></playground-variations-panel>
                     </div>
                 </div>
@@ -100,82 +102,84 @@ export class PlaygroundView extends View {
         this.selectedTab = e.detail.value;
     }
 
-    renderFlame = (): void => {
-        this.canvasContainer.innerHTML = '';
-        var brightnessElement = this.viewOptsPanel.brightnessElement // document.querySelector("#brightness") as HTMLElement;
-        var param1Element = this.viewOptsPanel.param1Element // document.querySelector("#param1") as HTMLElement;
-        var radioButtonElements = this.viewOptsPanel.displayModeElements // document.getElementsByName('displayMode') ;
-        var canvas = document.createElement('canvas');
-
-        canvas.id = "screen1";
-        canvas.width = 512;
-        canvas.height = 512;
-        this.canvasContainer.appendChild(canvas);
-
-        FlamesEndpoint.getExampleFlame(this.flamePanel.flameName).then(flame => {
-            console.log("FLAME", flame)
-            const renderer = new FlameRenderer(this.viewOptsPanel.imageSize, this.viewOptsPanel.pointsSize, canvas, FlameMapper.mapFromBackend(flame), brightnessElement, radioButtonElements, param1Element);
-            renderer.drawScene()
-        })
-    }
-
     protected firstUpdated(_changedProperties: PropertyValues) {
         super.firstUpdated(_changedProperties);
         this.canvasContainer = document.querySelector('#canvas-container')!
         this.viewOptsPanel = document.querySelector('#viewOptsPnl')!
         this.flamePanel = document.querySelector('#flamePnl')!
-        playgroundStore.registerInitCallback([this.flamePanel.tagName, this.viewOptsPanel.tagName], this.renderFlame)
+        playgroundStore.registerInitCallback([this.flamePanel.tagName, this.viewOptsPanel.tagName], this.renderFirstFlame)
     }
 
     private getTabStyle(ownTabIdx: number, selectedTab: number) {
         return ownTabIdx === selectedTab ? html`display: block;` : html`display: none;`;
     }
 
-    createRandomFlame = () => {
+    recreateCanvas = ()=> {
         this.canvasContainer.innerHTML = '';
+        let canvas = document.createElement('canvas')
+        canvas.id = "screen1"
+        canvas.width = 512
+        canvas.height = 512
+        this.canvasContainer.appendChild(canvas)
+        return canvas
+    }
 
-        var brightnessElement = this.viewOptsPanel.brightnessElement // document.querySelector("#brightness") as HTMLElement;
-        var param1Element = this.viewOptsPanel.param1Element // document.querySelector("#param1") as HTMLElement;
-        var radioButtonElements = this.viewOptsPanel.displayModeElements // document.getElementsByName('displayMode') ;
+    rerenderFlame = ()=> {
+        let brightnessElement = this.viewOptsPanel.brightnessElement
+        let param1Element = this.viewOptsPanel.param1Element
+        let radioButtonElements = this.viewOptsPanel.displayModeElements
+        const canvas = this.recreateCanvas()
+        const renderer = new FlameRenderer(this.viewOptsPanel.imageSize, this.viewOptsPanel.pointsSize, canvas, playgroundStore.flame, brightnessElement, radioButtonElements, param1Element);
+        renderer.drawScene()
+    }
 
-        var canvas = document.createElement('canvas');
+    importFlameFromXml = () => {
+        playgroundStore.calculating = true
+        playgroundStore.lastError = ''
+        FlamesEndpoint.parseFlame(this.flamePanel.flameXml).then(flame => {
+          playgroundStore.flame = FlameMapper.mapFromBackend(flame)
+          this.rerenderFlame()
+          playgroundStore.calculating = false
+        }).catch(err=> {
+            playgroundStore.calculating = false
+            playgroundStore.lastError = err
+        })
+    }
 
-        canvas.id = "screen1";
-        canvas.width = 512;
-        canvas.height = 512;
-        this.canvasContainer.appendChild(canvas);
-
+    createRandomFlame = () => {
+        playgroundStore.calculating = true
+        playgroundStore.lastError = ''
 
         FlamesEndpoint.generateRandomFlame(playgroundStore.variations).then(
             randomFlame => {
                 this.flamePanel.flameXml = randomFlame.flameXml
-                const renderer = new FlameRenderer(this.viewOptsPanel.imageSize, this.viewOptsPanel.pointsSize, canvas, FlameMapper.mapFromBackend(randomFlame.flame), brightnessElement, radioButtonElements, param1Element);
-                renderer.drawScene()
+                playgroundStore.flame = FlameMapper.mapFromBackend(randomFlame.flame)
+                this.rerenderFlame()
+                playgroundStore.calculating = false
             }
-        )
-
+        ).catch(err=> {
+            playgroundStore.calculating = false
+            playgroundStore.lastError = err
+        })
     }
 
-    importFlameFromXml = () => {
-        console.log("Importing...", this.flamePanel.flameXml);
+    importExampleFlame = (): void => {
+        playgroundStore.calculating = true
+        playgroundStore.lastError = ''
 
-        this.canvasContainer.innerHTML = '';
+        FlamesEndpoint.getExampleFlame(this.flamePanel.flameName).then(flame => {
+            playgroundStore.flame = FlameMapper.mapFromBackend(flame)
+            this.rerenderFlame()
+            playgroundStore.calculating = false
+        }).catch(err=> {
+                playgroundStore.calculating = false
+                playgroundStore.lastError = err
+            })
+    }
 
-        var brightnessElement = this.viewOptsPanel.brightnessElement // document.querySelector("#brightness") as HTMLElement;
-        var param1Element = this.viewOptsPanel.param1Element // document.querySelector("#param1") as HTMLElement;
-        var radioButtonElements = this.viewOptsPanel.displayModeElements // document.getElementsByName('displayMode') ;
-
-        var canvas = document.createElement('canvas');
-
-        canvas.id = "screen1";
-        canvas.width = 512;
-        canvas.height = 512;
-        this.canvasContainer.appendChild(canvas);
-
-        FlamesEndpoint.parseFlame(this.flamePanel.flameXml).then(flame => {
-            console.log("FLAME", flame)
-            const renderer = new FlameRenderer(this.viewOptsPanel.imageSize, this.viewOptsPanel.pointsSize, canvas, FlameMapper.mapFromBackend(flame), brightnessElement, radioButtonElements, param1Element);
-            renderer.drawScene()
-        })
+    renderFirstFlame = ()=> {
+        const idx = Math.floor(this.flamePanel.flameNames.length * Math.random())
+        this.flamePanel.flameName = this.flamePanel.flameNames[idx]
+        this.importExampleFlame()
     }
 }
