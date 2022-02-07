@@ -76,6 +76,9 @@ FECCB3FECCB3FECCB3FECCB3FECCB3FECCB3840802840802840802840802840802840802
   @property()
   onRandomFlame: ()=>void = ()=> {}
 
+  @property()
+  onRandomGradient: ()=>void = ()=> {}
+
   @state()
   flameName = 'example08'
 
@@ -96,10 +99,15 @@ FECCB3FECCB3FECCB3FECCB3FECCB3FECCB3840802840802840802840802840802840802
                             @change="${(event: Event) => this.flameNameChanged(event)}"></vaadin-combo-box>
           <br>
            <vaadin-text-area style="max-width:100em; max-height: 16em; font-size: xx-small;" label="Flame xml" value="${this.flameXml}" @change="${(event: Event)=>this.flameXmlChanged(event)}"></vaadin-text-area>
-          <vaadin-button ?disabled=${playgroundStore.calculating} theme="primary" @click="${this.onImport}">Import flame from xml</vaadin-button>
+          <div style="display: flex;">
+            <vaadin-button ?disabled=${playgroundStore.calculating} @click="${this.onImport}">Import flame from xml</vaadin-button>
+          </div>
           <br>
-          <vaadin-button ?disabled=${playgroundStore.calculating} theme="primary" @click="${this.onRandomFlame}">Generate random flame</vaadin-button>
+          <div style="display: flex;">
+          <vaadin-button theme="primary" ?disabled=${playgroundStore.calculating} @click="${this.onRandomFlame}">Generate random flame</vaadin-button>
+          <vaadin-button ?disabled=${playgroundStore.calculating} @click="${this.onRandomGradient}">Generate random gradient</vaadin-button>
 
+          </div>
           <swan-loading-indicator .loading=${playgroundStore.calculating} caption="Calculating..."></swan-loading-indicator>
 
         </div>

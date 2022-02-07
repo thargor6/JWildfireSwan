@@ -37,10 +37,13 @@ export class PlaygroundRenderPanel extends MobxLitElement {
   @property()
   onImageSizeChanged: ()=>void = ()=>{}
 
+  @property()
+  onSaveImage: ()=>void = ()=>{}
+
   @state()
   imageSize = 512
 
-  imageSizes = [256, 512, 1024, 2048]
+  imageSizes = [128, 256, 512, 1024, 2048]
 
   @state()
   pointsSize = 256
@@ -56,26 +59,27 @@ export class PlaygroundRenderPanel extends MobxLitElement {
       <div style="${this.visible ? `display:block;`: `display:none;`}">
         <div style="display: flex; flex-direction: column;">
         
-        <vaadin-combo-box style="max-width: 10em;" label="Image size" .items="${this.imageSizes}" value="${this.imageSize}"
-                          @change="${(event: Event) => this.imageSizeChanged(event)}"></vaadin-combo-box>
-        <vaadin-combo-box style="max-width: 10em;" label="Swarm size" .items="${this.pointsSizes}" value="${this.pointsSize}"
-                          @change="${(event: Event) => this.pointsSizeChanged(event)}"></vaadin-combo-box>
-
-        <vaadin-button style="max-width: 10em;" @click="${this.onRefresh}">Refresh</vaadin-button>
-        
-        <div style="display: flex;">
-        <label>brightness</label><paper-slider id="brightness" step="0.0001" value="1.6" min="0" max="4"></paper-slider>
-        <paper-slider style="display: none;" id="param1" step="0.1" value="2.5" min="0" max="10.0"></paper-slider>
-        </div>
-        <label><input type="radio" id="displayMode" name="displayMode" value="flame" checked="checked">Flame</label>
-        <label><input type="radio" id="displayMode" name="displayMode" value="position">Position Iteration</label>
-        <label><input type="radio" id="displayMode" name="displayMode" value="colour">Color Iteration</label>
+          <vaadin-combo-box style="max-width: 10em;" label="Image size" .items="${this.imageSizes}" value="${this.imageSize}"
+                            @change="${(event: Event) => this.imageSizeChanged(event)}"></vaadin-combo-box>
+          <vaadin-combo-box style="max-width: 10em;" label="Swarm size" .items="${this.pointsSizes}" value="${this.pointsSize}"
+                            @change="${(event: Event) => this.pointsSizeChanged(event)}"></vaadin-combo-box>
+  
+          <vaadin-button style="max-width: 10em;" @click="${this.onRefresh}">Refresh</vaadin-button>
+          
+          <div style="display: flex;">
+          <label>brightness</label><paper-slider id="brightness" step="0.0001" value="1.6" min="0" max="4"></paper-slider>
+          <paper-slider style="display: none;" id="param1" step="0.1" value="2.5" min="0" max="10.0"></paper-slider>
+          </div>
+          <label><input type="radio" id="displayMode" name="displayMode" value="flame" checked="checked">Flame</label>
+          <label><input type="radio" id="displayMode" name="displayMode" value="position">Position Iteration</label>
+          <label><input type="radio" id="displayMode" name="displayMode" value="colour">Color Iteration</label>
 
         </div>
       </div>
 `;
   }
 
+//<vaadin-button theme="primary" @click="${this.onSaveImage}">Save image</vaadin-button>
 
   private imageSizeChanged(event: Event) {
     if ((event.target as HasValue<string>).value) {

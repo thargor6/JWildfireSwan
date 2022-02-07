@@ -65,6 +65,7 @@ export class XForm {
 }
 
 export class Flame {
+    public uid: string = '';
     public brightness = Parameters.dNumber(1.0)
     public pixelsPerUnit = Parameters.dNumber(100.0)
     public width = Parameters.dNumber(512)

@@ -88,8 +88,10 @@ export class PlaygroundView extends View {
                         <playground-flame-panel id='flamePnl' 
                           .visible=${this.selectedTab === 0}
                           .onImport="${this.importFlameFromXml}" .onRandomFlame="${this.createRandomFlame}"
+                          .onRandomGradient="${this.createRandomGradient}"
                         .onFlameNameChanged="${this.importExampleFlame}"></playground-flame-panel>
-                        <playground-render-panel id='viewOptsPnl' .onRefresh="${this.rerenderFlame}"
+                        <playground-render-panel id='viewOptsPnl' .onRefresh="${this.rerenderFlame}" 
+                          .onSaveImage="${this.saveImage}"
                           .visible=${this.selectedTab === 1} .onImageSizeChanged="${this.rerenderFlame}"></playground-render-panel>
                         <playground-variations-panel .visible=${this.selectedTab === 2}></playground-variations-panel>
                     </div>
@@ -114,6 +116,8 @@ export class PlaygroundView extends View {
         return ownTabIdx === selectedTab ? html`display: block;` : html`display: none;`;
     }
 
+    myCanvas : undefined | HTMLCanvasElement = undefined
+
     recreateCanvas = ()=> {
         this.canvasContainer.innerHTML = '';
         let canvas = document.createElement('canvas')
@@ -121,7 +125,25 @@ export class PlaygroundView extends View {
         canvas.width = 512
         canvas.height = 512
         this.canvasContainer.appendChild(canvas)
+        this.myCanvas = canvas
         return canvas
+    }
+
+    saveImage =()=> {
+   //     const context = canvas.getContext("webgl")!
+  //      const imgData = canvas.toDataURL("image/png");
+  //      const imgElement = document.createElement('img');
+ //       imgElement.src = imgData;
+ //       this.canvasContainer.appendChild(imgElement);
+/*
+        const webglCanvas: HTMLCanvasElement = this.canvasContainer.querySelector('#screen1')!
+        const glContext = this.myCanvas!.getContext("webgl", {preserveDrawingBuffer: true})!
+        const width = this.myCanvas!.width
+        const height = this.myCanvas!.height
+        var pixels = new Uint8Array(4 * width * height)
+        glContext.readPixels(0, 0, width, height, glContext.RGBA, glContext.UNSIGNED_BYTE, pixels);
+console.log("PIXELS", pixels)
+*/
     }
 
     rerenderFlame = ()=> {
@@ -151,6 +173,23 @@ export class PlaygroundView extends View {
         playgroundStore.lastError = ''
 
         FlamesEndpoint.generateRandomFlame(playgroundStore.variations).then(
+            randomFlame => {
+                this.flamePanel.flameXml = randomFlame.flameXml
+                playgroundStore.flame = FlameMapper.mapFromBackend(randomFlame.flame)
+                this.rerenderFlame()
+                playgroundStore.calculating = false
+            }
+        ).catch(err=> {
+            playgroundStore.calculating = false
+            playgroundStore.lastError = err
+        })
+    }
+
+    createRandomGradient = () => {
+        playgroundStore.calculating = true
+        playgroundStore.lastError = ''
+
+        FlamesEndpoint.generateRandomGradientForFlame(FlameMapper.mapToBackend(playgroundStore.flame)).then(
             randomFlame => {
                 this.flamePanel.flameXml = randomFlame.flameXml
                 playgroundStore.flame = FlameMapper.mapFromBackend(randomFlame.flame)
