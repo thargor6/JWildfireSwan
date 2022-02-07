@@ -73,8 +73,8 @@ export class WebglShaders {
     progPointsVertexShader: string
     compPointsFragmentShader: string
 
-    constructor(gl: WebGLRenderingContext, canvas: HTMLCanvasElement, grid_size: number, points_size: number, flame: RenderFlame) {
-        this.progPointsVertexShader = new ProgPointsVertexShaderGenerator().createShader(flame, grid_size, points_size);
+    constructor(gl: WebGLRenderingContext, canvas: HTMLCanvasElement, canvas_size: number, swarm_size: number, flame: RenderFlame) {
+        this.progPointsVertexShader = new ProgPointsVertexShaderGenerator().createShader(flame, canvas_size);
         this.prog_points = compileShaderDirect(gl, this.progPointsVertexShader, shader_points_fs, {}) as ComputePointsProgram;
         this.prog_points.vertexPositionAttribute = gl.getAttribLocation(this.prog_points, "aVertexPosition");
         gl.enableVertexAttribArray(this.prog_points.vertexPositionAttribute);
@@ -84,7 +84,7 @@ export class WebglShaders {
         this.prog_points.time = gl.getUniformLocation(this.prog_points, "time")!;
 
         this.compPointsFragmentShader = new CompPointsFragmentShaderGenerator().createShader(flame);
-        this.prog_comp = compileShaderDirect(gl, shader_direct_vs, this.compPointsFragmentShader, {RESOLUTION: points_size}) as IteratePointsProgram;
+        this.prog_comp = compileShaderDirect(gl, shader_direct_vs, this.compPointsFragmentShader, {RESOLUTION: swarm_size}) as IteratePointsProgram;
         this.prog_comp.vertexPositionAttribute = gl.getAttribLocation(this.prog_comp, "aVertexPosition");
         gl.enableVertexAttribArray(this.prog_comp.vertexPositionAttribute);
         this.prog_comp.uTexSamp = gl.getUniformLocation(this.prog_comp, "uTexSamp")!;
@@ -93,7 +93,7 @@ export class WebglShaders {
         this.prog_comp.seed3 = gl.getUniformLocation(this.prog_comp, "seed3")!;
         this.prog_comp.time = gl.getUniformLocation(this.prog_comp, "time")!;
 
-        this.prog_comp_col = compileShaderDirect(gl, shader_direct_vs, shader_comp_col_fs, {RESOLUTION: points_size}) as ComputeColorsProgram;
+        this.prog_comp_col = compileShaderDirect(gl, shader_direct_vs, shader_comp_col_fs, {RESOLUTION: swarm_size}) as ComputeColorsProgram;
         this.prog_comp_col.vertexPositionAttribute = gl.getAttribLocation(this.prog_comp_col, "aVertexPosition");
         gl.enableVertexAttribArray(this.prog_comp_col.vertexPositionAttribute);
         this.prog_comp_col.uTexSamp = gl.getUniformLocation(this.prog_comp_col, "uTexSamp")!;

@@ -25,7 +25,7 @@ export class Textures {
     texture2: WebGLTexture;
     gradient: WebGLTexture;
 
-    constructor(public flame: RenderFlame, public gl: WebGLRenderingContext, public points_size: number, public grid_size: number) {
+    constructor(public flame: RenderFlame, public gl: WebGLRenderingContext, public swarm_size: number, public canvas_size: number) {
         //
         this.gradient = gl.createTexture()!;
         gl.bindTexture(gl.TEXTURE_2D, this.gradient);
@@ -47,7 +47,7 @@ export class Textures {
 
         this.texture0 = gl.createTexture()!;
         gl.bindTexture(gl.TEXTURE_2D, this.texture0);
-        var pixels = [], tSize = points_size;
+        var pixels = [], tSize = swarm_size;
         for(var i = 0; i < tSize; i++) {
             for(var j = 0; j < tSize; j++) {
                 pixels.push(
@@ -94,14 +94,14 @@ export class Textures {
         this.texture2 = gl.createTexture()!;
         gl.activeTexture(gl.TEXTURE2);
         gl.bindTexture(gl.TEXTURE_2D, this.texture2);
-        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, grid_size, grid_size, 0, gl.RGBA, gl.FLOAT, null);
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, canvas_size, canvas_size, 0, gl.RGBA, gl.FLOAT, null);
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
     }
 
     clearHistogram() {
         const gl = this.gl;
-        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, this.grid_size, this.grid_size, 0, gl.RGBA, gl.FLOAT, null);
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, this.canvas_size, this.canvas_size, 0, gl.RGBA, gl.FLOAT, null);
 
     }
 }

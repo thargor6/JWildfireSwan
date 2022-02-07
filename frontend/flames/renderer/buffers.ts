@@ -26,11 +26,11 @@ export class Buffers {
     pointsVertexPositionBuffer: PositionBuffer;
     quadVertexPositionBuffer: PositionBuffer;
 
-    constructor(gl: WebGLRenderingContext, shaders: WebglShaders, points_size: number) {
+    constructor(gl: WebGLRenderingContext, shaders: WebglShaders, swarm_size: number) {
         this.pointsVertexPositionBuffer = gl.createBuffer()! as PositionBuffer;
         gl.bindBuffer(gl.ARRAY_BUFFER, this.pointsVertexPositionBuffer);
         var vertices = [];
-        var N = points_size;
+        var N = swarm_size;
         for(var x = 0; x < N; x++) {
             for(var y = 0; y < N; y++) {
                 vertices.push(x / N, y / N, 0.0);

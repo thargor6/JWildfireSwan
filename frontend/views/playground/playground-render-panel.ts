@@ -74,12 +74,13 @@ export class PlaygroundRenderPanel extends MobxLitElement {
           <label><input type="radio" id="displayMode" name="displayMode" value="position">Position Iteration</label>
           <label><input type="radio" id="displayMode" name="displayMode" value="colour">Color Iteration</label>
 
+          
         </div>
       </div>
 `;
   }
 
-//<vaadin-button theme="primary" @click="${this.onSaveImage}">Save image</vaadin-button>
+  //<vaadin-button theme="primary" @click="${this.onSaveImage}">Save image</vaadin-button>
 
   private imageSizeChanged(event: Event) {
     if ((event.target as HasValue<string>).value) {

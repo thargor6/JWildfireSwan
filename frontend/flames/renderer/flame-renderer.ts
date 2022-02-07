@@ -31,14 +31,13 @@ import {render} from "lit";
 
 export class FlameRenderer {
     frames = 0;
-    canvas_size = 0;
     ctx: FlameRenderContext;
     settings: FlameRenderSettings;
     iterator: FlameIterator;
     display: FlameRendererDisplay;
 
-    constructor(private grid_size: number,
-                private points_size: number,
+    constructor(private canvas_size: number,
+                private swarm_size: number,
                 private canvas: HTMLCanvasElement,
                 private flame: Flame,
                 private brightnessElement: HTMLElement,
@@ -46,26 +45,25 @@ export class FlameRenderer {
 
         const renderFlame = FlameMapper.mapForRendering(flame)
         this.prepareFlame(renderFlame)
-        const imageWidth = grid_size
-        const imageHeight = grid_size
+        const imageWidth = canvas_size
+        const imageHeight = canvas_size
         const wScl = imageWidth / renderFlame.width
         const hScl = imageHeight / renderFlame.height
         renderFlame.pixelsPerUnit = (wScl + hScl) * 0.5 * renderFlame.pixelsPerUnit
         renderFlame.width = imageWidth
         renderFlame.height = imageHeight
 
-        this.canvas_size = this.grid_size
         canvas.width = this.canvas_size
         canvas.height = this.canvas_size
 
         const gl = initGL(canvas)
 
-        const shaders = new WebglShaders(gl, canvas, this.grid_size, this.points_size, renderFlame)
-        const buffers = new Buffers(gl, shaders, this.points_size)
-        const textures = new Textures(renderFlame, gl, this.points_size, this.grid_size)
+        const shaders = new WebglShaders(gl, canvas, this.canvas_size, this.swarm_size, renderFlame)
+        const buffers = new Buffers(gl, shaders, this.swarm_size)
+        const textures = new Textures(renderFlame, gl, this.swarm_size, this.canvas_size)
         const framebuffers = new Framebuffers(gl, textures)
         this.ctx = new FlameRenderContext(gl, shaders, buffers, textures, framebuffers)
-        this.settings = new FlameRenderSettings(1.2, this.canvas_size, this.points_size, 1, 0.0)
+        this.settings = new FlameRenderSettings(1.2, this.canvas_size, this.swarm_size, 1, 0.0)
         this.display = new FlameRendererDisplay(this.ctx, this.settings)
         this.iterator = new FlameIterator(this.ctx, this.settings)
     }

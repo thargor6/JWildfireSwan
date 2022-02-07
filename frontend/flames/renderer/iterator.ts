@@ -29,7 +29,7 @@ export class FlameIterator {
         const gl = this.ctx.gl;
         const canvas_size = this.settings.canvas_size;
 
-        gl.viewport(0, 0, this.settings.points_size, this.settings.points_size);
+        gl.viewport(0, 0, this.settings.swarm_size, this.settings.swarm_size);
 
         gl.disable(gl.BLEND);
         gl.activeTexture(gl.TEXTURE0);
