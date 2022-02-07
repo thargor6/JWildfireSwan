@@ -68,4 +68,44 @@ public class FlameMapper {
         .forEach(xForm -> res.getFinalXforms().add(xFormMapper.mapFromJwildfire(source, xForm)));
     return res;
   }
+
+  public org.jwildfire.create.tina.base.Flame mapToJwildfire(Flame source) {
+    org.jwildfire.create.tina.base.Flame res = new org.jwildfire.create.tina.base.Flame();
+    res.setBrightness(source.getBrightness());
+    res.setPixelsPerUnit(source.getPixelsPerUnit());
+    res.setWidth(source.getWidth());
+    res.setHeight(source.getHeight());
+    res.setCamZoom(source.getCamZoom());
+    res.setCentreX(source.getCentreX());
+    res.setCentreY(source.getCentreY());
+    res.setCamYaw(source.getCamYaw());
+    res.setCamPitch(source.getCamPitch());
+    res.setCamRoll(source.getCamRoll());
+    res.setCamBank(source.getCamBank());
+    res.setCamDOF(source.getCamDOF());
+    res.setCamDOFArea(source.getCamDOFArea());
+    res.setCamPerspective(source.getCamPerspective());
+    res.setDimishZ(source.getDiminishZ());
+    res.setCamPosX(source.getCamPosX());
+    res.setCamPosY(source.getCamPosY());
+    res.setCamPosZ(source.getCamPosZ());
+    res.setNewCamDOF(source.isNewCamDOF());
+    res.setDimZDistance(source.getDimZDistance());
+    res.setCamZ(source.getCamZ());
+    res.setFocusX(source.getFocusX());
+    res.setFocusY(source.getFocusY());
+    res.setFocusZ(source.getFocusZ());
+    res.setCamDOFExponent(source.getCamDOFExponent());
+
+    for(int i=0;i<source.getGradient().size();i++) {
+      Color color = source.getGradient().get(i);
+      res.getFirstLayer().getPalette().setColor(i, color.getR(), color.getG(), color.getB());
+    }
+
+    source.getXforms().stream()
+            .forEach(xForm -> res.getFirstLayer().getXForms().add(xFormMapper.mapToJwildfire(source, xForm)));
+    source.getFinalXforms().stream()
+            .forEach(xForm -> res.getFirstLayer().getFinalXForms().add(xFormMapper.mapToJwildfire(source, xForm)));
+    return res;
+  }
 }

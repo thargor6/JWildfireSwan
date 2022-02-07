@@ -17,7 +17,10 @@
 
 package org.jwildfire.swan.flames.mapper;
 
+import org.jwildfire.create.tina.variation.VariationFunc;
+import org.jwildfire.create.tina.variation.VariationFuncList;
 import org.jwildfire.swan.flames.model.DParam;
+import org.jwildfire.swan.flames.model.Flame;
 import org.jwildfire.swan.flames.model.IParam;
 import org.jwildfire.swan.flames.model.Variation;
 import org.jwildfire.swan.flames.model.XForm;
@@ -69,6 +72,52 @@ public class XFormMapper {
             dstVar.getDParams().add(new DParam(pName, (Double)pValue));
           }
         }
+      };
+      res.getVariations().add(dstVar);
+    }
+    return res;
+  }
+
+  public org.jwildfire.create.tina.base.XForm mapToJwildfire(Flame sourceFlame, XForm source) {
+    org.jwildfire.create.tina.base.XForm res = new org.jwildfire.create.tina.base.XForm();
+
+    res.setWeight(source.getWeight());
+    for(int i=0;i<res.getModifiedWeights().length;i++) {
+      res.getModifiedWeights()[i] = 0.0;
+    }
+    for(int i=0;i<sourceFlame.getXforms().size() && i<source.getModifiedWeights().size();i++) {
+      res.getModifiedWeights()[i]=source.getModifiedWeights().get(i);
+    }
+    res.setColor(source.getColor());
+    res.setColorSymmetry(source.getColorSymmetry());
+
+    res.setCoeff00(source.getC00());
+    res.setCoeff01(source.getC01());
+    res.setCoeff10(source.getC10());
+    res.setCoeff11(source.getC11());
+    res.setCoeff20(source.getC20());
+    res.setCoeff21(source.getC21());
+
+    res.setPostCoeff00(source.getP00());
+    res.setPostCoeff01(source.getP01());
+    res.setPostCoeff10(source.getP10());
+    res.setPostCoeff11(source.getP11());
+    res.setPostCoeff20(source.getP20());
+    res.setPostCoeff21(source.getP21());
+
+    for(int i=0;i<source.getVariations().size();i++) {
+      Variation srcVar = source.getVariations().get(i);
+      org.jwildfire.create.tina.variation.Variation dstVar = new org.jwildfire.create.tina.variation.Variation();
+      dstVar.setAmount(srcVar.getAmount());
+      VariationFunc varFunc = VariationFuncList.getVariationFuncInstance(srcVar.getName(), true);
+      dstVar.setFunc(varFunc);
+      for (int j = 0; j < srcVar.getIParams().size(); j++) {
+        IParam param = srcVar.getIParams().get(j);
+        varFunc.setParameter(param.getName(), param.getValue());
+      };
+      for (int j = 0; j < srcVar.getDParams().size(); j++) {
+        DParam param = srcVar.getDParams().get(j);
+        varFunc.setParameter(param.getName(), param.getValue());
       };
       res.getVariations().add(dstVar);
     }

@@ -15,12 +15,16 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 */
 
+import {default as SourceColor} from '../../../generated/org/jwildfire/swan/flames/model/Color'
 import {default as SourceXForm} from '../../../generated/org/jwildfire/swan/flames/model/XForm'
 import {default as SourceFlame} from '../../../generated/org/jwildfire/swan/flames/model/Flame'
 import {default as SourceVariation} from '../../../generated/org/jwildfire/swan/flames/model/Variation'
 import {Flame, XForm, Variation, Color} from "../flame";
 import {Parameters} from "Frontend/flames/model/parameters";
 import {RenderColor, RenderFlame, RenderVariation, RenderXForm} from "Frontend/flames/model/render-flame";
+import IParam from "Frontend/generated/org/jwildfire/swan/flames/model/IParam";
+import DParam from "Frontend/generated/org/jwildfire/swan/flames/model/DParam";
+import {spacing} from "@vaadin/vaadin-lumo-styles";
 
 class VariationMapper {
     static mapFromBackend(source: SourceVariation): Variation {
@@ -32,6 +36,22 @@ class VariationMapper {
         })
         source.iParams.map(id => {
             res.params.set(id.name, Parameters.iNumber(id.value))
+        })
+        return res;
+    }
+
+    static mapToBackend(source: Variation): SourceVariation {
+        const res: SourceVariation = {
+            name: source.name,
+            amount: source.amount.value,
+            iParams: new Array<IParam>(),
+            dParams: new Array<DParam>()
+        }
+        source.params.forEach((value, key) => {
+              res.dParams.push({
+                  name: key,
+                  value: value.value
+              })
         })
         return res;
     }
@@ -84,6 +104,43 @@ class XFormMapper {
         return res;
     }
 
+    static mapToBackend(source: XForm): SourceXForm {
+        const res: SourceXForm = {
+            weight: source.weight.value,
+            color: source.color.value,
+            colorSymmetry: source.colorSymmetry.value,
+
+            c00: source.c00.value,
+            c01: source.c01.value,
+            c10: source.c10.value,
+            c11: source.c11.value,
+            c20: source.c20.value,
+            c21: source.c21.value,
+
+            p00: source.p00.value,
+            p01: source.p01.value,
+            p10: source.p10.value,
+            p11: source.p11.value,
+            p20: source.p20.value,
+            p21: source.p21.value,
+            modifiedWeights: new Array<number>(),
+            variations: new Array<SourceVariation>()
+        }
+        for(let i=0;i<source.modifiedWeights.length;i++) {
+            if(i>=res.modifiedWeights.length) {
+                res.modifiedWeights.push(source.modifiedWeights[i])
+            }
+            else {
+                res.modifiedWeights[i] = source.modifiedWeights[i]
+            }
+        }
+
+        source.variations.map(svar => {
+            res.variations.push(VariationMapper.mapToBackend(svar))
+        })
+        return res;
+    }
+
     static mapForRendering(source: XForm): RenderXForm {
         const res = new RenderXForm()
 
@@ -130,6 +187,7 @@ class ColorMapper {
 export class FlameMapper {
     public static mapFromBackend(source: SourceFlame): Flame {
         const res = new Flame()
+        res.uid = source.uid
         res.brightness = Parameters.dNumber(source.brightness)
         res.pixelsPerUnit = Parameters.dNumber(source.pixelsPerUnit)
         res.width = Parameters.dNumber(source.width)
@@ -166,6 +224,55 @@ export class FlameMapper {
         })
         source.finalXforms.map(sxf => {
             res.finalXforms.push(XFormMapper.mapFromBackend(sxf))
+        })
+        return res
+    }
+
+    public static mapToBackend(source: Flame): SourceFlame {
+        const res: SourceFlame = {
+          uid: source.uid,
+          brightness: source.brightness.value,
+          pixelsPerUnit: source.pixelsPerUnit.value,
+          width: source.width.value,
+          height: source.height.value,
+          camZoom: source.camZoom.value,
+          centreX: source.centreX.value,
+          centreY: source.centreY.value,
+          camYaw: source.camYaw.value,
+          camPitch: source.camPitch.value,
+          camRoll:source.camRoll.value,
+          camBank: source.camBank.value,
+          camDOF: source.camDOF.value,
+          camDOFArea: source.camDOFArea.value,
+          camPerspective: source.camPerspective.value,
+          diminishZ: source.diminishZ.value,
+          camPosX: source.camPosX.value,
+          camPosY: source.camPosY.value,
+          camPosZ: source.camPosZ.value,
+          newCamDOF: source.newCamDOF,
+          dimZDistance: source.dimZDistance.value,
+          camZ: source.camZ.value,
+          focusX: source.focusX.value,
+          focusY: source.focusY.value,
+          focusZ: source.focusZ.value,
+          camDOFExponent: source.camDOFExponent.value,
+          gradient: new Array<Color>(),
+          xforms: new Array<SourceXForm>(),
+          finalXforms: new Array<SourceXForm>()
+        }
+
+        res.gradient = []
+        source.gradient.forEach(color => res.gradient.push(
+            // TODO whitelevel
+            { r: color.r * 200.0,
+              g: color.g * 200.0,
+              b: color.b * 200.0}))
+
+        source.xforms.map(sxf => {
+            res.xforms.push(XFormMapper.mapToBackend(sxf))
+        })
+        source.finalXforms.map(sxf => {
+            res.finalXforms.push(XFormMapper.mapToBackend(sxf))
         })
         return res
     }

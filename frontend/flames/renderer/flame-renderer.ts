@@ -129,6 +129,9 @@ export class FlameRenderer {
        //   this.ctx.textures.clearHistogram();
         }
 
+
+
+
         if (this.frames < 3000)
             window.requestAnimationFrame(this.drawScene.bind(this));
     }
