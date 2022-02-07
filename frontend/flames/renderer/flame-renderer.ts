@@ -30,11 +30,15 @@ import {RenderColor, RenderFlame} from "Frontend/flames/model/render-flame";
 import {render} from "lit";
 
 export class FlameRenderer {
-    frames = 0;
-    ctx: FlameRenderContext;
-    settings: FlameRenderSettings;
-    iterator: FlameIterator;
-    display: FlameRendererDisplay;
+    frames = 0
+    ctx: FlameRenderContext
+    settings: FlameRenderSettings
+    iterator: FlameIterator
+    display: FlameRendererDisplay
+    saveNextImage = false
+    saveImageontainer: HTMLDivElement | undefined = undefined
+    imageSourceCanvas: HTMLCanvasElement | undefined = undefined
+
 
     constructor(private canvas_size: number,
                 private swarm_size: number,
@@ -127,13 +131,25 @@ export class FlameRenderer {
        //   this.ctx.textures.clearHistogram();
         }
 
-
-
+        if(this.saveNextImage) {
+            this.saveNextImage = false
+            if(this.saveImageontainer && this.imageSourceCanvas) {
+                const imgData =  this.imageSourceCanvas.toDataURL("image/png");
+                const imgElement = document.createElement('img');
+                imgElement.src = imgData;
+                this.saveImageontainer.appendChild(imgElement);
+                this.saveImageontainer = undefined
+            }
+        }
 
         if (this.frames < 3000)
             window.requestAnimationFrame(this.drawScene.bind(this));
     }
 
 
-
+    saveCurrentImageToContainer(canvas: HTMLCanvasElement, destContainer: HTMLDivElement) {
+        this.saveImageontainer = destContainer
+        this.imageSourceCanvas = canvas
+        this.saveNextImage = true
+    }
 }

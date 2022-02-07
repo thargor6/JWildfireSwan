@@ -49,7 +49,8 @@ import '../../components/swan-error-panel'
 
 @customElement('playground-view')
 export class PlaygroundView extends View {
-    canvasContainer!: HTMLDivElement;
+    canvas!: HTMLCanvasElement
+    canvasContainer!: HTMLDivElement
 
     @state()
     selectedTab = 0
@@ -116,20 +117,18 @@ export class PlaygroundView extends View {
         return ownTabIdx === selectedTab ? html`display: block;` : html`display: none;`;
     }
 
-    myCanvas : undefined | HTMLCanvasElement = undefined
 
     recreateCanvas = ()=> {
         this.canvasContainer.innerHTML = '';
-        let canvas = document.createElement('canvas')
-        canvas.id = "screen1"
-        canvas.width = 512
-        canvas.height = 512
-        this.canvasContainer.appendChild(canvas)
-        this.myCanvas = canvas
-        return canvas
+        this.canvas = document.createElement('canvas')
+        this.canvas.id = "screen1"
+        this.canvas.width = 512
+        this.canvas.height = 512
+        this.canvasContainer.appendChild(this.canvas)
     }
 
     saveImage =()=> {
+        playgroundStore.renderer.saveCurrentImageToContainer(this.canvas, this.canvasContainer)
    //     const context = canvas.getContext("webgl")!
   //      const imgData = canvas.toDataURL("image/png");
   //      const imgElement = document.createElement('img');
@@ -150,9 +149,9 @@ console.log("PIXELS", pixels)
         let brightnessElement = this.viewOptsPanel.brightnessElement
         let param1Element = this.viewOptsPanel.param1Element
         let radioButtonElements = this.viewOptsPanel.displayModeElements
-        const canvas = this.recreateCanvas()
-        const renderer = new FlameRenderer(this.viewOptsPanel.imageSize, this.viewOptsPanel.pointsSize, canvas, playgroundStore.flame, brightnessElement, radioButtonElements, param1Element);
-        renderer.drawScene()
+        this.recreateCanvas()
+        playgroundStore.renderer = new FlameRenderer(this.viewOptsPanel.imageSize, this.viewOptsPanel.pointsSize, this.canvas, playgroundStore.flame, brightnessElement, radioButtonElements, param1Element);
+        playgroundStore.renderer.drawScene()
     }
 
     importFlameFromXml = () => {

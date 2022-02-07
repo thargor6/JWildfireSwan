@@ -21,6 +21,7 @@ import {register2DVars} from "Frontend/flames/renderer/variations/variation-shad
 import {register3DVars} from "Frontend/flames/renderer/variations/variation-shaders-3d";
 import {registerZTransformVars} from "Frontend/flames/renderer/variations/variation-shaders-ztransform";
 import {Flame} from "Frontend/flames/model/flame";
+import {FlameRenderer} from "Frontend/flames/renderer/flame-renderer";
 
 type OnInitCallback = () => void
 
@@ -30,7 +31,8 @@ export class PlaygroundStore {
   onInitCallbacks = new Map<string[], OnInitCallback>()
   calculating = false
   lastError = ''
-  flame = new Flame()
+  flame!: Flame
+  renderer!: FlameRenderer
 
   constructor() {
     makeAutoObservable(this);
