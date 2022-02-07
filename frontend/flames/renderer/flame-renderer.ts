@@ -148,6 +148,7 @@ export class FlameRenderer {
 
 
     saveCurrentImageToContainer(canvas: HTMLCanvasElement, destContainer: HTMLDivElement) {
+        console.log("SAVE SHIT1")
         this.saveImageontainer = destContainer
         this.imageSourceCanvas = canvas
         this.saveNextImage = true

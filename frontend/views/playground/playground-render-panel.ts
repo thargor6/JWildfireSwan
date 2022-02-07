@@ -46,9 +46,9 @@ export class PlaygroundRenderPanel extends MobxLitElement {
   imageSizes = [128, 256, 512, 1024, 2048]
 
   @state()
-  pointsSize = 256
+  swarmSize = 256
 
-  pointsSizes = [8, 16, 32, 64, 128, 256, 512]
+  swarmSizes = [8, 16, 32, 64, 128, 256, 512]
 
   brightnessElement!: any
   param1Element!: any
@@ -61,7 +61,7 @@ export class PlaygroundRenderPanel extends MobxLitElement {
         
           <vaadin-combo-box style="max-width: 10em;" label="Image size" .items="${this.imageSizes}" value="${this.imageSize}"
                             @change="${(event: Event) => this.imageSizeChanged(event)}"></vaadin-combo-box>
-          <vaadin-combo-box style="max-width: 10em;" label="Swarm size" .items="${this.pointsSizes}" value="${this.pointsSize}"
+          <vaadin-combo-box style="max-width: 10em;" label="Swarm size" .items="${this.swarmSizes}" value="${this.swarmSize}"
                             @change="${(event: Event) => this.pointsSizeChanged(event)}"></vaadin-combo-box>
   
           <vaadin-button style="max-width: 10em;" @click="${this.onRefresh}">Refresh</vaadin-button>
@@ -88,7 +88,7 @@ export class PlaygroundRenderPanel extends MobxLitElement {
 
   private pointsSizeChanged(event: Event) {
     if ((event.target as HasValue<string>).value) {
-      this.pointsSize = parseInt((event.target as HasValue<string>).value!)
+      this.swarmSize = parseInt((event.target as HasValue<string>).value!)
       this.onImageSizeChanged()
     }
   }

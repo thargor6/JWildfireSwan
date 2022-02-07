@@ -15,7 +15,7 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 */
 
-import {html, nothing, PropertyValues, render} from 'lit';
+import {html, nothing, PropertyValues} from 'lit';
 import {customElement, state} from 'lit/decorators.js';
 import { View } from '../../views/view';
 
@@ -34,7 +34,6 @@ import '@vaadin/tabs';
 import {FlameRenderer} from '../../flames/renderer/flame-renderer'
 import {FlamesEndpoint} from "Frontend/generated/endpoints";
 import {FlameMapper} from '../../flames/model/mapper/flame-mapper'
-import {HasValue} from "@vaadin/form";
 import '@vaadin/vaadin-combo-box';
 import './playground-render-panel'
 import './playground-flame-panel'
@@ -51,6 +50,7 @@ import '../../components/swan-error-panel'
 export class PlaygroundView extends View {
     canvas!: HTMLCanvasElement
     canvasContainer!: HTMLDivElement
+    capturedImageContainer!: HTMLDivElement
 
     @state()
     selectedTab = 0
@@ -61,10 +61,11 @@ export class PlaygroundView extends View {
     render() {
         return html`
             <swan-error-panel .errorMessage=${playgroundStore.lastError}></swan-error-panel>
-             <vaadin-split-layout>
-                <div style="display: flex; align-items: center; justify-content: center;"
+            <vaadin-split-layout>
+                 <div style="display: flex; align-items: center; justify-content: center;"
                      stylex="max-height: 70em;max-width:70em;overflow: scroll;" id="canvas-container">
                     <canvasx id="screen1" width="512" height="512"></canvasx>
+                    
                 </div>
                 <div style="display: flex; flex-direction: column; padding: 1em;">
 
@@ -92,12 +93,18 @@ export class PlaygroundView extends View {
                           .onRandomGradient="${this.createRandomGradient}"
                         .onFlameNameChanged="${this.importExampleFlame}"></playground-flame-panel>
                         <playground-render-panel id='viewOptsPnl' .onRefresh="${this.rerenderFlame}" 
-                          .onSaveImage="${this.saveImage}"
+                          .onCaptureImage="${this.saveImage}"
                           .visible=${this.selectedTab === 1} .onImageSizeChanged="${this.rerenderFlame}"></playground-render-panel>
-                        <playground-variations-panel .visible=${this.selectedTab === 2}></playground-variations-panel>
+                        <playground-variations-panel .visible=${this.selectedTab === 2}>
+    
+
+                        </playground-variations-panel>
+                        <label>Captured image: (use right-click and save-as to export)</label>
+                        <div style="max-height: 10em;max-width:20em;overflow: scroll;" id="captured-image-container"></div>
                     </div>
+     
                 </div>
-            </vaadin-split-layout>
+             </vaadin-split-layout>
         `;
     }
 
@@ -108,6 +115,8 @@ export class PlaygroundView extends View {
     protected firstUpdated(_changedProperties: PropertyValues) {
         super.firstUpdated(_changedProperties);
         this.canvasContainer = document.querySelector('#canvas-container')!
+        this.capturedImageContainer = document.querySelector('#captured-image-container')!
+
         this.viewOptsPanel = document.querySelector('#viewOptsPnl')!
         this.flamePanel = document.querySelector('#flamePnl')!
         playgroundStore.registerInitCallback([this.flamePanel.tagName, this.viewOptsPanel.tagName], this.renderFirstFlame)
@@ -128,21 +137,8 @@ export class PlaygroundView extends View {
     }
 
     saveImage =()=> {
-        playgroundStore.renderer.saveCurrentImageToContainer(this.canvas, this.canvasContainer)
-   //     const context = canvas.getContext("webgl")!
-  //      const imgData = canvas.toDataURL("image/png");
-  //      const imgElement = document.createElement('img');
- //       imgElement.src = imgData;
- //       this.canvasContainer.appendChild(imgElement);
-/*
-        const webglCanvas: HTMLCanvasElement = this.canvasContainer.querySelector('#screen1')!
-        const glContext = this.myCanvas!.getContext("webgl", {preserveDrawingBuffer: true})!
-        const width = this.myCanvas!.width
-        const height = this.myCanvas!.height
-        var pixels = new Uint8Array(4 * width * height)
-        glContext.readPixels(0, 0, width, height, glContext.RGBA, glContext.UNSIGNED_BYTE, pixels);
-console.log("PIXELS", pixels)
-*/
+        this.capturedImageContainer.innerHTML = ''
+        playgroundStore.renderer.saveCurrentImageToContainer(this.canvas, this.capturedImageContainer)
     }
 
     rerenderFlame = ()=> {
@@ -150,7 +146,7 @@ console.log("PIXELS", pixels)
         let param1Element = this.viewOptsPanel.param1Element
         let radioButtonElements = this.viewOptsPanel.displayModeElements
         this.recreateCanvas()
-        playgroundStore.renderer = new FlameRenderer(this.viewOptsPanel.imageSize, this.viewOptsPanel.pointsSize, this.canvas, playgroundStore.flame, brightnessElement, radioButtonElements, param1Element);
+        playgroundStore.renderer = new FlameRenderer(this.viewOptsPanel.imageSize, this.viewOptsPanel.swarmSize, this.canvas, playgroundStore.flame, brightnessElement, radioButtonElements, param1Element);
         playgroundStore.renderer.drawScene()
     }
 
