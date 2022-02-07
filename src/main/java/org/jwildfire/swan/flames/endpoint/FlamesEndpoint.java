@@ -67,12 +67,20 @@ public class FlamesEndpoint {
 
   public @Nonnull RandomFlame generateRandomFlame(@Nonnull List<@Nonnull String> supportedVariations) {
     try {
-      System.err.println("START GEN");
       return service.generateRandomFlame(supportedVariations);
     } catch (Throwable ex) {
-      System.err.println("  ERR GEN");
       log.error("Error generating random flame", ex);
       throw new RuntimeException(ex);
     }
   }
+
+  public @Nonnull RandomFlame generateRandomGradientForFlame(@Nonnull Flame refFlame) {
+    try {
+      return service.generateRandomGradientForFlame(refFlame);
+    } catch (Throwable ex) {
+      log.error("Error generating random gradient", ex);
+      throw new RuntimeException(ex);
+    }
+  }
+
 }

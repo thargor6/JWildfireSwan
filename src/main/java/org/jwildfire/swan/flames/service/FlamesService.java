@@ -18,13 +18,16 @@
 package org.jwildfire.swan.flames.service;
 
 import org.jwildfire.base.Prefs;
+import org.jwildfire.base.Tools;
 import org.jwildfire.cli.CliOptions;
 import org.jwildfire.cli.CliUtils;
 import org.jwildfire.cli.OptionsParserUtil;
 import org.jwildfire.create.tina.io.FlameReader;
 import org.jwildfire.create.tina.io.FlameWriter;
+import org.jwildfire.create.tina.palette.RGBPalette;
 import org.jwildfire.create.tina.randomflame.*;
 import org.jwildfire.create.tina.randomgradient.AllRandomGradientGenerator;
+import org.jwildfire.create.tina.randomgradient.RandomGradientGenerator;
 import org.jwildfire.create.tina.randomgradient.RandomGradientGeneratorList;
 import org.jwildfire.create.tina.randomsymmetry.RandomSymmetryGeneratorList;
 import org.jwildfire.create.tina.randomweightingfield.RandomWeightingFieldGeneratorList;
@@ -122,5 +125,27 @@ public class FlamesService {
       throw new RuntimeException(e);
     }
     return new RandomFlame(flameMapper.mapFromJwildfire(flame), flameXml);
+  }
+
+  public RandomFlame generateRandomGradientForFlame(Flame refFlame) {
+    String randGenGradientName = new AllRandomGradientGenerator().getName();
+
+    RandomGradientGenerator rndGradGen = RandomGradientGeneratorList.getRandomGradientGeneratorInstance(randGenGradientName, true);
+    int palettePoints = 3 + Tools.randomInt(21);
+    boolean fadePaletteColors = Math.random() > 0.09D;
+    boolean uniformSize = Math.random() > 0.75D;
+
+    RGBPalette palette = rndGradGen.generatePalette(palettePoints, fadePaletteColors, uniformSize);
+
+    org.jwildfire.create.tina.base.Flame jwfFlame = flameMapper.mapToJwildfire(refFlame);
+    jwfFlame.getFirstLayer().setPalette(palette);
+
+    String flameXml = null;
+    try {
+      flameXml = new FlameWriter().getFlameXML(jwfFlame);
+    } catch (Exception e) {
+      throw new RuntimeException(e);
+    }
+     return new RandomFlame(flameMapper.mapFromJwildfire(jwfFlame), flameXml);
   }
 }
