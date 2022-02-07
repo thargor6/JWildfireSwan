@@ -2655,6 +2655,24 @@ class SplitsFunc extends VariationShaderFunc2D {
     }
 }
 
+class SquareFunc extends VariationShaderFunc2D {
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        return `{
+          float amount = float(${variation.amount});
+          _vx += amount * (rand2(tex) - 0.5);
+          _vy += amount * (rand3(tex) - 0.5);    
+        }`;
+    }
+
+    get name(): string {
+        return "square";
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D, VariationTypes.VARTYPE_BASE_SHAPE];
+    }
+}
+
 class SwirlFunc extends VariationShaderFunc2D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
          return `{
@@ -2902,8 +2920,8 @@ class Waves2WFFunc extends VariationShaderFunc2D {
     PARAM_SCALEY = "scaley"
     PARAM_FREQX = "freqx"
     PARAM_FREQY = "freqy"
-    PARAM_CONT = "use_cos_x"
-    PARAM_YFACT = "use_cos_y"
+    PARAM_USE_COS_X = "use_cos_x"
+    PARAM_USE_COS_Y = "use_cos_y"
     PARAM_DAMPX = "dampx"
     PARAM_DAMPY = "dampy"
 
@@ -2912,8 +2930,8 @@ class Waves2WFFunc extends VariationShaderFunc2D {
             { name: this.PARAM_SCALEY, type: VariationParamType.VP_NUMBER, initialValue:  0.50 },
             { name: this.PARAM_FREQX, type: VariationParamType.VP_NUMBER, initialValue: M_PI / 2.0 },
             { name: this.PARAM_FREQY, type: VariationParamType.VP_NUMBER, initialValue: M_PI / 4.0 },
-            { name: this.PARAM_CONT, type: VariationParamType.VP_NUMBER, initialValue: 1 },
-            { name: this.PARAM_YFACT, type: VariationParamType.VP_NUMBER, initialValue: 0.0 },
+            { name: this.PARAM_USE_COS_X, type: VariationParamType.VP_NUMBER, initialValue: 1 },
+            { name: this.PARAM_USE_COS_Y, type: VariationParamType.VP_NUMBER, initialValue: 0.0 },
             { name: this.PARAM_DAMPX, type: VariationParamType.VP_NUMBER, initialValue:  0.00 },
             { name: this.PARAM_DAMPY, type: VariationParamType.VP_NUMBER, initialValue:  0.00 }]
     }
@@ -2926,8 +2944,8 @@ class Waves2WFFunc extends VariationShaderFunc2D {
           float scaley = float(${variation.params.get(this.PARAM_SCALEY)});
           float freqx = float(${variation.params.get(this.PARAM_FREQX)});
           float freqy = float(${variation.params.get(this.PARAM_FREQY)});
-          int use_cos_x = int(${variation.params.get(this.PARAM_CONT)});
-          int use_cos_y = int(${variation.params.get(this.PARAM_YFACT)});
+          int use_cos_x = int(${variation.params.get(this.PARAM_USE_COS_X)});
+          int use_cos_y = int(${variation.params.get(this.PARAM_USE_COS_Y)});
           float dampx = float(${variation.params.get(this.PARAM_DAMPX)});
           float dampy = float(${variation.params.get(this.PARAM_DAMPY)});
           float _dampingX = abs(dampx) < EPSILON ? 1.0 : exp(dampx);
@@ -2999,6 +3017,63 @@ class Waves3Func extends VariationShaderFunc2D {
     }
 }
 
+class Waves3WFFunc extends VariationShaderFunc2D {
+    PARAM_SCALEX = "scalex"
+    PARAM_SCALEY = "scaley"
+    PARAM_FREQX = "freqx"
+    PARAM_FREQY = "freqy"
+    PARAM_USE_COS_X = "use_cos_x"
+    PARAM_USE_COS_Y = "use_cos_y"
+    PARAM_DAMPX = "dampx"
+    PARAM_DAMPY = "dampy"
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_SCALEX, type: VariationParamType.VP_NUMBER, initialValue:  0.25 },
+            { name: this.PARAM_SCALEY, type: VariationParamType.VP_NUMBER, initialValue:  0.50 },
+            { name: this.PARAM_FREQX, type: VariationParamType.VP_NUMBER, initialValue: M_PI / 2.0 },
+            { name: this.PARAM_FREQY, type: VariationParamType.VP_NUMBER, initialValue: M_PI / 4.0 },
+            { name: this.PARAM_USE_COS_X, type: VariationParamType.VP_NUMBER, initialValue: 1 },
+            { name: this.PARAM_USE_COS_Y, type: VariationParamType.VP_NUMBER, initialValue: 0.0 },
+            { name: this.PARAM_DAMPX, type: VariationParamType.VP_NUMBER, initialValue:  0.00 },
+            { name: this.PARAM_DAMPY, type: VariationParamType.VP_NUMBER, initialValue:  0.00 }]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        /* Modified version of waves2 from Joel F */
+        return `{
+          float amount = float(${variation.amount});
+          float scalex = float(${variation.params.get(this.PARAM_SCALEX)});
+          float scaley = float(${variation.params.get(this.PARAM_SCALEY)});
+          float freqx = float(${variation.params.get(this.PARAM_FREQX)});
+          float freqy = float(${variation.params.get(this.PARAM_FREQY)});
+          int use_cos_x = int(${variation.params.get(this.PARAM_USE_COS_X)});
+          int use_cos_y = int(${variation.params.get(this.PARAM_USE_COS_Y)});
+          float dampx = float(${variation.params.get(this.PARAM_DAMPX)});
+          float dampy = float(${variation.params.get(this.PARAM_DAMPY)});
+          float _dampingX = abs(dampx) < EPSILON ? 1.0 : exp(dampx);
+          float _dampingY = abs(dampy) < EPSILON ? 1.0 : exp(dampy);
+          if (use_cos_x == 1) {
+            _vx += amount * (_tx + _dampingX * scalex * cos(_ty * freqx) * cos(_ty * freqx)) * _dampingX;
+          } else {
+            _vx += amount * (_tx + _dampingX * scalex * sin(_ty * freqx) * sin(_ty * freqx)) * _dampingX;
+          }
+          if (use_cos_y == 1) {
+            _vy += amount * (_ty + _dampingY * scaley * cos(_tx * freqy) * cos(_tx * freqy)) * _dampingY;
+          } else {
+            _vy += amount * (_ty + _dampingY * scaley * sin(_tx * freqy) * sin(_tx * freqy)) * _dampingY;
+          }
+        }`;
+    }
+
+    get name(): string {
+        return "waves3_wf";
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
 class Waves4Func extends VariationShaderFunc2D {
     PARAM_SCALEX = "scalex"
     PARAM_SCALEY = "scaley"
@@ -3041,6 +3116,63 @@ class Waves4Func extends VariationShaderFunc2D {
 
     get name(): string {
         return "waves4";
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
+class Waves4WFFunc extends VariationShaderFunc2D {
+    PARAM_SCALEX = "scalex"
+    PARAM_SCALEY = "scaley"
+    PARAM_FREQX = "freqx"
+    PARAM_FREQY = "freqy"
+    PARAM_USE_COS_X = "use_cos_x"
+    PARAM_USE_COS_Y = "use_cos_y"
+    PARAM_DAMPX = "dampx"
+    PARAM_DAMPY = "dampy"
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_SCALEX, type: VariationParamType.VP_NUMBER, initialValue:  0.25 },
+            { name: this.PARAM_SCALEY, type: VariationParamType.VP_NUMBER, initialValue:  0.50 },
+            { name: this.PARAM_FREQX, type: VariationParamType.VP_NUMBER, initialValue: M_PI / 2.0 },
+            { name: this.PARAM_FREQY, type: VariationParamType.VP_NUMBER, initialValue: M_PI / 4.0 },
+            { name: this.PARAM_USE_COS_X, type: VariationParamType.VP_NUMBER, initialValue: 1 },
+            { name: this.PARAM_USE_COS_Y, type: VariationParamType.VP_NUMBER, initialValue: 0.0 },
+            { name: this.PARAM_DAMPX, type: VariationParamType.VP_NUMBER, initialValue:  0.00 },
+            { name: this.PARAM_DAMPY, type: VariationParamType.VP_NUMBER, initialValue:  0.00 }]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        /* Modified version of waves2 from Joel F */
+        return `{
+          float amount = float(${variation.amount});
+          float scalex = float(${variation.params.get(this.PARAM_SCALEX)});
+          float scaley = float(${variation.params.get(this.PARAM_SCALEY)});
+          float freqx = float(${variation.params.get(this.PARAM_FREQX)});
+          float freqy = float(${variation.params.get(this.PARAM_FREQY)});
+          int use_cos_x = int(${variation.params.get(this.PARAM_USE_COS_X)});
+          int use_cos_y = int(${variation.params.get(this.PARAM_USE_COS_Y)});
+          float dampx = float(${variation.params.get(this.PARAM_DAMPX)});
+          float dampy = float(${variation.params.get(this.PARAM_DAMPY)});
+          float _dampingX = abs(dampx) < EPSILON ? 1.0 : exp(dampx);
+          float _dampingY = abs(dampy) < EPSILON ? 1.0 : exp(dampy);
+          if (use_cos_x == 1) {
+            _vx += amount * (_tx + _dampingX * scalex * cos(_ty * freqx) * sin(_ty * freqx) * cos(_ty * freqx)) * _dampingX;
+          } else {
+            _vx += amount * (_tx + _dampingX * scalex * sin(_ty * freqx) * cos(_ty * freqx) * sin(_ty * freqx)) * _dampingX;
+          }
+          if (use_cos_y == 1) {
+            _vy += amount * (_ty + _dampingY * scaley * cos(_tx * freqy) * sin(_tx * freqy) * cos(_tx * freqy)) * _dampingY;
+          } else {
+            _vy += amount * (_ty + _dampingY * scaley * sin(_tx * freqy) * cos(_tx * freqy) * sin(_tx * freqy)) * _dampingY;
+          }
+        }`;
+    }
+
+    get name(): string {
+        return "waves4_wf";
     }
 
     get variationTypes(): VariationTypes[] {
@@ -3220,6 +3352,7 @@ export function register2DVars() {
     VariationShaders.registerVar(new SpiralFunc())
     VariationShaders.registerVar(new SplitFunc())
     VariationShaders.registerVar(new SplitsFunc())
+    VariationShaders.registerVar(new SquareFunc())
     VariationShaders.registerVar(new SwirlFunc())
     VariationShaders.registerVar(new TanFunc())
     VariationShaders.registerVar(new TanhFunc())
@@ -3231,7 +3364,9 @@ export function register2DVars() {
     VariationShaders.registerVar(new Waves2Func())
     VariationShaders.registerVar(new Waves2WFFunc())
     VariationShaders.registerVar(new Waves3Func())
+    VariationShaders.registerVar(new Waves3WFFunc())
     VariationShaders.registerVar(new Waves4Func())
+    VariationShaders.registerVar(new Waves4WFFunc())
     VariationShaders.registerVar(new WedgeFunc())
     VariationShaders.registerVar(new WhorlFunc())
 }

@@ -515,6 +515,25 @@ class Spherical3DWFFunc extends VariationShaderFunc3D {
     }
 }
 
+class Square3DFunc extends VariationShaderFunc3D {
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        return `{
+          float amount = float(${variation.amount});
+          _vx += amount * (rand2(tex) - 0.5);
+          _vy += amount * (rand3(tex) - 0.5);    
+          _vz += amount * (rand4(tex) - 0.5);    
+        }`;
+    }
+
+    get name(): string {
+        return "square3D";
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_3D, VariationTypes.VARTYPE_BASE_SHAPE];
+    }
+}
+
 class Tangent3DFunc extends VariationShaderFunc3D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         return `{
@@ -551,5 +570,6 @@ export function register3DVars() {
     VariationShaders.registerVar(new Pie3DFunc())
     VariationShaders.registerVar(new Spherical3DFunc())
     VariationShaders.registerVar(new Spherical3DWFFunc())
+    VariationShaders.registerVar(new Square3DFunc())
     VariationShaders.registerVar(new Tangent3DFunc())
 }
