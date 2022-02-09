@@ -48,7 +48,7 @@ export class PlaygroundRenderPanel extends MobxLitElement {
   @state()
   swarmSize = 256
 
-  swarmSizes = [8, 16, 32, 64, 128, 256, 512]
+  swarmSizes = [8, 16, 32, 64, 128, 256, 512, 1024]
 
   brightnessElement!: any
   param1Element!: any

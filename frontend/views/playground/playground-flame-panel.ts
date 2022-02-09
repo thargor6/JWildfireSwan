@@ -85,7 +85,7 @@ FECCB3FECCB3FECCB3FECCB3FECCB3FECCB3840802840802840802840802840802840802
   flameNames = ['example01', 'example02', 'example03', 'example04', 'example05', 'example06',
     'example07', 'example08', 'example10', 'example11', 'example12', 'example14', 'example16',
     'example17', 'example20', 'example21', 'example22', 'example23', 'example24', 'example25',
-    'example26', 'example27', 'example28', 'example29', 'example30']
+    'example26', 'example27', 'example28', 'example29', 'example30', 'example31']
 
   @property()
   onFlameNameChanged: ()=>void = ()=> {}
