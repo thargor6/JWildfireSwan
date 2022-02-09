@@ -115,12 +115,12 @@ export class CompPointsFragmentShaderGenerator {
                ${this.addVariations(xForm, xFormIdx, 0)}
                ${this.addVariations(xForm, xFormIdx, 1)}
                ${this.addPostAffineTx(xForm)}
-               if(_color<0.0) {
-                 _color = 0.0;
-               }
-               else if(_color>1.0) {
-                 _color = 1.0;
-               }
+		       if(_color<0.0) {
+				 _color = 0.0;
+			   }
+			   else if(_color>1.0 - 1.0e-06) {
+				 _color = 1.0 - 1.0e-06; 
+			   }
 			}	
 	`;
     }
@@ -189,7 +189,6 @@ export class CompPointsFragmentShaderGenerator {
 			// - use with indicated seeding method. 
 			
 			float PHI = 1.61803398874989484820459;  // Φ = Golden Ratio   
-			int xFormIdx = 0;
 			
 			float gold_noise(in vec2 xy, in float seed){
 				   return fract(tan(distance(xy*PHI, xy)*seed)*xy.x);
@@ -250,13 +249,21 @@ export class CompPointsFragmentShaderGenerator {
 			void main(void) {
 				vec2 tex = gl_FragCoord.xy / <%= RESOLUTION %>;
 				vec3 point = texture2D(uTexSamp, tex).xyz;
-				float _color = texture2D(uTexSamp, tex).w;
+
+				float xFormIdxAndColor = texture2D(uTexSamp, tex).w;
+				int xFormIdx = int(floor(texture2D(uTexSamp, tex).w));
+				float _color = xFormIdxAndColor - float(xFormIdx);
+				
 	            float _tx, _ty, _tz;
                 float _vx = 0.0, _vy = 0.0, _vz = 0.0;
                 _tz = point.z;
 				${this.addXForms(flame)}
 				point = vec3(_vx, _vy, _vz);
-				gl_FragColor = vec4(point, _color);
+			
+			    // must ensure that color is already in the range [0..1)
+				xFormIdxAndColor = float(xFormIdx) + _color;
+
+				gl_FragColor = vec4(point, xFormIdxAndColor);
 			}
 			`;
     }

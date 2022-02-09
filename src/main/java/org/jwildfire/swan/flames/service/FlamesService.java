@@ -67,18 +67,35 @@ public class FlamesService {
 
   static {
     allGenerators = new ArrayList<>();
-//    allGenerators.add(new BrokatRandomFlameGenerator());
-//    allGenerators.add(new Brokat3DRandomFlameGenerator());
+/*
     allGenerators.add(new BubblesRandomFlameGenerator());
     allGenerators.add(new Bubbles3DRandomFlameGenerator());
- //   allGenerators.add(new CrossRandomFlameGenerator());
+    allGenerators.add(new ExperimentalBubbles3DRandomFlameGenerator());
+    allGenerators.add(new ExperimentalSimpleRandomFlameGenerator());
+    allGenerators.add(new JulianDiscRandomFlameGenerator());
+    allGenerators.add(new JuliansRandomFlameGenerator());
+    allGenerators.add(new LinearRandomFlameGenerator());
+    allGenerators.add(new RaysRandomFlameGenerator());
+    allGenerators.add(new SimpleRandomFlameGenerator());
+
+    allGenerators.add(new SierpinskyRandomFlameGenerator());
+    allGenerators.add(new SphericalRandomFlameGenerator());
+    allGenerators.add(new Spherical3DRandomFlameGenerator());
+    allGenerators.add(new SplitsRandomFlameGenerator());
+    allGenerators.add(new TentacleRandomFlameGenerator());
+    allGenerators.add(new XenomorphRandomFlameGenerator());
+*/
+
+        allGenerators.add(new BrokatRandomFlameGenerator());
+ //   allGenerators.add(new Brokat3DRandomFlameGenerator());
+ //    allGenerators.add(new CrossRandomFlameGenerator());
  //   allGenerators.add(new DualityRandomFlameGenerator());
  //   allGenerators.add(new DuckiesRandomFlameGenerator());
-    allGenerators.add(new ExperimentalBubbles3DRandomFlameGenerator());
+
   //  allGenerators.add(new ExperimentalGnarlRandomFlameGenerator());
-    allGenerators.add(new ExperimentalSimpleRandomFlameGenerator());
+
   //  allGenerators.add(new FilledFlowers3DRandomFlameGenerator());
-  //  allGenerators.add(new Flowers3DRandomFlameGenerator());
+    allGenerators.add(new Flowers3DRandomFlameGenerator());
  //   allGenerators.add(new GalaxiesRandomFlameGenerator());
    // allGenerators.add(new GhostsRandomFlameGenerator());
   //  allGenerators.add(new OrchidsRandomFlameGenerator());
@@ -88,25 +105,19 @@ public class FlamesService {
  //   allGenerators.add(new Spirals3DRandomFlameGenerator());
   //  allGenerators.add(new GnarlRandomFlameGenerator());
   //  allGenerators.add(new Gnarl3DRandomFlameGenerator());
-    allGenerators.add(new JulianDiscRandomFlameGenerator());
-    allGenerators.add(new JuliansRandomFlameGenerator());
+
   //  allGenerators.add(new JulianRingsRandomFlameGenerator());
-    allGenerators.add(new LinearRandomFlameGenerator());
+
 //    allGenerators.add(new Affine3DRandomFlameGenerator());
  //   allGenerators.add(new MachineRandomFlameGenerator());
 //   allGenerators.add(new OutlinesRandomFlameGenerator());
  //   allGenerators.add(new RasterRandomFlameGenerator());
-    allGenerators.add(new RaysRandomFlameGenerator());
-    allGenerators.add(new SimpleRandomFlameGenerator());
 //    allGenerators.add(new SimpleTilingRandomFlameGenerator());
-    allGenerators.add(new SierpinskyRandomFlameGenerator());
-    allGenerators.add(new SphericalRandomFlameGenerator());
-    allGenerators.add(new Spherical3DRandomFlameGenerator());
-    allGenerators.add(new SplitsRandomFlameGenerator());
+
  //   allGenerators.add(new SynthRandomFlameGenerator());
-    allGenerators.add(new TentacleRandomFlameGenerator());
+
  //   allGenerators.add(new TileBallRandomFlameGenerator());
-    allGenerators.add(new XenomorphRandomFlameGenerator());
+
   }
 
   public RandomFlame generateRandomFlame(List<String> supportedVariations) {
