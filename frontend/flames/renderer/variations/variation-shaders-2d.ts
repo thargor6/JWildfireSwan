@@ -443,6 +443,52 @@ class ConicFunc extends VariationShaderFunc2D {
     }
 }
 
+class CPowFunc extends VariationShaderFunc2D {
+    PARAM_R = "r"
+    PARAM_I = "i"
+    PARAM_POWER = "power"
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_R, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
+            { name: this.PARAM_I, type: VariationParamType.VP_NUMBER, initialValue: 0.1 },
+            { name: this.PARAM_POWER, type: VariationParamType.VP_NUMBER, initialValue: 1.5 }]
+    }
+
+    /* Cpow in the Apophysis Plugin Pack */
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        return `{
+                  float amount = float(${variation.amount});
+                  float r = float(${variation.params.get(this.PARAM_R)});
+                  float i = float(${variation.params.get(this.PARAM_I)});
+                  float power = float(${variation.params.get(this.PARAM_POWER)});
+                  float _theta = atan2(_ty, _tx);
+                  float a = _theta;
+                  float lnr = 0.5 * log(_r2);
+                  float va = 2.0 * M_PI / power;
+                  float vc = r / power;
+                  float vd = i / power;
+                  float ang = vc * a + vd * lnr + va * floor(power * rand2(tex));
+                
+                  float m = amount * exp(vc * lnr - vd * a);
+                  float sa = sin(ang);
+                  float ca = cos(ang);
+                
+                  _vx += m * ca;
+                  _vy += m * sa;
+                }`;
+    }
+
+
+    get name(): string {
+        return "cpow";
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
+
 class CrossFunc extends VariationShaderFunc2D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         return `{
@@ -2099,6 +2145,32 @@ class Polar2Func extends VariationShaderFunc2D {
     }
 }
 
+class PopcornFunc extends VariationShaderFunc2D {
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        return `{
+          float amount = float(${variation.amount});
+          float dx = tan(3.0 * _ty);
+          if (dx != dx)
+            dx = 0.0;
+          float dy = tan(3.0 * _tx);
+          if (dy != dy)
+            dy = 0.0;
+          float nx = _tx + float(${xform.c20}) * sin(dx);
+          float ny = _ty + float(${xform.c21}) * sin(dy);
+          _vx += amount * nx;
+          _vy += amount * ny;
+        }`;
+    }
+
+    get name(): string {
+        return "popcorn";
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
 class PowerFunc extends VariationShaderFunc2D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         return `{
@@ -2364,6 +2436,38 @@ class SecFunc extends VariationShaderFunc2D {
 
     get name(): string {
         return "sec";
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+
+    get funcDependencies(): string[] {
+        return [FUNC_SINH, FUNC_COSH];
+    }
+}
+
+class Secant2Func extends VariationShaderFunc2D {
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        /* Intended as a 'fixed' version of secant */
+        return `{
+           float amount = float(${variation.amount});
+           float r = amount * _r;
+           float cr = cos(r);
+           if (cr != 0.0) {
+             float icr = 1.0 / cr;
+             _vx += amount * _tx;
+             if (cr < 0.0) {
+               _vy += amount * (icr + 1.0);
+             } else {
+               _vy += amount * (icr - 1.0);
+             } 
+           }
+        }`;
+    }
+
+    get name(): string {
+        return "secant2";
     }
 
     get variationTypes(): VariationTypes[] {
@@ -3287,6 +3391,7 @@ export function register2DVars() {
     VariationShaders.registerVar(new CoshFunc())
     VariationShaders.registerVar(new CotFunc())
     VariationShaders.registerVar(new CothFunc())
+    VariationShaders.registerVar(new CPowFunc())
     VariationShaders.registerVar(new CrossFunc())
     VariationShaders.registerVar(new CscFunc())
     VariationShaders.registerVar(new CschFunc())
@@ -3334,6 +3439,7 @@ export function register2DVars() {
     VariationShaders.registerVar(new PieFunc())
     VariationShaders.registerVar(new PolarFunc())
     VariationShaders.registerVar(new Polar2Func())
+    VariationShaders.registerVar(new PopcornFunc())
     VariationShaders.registerVar(new PowerFunc())
     VariationShaders.registerVar(new PreBlurFunc())
     VariationShaders.registerVar(new RadialBlurFunc())
@@ -3344,6 +3450,7 @@ export function register2DVars() {
     VariationShaders.registerVar(new RectanglesFunc())
     VariationShaders.registerVar(new RoseWFFunc())
     VariationShaders.registerVar(new SecFunc())
+    VariationShaders.registerVar(new Secant2Func())
     VariationShaders.registerVar(new SechFunc())
     VariationShaders.registerVar(new SeparationFunc())
     VariationShaders.registerVar(new SinFunc())
