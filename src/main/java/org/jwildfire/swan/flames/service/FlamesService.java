@@ -111,7 +111,7 @@ public class FlamesService {
  //   allGenerators.add(new MachineRandomFlameGenerator());
 //   allGenerators.add(new OutlinesRandomFlameGenerator());
  //   allGenerators.add(new RasterRandomFlameGenerator());
-//    allGenerators.add(new SimpleTilingRandomFlameGenerator());
+    allGenerators.add(new SimpleTilingRandomFlameGenerator());
 
  //   allGenerators.add(new SynthRandomFlameGenerator());
 

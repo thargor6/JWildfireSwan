@@ -2537,6 +2537,57 @@ class RectanglesFunc extends VariationShaderFunc2D {
     }
 }
 
+class RingsFunc extends VariationShaderFunc2D {
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        return `{
+          float amount = float(${variation.amount});
+          float dx = float(${xform.c20 * xform.c21}) + EPSILON;
+          float r = _r;
+          r = r + dx - float(int((r + dx) / (2.0 * dx))) * 2.0 * dx - dx + r * (1.0 - dx);
+          _vx += r * _ty / _r;
+          _vy += r * _tx / _r;
+        }`;
+    }
+
+    get name(): string {
+        return "rings";
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
+class Rings2Func extends VariationShaderFunc2D {
+    PARAM_VAL = "val"
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_VAL, type: VariationParamType.VP_NUMBER, initialValue: 0.01 }]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        return `{
+          float amount = float(${variation.amount});
+          float val =float(${variation.params.get(this.PARAM_VAL)});
+          float _dx = val * val + EPSILON;
+          float l = _r;
+          if (_dx != 0.0 && l != 0.0) {
+            float r = amount * (2.0 - _dx * float(int(((l / _dx + 1.0) / 2.0) * 2.0 / l + 1.0)));
+            _vx += r * _tx;
+            _vy += r * _ty;
+          }
+        }`;
+    }
+
+    get name(): string {
+        return "rings2";
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
 class RoseWFFunc extends VariationShaderFunc2D {
     PARAM_AMP = "amp"
     PARAM_WAVES = "waves"
@@ -2847,6 +2898,59 @@ class SpiralFunc extends VariationShaderFunc2D {
 
     get name(): string {
         return "spiral";
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
+class SpirographFunc extends VariationShaderFunc2D {
+    PARAM_A = "a"
+    PARAM_B = "b"
+    PARAM_D = "d"
+    PARAM_C1 = "c1"
+    PARAM_C2 = "c2"
+    PARAM_TMIN = "tmin"
+    PARAM_TMAX = "tmax"
+    PARAM_YMIN = "ymin"
+    PARAM_YMAX = "ymax"
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_A, type: VariationParamType.VP_NUMBER, initialValue: 3.00 },
+            { name: this.PARAM_B, type: VariationParamType.VP_NUMBER, initialValue: 2.00 },
+            { name: this.PARAM_D, type: VariationParamType.VP_NUMBER, initialValue: 0.00 },
+            { name: this.PARAM_C1, type: VariationParamType.VP_NUMBER, initialValue: 0.00 },
+            { name: this.PARAM_C2, type: VariationParamType.VP_NUMBER, initialValue: 0.00 },
+            { name: this.PARAM_TMIN, type: VariationParamType.VP_NUMBER, initialValue: -1.00 },
+            { name: this.PARAM_TMAX, type: VariationParamType.VP_NUMBER, initialValue: 1.00 },
+            { name: this.PARAM_YMIN, type: VariationParamType.VP_NUMBER, initialValue: -1.00 },
+            { name: this.PARAM_YMAX, type: VariationParamType.VP_NUMBER, initialValue: 1.00 }]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        return `{
+          float amount = float(${variation.amount});
+          float a = float(${variation.params.get(this.PARAM_A)});
+          float b = float(${variation.params.get(this.PARAM_B)});
+          float d = float(${variation.params.get(this.PARAM_D)});
+          float c1 = float(${variation.params.get(this.PARAM_C1)});
+          float c2 = float(${variation.params.get(this.PARAM_C2)});
+          float tmin = float(${variation.params.get(this.PARAM_TMIN)});
+          float tmax = float(${variation.params.get(this.PARAM_TMAX)});
+          float ymin = float(${variation.params.get(this.PARAM_YMIN)});
+          float ymax = float(${variation.params.get(this.PARAM_YMAX)});
+          float t = (tmax - tmin) * rand2(tex) + tmin;
+          float y = (ymax - ymin) * rand3(tex) + ymin;
+          float x1 = (a + b) * cos(t) - c1 * cos((a + b) / b * t);
+          float y1 = (a + b) * sin(t) - c2 * sin((a + b) / b * t);
+          _vx += amount * (x1 + d * cos(t) + y);
+          _vy += amount * (y1 + d * sin(t) + y);
+        }`;
+    }
+
+    get name(): string {
+        return "spirograph";
     }
 
     get variationTypes(): VariationTypes[] {
@@ -3641,6 +3745,8 @@ export function register2DVars() {
     VariationShaders.registerVar(new Rays2Func())
     VariationShaders.registerVar(new Rays3Func())
     VariationShaders.registerVar(new RectanglesFunc())
+    VariationShaders.registerVar(new RingsFunc())
+    VariationShaders.registerVar(new Rings2Func())
     VariationShaders.registerVar(new RoseWFFunc())
     VariationShaders.registerVar(new ScryFunc())
     VariationShaders.registerVar(new SecFunc())
@@ -3651,6 +3757,7 @@ export function register2DVars() {
     VariationShaders.registerVar(new SinhFunc())
     VariationShaders.registerVar(new SphericalFunc())
     VariationShaders.registerVar(new SpiralFunc())
+    VariationShaders.registerVar(new SpirographFunc())
     VariationShaders.registerVar(new SplitFunc())
     VariationShaders.registerVar(new SplitsFunc())
     VariationShaders.registerVar(new SquareFunc())
