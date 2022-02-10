@@ -1,11 +1,11 @@
 # JWildfire Swan - fractal flames the playful way, GPU accelerated
 
-![Example](example1.jpg?raw=true)
+![Example 1](example1.jpg?raw=true)
 
 This is an experimental project and work in progress.
 
 ## Project goals
-
+![Example 4](example4.jpg?raw=true)
 The basic idea is to use standard Web-technologies to create an application which allows playful access to the fascinating world of fractal flames, without barriers.
 So is shall be simple to use and require no certain hardware or operating system.
 
@@ -15,9 +15,10 @@ create real art with it.
 
 There shall be no special GPU mode, so GPU (when available) is used per default.
 
-![Example](example2.jpg?raw=true)
+![Example 2](example2.jpg?raw=true)
 
 ## Technical details
+![Example 5](example5.jpg?raw=true)
 The user-interface is made use Vaadin Fusion.
 The app will be executed using the electron-framework, which means it runs on all major platforms and uses internally a Chromium-browser. 
 The flame-code will be implemented using TypeScript and WebGL.
@@ -25,8 +26,12 @@ The flame-code will be implemented using TypeScript and WebGL.
 Some concepts, especially the WebGL buffer setup, are inspired by 
 https://github.com/richardassar/ElectricSheep_WebGL by Richard Assar.
 
+## Live demo
+![Example 6](example6.jpg?raw=true)
+You can try it here: https://herokuapp.overwhale.com/ 
+(it is early alpha version, and may be offline or may take some while to start)
 
-![Example](example3.jpg?raw=true)
+![Example 3](example3.jpg?raw=true)
 ## Build
 
 

@@ -48,6 +48,25 @@ class FlattenFunc extends VariationShaderFunc3D {
     }
 }
 
+class ZBlurFunc extends VariationShaderFunc3D {
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        return `{
+           float amount = float(${variation.amount});
+           _vz += amount * (rand2(tex) + rand3(tex) + rand4(tex) + rand5(tex) - 2.0);
+
+        }`;
+    }
+
+    get name(): string {
+        return "zblur";
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_ZTRANSFORM];
+    }
+}
+
+
 class ZConeFunc extends VariationShaderFunc3D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         return `{
@@ -85,6 +104,7 @@ class ZTranslateFunc extends VariationShaderFunc3D {
 
 export function registerZTransformVars() {
     VariationShaders.registerVar(new FlattenFunc())
+    VariationShaders.registerVar(new ZBlurFunc())
     VariationShaders.registerVar(new ZConeFunc())
     VariationShaders.registerVar(new ZTranslateFunc())
 }
