@@ -1807,6 +1807,33 @@ class LogFunc extends VariationShaderFunc2D {
     }
 }
 
+class LoonieFunc extends VariationShaderFunc2D {
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        /* Loonie in the Apophysis Plugin Pack */
+        return `{
+          float amount = float(${variation.amount});
+          float r2 = _r2;
+          float w2 = amount * amount;
+          if (r2 < w2 && r2 != 0.0) {
+            float r = amount * sqrt(w2 / r2 - 1.0);
+            _vx += r * _tx;
+            _vy += r * _ty;
+          } else {
+            _vx += amount * _tx;
+            _vy += amount * _ty;
+          }
+        }`;
+    }
+
+    get name(): string {
+        return "loonie";
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
 class MobiusFunc extends VariationShaderFunc2D {
     PARAM_RE_A = "re_a"
     PARAM_RE_B = "re_b"
@@ -1973,6 +2000,110 @@ class NPolarFunc extends VariationShaderFunc2D {
 
     get funcDependencies(): string[] {
         return [FUNC_MODULO];
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
+class OscilloscopeFunc extends VariationShaderFunc2D {
+    PARAM_SEPARATION = "separation"
+    PARAM_FREQUENCY = "frequency"
+    PARAM_AMPLITUDE = "amplitude"
+    PARAM_DAMPING = "damping"
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_SEPARATION, type: VariationParamType.VP_NUMBER, initialValue: 1.00 },
+            { name: this.PARAM_FREQUENCY, type: VariationParamType.VP_NUMBER, initialValue: M_PI },
+            { name: this.PARAM_AMPLITUDE, type: VariationParamType.VP_NUMBER, initialValue: 1.00 },
+            { name: this.PARAM_DAMPING, type: VariationParamType.VP_NUMBER, initialValue: 0.00 }]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        /* oscilloscope from the apophysis plugin pack */
+        return `{
+          float amount = float(${variation.amount});
+          float separation = float(${variation.params.get(this.PARAM_SEPARATION)});
+          float frequency = float(${variation.params.get(this.PARAM_FREQUENCY)});
+          float amplitude = float(${variation.params.get(this.PARAM_AMPLITUDE)});
+          float damping = float(${variation.params.get(this.PARAM_DAMPING)});
+          float _tpf = 2.0 * M_PI * frequency;
+          bool _noDamping = abs(damping) <= EPSILON;
+          float t;
+          if (_noDamping) {
+            t = amplitude * cos(_tpf * _tx) + separation;
+          } else {
+            t = amplitude * exp(-abs(_tx) * damping) * cos(_tpf * _tx) + separation;
+          }        
+          if (abs(_ty) <= t) {
+            _vx += amount * _tx;
+            _vy -= amount * _ty;
+          } else {
+            _vx += amount * _tx;
+            _vy += amount * _ty;
+          }
+        }`;
+    }
+
+    get name(): string {
+        return "oscilloscope";
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
+class Oscilloscope2Func extends VariationShaderFunc2D {
+    PARAM_SEPARATION = "separation"
+    PARAM_FREQUENCYX = "frequencyx"
+    PARAM_FREQUENCYY = "frequencyy"
+    PARAM_AMPLITUDE = "amplitude"
+    PARAM_PERTUBATION = "perturbation"
+    PARAM_DAMPING = "damping"
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_SEPARATION, type: VariationParamType.VP_NUMBER, initialValue: 1.00 },
+            { name: this.PARAM_FREQUENCYX, type: VariationParamType.VP_NUMBER, initialValue: M_PI },
+            { name: this.PARAM_FREQUENCYY, type: VariationParamType.VP_NUMBER, initialValue: M_PI },
+            { name: this.PARAM_AMPLITUDE, type: VariationParamType.VP_NUMBER, initialValue: 1.00 },
+            { name: this.PARAM_PERTUBATION, type: VariationParamType.VP_NUMBER, initialValue: 1.00 },
+            { name: this.PARAM_DAMPING, type: VariationParamType.VP_NUMBER, initialValue: 0.00 }]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        /* oscilloscope from the apophysis plugin pack tweak darkbeam */
+        return `{
+          float amount = float(${variation.amount});
+          float separation = float(${variation.params.get(this.PARAM_SEPARATION)});
+          float frequencyx = float(${variation.params.get(this.PARAM_FREQUENCYX)});
+          float frequencyy = float(${variation.params.get(this.PARAM_FREQUENCYY)});
+          float amplitude = float(${variation.params.get(this.PARAM_AMPLITUDE)});
+          float perturbation = float(${variation.params.get(this.PARAM_PERTUBATION)});
+          float damping = float(${variation.params.get(this.PARAM_DAMPING)});
+          float _tpf = 2.0 * M_PI * frequencyx;
+          float _tpf2 = 2.0 * M_PI * frequencyy;
+          bool _noDamping = abs(damping) <= EPSILON;
+          float t;
+          float pt = perturbation * sin(_tpf2 * _ty);
+          if (_noDamping) {
+            t = amplitude * (cos(_tpf * _tx + pt)) + separation;
+          } else {
+            t = amplitude * exp(-abs(_tx) * damping) * (cos(_tpf * _tx + pt)) + separation;
+          }
+          if (abs(_ty) <= t) {
+            _vx -= amount * _tx;
+            _vy -= amount * _ty;
+          } else {
+            _vx += amount * _tx;
+            _vy += amount * _ty;
+          }
+        }`;
+    }
+
+    get name(): string {
+        return "oscilloscope2";
     }
 
     get variationTypes(): VariationTypes[] {
@@ -3487,10 +3618,13 @@ export function register2DVars() {
     VariationShaders.registerVar(new LinearFunc())
     VariationShaders.registerVar(new LinearTFunc())
     VariationShaders.registerVar(new LogFunc())
+    VariationShaders.registerVar(new LoonieFunc())
     VariationShaders.registerVar(new MobiusFunc())
     VariationShaders.registerVar(new NGonFunc())
     VariationShaders.registerVar(new NoiseFunc())
     VariationShaders.registerVar(new NPolarFunc())
+    VariationShaders.registerVar(new OscilloscopeFunc())
+    VariationShaders.registerVar(new Oscilloscope2Func())
     VariationShaders.registerVar(new ParabolaFunc())
     VariationShaders.registerVar(new PDJFunc())
     VariationShaders.registerVar(new PetalFunc())

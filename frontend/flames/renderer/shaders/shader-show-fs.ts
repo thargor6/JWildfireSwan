@@ -29,13 +29,12 @@ uniform float frames;
 uniform float brightness;
 
 void main(void) {
-vec3 colorTexel = texture2D(uTexSamp, gl_FragCoord.xy / <%= RESOLUTION %>).rgb;
-float alpha = texture2D(uTexSamp, gl_FragCoord.xy / <%= RESOLUTION %>).a;
-
-vec3 col = colorTexel * log(alpha) / (log(alpha) * frames);
-
-col = vec3(pow(col.r, 1.0 / brightness), pow(col.g, 1.0 / brightness), pow(col.b, 1.0 / brightness)); // Brightness correction
-
-gl_FragColor = vec4(col, 1.0);
+  float swarmSizeScl = float( <%= RESOLUTION %> * <%= RESOLUTION %> ) / (512.0 * 512.0);  
+  vec3 colorTexel = texture2D(uTexSamp, gl_FragCoord.xy / <%= RESOLUTION %>).rgb;
+  float alpha = texture2D(uTexSamp, gl_FragCoord.xy / <%= RESOLUTION %>).a;
+  vec3 col = colorTexel * log(alpha) / (log(alpha) * frames);
+  float brightnessScl = 1.0 / brightness / swarmSizeScl;
+  col = vec3(pow(col.r, brightnessScl), pow(col.g, brightnessScl), pow(col.b, brightnessScl)); // Brightness correction
+  gl_FragColor = vec4(col, 1.0);
 }
 `;
