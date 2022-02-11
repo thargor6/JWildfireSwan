@@ -48,15 +48,10 @@ export class AboutView extends View {
 
       <vaadin-details opened="${true}">
         <h2 slot="summary">Current TODO's</h2>
-        <p>random flames</p>
-        <p>basic camera stuff</p>
+        <p>fix basic camera stuff</p>
         <p>user settings</p>
-        <p>color-iteration-stuff</p>
-        <p>support for dc variations</p>
         <p>display shader code in browser</p>
         <p>line codes for shader display</p>
-        <p>error-handling for the backend (e.g. flame parsing)</p>
-        <p>frontend-store for flames</p>
         <p>dynamic param evaluation stuff</p>
         <p>basic editor</p>
         <p>more variations</p>

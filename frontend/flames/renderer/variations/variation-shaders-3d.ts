@@ -17,7 +17,8 @@
 
 import {
     VariationParam,
-    VariationParamType, VariationShaderFunc2D,
+    VariationParamType,
+    VariationShaderFunc2D,
     VariationShaderFunc3D,
     VariationTypes
 } from "./variation-shader-func";
@@ -85,7 +86,7 @@ class Blob3DFunc extends VariationShaderFunc3D {
     }
 
     get variationTypes(): VariationTypes[] {
-        return [VariationTypes.VARTYPE_3D];
+        return [VariationTypes.VARTYPE_3D, VariationTypes.VARTYPE_BLUR];
     }
 }
 
@@ -114,7 +115,7 @@ class Blur3DFunc extends VariationShaderFunc3D {
     }
 
     get variationTypes(): VariationTypes[] {
-        return [VariationTypes.VARTYPE_3D];
+        return [VariationTypes.VARTYPE_3D, VariationTypes.VARTYPE_BLUR];
     }
 }
 

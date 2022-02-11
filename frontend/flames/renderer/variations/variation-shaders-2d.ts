@@ -1404,6 +1404,28 @@ class HeartFunc extends VariationShaderFunc2D {
     }
 }
 
+class GaussianBlurFunc extends VariationShaderFunc2D {
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        return `{
+          float amount = float(${variation.amount});
+          float r = rand2(tex) * 2.0 * M_PI;
+          float sina = sin(r);
+          float cosa = cos(r);
+          r = amount * (rand3(tex) + rand4(tex) + rand5(tex) + rand6(tex) - 2.0);
+          _vx += r * cosa;
+          _vy += r * sina;
+        }`;
+    }
+
+    get name(): string {
+        return "gaussian_blur";
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D, VariationTypes.VARTYPE_BLUR];
+    }
+}
+
 class HeartWFFunc extends VariationShaderFunc2D {
     PARAM_SCALE_X = "scale_x"
     PARAM_SCALE_T = "scale_t"
@@ -3312,6 +3334,114 @@ class Waves2Func extends VariationShaderFunc2D {
     }
 }
 
+class Waves22Func extends VariationShaderFunc2D {
+    PARAM_SCALEX = "scalex"
+    PARAM_SCALEY = "scaley"
+    PARAM_FREQX = "freqx"
+    PARAM_FREQY = "freqy"
+    PARAM_MODEX = "modex"
+    PARAM_MODEY = "modey"
+    PARAM_POWERX = "powerx"
+    PARAM_POWERY = "powery"
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_SCALEX, type: VariationParamType.VP_NUMBER, initialValue:  0.05 },
+            { name: this.PARAM_SCALEY, type: VariationParamType.VP_NUMBER, initialValue:  0.05 },
+            { name: this.PARAM_FREQX, type: VariationParamType.VP_NUMBER, initialValue: 7.00 },
+            { name: this.PARAM_FREQY, type: VariationParamType.VP_NUMBER, initialValue: 13.00 },
+            { name: this.PARAM_MODEX, type: VariationParamType.VP_NUMBER, initialValue: 0 },
+            { name: this.PARAM_MODEY, type: VariationParamType.VP_NUMBER, initialValue: 0 },
+            { name: this.PARAM_POWERX, type: VariationParamType.VP_NUMBER, initialValue:  2.00 },
+            { name: this.PARAM_POWERY, type: VariationParamType.VP_NUMBER, initialValue:  2.00 }]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        /* weird waves22 from Tatyana Zabanova converted by Brad Stefanov https://www.deviantart.com/tatasz/art/Weird-Waves-Plugin-Pack-1-783560564*/
+        return `{
+          float amount = float(${variation.amount});
+          float scalex = float(${variation.params.get(this.PARAM_SCALEX)});
+          float scaley = float(${variation.params.get(this.PARAM_SCALEY)});
+          float freqx = float(${variation.params.get(this.PARAM_FREQX)});
+          float freqy = float(${variation.params.get(this.PARAM_FREQY)});
+          int modex = int(${variation.params.get(this.PARAM_MODEX)});
+          int modey = int(${variation.params.get(this.PARAM_MODEY)});
+          float powerx = float(${variation.params.get(this.PARAM_POWERX)});
+          float powery = float(${variation.params.get(this.PARAM_POWERY)});
+          float x0 = _tx;
+          float y0 = _ty;
+          float sinx;
+          float siny;
+          int px =  int(powerx);
+          int py =  int(powery);  
+          if (modex < 1) {
+            sinx = sin(y0 * freqx);
+          } else {
+            sinx = 0.5 * (1.0 + sin(y0 * freqx));
+          }
+          float offsetx = pow(sinx, float(px)) * scalex;
+          if (modey < 1) {
+            siny = sin(x0 * freqy);
+          } else {
+            siny = 0.5 * (1.0 + sin(x0 * freqy));
+          }
+          float offsety = pow(siny, float(py)) * scaley; 
+          _vx += amount * (x0 + offsetx);
+          _vy += amount * (y0 + offsety);
+        }`;
+    }
+
+    get name(): string {
+        return "waves22";
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
+class Waves23Func extends VariationShaderFunc2D {
+    PARAM_SCALEX = "scalex"
+    PARAM_SCALEY = "scaley"
+    PARAM_FREQX = "freqx"
+    PARAM_FREQY = "freqy"
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_SCALEX, type: VariationParamType.VP_NUMBER, initialValue:  0.05 },
+            { name: this.PARAM_SCALEY, type: VariationParamType.VP_NUMBER, initialValue:  0.05 },
+            { name: this.PARAM_FREQX, type: VariationParamType.VP_NUMBER, initialValue: 7.00 },
+            { name: this.PARAM_FREQY, type: VariationParamType.VP_NUMBER, initialValue: 13.00 }]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        /* waves23 from Tatyana Zabanova converted by Brad Stefanov https://www.deviantart.com/tatasz/art/Weird-Waves-Plugin-Pack-1-783560564*/
+        return `{
+          float amount = float(${variation.amount});
+          float scalex = float(${variation.params.get(this.PARAM_SCALEX)});
+          float scaley = float(${variation.params.get(this.PARAM_SCALEY)});
+          float freqx = float(${variation.params.get(this.PARAM_FREQX)});
+          float freqy = float(${variation.params.get(this.PARAM_FREQY)});
+          float x0 = _tx;
+          float y0 = _ty;
+          float mx = y0 * freqx * (1.0 / (M_PI + M_PI));
+          float fx = mx - floor(mx);
+          if (fx > 0.5) fx = 0.5 - fx;
+          float my = x0 * freqy * (1.0 / (M_PI + M_PI));
+          float fy = my - floor(my);
+          if (fy > 0.5) fy = 0.5 - fy;
+          _vx += amount * (x0 + fx * scalex);
+          _vy += amount * (y0 + fy * scaley);
+        }`;
+    }
+
+    get name(): string {
+        return "waves23";
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
 class Waves2WFFunc extends VariationShaderFunc2D {
     PARAM_SCALEX = "scalex"
     PARAM_SCALEY = "scaley"
@@ -3328,7 +3458,7 @@ class Waves2WFFunc extends VariationShaderFunc2D {
             { name: this.PARAM_FREQX, type: VariationParamType.VP_NUMBER, initialValue: M_PI / 2.0 },
             { name: this.PARAM_FREQY, type: VariationParamType.VP_NUMBER, initialValue: M_PI / 4.0 },
             { name: this.PARAM_USE_COS_X, type: VariationParamType.VP_NUMBER, initialValue: 1 },
-            { name: this.PARAM_USE_COS_Y, type: VariationParamType.VP_NUMBER, initialValue: 0.0 },
+            { name: this.PARAM_USE_COS_Y, type: VariationParamType.VP_NUMBER, initialValue: 0 },
             { name: this.PARAM_DAMPX, type: VariationParamType.VP_NUMBER, initialValue:  0.00 },
             { name: this.PARAM_DAMPY, type: VariationParamType.VP_NUMBER, initialValue:  0.00 }]
     }
@@ -3709,6 +3839,7 @@ export function register2DVars() {
     VariationShaders.registerVar(new FlowerFunc())
     VariationShaders.registerVar(new FluxFunc())
     VariationShaders.registerVar(new FociFunc())
+    VariationShaders.registerVar(new GaussianBlurFunc())
     VariationShaders.registerVar(new HeartFunc())
     VariationShaders.registerVar(new HeartWFFunc())
     VariationShaders.registerVar(new HorseshoeFunc())
@@ -3770,6 +3901,8 @@ export function register2DVars() {
     VariationShaders.registerVar(new UnpolarFunc())
     VariationShaders.registerVar(new WavesFunc())
     VariationShaders.registerVar(new Waves2Func())
+    VariationShaders.registerVar(new Waves22Func())
+    VariationShaders.registerVar(new Waves23Func())
     VariationShaders.registerVar(new Waves2WFFunc())
     VariationShaders.registerVar(new Waves3Func())
     VariationShaders.registerVar(new Waves3WFFunc())
