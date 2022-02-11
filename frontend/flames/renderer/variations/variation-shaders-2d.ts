@@ -260,6 +260,115 @@ class BlurFunc extends VariationShaderFunc2D {
     }
 }
 
+class BoardersFunc extends VariationShaderFunc2D {
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        /* Boarders in the Apophysis Plugin Pack */
+        return `{
+          float amount = float(${variation.amount});
+          float roundX = float(int(_tx+0.5));
+          float roundY = float(int(_ty+0.5));
+          float offsetX = _tx - roundX;
+          float offsetY = _ty - roundY;
+          if (rand2(tex) >= 0.75) {
+            _vx += amount * (offsetX * 0.5 + roundX);
+            _vy += amount * (offsetY * 0.5 + roundY);
+          } else {
+             if (abs(offsetX) >= abs(offsetY)) {
+               if (offsetX >= 0.0) {
+                  _vx += amount * (offsetX * 0.5 + roundX + 0.25);
+                  _vy += amount * (offsetY * 0.5 + roundY + 0.25 * offsetY / offsetX);
+                } else {
+                  _vx += amount * (offsetX * 0.5 + roundX - 0.25);
+                  _vy += amount * (offsetY * 0.5 + roundY - 0.25 * offsetY / offsetX);
+                }
+              } else {
+                if (offsetY >= 0.0) {
+                  _vy += amount * (offsetY * 0.5 + roundY + 0.25);
+                  _vx += amount * (offsetX * 0.5 + roundX + offsetX / offsetY * 0.25);
+                } else {
+                  _vy += amount * (offsetY * 0.5 + roundY - 0.25);
+                  _vx += amount * (offsetX * 0.5 + roundX - offsetX / offsetY * 0.25);
+                }
+              }
+            }
+        }`;
+    }
+
+    get name(): string {
+        return "boarders";
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
+class Boarders2Func extends VariationShaderFunc2D {
+    PARAM_C = "c"
+    PARAM_LEFT = "left"
+    PARAM_RIGHT = "right"
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_C, type: VariationParamType.VP_NUMBER, initialValue: 0.40 },
+            { name: this.PARAM_LEFT, type: VariationParamType.VP_NUMBER, initialValue: 0.65 },
+            { name: this.PARAM_RIGHT, type: VariationParamType.VP_NUMBER, initialValue: 0.35 }]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        // boarders2 by Xyrus02, http://xyrus02.deviantart.com/art/Boarders2-plugin-for-Apophysis-173427128
+        return `{
+          float amount = float(${variation.amount});
+          float c = float(${variation.params.get(this.PARAM_C)});
+          float left = float(${variation.params.get(this.PARAM_LEFT)});
+          float right = float(${variation.params.get(this.PARAM_RIGHT)});
+          float roundX = float(int(_tx+0.5));
+          float roundY = float(int(_ty+0.5));
+          
+          float _c = abs(c);
+          float _cl = abs(left);
+          float _cr = abs(right);
+          _c = (_c == 0.0 ? EPSILON : _c);
+          _cl = (_cl == 0.0 ? EPSILON : _cl);
+          _cr = (_cr == 0.0 ? EPSILON : _cr);
+          _cl = _c * _cl;
+          _cr = _c + (_c * _cr);
+    
+          float offsetX = _tx - roundX;
+          float offsetY = _ty - roundY;
+          if (rand2(tex) >= _cr) {
+            _vx += amount * (offsetX * _c + roundX);
+            _vy += amount * (offsetY * _c + roundY);
+          } else {
+            if (abs(offsetX) >= abs(offsetY)) {
+              if (offsetX >= 0.0) {
+                _vx += amount * (offsetX * _c + roundX + _cl);
+                _vy += amount * (offsetY * _c + roundY + _cl * offsetY / offsetX);
+              } else {
+                 _vx += amount * (offsetX * _c + roundX - _cl);
+                _vy += amount * (offsetY * _c + roundY - _cl * offsetY / offsetX);
+              }
+            } else {
+              if (offsetY >= 0.0) {
+                _vy += amount * (offsetY * _c + roundY + _cl);
+                _vx += amount * (offsetX * _c + roundX + offsetX / offsetY * _cl);
+              } else {
+                _vy += amount * (offsetY * _c + roundY - _cl);
+                _vx += amount * (offsetX * _c + roundX - offsetX / offsetY * _cl);
+              }
+            }
+          }
+        }`;
+    }
+
+    get name(): string {
+        return "boarders2";
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
 class ButterflyFunc extends VariationShaderFunc2D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         /* wx is weight*4/sqrt(3*pi) */
@@ -622,6 +731,31 @@ class CoshFunc extends VariationShaderFunc2D {
 
     get name(): string {
         return "cosh";
+    }
+
+    get funcDependencies(): string[] {
+        return [FUNC_SINH, FUNC_COSH];
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
+class CosineFunc extends VariationShaderFunc2D {
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        return `{
+                  float amount = float(${variation.amount});
+                  float r = _tx * M_PI;
+                  float sinr = sin(r);
+                  float cosr = cos(r);
+                  _vx += amount * cosr * cosh(_ty);
+                  _vy -= amount * sinr * sinh(_ty);
+                }`;
+    }
+
+    get name(): string {
+        return "cosine";
     }
 
     get funcDependencies(): string[] {
@@ -3650,6 +3784,58 @@ class Waves4Func extends VariationShaderFunc2D {
     }
 }
 
+class Waves42Func extends VariationShaderFunc2D {
+    PARAM_SCALEX = "scalex"
+    PARAM_SCALEY = "scaley"
+    PARAM_FREQX = "freqx"
+    PARAM_FREQY = "freqy"
+    PARAM_CONT = "cont"
+    PARAM_YFACT = "yfact"
+    PARAM_FREQX2 = "freqx2"
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_SCALEX, type: VariationParamType.VP_NUMBER, initialValue:  0.05 },
+            { name: this.PARAM_SCALEY, type: VariationParamType.VP_NUMBER, initialValue:  0.05 },
+            { name: this.PARAM_FREQX, type: VariationParamType.VP_NUMBER, initialValue: 7.00 },
+            { name: this.PARAM_FREQY, type: VariationParamType.VP_NUMBER, initialValue: 13.00 },
+            { name: this.PARAM_CONT, type: VariationParamType.VP_NUMBER, initialValue: 0 },
+            { name: this.PARAM_YFACT, type: VariationParamType.VP_NUMBER, initialValue: 0.10 },
+            { name: this.PARAM_FREQX2, type: VariationParamType.VP_NUMBER, initialValue: 1.00 }]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        /* waves42 from Tatyana Zabanova converted by Brad Stefanov https://www.deviantart.com/tatasz/art/Weird-Waves-Plugin-Pack-1-783560564*/
+        return `{
+          float amount = float(${variation.amount});
+          float scalex = float(${variation.params.get(this.PARAM_SCALEX)});
+          float scaley = float(${variation.params.get(this.PARAM_SCALEY)});
+          float freqx = float(${variation.params.get(this.PARAM_FREQX)});
+          float freqy = float(${variation.params.get(this.PARAM_FREQY)});
+          int cont = int(${variation.params.get(this.PARAM_CONT)});
+          float yfact = float(${variation.params.get(this.PARAM_YFACT)});
+          float freqx2 = float(${variation.params.get(this.PARAM_FREQX2)});
+          float x0 = _tx;
+          float y0 = _ty;
+          float ax = floor(y0 * freqx2);   
+          ax = sin(ax * 12.9898 + ax * 78.233 + 1.0 + y0 * 0.001 * yfact) * 43758.5453;
+          ax = ax - float(int(ax));
+          if (cont == 1) {
+            ax = (ax > 0.5) ? 1.0 : 0.0;
+          }
+          _vx += amount * (x0 + sin(y0 * freqx) * ax * ax * scalex);
+          _vy += amount * (y0 + sin(x0 * freqy) * scaley);
+        }`;
+    }
+
+    get name(): string {
+        return "waves42";
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
 class Waves4WFFunc extends VariationShaderFunc2D {
     PARAM_SCALEX = "scalex"
     PARAM_SCALEY = "scaley"
@@ -3805,6 +3991,8 @@ export function register2DVars() {
     VariationShaders.registerVar(new BladeFunc())
     VariationShaders.registerVar(new BlobFunc())
     VariationShaders.registerVar(new BlurFunc())
+    VariationShaders.registerVar(new BoardersFunc())
+    VariationShaders.registerVar(new Boarders2Func())
     VariationShaders.registerVar(new ButterflyFunc())
     VariationShaders.registerVar(new CannabisCurveWFFunc())
     VariationShaders.registerVar(new CellFunc())
@@ -3812,6 +4000,7 @@ export function register2DVars() {
     VariationShaders.registerVar(new ConicFunc())
     VariationShaders.registerVar(new CosFunc())
     VariationShaders.registerVar(new CoshFunc())
+    VariationShaders.registerVar(new CosineFunc())
     VariationShaders.registerVar(new CotFunc())
     VariationShaders.registerVar(new CothFunc())
     VariationShaders.registerVar(new CPowFunc())
@@ -3907,6 +4096,7 @@ export function register2DVars() {
     VariationShaders.registerVar(new Waves3Func())
     VariationShaders.registerVar(new Waves3WFFunc())
     VariationShaders.registerVar(new Waves4Func())
+    VariationShaders.registerVar(new Waves42Func())
     VariationShaders.registerVar(new Waves4WFFunc())
     VariationShaders.registerVar(new WedgeFunc())
     VariationShaders.registerVar(new WhorlFunc())
