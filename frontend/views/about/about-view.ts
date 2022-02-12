@@ -30,7 +30,7 @@ import '@vaadin/text-field';
 import '@vaadin/vertical-layout';
 import '@vaadin/vaadin-details'
 
-import {AppInfoEndpoint} from "Frontend/generated/endpoints";
+import {AppInfoEndpoint, GalleryEndpoint} from "Frontend/generated/endpoints";
 import '@vaadin/vaadin-combo-box';
 import {appStore} from "Frontend/stores/app-store";
 
@@ -44,6 +44,9 @@ export class AboutView extends View {
         <h2 slot="summary">${appStore.applicationName}</h2>
         <p><b>Version</b>: ${until(AppInfoEndpoint.getAppVersion().then((data) =>  html`<span>${data}</span>`), html`<span>${appStore.loadingText}</span>`)}</p>
         <p><b>Build date</b>: ${until(AppInfoEndpoint.getAppBuildDate().then((data) =>  html`<span>${data}</span>`), html`<span>${appStore.loadingText}</span>`)}</p>
+
+        <p><b>Build date</b>: ${until(GalleryEndpoint.getExampleList().then((metadata) =>  html`<span>${metadata[0]}</span>`), html`<span>${appStore.loadingText}</span>`)}</p>
+
       </vaadin-details>
 
       <vaadin-details opened="${true}">
