@@ -82,11 +82,11 @@ FECCB3FECCB3FECCB3FECCB3FECCB3FECCB3840802840802840802840802840802840802
   @state()
   flameName = 'example08'
 
-  flameNames = ['example01', 'example02', 'example03', 'example04', 'example05', 'example06',
-    'example07', 'example08', 'example09', 'example10', 'example11', 'example12', 'example14',
-    'example15', 'example16', 'example17', 'example20', 'example21', 'example22', 'example23', 'example24',
-    'example25', 'example26', 'example27', 'example28', 'example29', 'example30', 'example31',
-    'example32', 'example33', 'example34', 'example35', 'example36', 'example37', 'example38']
+  flameNames = ['example001', 'example002', 'example003', 'example004', 'example005', 'example006',
+    'example007', 'example008', 'example009', 'example010', 'example011', 'example012', 'example014',
+    'example015', 'example016', 'example017', 'example020', 'example021', 'example022', 'example023', 'example024',
+    'example025', 'example026', 'example027', 'example028', 'example029', 'example030', 'example031',
+    'example032', 'example033', 'example034', 'example035', 'example036', 'example037', 'example038']
 
   @property()
   onFlameNameChanged: ()=>void = ()=> {}

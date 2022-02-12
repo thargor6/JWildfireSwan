@@ -44,20 +44,11 @@ export class AboutView extends View {
         <h2 slot="summary">${appStore.applicationName}</h2>
         <p><b>Version</b>: ${until(AppInfoEndpoint.getAppVersion().then((data) =>  html`<span>${data}</span>`), html`<span>${appStore.loadingText}</span>`)}</p>
         <p><b>Build date</b>: ${until(AppInfoEndpoint.getAppBuildDate().then((data) =>  html`<span>${data}</span>`), html`<span>${appStore.loadingText}</span>`)}</p>
-
-        <p><b>Build date</b>: ${until(GalleryEndpoint.getExampleList().then((metadata) =>  html`<span>${metadata[0]}</span>`), html`<span>${appStore.loadingText}</span>`)}</p>
-
       </vaadin-details>
 
       <vaadin-details opened="${true}">
-        <h2 slot="summary">Current TODO's</h2>
-        <p>fix basic camera stuff</p>
-        <p>user settings</p>
-        <p>display shader code in browser</p>
-        <p>line codes for shader display</p>
-        <p>dynamic param evaluation stuff</p>
-        <p>basic editor</p>
-        <p>more variations</p>
+        <h2 slot="summary">...</h2>
+
       </vaadin-details>
       
 `;

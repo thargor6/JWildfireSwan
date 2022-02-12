@@ -1,0 +1,7 @@
+- fix basic camera stuff
+- user settings
+- display shader code in browser
+- line codes for shader display
+- dynamic param evaluation stuff
+- basic editor
+- more variations

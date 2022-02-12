@@ -248,6 +248,56 @@ class Curl3DFunc extends VariationShaderFunc3D {
     }
 }
 
+class ColorscaleWFFunc extends VariationShaderFunc3D {
+    PARAM_CX = "scale_x"
+    PARAM_CY = "scale_y"
+    PARAM_CZ = "scale_z"
+    PARAM_OFFSET_Z = "offset_z"
+    PARAM_RESET_Z = "reset_z"
+    PARAM_SIDES = "sides"
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_CX, type: VariationParamType.VP_NUMBER, initialValue: 0.0 },
+            { name: this.PARAM_CY, type: VariationParamType.VP_NUMBER, initialValue: 0.00 },
+            { name: this.PARAM_CZ, type: VariationParamType.VP_NUMBER, initialValue: 0.50 },
+            { name: this.PARAM_OFFSET_Z, type: VariationParamType.VP_NUMBER, initialValue: 0.00 },
+            { name: this.PARAM_RESET_Z, type: VariationParamType.VP_NUMBER, initialValue: 0.00 },
+            { name: this.PARAM_SIDES, type: VariationParamType.VP_NUMBER, initialValue: 0.00 }]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        return `{
+          float amount = float(${variation.amount});
+          float scale_x = float(${variation.params.get(this.PARAM_CX)});
+          float scale_y = float(${variation.params.get(this.PARAM_CY)});
+          float scale_z = float(${variation.params.get(this.PARAM_CZ)});
+          float offset_z = float(${variation.params.get(this.PARAM_OFFSET_Z)});
+          float reset_z = float(${variation.params.get(this.PARAM_RESET_Z)});
+          float sides = float(${variation.params.get(this.PARAM_SIDES)});
+          _vx += amount * scale_x * _tx;
+          _vy += amount * scale_y * _ty;
+          float dz = _color * scale_z * amount + offset_z;
+          if (reset_z > 0.0) {
+            _vz = dz;
+          } else {
+            if (sides > 0.0) {
+              _vz += dz * rand2(tex);
+            } else {
+              _vz += dz;
+            }
+          }  
+        }`;
+    }
+
+    get name(): string {
+        return "colorscale_wf";
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_3D, VariationTypes.VARTYPE_DC];
+    }
+}
+
 class CylinderApoFunc extends VariationShaderFunc3D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         return `{
@@ -561,6 +611,7 @@ export function register3DVars() {
     VariationShaders.registerVar(new BubbleFunc())
     VariationShaders.registerVar(new Bubble2Func())
     VariationShaders.registerVar(new BubbleWFFunc())
+    VariationShaders.registerVar(new ColorscaleWFFunc())
     VariationShaders.registerVar(new Curl3DFunc())
     VariationShaders.registerVar(new CylinderApoFunc())
     VariationShaders.registerVar(new HemisphereFunc())

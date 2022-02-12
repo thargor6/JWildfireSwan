@@ -391,6 +391,85 @@ class ButterflyFunc extends VariationShaderFunc2D {
     }
 }
 
+class BWraps7Func extends VariationShaderFunc2D {
+    PARAM_CELLSIZE = "cellsize"
+    PARAM_SPACE = "space"
+    PARAM_RIGHT = "gain"
+    PARAM_INNER_TWIST = "inner_twist"
+    PARAM_OUTER_TWIST = "outer_twist"
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_CELLSIZE, type: VariationParamType.VP_NUMBER, initialValue: 1.00 },
+            { name: this.PARAM_SPACE, type: VariationParamType.VP_NUMBER, initialValue: 0.00 },
+            { name: this.PARAM_RIGHT, type: VariationParamType.VP_NUMBER, initialValue: 2.00 },
+            { name: this.PARAM_INNER_TWIST, type: VariationParamType.VP_NUMBER, initialValue: 0.00 },
+            { name: this.PARAM_OUTER_TWIST, type: VariationParamType.VP_NUMBER, initialValue: 0.00 }]
+    }
+
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        // Bubble Wrap - WIP Plugin by slobo777
+        // http://slobo777.deviantart.com/art/Bubble-Wrap-WIP-Plugin-112370125
+        return `{
+          float amount = float(${variation.amount});
+          float cellsize = float(${variation.params.get(this.PARAM_CELLSIZE)});
+          float space = float(${variation.params.get(this.PARAM_SPACE)});
+          float gain = float(${variation.params.get(this.PARAM_RIGHT)});
+          float inner_twist = float(${variation.params.get(this.PARAM_INNER_TWIST)});
+          float outer_twist = float(${variation.params.get(this.PARAM_OUTER_TWIST)});
+          float radius = 0.5 * (cellsize / (1.0 + space * space));
+          float _g2 = gain * gain + 1.0e-6;
+          float max_bubble = _g2 * radius;    
+          if (max_bubble > 2.0) {
+            max_bubble = 1.0;
+          } else {    
+            max_bubble *= 1.0 / ((max_bubble * max_bubble) / 4.0 + 1.0);
+          }
+          float _r2 = radius * radius;
+          float _rfactor = radius / max_bubble;            
+          float Vx = _tx;
+          float Vy = _ty;
+          if (abs(cellsize) < EPSILON) {    
+            _vx += amount * Vx;
+            _vy += amount * Vy;
+          }
+          else {
+            float Cx = (floor(Vx / cellsize) + 0.5) * cellsize;
+            float Cy = (floor(Vy / cellsize) + 0.5) * cellsize;
+            float Lx = Vx - Cx;
+            float Ly = Vy - Cy;
+            if ((Lx * Lx + Ly * Ly) > _r2) {
+              _vx += amount * Vx;
+              _vy += amount * Vy;
+            }
+            else {
+              Lx *= _g2;
+              Ly *= _g2;
+              float r = _rfactor / ((Lx * Lx + Ly * Ly) / 4.0 + 1.0);
+              Lx *= r;
+              Ly *= r;
+              r = (Lx * Lx + Ly * Ly) / _r2; 
+              float theta = inner_twist * (1.0 - r) + outer_twist * r;
+              float s = sin(theta);
+              float c = cos(theta);  
+              Vx = Cx + c * Lx + s * Ly;
+              Vy = Cy - s * Lx + c * Ly;
+              _vx += amount * Vx;
+              _vy += amount * Vy;
+            }
+          }
+        }`;
+    }
+
+    get name(): string {
+        return "bwraps7";
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
 class CannabisCurveWFFunc extends VariationShaderFunc2D {
     PARAM_FILLED = "filled"
 
@@ -1830,6 +1909,52 @@ class JuliascopeFunc extends VariationShaderFunc2D {
 
     get funcDependencies(): string[] {
         return [FUNC_MODULO];
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
+class KaleidoscopeFunc extends VariationShaderFunc2D {
+    PARAM_PULL = "pull"
+    PARAM_ROTATE = "rotate"
+    PARAM_LINE_UP = "line_up"
+    PARAM_X = "x"
+    PARAM_Y = "y"
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_PULL, type: VariationParamType.VP_NUMBER, initialValue: 0.00 },
+            { name: this.PARAM_ROTATE, type: VariationParamType.VP_NUMBER, initialValue: 1.00 },
+            { name: this.PARAM_LINE_UP, type: VariationParamType.VP_NUMBER, initialValue: 1.00 },
+            { name: this.PARAM_X, type: VariationParamType.VP_NUMBER, initialValue: 0.00 },
+            { name: this.PARAM_Y, type: VariationParamType.VP_NUMBER, initialValue: 0.00 }]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        /* Kaleidoscope by Will Evans, http://eevans1.deviantart.com/art/kaleidoscope-plugin-122185469  */
+        return `{
+          float amount = float(${variation.amount});
+          float pull = float(${variation.params.get(this.PARAM_PULL)});
+          float rotate = float(${variation.params.get(this.PARAM_ROTATE)});
+          float line_up = float(${variation.params.get(this.PARAM_LINE_UP)});
+          float x = float(${variation.params.get(this.PARAM_X)});
+          float y = float(${variation.params.get(this.PARAM_Y)});
+          float _q = pull; 
+          float _w = rotate; 
+          float _e = line_up;
+          float _r = x; 
+          float _t = y; 
+          if (_ty > 0.0) {
+            _vy += ((_w * _ty) * cos(45.0) + _tx * sin(45.0) + _q + _e) + _t;
+          } else {
+            _vy += (_w * _ty) * cos(45.0) + _tx * sin(45.0) - _q - _e;
+          }
+        }`;
+    }
+
+    get name(): string {
+        return "kaleidoscope";
     }
 
     get variationTypes(): VariationTypes[] {
@@ -3994,6 +4119,7 @@ export function register2DVars() {
     VariationShaders.registerVar(new BoardersFunc())
     VariationShaders.registerVar(new Boarders2Func())
     VariationShaders.registerVar(new ButterflyFunc())
+    VariationShaders.registerVar(new BWraps7Func())
     VariationShaders.registerVar(new CannabisCurveWFFunc())
     VariationShaders.registerVar(new CellFunc())
     VariationShaders.registerVar(new CloverLeafWFFunc())
@@ -4038,6 +4164,7 @@ export function register2DVars() {
     VariationShaders.registerVar(new JuliaNFunc())
     VariationShaders.registerVar(new JuliaQFunc())
     VariationShaders.registerVar(new JuliascopeFunc())
+    VariationShaders.registerVar(new KaleidoscopeFunc())
     VariationShaders.registerVar(new LazySusanFunc())
     VariationShaders.registerVar(new LinearFunc())
     VariationShaders.registerVar(new LinearTFunc())
