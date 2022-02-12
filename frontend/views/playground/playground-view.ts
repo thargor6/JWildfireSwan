@@ -212,8 +212,7 @@ export class PlaygroundView extends View {
     }
 
     renderFirstFlame = ()=> {
-        const idx = Math.floor(this.flamePanel.flameNames.length * Math.random())
-        this.flamePanel.flameName = this.flamePanel.flameNames[idx]
+        this.flamePanel.flameName = playgroundStore.randomExampleFlamename()
         this.importExampleFlame()
     }
 }

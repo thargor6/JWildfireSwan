@@ -24,67 +24,31 @@ import {Flame} from "Frontend/flames/model/flame";
 import {FlameRenderer} from "Frontend/flames/renderer/flame-renderer";
 import {GalleryEndpoint} from "Frontend/generated/endpoints";
 
-type OnInitCallback = () => void
+interface ExampleFlame {
+  title: string;
+  name: string;
+  caption: string;
+  description?: string;
+  tags: string[];
+}
 
-export class PlaygroundStore {
-  variations: string[] = []
-  initState = new Set<string>()
-  onInitCallbacks = new Map<string[], OnInitCallback>()
-  calculating = false
-  lastError = ''
-  flame!: Flame
-  renderer!: FlameRenderer
-  exampleFlamenames: string[] = []
+export class GalleryStore {
+  exampleFlames: ExampleFlame[] = []
+
 
   constructor() {
     makeAutoObservable(this);
     this.initialize()
   }
 
+  private parseExampleFlame =(example: string): ExampleFlame => JSON.parse(example)
+
   async initialize() {
-    let vars = [... VariationShaders.varNameList]
-    vars.sort()
-    this.variations = vars
-
-    this.exampleFlamenames = await GalleryEndpoint.getExampleList()
+    this.exampleFlames = await GalleryEndpoint.getExampleMetaDataList().then(
+       examples => examples.map(example => this.parseExampleFlame(example))
+    )
   }
 
-  notifyInit(tagName: string) {
-    this.initState.add(tagName)
-    this.executeOnInitCallbacks()
-  }
-
-  registerInitCallback(componentIds: string[], cb: OnInitCallback) {
-    this.onInitCallbacks.set(componentIds, cb)
-  }
-
-  private executeOnInitCallbacks() {
-    let removeCbs = new Array<string[]>()
-    this.onInitCallbacks.forEach((value, key) => {
-      let registerState = true
-      key.forEach(key => {
-        if(!this.initState.has(key)) {
-          registerState = false
-        }
-      })
-      if(registerState) {
-        removeCbs.push(key)
-        value()
-      }
-    })
-    // remove executed callbacks
-    removeCbs.forEach(key=>this.onInitCallbacks.delete(key))
-  }
-
-  public randomExampleFlamename = ()=> {
-    const idx = Math.floor( this.exampleFlamenames.length * Math.random())
-    return idx>=0 && idx<this.exampleFlamenames.length ? this.exampleFlamenames[idx] : ''
-  }
 }
 
-
-register2DVars()
-register3DVars()
-registerZTransformVars()
-
-export const playgroundStore = new PlaygroundStore()
+export const galleryStore = new GalleryStore()

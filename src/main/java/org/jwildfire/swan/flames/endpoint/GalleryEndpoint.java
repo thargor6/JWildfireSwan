@@ -16,28 +16,20 @@
 */
 package org.jwildfire.swan.flames.endpoint;
 
-import com.google.common.io.Resources;
 import com.vaadin.flow.server.auth.AnonymousAllowed;
 import com.vaadin.fusion.Endpoint;
 import com.vaadin.fusion.Nonnull;
-import io.swagger.models.auth.In;
 import lombok.extern.slf4j.Slf4j;
 import org.jwildfire.base.Tools;
-import org.jwildfire.swan.flames.model.Flame;
-import org.jwildfire.swan.flames.model.RandomFlame;
-import org.jwildfire.swan.flames.service.FlamesService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.core.io.support.ResourcePatternResolver;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -47,12 +39,13 @@ import java.util.List;
 @AnonymousAllowed
 @Slf4j
 public class GalleryEndpoint {
-  private static List<String> exampleJsonMetadata = null;
+  private static List<String> examples = null;
+  private static List<String> exampleMetaData = null;
   private static final String EXAMPLE_PATH = "examples";
 
   public @Nonnull List<@Nonnull String> getExampleList() {
     try {
-      if(exampleJsonMetadata==null) {
+      if(examples ==null) {
         List<String> metaData = new ArrayList<>();
         ClassLoader cl = getClassLoader();
         ResourcePatternResolver resolver = new PathMatchingResourcePatternResolver(cl);
@@ -74,9 +67,25 @@ public class GalleryEndpoint {
             }
           }
         }
-        exampleJsonMetadata = metaData;
+        examples = metaData;
       }
-      return exampleJsonMetadata;
+      return examples;
+    } catch (Throwable ex) {
+      log.error("Error accessing example example-list", ex);
+      throw new RuntimeException(ex);
+    }
+  }
+
+  public @Nonnull List<@Nonnull String> getExampleMetaDataList() {
+    try {
+      if (exampleMetaData == null) {
+        List<String> metaData = new ArrayList<>();
+        for(String example: getExampleList()) {
+          metaData.add(getExampleMetaData(example));
+        }
+        exampleMetaData = metaData;
+      }
+      return exampleMetaData;
     } catch (Throwable ex) {
       log.error("Error accessing example meta-data-list", ex);
       throw new RuntimeException(ex);

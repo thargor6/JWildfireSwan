@@ -80,23 +80,16 @@ FECCB3FECCB3FECCB3FECCB3FECCB3FECCB3840802840802840802840802840802840802
   onRandomGradient: ()=>void = ()=> {}
 
   @state()
-  flameName = 'example08'
-
-  flameNames = ['example001', 'example002', 'example003', 'example004', 'example005', 'example006',
-    'example007', 'example008', 'example009', 'example010', 'example011', 'example012', 'example014',
-    'example015', 'example016', 'example017', 'example020', 'example021', 'example022', 'example023', 'example024',
-    'example025', 'example026', 'example027', 'example028', 'example029', 'example030', 'example031',
-    'example032', 'example033', 'example034', 'example035', 'example036', 'example037', 'example038']
+  flameName = 'example008'
 
   @property()
   onFlameNameChanged: ()=>void = ()=> {}
-
 
   render() {
     return html`
       <div style="${this.visible ? `display:block; width: 100%;`: `display:none;`}">
         <div style="display:flex; flex-direction: column;">
-          <vaadin-combo-box label="Example flame" .items="${this.flameNames}" value="${this.flameName}"
+          <vaadin-combo-box label="Example flame" .items="${playgroundStore.exampleFlamenames}" value="${this.flameName}"
                             @change="${(event: Event) => this.flameNameChanged(event)}"></vaadin-combo-box>
           <br>
            <vaadin-text-area style="max-width:100em; max-height: 16em; font-size: xx-small;" label="Flame xml" value="${this.flameXml}" @change="${(event: Event)=>this.flameXmlChanged(event)}"></vaadin-text-area>
