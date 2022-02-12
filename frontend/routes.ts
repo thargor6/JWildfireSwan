@@ -23,7 +23,16 @@ export const views: ViewRoute[] = [
     icon: 'la la-file',
     title: 'Playground',
   },
-
+  {
+    path: 'gallery',
+    component: 'gallery-view',
+    icon: 'la la-th-list',
+    title: 'Example Gallery',
+    action: async (_context, _command) => {
+      await import('./views/gallery/gallery-view');
+      return;
+    },
+  },
   {
     path: 'about',
     component: 'about-view',
@@ -102,26 +111,6 @@ export const views: ViewRoute[] = [
     title: 'Map',
     action: async (_context, _command) => {
       await import('./views/map/map-view');
-      return;
-    },
-  },
-  {
-    path: 'gallery',
-    component: 'gallery-view',
-    icon: 'la la-th-list',
-    title: 'Example Gallery',
-    action: async (_context, _command) => {
-      await import('./views/gallery/gallery-view');
-      return;
-    },
-  },
-  {
-    path: 'image-list',
-    component: 'image-list-view',
-    icon: 'la la-th-list',
-    title: 'Image List',
-    action: async (_context, _command) => {
-      await import('./views/imagelist/image-list-view');
       return;
     },
   },

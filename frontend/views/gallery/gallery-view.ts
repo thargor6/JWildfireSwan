@@ -85,18 +85,20 @@ export class ImageListView extends View {
       caption: '',
       tags: ['example']
     },
+      /*
     {
       title: 'Example 12',
       name: 'example12',
       caption: '',
       tags: ['example']
-    },
+    },*/
+      /*
     {
       title: 'Example 13',
       name: 'example13',
       caption: '',
       tags: ['example']
-    },
+    },*/
     {
       title: 'Example 14',
       name: 'example14',
@@ -104,56 +106,154 @@ export class ImageListView extends View {
       tags: ['example']
     },
     {
-      title: 'Example 3',
-      name: 'example03',
+      title: 'Example 15',
+      name: 'example15',
       caption: '',
       tags: ['example']
     },
     {
-      title: 'Example 3',
-      name: 'example03',
+      title: 'Example 16',
+      name: 'example16',
+      caption: '',
+      tags: ['example']
+    },/*
+    {
+      title: 'Example 17',
+      name: 'example17',
+      caption: '',
+      tags: ['example']
+    },*/
+      /*
+    {
+      title: 'Example 18',
+      name: 'example18',
+      caption: '',
+      tags: ['example']
+    },*/
+      /*
+    {
+      title: 'Example 19',
+      name: 'example19',
+      caption: '',
+      tags: ['example']
+    },*/
+
+      /*
+    {
+      title: 'Example 20',
+      name: 'example20',
+      caption: '',
+      tags: ['example']
+    },*/
+    /*
+    {
+      title: 'Example 21',
+      name: 'example21',
+      caption: '',
+      tags: ['example']
+    },*/
+      /*
+    {
+      title: 'Example 22',
+      name: 'example22',
+      caption: '',
+      tags: ['example']
+    },*/
+    {
+      title: 'Example 23',
+      name: 'example23',
+      caption: '',
+      tags: ['example']
+    },/*
+    {
+      title: 'Example 24',
+      name: 'example24',
+      caption: '',
+      tags: ['example']
+    },*/
+    {
+      title: 'Example 25',
+      name: 'example25',
+      caption: '',
+      tags: ['example']
+    },/*
+    {
+      title: 'Example 26',
+      name: 'example26',
+      caption: '',
+      tags: ['example']
+    },*/
+      /*
+    {
+      title: 'Example 27',
+      name: 'example27',
+      caption: '',
+      tags: ['example']
+    },*/
+    {
+      title: 'Example 28',
+      name: 'example28',
+      caption: '',
+      tags: ['example']
+    },/*
+    {
+      title: 'Example 29',
+      name: 'example29',
+      caption: '',
+      tags: ['example']
+    },*/
+      /*
+    {
+      title: 'Example 30',
+      name: 'example30',
+      caption: '',
+      tags: ['example']
+    },*/
+    {
+      title: 'Example 31',
+      name: 'example31',
+      caption: '',
+      tags: ['example']
+    },/*
+    {
+      title: 'Example 32',
+      name: 'example32',
+      caption: '',
+      tags: ['example']
+    },*/
+    {
+      title: 'Example 33',
+      name: 'example33',
       caption: '',
       tags: ['example']
     },
     {
-      title: 'Example 3',
-      name: 'example03',
+      title: 'Example 34',
+      name: 'example34',
       caption: '',
       tags: ['example']
     },
     {
-      title: 'Example 3',
-      name: 'example03',
+      title: 'Example 35',
+      name: 'example35',
       caption: '',
       tags: ['example']
     },
     {
-      title: 'Example 3',
-      name: 'example03',
+      title: 'Example 36',
+      name: 'example36',
       caption: '',
       tags: ['example']
     },
     {
-      title: 'Example 3',
-      name: 'example03',
+      title: 'Example 37',
+      name: 'example37',
       caption: '',
       tags: ['example']
     },
     {
-      title: 'Example 3',
-      name: 'example03',
-      caption: '',
-      tags: ['example']
-    },
-    {
-      title: 'Example 3',
-      name: 'example03',
-      caption: '',
-      tags: ['example']
-    },
-    {
-      title: 'Example 3',
-      name: 'example03',
+      title: 'Example 38',
+      name: 'example38',
       caption: '',
       tags: ['example']
     },
@@ -164,8 +264,8 @@ export class ImageListView extends View {
       <main class="max-w-screen-lg mx-auto pb-l px-l">
         <vaadin-horizontal-layout class="items-center justify-between">
           <vaadin-vertical-layout>
-            <h2 class="mb-0 mt-xl text-3xl">Beautiful photos</h2>
-            <p class="mb-xl mt-0 text-secondary">Royalty free photos and pictures, courtesy of Unsplash</p>
+            <h2 class="mb-0 mt-xl text-3xl">Gallery</h2>
+            <p class="mb-xl mt-0 text-secondary">A gallery of example flames. All images where rendered inside the browser</p>
           </vaadin-vertical-layout>
         </vaadin-horizontal-layout>
         <ol class="gap-m grid list-none m-0 p-0">
