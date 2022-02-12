@@ -106,6 +106,16 @@ export const views: ViewRoute[] = [
     },
   },
   {
+    path: 'gallery',
+    component: 'gallery-view',
+    icon: 'la la-th-list',
+    title: 'Example Gallery',
+    action: async (_context, _command) => {
+      await import('./views/gallery/gallery-view');
+      return;
+    },
+  },
+  {
     path: 'image-list',
     component: 'image-list-view',
     icon: 'la la-th-list',
