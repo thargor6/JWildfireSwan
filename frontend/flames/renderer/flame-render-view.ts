@@ -74,9 +74,9 @@ export class FlameRenderView {
     }
 
     private initView() {
-        const pixelsPerUnit = this._flame.pixelsPerUnit * this._flame.camZoom * 2.0;
-        const corner_x = this._flame.centreX - this._imageWidth / pixelsPerUnit / 2.0;
-        const corner_y = this._flame.centreY - this._imageHeight / pixelsPerUnit / 2.0;
+        const pixelsPerUnit = this._flame.pixelsPerUnit * this._flame.camZoom * 2.0
+        const corner_x = this._flame.centreX - this._imageWidth / pixelsPerUnit / 2.0
+        const corner_y = this._flame.centreY - this._imageHeight / pixelsPerUnit / 2.0
         const border_size = this._borderWidth / pixelsPerUnit;
 
         this._camX0 = corner_x - border_size;
@@ -90,17 +90,16 @@ export class FlameRenderView {
         this._bws = this._rasterWidth / this._camW / this._imageWidth;
         this._bhs = this._rasterHeight / this._camH / this._imageHeight;
 
-        // TODO remove rcX/rcY
         if (!this._doProject3D) {
             this._cosa = Math.cos(-M_PI * (this._flame.camRoll) / 180.0);
             this._sina = Math.sin(-M_PI * (this._flame.camRoll) / 180.0);
-            this._rcX = this._flame.centreX;// this._flame.centreX * (1.0 - this._cosa) - this._flame.centreY * this._sina - this._camX0;
-            this._rcY = this._flame.centreY; //this._flame.centreY * (1.0 - this._cosa) + this._flame.centreX * this._sina - this._camY0;
+            this._rcX = this._flame.centreX * (1.0 - this._cosa) - this._flame.centreY * this._sina - this._flame.centreX
+            this._rcY = this._flame.centreY * (1.0 - this._cosa) + this._flame.centreX * this._sina - this._flame.centreY
         } else {
             this._cosa = 1.0;
             this._sina = 0.0;
-            this._rcX = this._flame.centreX; //-this._camX0;
-            this._rcY = this._flame.centreY;//-this._camY0;
+            this._rcX = -this._flame.centreX
+            this._rcY = -this._flame.centreY
         }
     }
 
