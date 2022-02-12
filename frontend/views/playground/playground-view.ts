@@ -45,9 +45,10 @@ import {playgroundStore} from "Frontend/stores/playground-store";
 import {PlaygroundFlamePanel} from "Frontend/views/playground/playground-flame-panel";
 import '../../components/swan-loading-indicator'
 import '../../components/swan-error-panel'
+import {BeforeEnterObserver, PreventAndRedirectCommands, Router, RouterLocation} from "@vaadin/router";
 
 @customElement('playground-view')
-export class PlaygroundView extends View {
+export class PlaygroundView extends View  implements BeforeEnterObserver {
     canvas!: HTMLCanvasElement
     canvasContainer!: HTMLDivElement
     capturedImageContainer!: HTMLDivElement
@@ -57,6 +58,7 @@ export class PlaygroundView extends View {
 
     viewOptsPanel!: PlaygroundRenderPanel
     flamePanel!: PlaygroundFlamePanel
+    loadExampleAtStartup: string | undefined = undefined
 
     render() {
         return html`
@@ -198,6 +200,10 @@ export class PlaygroundView extends View {
     }
 
     importExampleFlame = (): void => {
+        if(!this.flamePanel.flameName) {
+            return
+        }
+
         playgroundStore.calculating = true
         playgroundStore.lastError = ''
 
@@ -212,7 +218,17 @@ export class PlaygroundView extends View {
     }
 
     renderFirstFlame = ()=> {
-        this.flamePanel.flameName = playgroundStore.randomExampleFlamename()
+        this.flamePanel.flameName = this.loadExampleAtStartup ? this.loadExampleAtStartup : playgroundStore.randomExampleFlamename()
         this.importExampleFlame()
+    }
+
+    onBeforeEnter(
+        _location: RouterLocation,
+        _commands: PreventAndRedirectCommands,
+        _router: Router) {
+        const exampleName = _location.params['example'] as string;
+        if(exampleName && exampleName!=='') {
+            this.loadExampleAtStartup = exampleName
+        }
     }
 }

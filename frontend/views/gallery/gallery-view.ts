@@ -7,6 +7,7 @@ import {html, nothing} from 'lit';
 import { customElement, state } from 'lit/decorators.js';
 import { View } from '../../views/view';
 import {galleryStore} from "Frontend/stores/gallery-store";
+import {Router} from "@vaadin/router";
 
 
 
@@ -36,6 +37,7 @@ export class ImageListView extends View {
                 <span class="text-s text-secondary">${example.caption}</span>
                 ${(example.description && example.description!=='') ? html `<p class = "my-m" >${example.description}</p>`: nothing}
                 ${example.tags.length > 0 ? html `${example.tags.map(tag => html `#${tag} `)}` : nothing}
+                  <vaadin-button @click="${this.renderExample.bind(this, example.name)}">Render in Playground</vaadin-button>
               </li>
             `
           )}
@@ -47,5 +49,9 @@ export class ImageListView extends View {
   connectedCallback() {
     super.connectedCallback();
     this.classList.add('flex', 'flex-col', 'h-full');
+  }
+
+  renderExample(example: string) {
+      Router.go('/playground/'+example)
   }
 }

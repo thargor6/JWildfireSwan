@@ -80,7 +80,7 @@ FECCB3FECCB3FECCB3FECCB3FECCB3FECCB3840802840802840802840802840802840802
   onRandomGradient: ()=>void = ()=> {}
 
   @state()
-  flameName = 'example008'
+  flameName = 'example003'
 
   @property()
   onFlameNameChanged: ()=>void = ()=> {}

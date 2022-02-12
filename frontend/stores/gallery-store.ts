@@ -34,19 +34,21 @@ interface ExampleFlame {
 
 export class GalleryStore {
   exampleFlames: ExampleFlame[] = []
-
+  initFlag = false
 
   constructor() {
     makeAutoObservable(this);
-    this.initialize()
   }
 
   private parseExampleFlame =(example: string): ExampleFlame => JSON.parse(example)
 
-  async initialize() {
-    this.exampleFlames = await GalleryEndpoint.getExampleMetaDataList().then(
-       examples => examples.map(example => this.parseExampleFlame(example))
-    )
+  public async initialize() {
+    if(!this.initFlag) {
+      this.exampleFlames = await GalleryEndpoint.getExampleMetaDataList().then(
+          examples => examples.map(example => this.parseExampleFlame(example))
+      )
+      this.initFlag = true
+    }
   }
 
 }

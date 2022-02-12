@@ -27,6 +27,7 @@ import {GalleryEndpoint} from "Frontend/generated/endpoints";
 type OnInitCallback = () => void
 
 export class PlaygroundStore {
+  initFlag = false
   variations: string[] = []
   initState = new Set<string>()
   onInitCallbacks = new Map<string[], OnInitCallback>()
@@ -38,15 +39,19 @@ export class PlaygroundStore {
 
   constructor() {
     makeAutoObservable(this);
-    this.initialize()
+
   }
 
   async initialize() {
-    let vars = [... VariationShaders.varNameList]
-    vars.sort()
-    this.variations = vars
+    if(!this.initFlag) {
+      let vars = [...VariationShaders.varNameList]
+      vars.sort()
+      this.variations = vars
 
-    this.exampleFlamenames = await GalleryEndpoint.getExampleList()
+      this.exampleFlamenames = await GalleryEndpoint.getExampleList()
+      this.initFlag = true
+      this.notifyInit('store')
+    }
   }
 
   notifyInit(tagName: string) {
@@ -55,7 +60,7 @@ export class PlaygroundStore {
   }
 
   registerInitCallback(componentIds: string[], cb: OnInitCallback) {
-    this.onInitCallbacks.set(componentIds, cb)
+    this.onInitCallbacks.set(['store', ...componentIds], cb)
   }
 
   private executeOnInitCallbacks() {

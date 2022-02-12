@@ -1,3 +1,20 @@
+/*
+  JWildfire Swan - fractal flames the playful way, GPU accelerated
+  Copyright (C) 2021-2022 Andreas Maschke
+
+  This is free software; you can redistribute it and/or modify it under the terms of the GNU Lesser
+  General Public License as published by the Free Software Foundation; either version 2.1 of the
+  License, or (at your option) any later version.
+
+  This software is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+  even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+  Lesser General Public License for more details.
+
+  You should have received a copy of the GNU Lesser General Public License along with this software;
+  if not, write to the Free Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+  02110-1301 USA, or see the FSF site: http://www.fsf.org.
+*/
+
 import '@vaadin/app-layout';
 import { AppLayout } from '@vaadin/app-layout';
 import '@vaadin/app-layout/vaadin-drawer-toggle';
@@ -12,6 +29,7 @@ import { router } from '../index';
 import { views } from '../routes';
 import { appStore } from '../stores/app-store';
 import { Layout } from './view';
+import {galleryStore} from "Frontend/stores/gallery-store";
 
 interface RouteInfo {
   path: string;
@@ -65,9 +83,11 @@ export class MainLayout extends Layout {
         AppLayout.dispatchCloseOverlayDrawerEvent();
       }
     );
+
   }
 
+
   private getMenuRoutes(): RouteInfo[] {
-    return views.filter((route) => route.title === 'About' || route.title === 'Playground' || route.title === 'Example Gallery') as RouteInfo[];
+    return views.filter((route) => (route.title === 'About' || route.title === 'Playground' || route.title === 'Example Gallery') && (route.path.indexOf(':')<0)) as RouteInfo[];
   }
 }
