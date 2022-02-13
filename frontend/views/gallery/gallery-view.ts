@@ -41,7 +41,7 @@ export class ImageListView extends View {
                   class="bg-contrast flex items-center justify-center mb-m overflow-hidden rounded-m w-full"
                   style="height: 160px;"
                 >
-                  <img alt=${example.title} class="w-full" loading="lazy" src="./images/${example.name}.jpg" />
+                  <img alt=${example.title} @click="${this.renderExample.bind(this, example.name)}" class="w-full" style="cursor: pointer;" loading="lazy" src="./images/${example.name}.jpg" />
                 </div>
                 <span class="text-xl font-semibold">${example.title}</span>
                 ${(example.caption && example.caption!=='') ? html `<span class="text-s text-secondary">${example.caption}</span>`: nothing}  

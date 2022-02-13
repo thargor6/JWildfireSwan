@@ -42,7 +42,7 @@ export enum SortOrder {
 export class GalleryStore {
   exampleFlames: ExampleFlame[] = []
   initFlag = false
-  sortOrder = SortOrder.NEWEST_FIRST
+  sortOrder = SortOrder.RANDOM
 
   constructor() {
     makeAutoObservable(this);
@@ -72,7 +72,7 @@ export class GalleryStore {
   private sortExamples(examples: ExampleFlame[]) {
     switch (this.sortOrder) {
       case SortOrder.RANDOM:
-        return this.shuffle([...this.exampleFlames])
+        return this.shuffle([...examples])
       case SortOrder.NEWEST_FIRST:
         return examples.sort((a, b) => -a.name.localeCompare(b.name)  )
       case SortOrder.OLDEST_FIRST:

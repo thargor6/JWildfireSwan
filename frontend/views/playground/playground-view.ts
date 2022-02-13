@@ -32,7 +32,7 @@ import '@vaadin/icons';
 import '@vaadin/tabs';
 
 import {FlameRenderer} from '../../flames/renderer/flame-renderer'
-import {FlamesEndpoint} from "Frontend/generated/endpoints";
+import {FlamesEndpoint, GalleryEndpoint} from "Frontend/generated/endpoints";
 import {FlameMapper} from '../../flames/model/mapper/flame-mapper'
 import '@vaadin/vaadin-combo-box';
 import './playground-render-panel'
@@ -220,6 +220,11 @@ export class PlaygroundView extends View  implements BeforeEnterObserver {
     renderFirstFlame = ()=> {
         this.flamePanel.flameName = this.loadExampleAtStartup ? this.loadExampleAtStartup : playgroundStore.randomExampleFlamename()
         this.importExampleFlame()
+        if(this.loadExampleAtStartup) {
+            GalleryEndpoint.getExampleFlameXml(this.loadExampleAtStartup).then(flameXml => {
+                this.flamePanel.flameXml = flameXml
+            })
+        }
     }
 
     onBeforeEnter(
