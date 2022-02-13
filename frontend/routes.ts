@@ -62,7 +62,7 @@ export const views: ViewRoute[] = [
     path: 'about',
     component: 'about-view',
     icon: 'la la-file',
-    title: 'About',
+    title: 'Help / About',
     action: async (_context, _command) => {
       await import('./views/about/about-view');
       return;

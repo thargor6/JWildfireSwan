@@ -1,4 +1,4 @@
-# JWildfire Swan - fractal flames the playful way, GPU accelerated
+# JWildfire Swan - awesome fractal flames, GPU accelerated
 
 ![Example 1](example1.jpg?raw=true)
 
@@ -7,7 +7,7 @@ This is an experimental project and work in progress.
 ## Project goals
 ![Example 4](example4.jpg?raw=true)
 The basic idea is to use standard Web-technologies to create an application which allows playful access to the fascinating world of fractal flames, without barriers.
-So is shall be simple to use and require no certain hardware or operating system.
+So it shall be simple to use and require no certain hardware or operating system.
 
 It is a clear side-project (rather than a replacement) to JWildfire and will never have such a lot of features (by design).
 So it is more a game than a professional application, even you will be able to
