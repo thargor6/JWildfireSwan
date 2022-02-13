@@ -189,6 +189,18 @@ export class FlameMapper {
         const res = new Flame()
         res.uid = source.uid
         res.brightness = Parameters.dNumber(source.brightness)
+        res.whiteLevel = Parameters.dNumber(source.whiteLevel)
+        res.contrast = Parameters.dNumber(source.contrast)
+        res.sampleDensity = Parameters.dNumber(source.sampleDensity)
+        res.lowDensityBrightness = Parameters.dNumber(source.lowDensityBrightness)
+        res.balanceRed = Parameters.dNumber(source.balanceRed)
+        res.balanceGreen = Parameters.dNumber(source.balanceGreen)
+        res.balanceBlue = Parameters.dNumber(source.balanceBlue)
+        res.gamma = Parameters.dNumber(source.gamma)
+        res.gammaThreshold = Parameters.dNumber(source.gammaThreshold)
+        res.foregroundOpacity = Parameters.dNumber(source.foregroundOpacity)
+        res.vibrancy = Parameters.dNumber(source.vibrancy)
+        res.saturation = Parameters.dNumber(source.saturation)
         res.pixelsPerUnit = Parameters.dNumber(source.pixelsPerUnit)
         res.width = Parameters.dNumber(source.width)
         res.height = Parameters.dNumber(source.height)
@@ -232,6 +244,18 @@ export class FlameMapper {
         const res: SourceFlame = {
           uid: source.uid,
           brightness: source.brightness.value,
+          whiteLevel: source.whiteLevel.value,
+          contrast: source.contrast.value,
+          sampleDensity: source.sampleDensity.value,
+          lowDensityBrightness: source.lowDensityBrightness.value,
+          balanceRed: source.balanceRed.value,
+          balanceGreen: source.balanceGreen.value,
+          balanceBlue: source.balanceBlue.value,
+          gamma: source.gamma.value,
+          gammaThreshold: source.gammaThreshold.value,
+          foregroundOpacity: source.foregroundOpacity.value,
+          vibrancy: source.vibrancy.value,
+          saturation: source.saturation.value,
           pixelsPerUnit: source.pixelsPerUnit.value,
           width: source.width.value,
           height: source.height.value,
@@ -279,8 +303,19 @@ export class FlameMapper {
 
     public static mapForRendering(source: Flame): RenderFlame {
         const res = new RenderFlame();
-        res.brightness = source.brightness.value;
-
+        res.brightness = source.brightness.value
+        res.whiteLevel = source.whiteLevel.value
+        res.contrast = source.contrast.value
+        res.sampleDensity = source.sampleDensity.value
+        res.lowDensityBrightness = source.lowDensityBrightness.value
+        res.balanceRed = source.balanceRed.value
+        res.balanceGreen = source.balanceGreen.value
+        res.balanceBlue = source.balanceBlue.value
+        res.gamma = source.gamma.value
+        res.gammaThreshold = source.gammaThreshold.value
+        res.foregroundOpacity = source.foregroundOpacity.value
+        res.vibrancy = source.vibrancy.value
+        res.saturation = source.saturation.value
         res.pixelsPerUnit = source.pixelsPerUnit.value
         res.width = source.width.value
         res.height = source.height.value

@@ -63,6 +63,18 @@ export class RenderXForm {
 
 export class RenderFlame {
     public brightness = 1.0
+    whiteLevel = 220
+    contrast = 1.0
+    sampleDensity = 100.0
+    lowDensityBrightness = 0.25
+    balanceRed = 0.0
+    balanceGreen = 0.0
+    balanceBlue = 0.0
+    gamma = 3.0
+    gammaThreshold = 0.025
+    foregroundOpacity = 0.0
+    vibrancy = 1.0
+    saturation = 1.0
     public width = 512
     public height = 512
     public pixelsPerUnit = 100

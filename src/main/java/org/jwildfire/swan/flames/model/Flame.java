@@ -32,6 +32,42 @@ public class Flame {
   private double brightness;
 
   @Nonnull
+  private double contrast;
+
+  @Nonnull
+  private double sampleDensity;
+
+  @Nonnull
+  private double lowDensityBrightness;
+
+  @Nonnull
+  private double foregroundOpacity;
+
+  @Nonnull
+  private double vibrancy;
+
+  @Nonnull
+  private double saturation;
+
+  @Nonnull
+  private double gamma;
+
+  @Nonnull
+  private double gammaThreshold;
+
+  @Nonnull
+  private double balanceRed;
+
+  @Nonnull
+  private double balanceGreen;
+
+  @Nonnull
+  private double balanceBlue;
+
+  @Nonnull
+  private double whiteLevel;
+
+  @Nonnull
   private double pixelsPerUnit;
 
   @Nonnull

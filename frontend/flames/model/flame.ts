@@ -67,6 +67,18 @@ export class XForm {
 export class Flame {
     public uid: string = '';
     public brightness = Parameters.dNumber(1.0)
+    public whiteLevel = Parameters.dNumber(200.0)
+    public contrast = Parameters.dNumber(1.0)
+    public sampleDensity = Parameters.dNumber(100.0)
+    public lowDensityBrightness = Parameters.dNumber(0.2)
+    public balanceRed = Parameters.dNumber(0.0)
+    public balanceGreen = Parameters.dNumber(0.0)
+    public balanceBlue = Parameters.dNumber(0.0)
+    public gamma = Parameters.dNumber(3.0)
+    public gammaThreshold = Parameters.dNumber(0.05)
+    public foregroundOpacity = Parameters.dNumber(0.0)
+    public vibrancy = Parameters.dNumber(1.0)
+    public saturation = Parameters.dNumber(1.0)
     public pixelsPerUnit = Parameters.dNumber(100.0)
     public width = Parameters.dNumber(512)
     public height = Parameters.dNumber(512)
