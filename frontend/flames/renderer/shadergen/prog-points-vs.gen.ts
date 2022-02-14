@@ -22,8 +22,6 @@ export class ProgPointsVertexShaderGenerator {
     public createShader(flame: RenderFlame, canvas_size:number) {
         const view = new FlameRenderView(flame, canvas_size, canvas_size)
 
-        console.log(view)
-
         return  `
         attribute vec3 aVertexPosition;
         
@@ -58,6 +56,7 @@ export class ProgPointsVertexShaderGenerator {
           float _cx = float(${view.m[0][0]}) * _px + float(${view.m[1][0]}) * _py + float(${view.m[2][0]}) * _pz;
           float _cy = float(${view.m[0][1]}) * _px + float(${view.m[1][1]}) * _py + float(${view.m[2][1]}) * _pz;
           float _cz = float(${view.m[0][2]}) * _px + float(${view.m[1][2]}) * _py + float(${view.m[2][2]}) * _pz;
+      
           _cx += float(${view.flame.camPosX});
           _cy += float(${view.flame.camPosY});
           _cz += float(${view.flame.camPosZ});
@@ -112,7 +111,7 @@ export class ProgPointsVertexShaderGenerator {
     
           float prjX = _px * float(${view.cosa}) + _py * float(${view.sina}) + float(${view.rcX});
           float prjY = _py * float(${view.cosa}) - _px * float(${view.sina}) + float(${view.rcY});
-          gl_Position = vec4(prjX * float(${view.bws}), prjY * float(${view.bhs}), 0.0, 1.0);
+          gl_Position = vec4(prjX * float(${view.bws}), - prjY * float(${view.bhs}), 0.0, 1.0);
     `
         }
         else {

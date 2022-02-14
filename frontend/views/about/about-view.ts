@@ -112,8 +112,6 @@ export class AboutView extends View {
       The options at the Render-tab are currently not working as expected. 
       It is recommended to leave them alone.
       
-      Camera for 3D-flames ist wierd, while camera for 2D-flames should work well.
-      
 `;
   }
 
