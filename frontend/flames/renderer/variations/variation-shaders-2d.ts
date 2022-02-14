@@ -3617,6 +3617,29 @@ class TwintrianFunc extends VariationShaderFunc2D {
     }
 }
 
+class TwoFaceFunc extends VariationShaderFunc2D {
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        /* Z+ variation Jan 07 */
+        return `{
+          float amount = float(${variation.amount});
+          float r = amount;
+          if (_tx > 0.0) {
+            r /= sqr(_tx) + sqr(_ty);
+          }
+          _vx += r * _tx;
+          _vy += r * _ty;
+        }`;
+    }
+
+    get name(): string {
+        return "twoface";
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
 class UnpolarFunc extends VariationShaderFunc2D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         return `{
@@ -4207,6 +4230,84 @@ class WhorlFunc extends VariationShaderFunc2D {
     }
 }
 
+class YinYangFunc extends VariationShaderFunc2D {
+    PARAM_RADIUS = "radius"
+    PARAM_ANG1 = "ang1"
+    PARAM_ANG2 = "ang2"
+    PARAM_DUAL_T = "dual_t"
+    PARAM_OUTSIDE = "outside"
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_RADIUS, type: VariationParamType.VP_NUMBER, initialValue: 0.50 },
+            { name: this.PARAM_ANG1, type: VariationParamType.VP_NUMBER, initialValue: 0.00 },
+            { name: this.PARAM_ANG2, type: VariationParamType.VP_NUMBER, initialValue: 0.00 },
+            { name: this.PARAM_DUAL_T, type: VariationParamType.VP_NUMBER, initialValue: 1 },
+            { name: this.PARAM_OUTSIDE, type: VariationParamType.VP_NUMBER, initialValue: 0 }
+        ]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        /* yin_yang by dark-beam */
+        return `{
+          float amount = float(${variation.amount});
+          float radius = float(${variation.params.get(this.PARAM_RADIUS)});
+          float ang1 = float(${variation.params.get(this.PARAM_ANG1)});
+          float ang2 = float(${variation.params.get(this.PARAM_ANG2)});
+          int dual_t = int(${variation.params.get(this.PARAM_DUAL_T)});
+          int outside = int(${variation.params.get(this.PARAM_OUTSIDE)});
+          float sina = sin(M_PI * ang1);
+          float cosa = cos(M_PI * ang1);
+          float sinb = sin(M_PI * ang2);
+          float cosb = cos(M_PI * ang2);  
+          float xx = _tx;
+          float yy = _ty;
+          float inv = 1.0;
+          float RR = radius;
+          float R2 = (xx * xx + yy * yy);
+          if (R2 < 1.0) {
+            float nx = xx * cosa - yy * sina;
+            float ny = xx * sina + yy * cosa;
+            if (dual_t == 1 && rand2(tex) > 0.5) {
+              inv = -1.0;
+              RR = 1.0 - radius;
+              nx = xx * cosb - yy * sinb;
+              ny = xx * sinb + yy * cosb;
+            }
+            xx = nx;
+            yy = ny;
+            if (yy > 0.0) {
+              float t = sqrt(1.0 - yy * yy);
+              float k = xx / t;
+              float t1 = (t - 0.5) * 2.0;
+              float alfa = (1.0 - k) * 0.5;
+              float beta = (1.0 - alfa);
+              float dx = alfa * (RR - 1.0);
+              float k1 = alfa * (RR) + beta;
+              _vx += amount * (t1 * k1 + dx) * inv;
+              _vy += amount * sqrt(1.0 - t1 * t1) * k1 * inv;
+            } else {
+              _vx += amount * (xx * (1.0 - RR) + RR) * inv;
+              _vy += amount * (yy * (1.0 - RR)) * inv;
+            }
+          } else if (outside == 1) {
+            _vx += amount * _tx;
+            _vy += amount * _ty;
+          } else {
+            _vx += 0.0; 
+            _vy += 0.0; 
+          }
+        }`;
+    }
+
+    get name(): string {
+        return "yin_yang";
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
 export function register2DVars() {
     VariationShaders.registerVar(new ArchFunc())
     VariationShaders.registerVar(new AugerFunc())
@@ -4317,6 +4418,7 @@ export function register2DVars() {
     VariationShaders.registerVar(new TanCosFunc())
     VariationShaders.registerVar(new TangentFunc())
     VariationShaders.registerVar(new TwintrianFunc())
+    VariationShaders.registerVar(new TwoFaceFunc())
     VariationShaders.registerVar(new UnpolarFunc())
     VariationShaders.registerVar(new WavesFunc())
     VariationShaders.registerVar(new Waves2Func())
@@ -4330,4 +4432,5 @@ export function register2DVars() {
     VariationShaders.registerVar(new Waves4WFFunc())
     VariationShaders.registerVar(new WedgeFunc())
     VariationShaders.registerVar(new WhorlFunc())
+    VariationShaders.registerVar(new YinYangFunc())
 }

@@ -18,7 +18,6 @@
 import {
     VariationParam,
     VariationParamType,
-    VariationShaderFunc2D,
     VariationShaderFunc3D,
     VariationTypes
 } from "./variation-shader-func";
@@ -466,7 +465,7 @@ class LinearT3DFunc extends VariationShaderFunc3D {
     }
 }
 
-class Pie3DFunc extends VariationShaderFunc2D {
+class Pie3DFunc extends VariationShaderFunc3D {
     PARAM_SLICES = "slices"
     PARAM_ROTATION = "rotation"
     PARAM_THICKNESS = "thickness"
@@ -604,6 +603,48 @@ class Tangent3DFunc extends VariationShaderFunc3D {
     }
 }
 
+class TaurusFunc extends VariationShaderFunc3D {
+    PARAM_R = "r"
+    PARAM_N = "n"
+    PARAM_INV = "inv"
+    PARAM_SOR = "sor"
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_R, type: VariationParamType.VP_NUMBER, initialValue: 3.00 },
+            { name: this.PARAM_N, type: VariationParamType.VP_NUMBER, initialValue: 5.00 },
+            { name: this.PARAM_INV, type: VariationParamType.VP_NUMBER, initialValue: 1.50 },
+            { name: this.PARAM_SOR, type: VariationParamType.VP_NUMBER, initialValue: 1.00 }
+        ]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        /* taurus by gossamer light */
+        return `{
+          float amount = float(${variation.amount});
+          float r = float(${variation.params.get(this.PARAM_R)});
+          float n = float(${variation.params.get(this.PARAM_N)});
+          float inv = float(${variation.params.get(this.PARAM_INV)});
+          float sor = float(${variation.params.get(this.PARAM_SOR)});
+          float sx = sin(_tx);
+          float cx = cos(_tx);
+          float sy = sin(_ty);
+          float cy = cos(_ty);
+          float ir = (inv * r) + ((1.0 - inv) * (r * cos(n * _tx)));
+          _vx += amount * (cx * (ir + sy));
+          _vy += amount * (sx * (ir + sy));
+          _vz += amount * (sor * cy) + ((1.0 - sor) * _ty);
+        }`;
+    }
+
+    get name(): string {
+        return "taurus";
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_3D];
+    }
+}
+
 export function register3DVars() {
     VariationShaders.registerVar(new Blade3DFunc())
     VariationShaders.registerVar(new Blob3DFunc())
@@ -624,4 +665,5 @@ export function register3DVars() {
     VariationShaders.registerVar(new Spherical3DWFFunc())
     VariationShaders.registerVar(new Square3DFunc())
     VariationShaders.registerVar(new Tangent3DFunc())
+    VariationShaders.registerVar(new TaurusFunc())
 }
