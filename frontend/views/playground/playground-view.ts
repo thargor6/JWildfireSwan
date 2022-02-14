@@ -92,10 +92,9 @@ export class PlaygroundView extends View  implements BeforeEnterObserver {
                         <playground-flame-panel id='flamePnl' 
                           .visible=${this.selectedTab === 0}
                           .onImport="${this.importFlameFromXml}" .onRandomFlame="${this.createRandomFlame}"
-                          .onRandomGradient="${this.createRandomGradient}"
+                          .onRandomGradient="${this.createRandomGradient}" .onCaptureImage="${this.saveImage}"
                         .onFlameNameChanged="${this.importExampleFlame}"></playground-flame-panel>
-                        <playground-render-panel id='viewOptsPnl' .onRefresh="${this.rerenderFlame}" 
-                          .onCaptureImage="${this.saveImage}"
+                        <playground-render-panel id='viewOptsPnl' .onRefresh="${this.rerenderFlame}"
                           .visible=${this.selectedTab === 1} .onImageSizeChanged="${this.rerenderFlame}"></playground-render-panel>
                         <playground-variations-panel .visible=${this.selectedTab === 2}>
     
@@ -209,6 +208,10 @@ export class PlaygroundView extends View  implements BeforeEnterObserver {
 
         FlamesEndpoint.getExampleFlame(this.flamePanel.flameName).then(flame => {
             playgroundStore.flame = FlameMapper.mapFromBackend(flame)
+            GalleryEndpoint.getExampleFlameXml(this.flamePanel.flameName).then(
+                flameXml => this.flamePanel.flameXml = flameXml
+            )
+
             this.rerenderFlame()
             playgroundStore.calculating = false
         }).catch(err=> {

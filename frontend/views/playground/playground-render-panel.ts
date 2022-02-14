@@ -37,9 +37,6 @@ export class PlaygroundRenderPanel extends MobxLitElement {
   @property()
   onImageSizeChanged: ()=>void = ()=>{}
 
-  @property()
-  onCaptureImage: ()=>void = ()=>{}
-
   @state()
   imageSize = 512
 
@@ -73,8 +70,7 @@ export class PlaygroundRenderPanel extends MobxLitElement {
           <label><input type="radio" id="displayMode" name="displayMode" value="flame" checked="checked">Flame</label>
           <label><input type="radio" id="displayMode" name="displayMode" value="position">Position Iteration</label>
           <label><input type="radio" id="displayMode" name="displayMode" value="colour">Color Iteration</label>
-          <vaadin-button theme="primary" @click="${this.onCaptureImage}">Capture image</vaadin-button>
-        </div>
+         </div>
       </div>
 `;
   }
