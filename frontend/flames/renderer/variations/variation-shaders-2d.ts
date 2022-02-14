@@ -50,8 +50,44 @@ class ArchFunc extends VariationShaderFunc2D {
         return "arch";
     }
 
-    get dependencies(): string[] {
-        return ['rand2'];
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
+class AugerFunc extends VariationShaderFunc2D {
+    PARAM_FREQ = "freq"
+    PARAM_WEIGHT = "weight"
+    PARAM_SYM = "sym"
+    PARAM_SCALE = "scale"
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_FREQ, type: VariationParamType.VP_NUMBER, initialValue: 1.00 },
+            { name: this.PARAM_WEIGHT, type: VariationParamType.VP_NUMBER, initialValue: 0.50 },
+            { name: this.PARAM_SYM, type: VariationParamType.VP_NUMBER, initialValue: 0.10 },
+            { name: this.PARAM_SCALE, type: VariationParamType.VP_NUMBER, initialValue: 0.90 }
+        ]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        // Auger, by Xyrus02
+        return `{
+          float amount = float(${variation.amount});
+          float freq = float(${variation.params.get(this.PARAM_FREQ)});
+          float weight = float(${variation.params.get(this.PARAM_WEIGHT)});
+          float sym = float(${variation.params.get(this.PARAM_SYM)});
+          float scale = float(${variation.params.get(this.PARAM_SCALE)});
+          float s = sin(freq * _tx);
+          float t = sin(freq * _ty);
+          float dy = _ty + weight * (scale * s * 0.5 + abs(_ty) * s);
+          float dx = _tx + weight * (scale * t * 0.5 + abs(_tx) * t);
+          _vx += amount * (_tx + sym * (dx - _tx));
+          _vy += amount * dy;
+        }`;
+    }
+
+    get name(): string {
+        return "auger";
     }
 
     get variationTypes(): VariationTypes[] {
@@ -940,6 +976,48 @@ class CurlFunc extends VariationShaderFunc2D {
     }
 }
 
+class CurveFunc extends VariationShaderFunc2D {
+    PARAM_XAMP = "xamp"
+    PARAM_YAMP = "yamp"
+    PARAM_XLENGTH = "xlength"
+    PARAM_YLENGTH = "ylength"
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_XAMP, type: VariationParamType.VP_NUMBER, initialValue: 0.25 },
+            { name: this.PARAM_YAMP, type: VariationParamType.VP_NUMBER, initialValue: 0.50 },
+            { name: this.PARAM_XLENGTH, type: VariationParamType.VP_NUMBER, initialValue: 1.00 },
+            { name: this.PARAM_YLENGTH, type: VariationParamType.VP_NUMBER, initialValue: 1.00 }
+        ]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        /* Curve in the Apophysis Plugin Pack */
+        return `{
+          float amount = float(${variation.amount});
+          float xamp = float(${variation.params.get(this.PARAM_XAMP)});
+          float yamp = float(${variation.params.get(this.PARAM_YAMP)});
+          float xlength = float(${variation.params.get(this.PARAM_XLENGTH)});
+          float ylength = float(${variation.params.get(this.PARAM_YLENGTH)});
+          float _pc_xlen = xlength * xlength;
+          float _pc_ylen = ylength * ylength;
+          if (_pc_xlen < EPSILON)
+            _pc_xlen = EPSILON;
+          if (_pc_ylen < EPSILON)
+            _pc_ylen = EPSILON;
+          _vx += amount * (_tx + xamp * exp(-_ty * _ty / _pc_xlen));
+          _vy += amount * (_ty + yamp * exp(-_tx * _tx / _pc_ylen));
+        }`;
+    }
+
+    get name(): string {
+        return "curve";
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
 class CylinderFunc extends VariationShaderFunc2D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         return `{
@@ -1491,6 +1569,28 @@ class FisheyeFunc extends VariationShaderFunc2D {
 
     get name(): string {
         return "fisheye";
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
+class FlipCircleFunc extends VariationShaderFunc2D {
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        // flipcircle by MichaelFaber, http://michaelfaber.deviantart.com/art/Flip-216005432
+        return `{
+            float amount = float(${variation.amount});
+            if (sqr(_tx) + sqr(_ty) > sqr(amount))
+              _vy += amount * _ty;
+            else
+              _vy -= amount * _ty;
+            _vx += amount * _tx;
+        }`;
+    }
+
+    get name(): string {
+        return "flipcircle";
     }
 
     get variationTypes(): VariationTypes[] {
@@ -4109,6 +4209,7 @@ class WhorlFunc extends VariationShaderFunc2D {
 
 export function register2DVars() {
     VariationShaders.registerVar(new ArchFunc())
+    VariationShaders.registerVar(new AugerFunc())
     VariationShaders.registerVar(new BentFunc())
     VariationShaders.registerVar(new Bent2Func())
     VariationShaders.registerVar(new BiLinearFunc())
@@ -4134,6 +4235,7 @@ export function register2DVars() {
     VariationShaders.registerVar(new CscFunc())
     VariationShaders.registerVar(new CschFunc())
     VariationShaders.registerVar(new CurlFunc())
+    VariationShaders.registerVar(new CurveFunc())
     VariationShaders.registerVar(new CylinderFunc())
     VariationShaders.registerVar(new DCLinearFunc())
     VariationShaders.registerVar(new DiamondFunc())
@@ -4151,6 +4253,7 @@ export function register2DVars() {
     VariationShaders.registerVar(new FanFunc())
     VariationShaders.registerVar(new Fan2Func())
     VariationShaders.registerVar(new FisheyeFunc())
+    VariationShaders.registerVar(new FlipCircleFunc())
     VariationShaders.registerVar(new FlowerFunc())
     VariationShaders.registerVar(new FluxFunc())
     VariationShaders.registerVar(new FociFunc())
