@@ -1694,6 +1694,59 @@ class FociFunc extends VariationShaderFunc2D {
     }
 }
 
+class GlynniaFunc extends VariationShaderFunc2D {
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        // glynnia my Michael Faber, http://michaelfaber.deviantart.com/art/The-Lost-Variations-258913970
+        return `{
+            float amount = float(${variation.amount});
+            float _vvar2 = amount * sqrt(2.0) / 2.0; 
+            float r = sqrt(sqr(_tx) + sqr(_ty));
+            float d;
+            if (r >= 1.0) {
+              if (rand2(tex) > 0.5) {
+                d = sqrt(r + _tx);
+                if (d != 0.0) {
+                  _vx += _vvar2 * d;
+                  _vy -= _vvar2 / d * _ty; 
+                }
+              } else {
+                d = r + _tx;
+                float dx = sqrt(r * (sqr(_ty) + sqr(d)));
+                if (dx != 0.0) {
+                  r = amount / dx;
+                  _vx += r * d;
+                  _vy += r * _ty;                   
+                }
+              }
+            } else {
+              if (rand2(tex) > 0.5) {
+                d = sqrt(r + _tx);
+                if (d != 0.0) {
+                  _vx -= _vvar2 * d;
+                  _vy -= _vvar2 / d * _ty;                
+                }
+              } else {
+                d = r + _tx;
+                float dx = sqrt(r * (sqr(_ty) + sqr(d)));
+                if (dx != 0.0) {
+                  r = amount / dx;
+                  _vx -= r * d;
+                  _vy += r * _ty;               
+                }
+              }
+            }
+        }`;
+    }
+
+    get name(): string {
+        return "glynnia";
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
 class HeartFunc extends VariationShaderFunc2D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         return `{
@@ -2062,6 +2115,36 @@ class KaleidoscopeFunc extends VariationShaderFunc2D {
     }
 }
 
+class LayeredSpiralFunc extends VariationShaderFunc2D {
+    PARAM_RADIUS = "radius"
+
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_RADIUS, type: VariationParamType.VP_NUMBER, initialValue: 1.00 }
+        ]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        /* layered_spiral by Will Evans, http://eevans1.deviantart.com/art/kaleidoscope-plugin-122185469  */
+        return `{
+          float amount = float(${variation.amount});
+          float radius = float(${variation.params.get(this.PARAM_RADIUS)});
+          float a = _tx * radius; 
+          float t = sqr(_tx) + sqr(_ty) + EPSILON;
+          _vx += amount * a * cos(t);
+          _vy += amount * a * sin(t);
+        }`;
+    }
+
+    get name(): string {
+        return "layered_spiral";
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
 class LazySusanFunc extends VariationShaderFunc2D {
     PARAM_SPACE = "space"
     PARAM_TWIST = "twist"
@@ -2208,6 +2291,126 @@ class LoonieFunc extends VariationShaderFunc2D {
 
     get name(): string {
         return "loonie";
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
+
+class Loonie2Func extends VariationShaderFunc2D {
+    PARAM_RE_A = "sides"
+    PARAM_RE_B = "star"
+    PARAM_RE_C = "circle"
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_RE_A, type: VariationParamType.VP_NUMBER, initialValue: 4 },
+            { name: this.PARAM_RE_B, type: VariationParamType.VP_NUMBER, initialValue: 0.15 },
+            { name: this.PARAM_RE_C, type: VariationParamType.VP_NUMBER, initialValue: 0.25 }
+        ]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        /* loonie2 by dark-beam, http://dark-beam.deviantart.com/art/Loonie2-update-2-Loonie3-457414891 */
+        return `{
+          float amount = float(${variation.amount});
+          int sides = int(${variation.params.get(this.PARAM_RE_A)});
+          float star = float(${variation.params.get(this.PARAM_RE_B)});
+          float circle = float(${variation.params.get(this.PARAM_RE_C)});
+          float _sqrvvar = amount * amount;
+          float a = (2.0*M_PI) / float(sides);
+          float _sina = sin(a);
+          float _cosa = cos(a);
+          a = -(M_PI*0.5) * star;
+          float _sins = sin(a);
+          float _coss = cos(a);
+          a = (M_PI*0.5) * circle;
+          float _sinc = sin(a);
+          float _cosc = cos(a);
+          float xrt = _tx, yrt = _ty, swp;
+          float r2 = xrt * _coss + abs(yrt) * _sins; 
+          float _circle = sqrt(sqr(xrt) + sqr(yrt));  
+          int i = 0;
+          if(sides>1) {   
+            swp = xrt * _cosa - yrt * _sina;
+            yrt = xrt * _sina + yrt * _cosa;
+            xrt = swp;           
+            r2 = max(r2, xrt * _coss + abs(yrt) * _sins);
+            i++; 
+          }
+          if(sides>2) {   
+            swp = xrt * _cosa - yrt * _sina;
+            yrt = xrt * _sina + yrt * _cosa;
+            xrt = swp;           
+            r2 = max(r2, xrt * _coss + abs(yrt) * _sins);
+            i++; 
+          }
+          if(sides>3) {   
+            swp = xrt * _cosa - yrt * _sina;
+            yrt = xrt * _sina + yrt * _cosa;
+            xrt = swp;           
+            r2 = max(r2, xrt * _coss + abs(yrt) * _sins);
+            i++; 
+          }
+          if(sides>4) {   
+            swp = xrt * _cosa - yrt * _sina;
+            yrt = xrt * _sina + yrt * _cosa;
+            xrt = swp;           
+            r2 = max(r2, xrt * _coss + abs(yrt) * _sins);
+            i++; 
+          }
+          if(sides>5) {   
+            swp = xrt * _cosa - yrt * _sina;
+            yrt = xrt * _sina + yrt * _cosa;
+            xrt = swp;           
+            r2 = max(r2, xrt * _coss + abs(yrt) * _sins);
+            i++; 
+          }
+          if(sides>6) {   
+            swp = xrt * _cosa - yrt * _sina;
+            yrt = xrt * _sina + yrt * _cosa;
+            xrt = swp;           
+            r2 = max(r2, xrt * _coss + abs(yrt) * _sins);
+            i++; 
+          }
+          if(sides>7) {   
+            swp = xrt * _cosa - yrt * _sina;
+            yrt = xrt * _sina + yrt * _cosa;
+            xrt = swp;           
+            r2 = max(r2, xrt * _coss + abs(yrt) * _sins);
+            i++; 
+          }
+          if(sides>8) {   
+            swp = xrt * _cosa - yrt * _sina;
+            yrt = xrt * _sina + yrt * _cosa;
+            xrt = swp;           
+            r2 = max(r2, xrt * _coss + abs(yrt) * _sins);
+            i++; 
+          }
+          r2 = r2 * _cosc + _circle * _sinc; 
+          if (i > 1) {
+            r2 = sqr(r2); 
+          } else {
+            r2 = abs(r2) * r2; 
+          }
+          if (r2 > 0.0 && (r2 < _sqrvvar)) {
+            float r = amount * sqrt(abs(_sqrvvar / r2 - 1.0));
+            _vx += r * _tx;
+            _vy += r * _ty;
+          } else if (r2 < 0.0) {
+            float r = amount / sqrt(abs(_sqrvvar / r2) - 1.0);
+            _vx += r * _tx;
+            _vy += r * _ty;
+          } else {
+            _vx += amount * _tx;
+            _vy += amount * _ty;
+          }
+        }`;
+    }
+
+    get name(): string {
+        return "loonie2";
     }
 
     get variationTypes(): VariationTypes[] {
@@ -4359,6 +4562,7 @@ export function register2DVars() {
     VariationShaders.registerVar(new FluxFunc())
     VariationShaders.registerVar(new FociFunc())
     VariationShaders.registerVar(new GaussianBlurFunc())
+    VariationShaders.registerVar(new GlynniaFunc())
     VariationShaders.registerVar(new HeartFunc())
     VariationShaders.registerVar(new HeartWFFunc())
     VariationShaders.registerVar(new HorseshoeFunc())
@@ -4369,11 +4573,13 @@ export function register2DVars() {
     VariationShaders.registerVar(new JuliaQFunc())
     VariationShaders.registerVar(new JuliascopeFunc())
     VariationShaders.registerVar(new KaleidoscopeFunc())
+    VariationShaders.registerVar(new LayeredSpiralFunc())
     VariationShaders.registerVar(new LazySusanFunc())
     VariationShaders.registerVar(new LinearFunc())
     VariationShaders.registerVar(new LinearTFunc())
     VariationShaders.registerVar(new LogFunc())
     VariationShaders.registerVar(new LoonieFunc())
+    VariationShaders.registerVar(new Loonie2Func())
     VariationShaders.registerVar(new MobiusFunc())
     VariationShaders.registerVar(new NGonFunc())
     VariationShaders.registerVar(new NoiseFunc())
