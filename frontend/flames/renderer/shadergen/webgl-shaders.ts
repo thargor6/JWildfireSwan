@@ -73,7 +73,7 @@ export class WebglShaders {
     progPointsVertexShader: string
     compPointsFragmentShader: string
 
-    constructor(gl: WebGLRenderingContext, canvas: HTMLCanvasElement, canvas_size: number, swarm_size: number, flame: RenderFlame) {
+    constructor(gl: WebGLRenderingContext, canvas: HTMLCanvasElement, canvas_size: number, swarm_size: number, private flame: RenderFlame) {
         this.progPointsVertexShader = new ProgPointsVertexShaderGenerator().createShader(flame, canvas_size);
         this.prog_points = compileShaderDirect(gl, this.progPointsVertexShader, shader_points_fs, {}) as ComputePointsProgram;
         this.prog_points.vertexPositionAttribute = gl.getAttribLocation(this.prog_points, "aVertexPosition");
@@ -103,11 +103,28 @@ export class WebglShaders {
         this.prog_comp_col.seed2 = gl.getUniformLocation(this.prog_comp_col, "seed2")!;
         this.prog_comp_col.seed3 = gl.getUniformLocation(this.prog_comp_col, "seed3")!;
 
-        this.prog_show = compileShaderDirect(gl, shader_direct_vs, shader_show_fs, {RESOLUTION: canvas.width}) as ShowHistogramProgram;
-        this.prog_show.uTexSamp = gl.getUniformLocation(this.prog_show, "uTexSamp")!;
-        this.prog_show.frames = gl.getUniformLocation(this.prog_show, "frames")!;
-        this.prog_show.brightness = gl.getUniformLocation(this.prog_show, "brightness")!;
+        {
+            const whiteLevel = this.flame.whiteLevel
+            const brightness = this.flame.brightness
+            const balanceRed = this.flame.balanceRed
+            const balanceGreen = this.flame.balanceGreen
+            const balanceBlue = this.flame.balanceBlue
 
+            const params = {
+                BRIGHTNESS: brightness,
+                CONTRAST: this.flame.contrast,
+                SWARM_SIZE: swarm_size,
+                WHITE_LEVEL: whiteLevel,
+                BALANCE_RED: balanceRed,
+                BALANCE_GREEN: balanceGreen,
+                BALANCE_BLUE: balanceBlue,
+                RESOLUTION: canvas.width}
+
+            this.prog_show = compileShaderDirect(gl, shader_direct_vs, shader_show_fs, params) as ShowHistogramProgram;
+            this.prog_show.uTexSamp = gl.getUniformLocation(this.prog_show, "uTexSamp")!;
+            this.prog_show.frames = gl.getUniformLocation(this.prog_show, "frames")!;
+            this.prog_show.brightness = gl.getUniformLocation(this.prog_show, "brightness")!;
+        }
         this.prog_show_raw = compileShaderDirect(gl, shader_direct_vs, shader_show_raw_fs, {RESOLUTION: canvas.width}) as ShowRawBufferProgram;
         this.prog_show_raw.uTexSamp = gl.getUniformLocation(this.prog_show_raw, "uTexSamp")!;
         this.prog_show_raw.pTexSamp = gl.getUniformLocation(this.prog_show_raw, "pTexSamp")!;

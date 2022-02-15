@@ -48,7 +48,7 @@ void main(void) {
   
   x *=  resolutionScl * swarmSizeScl; 
   
-  float logScale = _brightness * _contrast * log(x / _contrast) / (log(x) * frames);
+  float logScale = swarmSizeScl / resolutionScl * _brightness * _contrast * log(x / _contrast) / (log(x) * frames);
  
   float r = colorTexel.r * logScale * <%= BALANCE_RED %>;
   float g = colorTexel.g * logScale * <%= BALANCE_GREEN %>;
