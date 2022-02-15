@@ -28,13 +28,64 @@ uniform sampler2D uTexSamp;
 uniform float frames;
 uniform float brightness;
 
-void main(void) {
-  float swarmSizeScl = float( <%= RESOLUTION %> * <%= RESOLUTION %> ) / (512.0 * 512.0);  
+/* 
   vec3 colorTexel = texture2D(uTexSamp, gl_FragCoord.xy / <%= RESOLUTION %>).rgb;
   float alpha = texture2D(uTexSamp, gl_FragCoord.xy / <%= RESOLUTION %>).a;
   vec3 col = colorTexel * log(alpha) / (log(alpha) * frames);
-  float brightnessScl = 1.0 / brightness / swarmSizeScl;
+  float brightnessScl = 1.0 / brightness;
   col = vec3(pow(col.r, brightnessScl), pow(col.g, brightnessScl), pow(col.b, brightnessScl)); // Brightness correction
+  gl_FragColor = vec4(col, 1.0);
+*/
+
+void main(void) {
+  vec3 colorTexel = texture2D(uTexSamp, gl_FragCoord.xy / <%= RESOLUTION %>).rgb;
+  float x = texture2D(uTexSamp, gl_FragCoord.xy / <%= RESOLUTION %>).a;
+  float swarmSizeScl = float(256 * 256) / (<%= SWARM_SIZE %> * <%= SWARM_SIZE %>);
+  float resolutionScl = float(512 * 512) / (<%= RESOLUTION %> * <%= RESOLUTION %>);
+  
+  float _brightness = <%= BRIGHTNESS %>;
+  float _contrast = <%= CONTRAST %>;
+  
+  x *=  resolutionScl * swarmSizeScl; 
+  
+  float logScale = _brightness * _contrast * log(x / _contrast) / (log(x) * frames);
+ 
+  float r = colorTexel.r * logScale * <%= BALANCE_RED %>;
+  float g = colorTexel.g * logScale * <%= BALANCE_GREEN %>;
+  float b = colorTexel.b * logScale * <%= BALANCE_BLUE %>;
+
+
+  float foregroundOpacity = 1.00;
+  float gamma = 15.5;
+  float vibrancy = 0.9;
+  float gammaThreshold = 0.025;
+  float _alphaScale = 1.0 - atan(3.0 * (foregroundOpacity - 1.0)) / 1.25;
+  float _gamma = (gamma == 0.0) ? gamma : 1.0 / gamma;
+  float _vib = (vibrancy < 0.0 ? 0.0 : vibrancy > 1.0 ? 1.0 : vibrancy);
+  float _inverseVib = 1.0 - _vib;
+  float _sclGamma = 0.0;
+  if (gammaThreshold != 0.0) {
+    _sclGamma = pow(gammaThreshold, _gamma - 1.0);
+  }
+  float _intensity = logScale / <%= WHITE_LEVEL %>;
+
+  float _alpha;
+  if (_intensity <= gammaThreshold) {
+    float _frac = _intensity / gammaThreshold;
+    _alpha = (1.0 - _frac) * _intensity * _sclGamma + _frac * pow(_intensity, _gamma);
+  }
+  else {
+    _alpha = pow(_intensity, _gamma);
+  }
+  _alpha *= _alphaScale;
+  
+  float _gammaLogScl = _vib * _alpha;
+  float finalRed = _gammaLogScl * colorTexel.r + _inverseVib * pow(colorTexel.r, _gamma);
+  float finalGreen = _gammaLogScl * colorTexel.g + _inverseVib * pow(colorTexel.g, _gamma);
+  float finalBlue = _gammaLogScl * colorTexel.b + _inverseVib * pow(colorTexel.b, _gamma);
+  vec3 col = vec3(finalRed, finalGreen, finalBlue);
+  
+// vec3 col = vec3(r, g, b);
   gl_FragColor = vec4(col, 1.0);
 }
 `;
