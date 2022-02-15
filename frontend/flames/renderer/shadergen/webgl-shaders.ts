@@ -104,20 +104,18 @@ export class WebglShaders {
         this.prog_comp_col.seed3 = gl.getUniformLocation(this.prog_comp_col, "seed3")!;
 
         {
-            const whiteLevel = this.flame.whiteLevel
-            const brightness = this.flame.brightness
-            const balanceRed = this.flame.balanceRed
-            const balanceGreen = this.flame.balanceGreen
-            const balanceBlue = this.flame.balanceBlue
-
             const params = {
-                BRIGHTNESS: brightness,
+                BRIGHTNESS: this.flame.brightness,
                 CONTRAST: this.flame.contrast,
                 SWARM_SIZE: swarm_size,
-                WHITE_LEVEL: whiteLevel,
-                BALANCE_RED: balanceRed,
-                BALANCE_GREEN: balanceGreen,
-                BALANCE_BLUE: balanceBlue,
+                WHITE_LEVEL: this.flame.whiteLevel,
+                VIBRANCY: this.flame.vibrancy,
+                GAMMA: this.flame.gamma,
+                GAMMA_THRESHOLD: this.flame.gammaThreshold,
+                FOREGROUND_OPACITY: this.flame.foregroundOpacity,
+                BALANCE_RED: this.flame.balanceRed,
+                BALANCE_GREEN: this.flame.balanceGreen,
+                BALANCE_BLUE: this.flame.balanceBlue,
                 RESOLUTION: canvas.width}
 
             this.prog_show = compileShaderDirect(gl, shader_direct_vs, shader_show_fs, params) as ShowHistogramProgram;

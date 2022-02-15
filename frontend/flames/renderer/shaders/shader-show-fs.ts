@@ -45,20 +45,17 @@ void main(void) {
   
   float _brightness = <%= BRIGHTNESS %>;
   float _contrast = <%= CONTRAST %>;
-  
-  x *=  resolutionScl * swarmSizeScl; 
-  
-  float logScale = swarmSizeScl / resolutionScl * _brightness * _contrast * log(x / _contrast) / (log(x) * frames);
+   
+  float logScale = 2.0 * swarmSizeScl / resolutionScl * _brightness * _contrast * log(x / _contrast) / (log(x) * frames);
  
   float r = colorTexel.r * logScale * <%= BALANCE_RED %>;
   float g = colorTexel.g * logScale * <%= BALANCE_GREEN %>;
   float b = colorTexel.b * logScale * <%= BALANCE_BLUE %>;
 
-
-  float foregroundOpacity = 1.00;
-  float gamma = 15.5;
-  float vibrancy = 0.9;
-  float gammaThreshold = 0.025;
+  float foregroundOpacity = <%= FOREGROUND_OPACITY %>;
+  float gamma = <%= GAMMA %>;
+  float vibrancy = <%= VIBRANCY %>;
+  float gammaThreshold = <%= GAMMA_THRESHOLD %>;
   float _alphaScale = 1.0 - atan(3.0 * (foregroundOpacity - 1.0)) / 1.25;
   float _gamma = (gamma == 0.0) ? gamma : 1.0 / gamma;
   float _vib = (vibrancy < 0.0 ? 0.0 : vibrancy > 1.0 ? 1.0 : vibrancy);
@@ -80,12 +77,15 @@ void main(void) {
   _alpha *= _alphaScale;
   
   float _gammaLogScl = _vib * _alpha;
-  float finalRed = _gammaLogScl * colorTexel.r + _inverseVib * pow(colorTexel.r, _gamma);
-  float finalGreen = _gammaLogScl * colorTexel.g + _inverseVib * pow(colorTexel.g, _gamma);
-  float finalBlue = _gammaLogScl * colorTexel.b + _inverseVib * pow(colorTexel.b, _gamma);
+  float br = colorTexel.r * <%= BALANCE_RED %>;
+  float bg = colorTexel.g * <%= BALANCE_GREEN %>;
+  float bb = colorTexel.b * <%= BALANCE_BLUE %>;
+  float finalRed = _gammaLogScl * br + _inverseVib * pow(colorTexel.r, _gamma);
+  float finalGreen = _gammaLogScl * bg + _inverseVib * pow(bg, _gamma);
+  float finalBlue = _gammaLogScl * bb + _inverseVib * pow(bb, _gamma);
   vec3 col = vec3(finalRed, finalGreen, finalBlue);
   
-// vec3 col = vec3(r, g, b);
+   //vec3 col = vec3(r, g, b);
   gl_FragColor = vec4(col, 1.0);
 }
 `;
