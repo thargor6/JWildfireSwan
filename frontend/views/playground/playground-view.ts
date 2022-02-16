@@ -30,6 +30,7 @@ import '@vaadin/vertical-layout';
 import '@vaadin/icon';
 import '@vaadin/icons';
 import '@vaadin/tabs';
+import '@vaadin/vaadin-progress-bar'
 
 import {FlameRenderer} from '../../flames/renderer/flame-renderer'
 import {FlamesEndpoint, GalleryEndpoint} from "Frontend/generated/endpoints";
@@ -56,6 +57,14 @@ export class PlaygroundView extends View  implements BeforeEnterObserver {
     @state()
     selectedTab = 0
 
+    @state()
+    renderInfo = ''
+
+    @state()
+    renderProgress = 0.0
+
+    lastProgressUpdate = 0.0
+
     viewOptsPanel!: PlaygroundRenderPanel
     flamePanel!: PlaygroundFlamePanel
     loadExampleAtStartup: string | undefined = undefined
@@ -64,11 +73,18 @@ export class PlaygroundView extends View  implements BeforeEnterObserver {
         return html`
             <swan-error-panel .errorMessage=${playgroundStore.lastError}></swan-error-panel>
             <vaadin-split-layout>
-                 <div style="display: flex; align-items: center; justify-content: center;"
+                <vertical-layout>
+                <div style="display: flex; align-items: center; justify-content: center;"
                      stylex="max-height: 70em;max-width:70em;overflow: scroll;" id="canvas-container">
-                    <canvasx id="screen1" width="512" height="512"></canvasx>
+                    <canvas id="screen1" width="512" height="512"></canvas>
                     
                 </div>
+
+                <div style="width: 100%;">
+                    <div>${this.renderInfo}</div>
+                    <vaadin-progress-bar .value=${this.renderProgress} theme="contrast"></vaadin-progress-bar>
+                </div>
+                </vertical-layout>
                 <div style="display: flex; flex-direction: column; padding: 1em;">
 
                     <div style="display: flex; flex-direction: row; align-items: flex-end; margin-right: 1em;">
@@ -147,8 +163,27 @@ export class PlaygroundView extends View  implements BeforeEnterObserver {
         let param1Element = this.viewOptsPanel.param1Element
         let radioButtonElements = this.viewOptsPanel.displayModeElements
         this.recreateCanvas()
+        this.renderProgress = 0.0
+        this.renderInfo = 'Rendering'
         playgroundStore.renderer = new FlameRenderer(this.viewOptsPanel.imageSize, this.viewOptsPanel.swarmSize, this.canvas, playgroundStore.flame, brightnessElement, radioButtonElements, param1Element);
+        this.lastProgressUpdate = playgroundStore.renderer.getTimeStamp()
+        playgroundStore.renderer.onRenderFinished = this.onRenderFinished
+        playgroundStore.renderer.onUpdateRenderProgress = this.onUpdateRenderProgress
         playgroundStore.renderer.drawScene()
+    }
+
+    onRenderFinished = (frameCount: number, elapsedTimeInS: number) => {
+       this.renderProgress = 1.0
+       this.renderInfo = 'Rendering finished after ' + Math.round((elapsedTimeInS + Number.EPSILON) * 100) / 100 + ' s'
+    }
+
+    onUpdateRenderProgress = (currSampleCount: number, maxSampleCount: number, frameCount: number, elapsedTimeInSeconds: number)=> {
+        const currTimeStamp = playgroundStore.renderer.getTimeStamp()
+        if(currTimeStamp > this.lastProgressUpdate + 500) {
+            this.lastProgressUpdate = currTimeStamp
+            this.renderProgress = currSampleCount / maxSampleCount
+            this.renderInfo = 'Rendering in progress (frame: ' + frameCount + ')'
+        }
     }
 
     importFlameFromXml = () => {

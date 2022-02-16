@@ -29,16 +29,25 @@ import {FlameMapper} from "Frontend/flames/model/mapper/flame-mapper";
 import {RenderColor, RenderFlame} from "Frontend/flames/model/render-flame";
 import {render} from "lit";
 
+type RenderFinishedHandler = (frameCount: number, elapsedTimeInMs: number) => void
+type RenderProgressHandler = (currSampleCount: number, maxSampleCount: number, frameCount: number, elapsedTimeInMs: number) => void
+
 export class FlameRenderer {
-    frames = 0
+    currFrameCount = 0
     ctx: FlameRenderContext
     settings: FlameRenderSettings
     iterator: FlameIterator
     display: FlameRendererDisplay
     saveNextImage = false
+    maxSampleCount: number
+    currSampleCount: number
+    samplesPerFrame: number
     saveImageontainer: HTMLDivElement | undefined = undefined
     imageSourceCanvas: HTMLCanvasElement | undefined = undefined
-
+    startTimeStampInMs: number
+    currTimeStampInMs: number
+    onRenderFinished: RenderFinishedHandler = (frameCount: number, elapsedTimeInSeconds: number) => {}
+    onUpdateRenderProgress: RenderProgressHandler = (currSampleCount: number, maxSampleCount: number, frameCount: number, elapsedTimeInSeconds: number) => {}
 
     constructor(private canvas_size: number,
                 private swarm_size: number,
@@ -57,6 +66,10 @@ export class FlameRenderer {
         renderFlame.width = imageWidth
         renderFlame.height = imageHeight
 
+        this.maxSampleCount = imageWidth * imageHeight * flame.sampleDensity.value
+        this.samplesPerFrame = swarm_size * swarm_size * 0.5
+        this.currSampleCount = 0
+
         canvas.width = this.canvas_size
         canvas.height = this.canvas_size
 
@@ -70,6 +83,14 @@ export class FlameRenderer {
         this.settings = new FlameRenderSettings(1.2, this.canvas_size, this.swarm_size, 1, 0.0)
         this.display = new FlameRendererDisplay(this.ctx, this.settings)
         this.iterator = new FlameIterator(this.ctx, this.settings)
+
+        this.startTimeStampInMs = this.getTimeStamp()
+        this.currTimeStampInMs = this.startTimeStampInMs
+    }
+
+    getTimeStamp() {
+      // @ts-ignore
+      return window.performance && window.performance.now && window.performance.timing && window.performance.timing.navigationStart ? window.performance.now() + window.performance.timing.navigationStart : Date.now()
     }
 
     private prepareFlame(renderFlame: RenderFlame) {
@@ -92,7 +113,7 @@ export class FlameRenderer {
     }
 
     public drawScene() {
-        this.settings.frames = this.frames;
+        this.settings.frames = this.currFrameCount;
         // @ts-ignore
         this.settings.brightness = this.brightnessElement.value;
 
@@ -102,7 +123,7 @@ export class FlameRenderer {
         this.iterator.iterateIFS();
 
         //
-        if (this.frames > 8) {
+        if (this.currFrameCount > 8) {
             this.iterator.plotHistogram();
         }
 
@@ -123,10 +144,11 @@ export class FlameRenderer {
                 this.display.displayFlame();
         }
 
-        this.frames++;
+        this.currFrameCount++;
 
 
-        if(this.frames>5) {
+
+        if(this.currFrameCount>5) {
          // this.frames=0;
        //   this.ctx.textures.clearHistogram();
         }
@@ -142,13 +164,19 @@ export class FlameRenderer {
             }
         }
 
-        if (this.frames < 3000)
+        this.currSampleCount += this.samplesPerFrame
+        this.currTimeStampInMs = this.getTimeStamp()
+        const elapsedTimeInSeconds = (this.currTimeStampInMs-this.startTimeStampInMs)/1000
+        if (this.currSampleCount < this.maxSampleCount) {
+            this.onUpdateRenderProgress(this.currSampleCount, this.maxSampleCount, this.currFrameCount, elapsedTimeInSeconds)
             window.requestAnimationFrame(this.drawScene.bind(this));
+        }
+        else {
+            this.onRenderFinished(this.currFrameCount, elapsedTimeInSeconds)
+        }
     }
 
-
     saveCurrentImageToContainer(canvas: HTMLCanvasElement, destContainer: HTMLDivElement) {
-        console.log("SAVE SHIT1")
         this.saveImageontainer = destContainer
         this.imageSourceCanvas = canvas
         this.saveNextImage = true
