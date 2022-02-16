@@ -599,6 +599,54 @@ class CellFunc extends VariationShaderFunc2D {
     }
 }
 
+class CirclizeFunc extends VariationShaderFunc2D {
+    PARAM_HOLE = "hole"
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_HOLE, type: VariationParamType.VP_NUMBER, initialValue: 0.40 }]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        return `{
+          float amount = float(${variation.amount});
+          float hole = float(${variation.params.get(this.PARAM_HOLE)});
+          float var4_PI = amount / (0.25*M_PI);
+          float absx = abs(_tx);
+          float absy = abs(_ty);
+          float perimeter, side;
+          if (absx >= absy) {
+            if (_tx >= absy) {
+              perimeter = absx + _ty;
+            } else {
+              perimeter = 5.0 * absx - _ty;
+            }
+            side = absx;
+          } else {
+            if (_ty >= absx) {
+              perimeter = 3.0 * absy - _tx;
+            } else {
+              perimeter = 7.0 * absy + _tx;
+            }
+            side = absy;
+          }
+          float r = var4_PI * side + hole;
+          float a = (0.25*M_PI) * perimeter / side - (0.25*M_PI);
+          float sina = sin(a);
+          float cosa = cos(a);
+          _vx += r * cosa;
+          _vy += r * sina;
+        }`;
+    }
+
+    get name(): string {
+        return "circlize";
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
 class CloverLeafWFFunc extends VariationShaderFunc2D {
     PARAM_FILLED = "filled"
 
@@ -3411,7 +3459,6 @@ class SinFunc extends VariationShaderFunc2D {
         return [VariationTypes.VARTYPE_2D];
     }
 
-
     get funcDependencies(): string[] {
         return [FUNC_SINH, FUNC_COSH];
     }
@@ -3444,6 +3491,25 @@ class SinhFunc extends VariationShaderFunc2D {
     get funcDependencies(): string[] {
         return [FUNC_SINH, FUNC_COSH];
     }
+}
+
+class SinusoidalFunc extends VariationShaderFunc2D {
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        return `{
+          float amount = float(${variation.amount});
+          _vx += amount * sin(_tx);
+          _vy += amount * sin(_ty);
+        }`;
+    }
+
+    get name(): string {
+        return "sinusoidal";
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+
 }
 
 class SphericalFunc extends VariationShaderFunc2D {
@@ -3780,6 +3846,53 @@ class TangentFunc extends VariationShaderFunc2D {
 
     get name(): string {
         return "tangent";
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
+class TargetFunc extends VariationShaderFunc2D {
+    PARAM_EVEN = "even"
+    PARAM_ODD = "odd"
+    PARAM_SIZE = "size"
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_EVEN, type: VariationParamType.VP_NUMBER, initialValue: 0.0 },
+            { name: this.PARAM_ODD, type: VariationParamType.VP_NUMBER, initialValue: 0.6 },
+            { name: this.PARAM_SIZE, type: VariationParamType.VP_NUMBER, initialValue: M_PI / 2.0 }
+        ]
+    }
+
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        /* target by Michael Faber, http://michaelfaber.deviantart.com/art/Target-362520023?q=gallery%3Afractal-resources%2F24660058&qo=0 */
+        return `{
+          float amount = float(${variation.amount});
+          float even = float(${variation.params.get(this.PARAM_EVEN)});
+          float odd = float(${variation.params.get(this.PARAM_ODD)});   
+          float size = float(${variation.params.get(this.PARAM_SIZE)});
+          float t_size_2 = 0.5 * size;
+          float a = atan2(_ty, _tx);
+          float r = sqrt(sqr(_tx) + sqr(_ty));
+          float t = log(r);
+          if (t < 0.0)
+            t -= t_size_2;
+          t = mod(abs(t), size);
+          if (t < t_size_2)
+            a += even;
+          else
+            a += odd;
+          float s = sin(a);
+          float c = cos(a);
+          _vx += r * c;
+          _vy += r * s;
+        }`;
+    }
+
+    get name(): string {
+        return "target";
     }
 
     get variationTypes(): VariationTypes[] {
@@ -4527,6 +4640,7 @@ export function register2DVars() {
     VariationShaders.registerVar(new BWraps7Func())
     VariationShaders.registerVar(new CannabisCurveWFFunc())
     VariationShaders.registerVar(new CellFunc())
+    VariationShaders.registerVar(new CirclizeFunc())
     VariationShaders.registerVar(new CloverLeafWFFunc())
     VariationShaders.registerVar(new ConicFunc())
     VariationShaders.registerVar(new CosFunc())
@@ -4612,6 +4726,7 @@ export function register2DVars() {
     VariationShaders.registerVar(new SeparationFunc())
     VariationShaders.registerVar(new SinFunc())
     VariationShaders.registerVar(new SinhFunc())
+    VariationShaders.registerVar(new SinusoidalFunc())
     VariationShaders.registerVar(new SphericalFunc())
     VariationShaders.registerVar(new SpiralFunc())
     VariationShaders.registerVar(new SpirographFunc())
@@ -4623,6 +4738,7 @@ export function register2DVars() {
     VariationShaders.registerVar(new TanhFunc())
     VariationShaders.registerVar(new TanCosFunc())
     VariationShaders.registerVar(new TangentFunc())
+    VariationShaders.registerVar(new TargetFunc())
     VariationShaders.registerVar(new TwintrianFunc())
     VariationShaders.registerVar(new TwoFaceFunc())
     VariationShaders.registerVar(new UnpolarFunc())
