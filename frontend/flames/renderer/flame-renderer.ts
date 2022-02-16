@@ -46,7 +46,9 @@ export class FlameRenderer {
     imageSourceCanvas: HTMLCanvasElement | undefined = undefined
     startTimeStampInMs: number
     currTimeStampInMs: number
+    cancelSignalled = false
     onRenderFinished: RenderFinishedHandler = (frameCount: number, elapsedTimeInSeconds: number) => {}
+    onRenderCancelled: RenderFinishedHandler = (frameCount: number, elapsedTimeInSeconds: number) => {}
     onUpdateRenderProgress: RenderProgressHandler = (currSampleCount: number, maxSampleCount: number, frameCount: number, elapsedTimeInSeconds: number) => {}
 
     constructor(private canvas_size: number,
@@ -167,13 +169,22 @@ export class FlameRenderer {
         this.currSampleCount += this.samplesPerFrame
         this.currTimeStampInMs = this.getTimeStamp()
         const elapsedTimeInSeconds = (this.currTimeStampInMs-this.startTimeStampInMs)/1000
-        if (this.currSampleCount < this.maxSampleCount) {
-            this.onUpdateRenderProgress(this.currSampleCount, this.maxSampleCount, this.currFrameCount, elapsedTimeInSeconds)
-            window.requestAnimationFrame(this.drawScene.bind(this));
+        if(this.cancelSignalled) {
+            this.onRenderCancelled(this.currFrameCount, elapsedTimeInSeconds)
         }
         else {
-            this.onRenderFinished(this.currFrameCount, elapsedTimeInSeconds)
+            if (this.currSampleCount < this.maxSampleCount) {
+                this.onUpdateRenderProgress(this.currSampleCount, this.maxSampleCount, this.currFrameCount, elapsedTimeInSeconds)
+                window.requestAnimationFrame(this.drawScene.bind(this));
+            }
+            else {
+                this.onRenderFinished(this.currFrameCount, elapsedTimeInSeconds)
+            }
         }
+    }
+
+    public signalCancel() {
+        this.cancelSignalled = true
     }
 
     saveCurrentImageToContainer(canvas: HTMLCanvasElement, destContainer: HTMLDivElement) {

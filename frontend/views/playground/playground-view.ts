@@ -159,6 +159,9 @@ export class PlaygroundView extends View  implements BeforeEnterObserver {
     }
 
     rerenderFlame = ()=> {
+        if(playgroundStore.renderer) {
+            playgroundStore.renderer.signalCancel()
+        }
         let brightnessElement = this.viewOptsPanel.brightnessElement
         let param1Element = this.viewOptsPanel.param1Element
         let radioButtonElements = this.viewOptsPanel.displayModeElements
@@ -168,6 +171,7 @@ export class PlaygroundView extends View  implements BeforeEnterObserver {
         playgroundStore.renderer = new FlameRenderer(this.viewOptsPanel.imageSize, this.viewOptsPanel.swarmSize, this.canvas, playgroundStore.flame, brightnessElement, radioButtonElements, param1Element);
         this.lastProgressUpdate = playgroundStore.renderer.getTimeStamp()
         playgroundStore.renderer.onRenderFinished = this.onRenderFinished
+        playgroundStore.renderer.onRenderCancelled = this.onRenderCancelled
         playgroundStore.renderer.onUpdateRenderProgress = this.onUpdateRenderProgress
         playgroundStore.renderer.drawScene()
     }
@@ -175,6 +179,10 @@ export class PlaygroundView extends View  implements BeforeEnterObserver {
     onRenderFinished = (frameCount: number, elapsedTimeInS: number) => {
        this.renderProgress = 1.0
        this.renderInfo = 'Rendering finished after ' + Math.round((elapsedTimeInS + Number.EPSILON) * 100) / 100 + ' s'
+    }
+
+    onRenderCancelled = (frameCount: number, elapsedTimeInS: number) => {
+         console.log("CANCELLED")
     }
 
     onUpdateRenderProgress = (currSampleCount: number, maxSampleCount: number, frameCount: number, elapsedTimeInSeconds: number)=> {
