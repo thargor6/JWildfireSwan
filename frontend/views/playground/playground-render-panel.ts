@@ -25,6 +25,12 @@ import {playgroundStore} from "Frontend/stores/playground-store";
 
 import {MobxLitElement} from "@adobe/lit-mobx";
 import {HasValue} from "@vaadin/form";
+import {DisplayMode} from "Frontend/flames/renderer/render-settings";
+
+interface DisplayModeItem {
+  displayMode: DisplayMode;
+  caption: string;
+}
 
 @customElement('playground-render-panel')
 export class PlaygroundRenderPanel extends MobxLitElement {
@@ -47,9 +53,14 @@ export class PlaygroundRenderPanel extends MobxLitElement {
 
   swarmSizes = [8, 16, 32, 64, 128, 256, 512, 1024]
 
-  brightnessElement!: any
-  param1Element!: any
-  displayModeElements!: any
+  displayModes: DisplayModeItem[] = [
+      { displayMode: DisplayMode.FLAME, caption: "Flame"},
+      { displayMode: DisplayMode.POSITION_ITER, caption: "Position iteration"},
+      { displayMode: DisplayMode.COLOR_ITER, caption: "Color iteration"},
+      { displayMode: DisplayMode.GRADIENT, caption: "Gradient"}]
+
+  @state()
+  displayMode: DisplayMode = DisplayMode.FLAME
 
   render() {
     return html`
@@ -65,12 +76,12 @@ export class PlaygroundRenderPanel extends MobxLitElement {
           
           <div style="display: flex;">
           <label>brightness</label><paper-slider id="brightness" step="0.0001" value="1.6" min="0" max="4"></paper-slider>
-          <paper-slider style="display: none;" id="param1" step="0.1" value="2.5" min="0" max="10.0"></paper-slider>
+           </div>
+          <vaadin-combo-box style="max-width: 10em;" label="Display mode" 
+                            .items="${this.displayModes}" .value=${this.displayMode}
+                            item-value-path="displayMode" item-label-path="caption"
+                            @change="${(event: Event) => this.displayModeChanged(event)}"></vaadin-combo-box>
           </div>
-          <label><input type="radio" id="displayMode" name="displayMode" value="flame" checked="checked">Flame</label>
-          <label><input type="radio" id="displayMode" name="displayMode" value="position">Position Iteration</label>
-          <label><input type="radio" id="displayMode" name="displayMode" value="colour">Color Iteration</label>
-         </div>
       </div>
 `;
   }
@@ -89,11 +100,17 @@ export class PlaygroundRenderPanel extends MobxLitElement {
     }
   }
 
+  private displayModeChanged(event: Event) {
+    if ((event.target as HasValue<DisplayMode>).value) {
+      this.displayMode = (event.target as HasValue<DisplayMode>).value!
+      if(this.displayMode && playgroundStore.renderer) {
+        playgroundStore.renderer.settings.displayMode = this.displayMode
+      }
+    }
+  }
+
   protected firstUpdated() {
-    this.brightnessElement = this.shadowRoot!.querySelector("#brightness") as HTMLElement
-    this.param1Element = this.shadowRoot!.querySelector("#param1") as HTMLElement
-    this.displayModeElements = this.shadowRoot!.querySelectorAll('#displayMode')
-    playgroundStore.notifyInit(this.tagName)
+     playgroundStore.notifyInit(this.tagName)
   }
 
 }

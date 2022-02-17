@@ -21,13 +21,12 @@ import {Buffers} from "./buffers";
 import {Textures} from './textures'
 import {Framebuffers} from './framebuffers'
 import {FlameRenderContext} from "./render-context";
-import {FlameRenderSettings} from "./render-settings";
+import {DisplayMode, FlameRenderSettings} from "./render-settings";
 import {FlameRendererDisplay} from "./display";
 import {FlameIterator} from "./iterator";
 import {Flame, GRADIENT_SIZE} from "Frontend/flames/model/flame";
 import {FlameMapper} from "Frontend/flames/model/mapper/flame-mapper";
 import {RenderColor, RenderFlame} from "Frontend/flames/model/render-flame";
-import {render} from "lit";
 
 type RenderFinishedHandler = (frameCount: number, elapsedTimeInMs: number) => void
 type RenderProgressHandler = (currSampleCount: number, maxSampleCount: number, frameCount: number, elapsedTimeInMs: number) => void
@@ -53,10 +52,9 @@ export class FlameRenderer {
 
     constructor(private canvas_size: number,
                 private swarm_size: number,
+                private displayMode: DisplayMode,
                 private canvas: HTMLCanvasElement,
-                private flame: Flame,
-                private brightnessElement: HTMLElement,
-                private radioButtonElements: any, private param1Element: HTMLElement) {
+                private flame: Flame) {
 
         const renderFlame = FlameMapper.mapForRendering(flame)
         this.prepareFlame(renderFlame)
@@ -82,7 +80,7 @@ export class FlameRenderer {
         const textures = new Textures(renderFlame, gl, this.swarm_size, this.canvas_size)
         const framebuffers = new Framebuffers(gl, textures)
         this.ctx = new FlameRenderContext(gl, shaders, buffers, textures, framebuffers)
-        this.settings = new FlameRenderSettings(1.2, this.canvas_size, this.swarm_size, 1, 0.0)
+        this.settings = new FlameRenderSettings(1.2, this.canvas_size, this.swarm_size, 1, 0.0, displayMode)
         this.display = new FlameRendererDisplay(this.ctx, this.settings)
         this.iterator = new FlameIterator(this.ctx, this.settings)
 
@@ -105,50 +103,33 @@ export class FlameRenderer {
        }
     }
 
-    private getRadioValue() {
-        for (var i = 0; i < this.radioButtonElements.length; i++) {
-            var radioButtonElement = this.radioButtonElements[i];
-
-            if (radioButtonElement.checked)
-                return radioButtonElement.value;
-        }
-    }
-
     public drawScene() {
         this.settings.frames = this.currFrameCount;
-        // @ts-ignore
-        this.settings.brightness = this.brightnessElement.value;
-
-
+        this.settings.brightness = 1.0 // this.brightnessElement.value;
         this.settings.time += 0.01;
         //
         this.iterator.iterateIFS();
-
         //
-        if (this.currFrameCount > 8) {
+        if (this.currFrameCount > 1) {
             this.iterator.plotHistogram();
         }
 
         //
-        var displayMode = this.getRadioValue();
-
-        switch (displayMode) {
-            case "flame":
-                this.display.displayFlame();
+        switch(this.settings.displayMode) {
+            case DisplayMode.POSITION_ITER:
+                this.display.displayPositionIteration();
                 break;
-            case "position":
-                this.display.displayPosition();
+            case DisplayMode.COLOR_ITER:
+                this.display.displayColorIteration();
                 break;
-            case "colour":
-                this.display.displayColour();
+            case DisplayMode.GRADIENT:
+                this.display.displayGradient();
                 break;
+            case DisplayMode.FLAME:
             default:
                 this.display.displayFlame();
         }
-
         this.currFrameCount++;
-
-
 
         if(this.currFrameCount>5) {
          // this.frames=0;

@@ -62,6 +62,7 @@ interface ShowRawBufferProgram extends WebGLProgram {
     uTexSamp: WebGLUniformLocation;
     pTexSamp: WebGLUniformLocation;
     gradTexSamp: WebGLUniformLocation;
+    displayMode: WebGLUniformLocation;
 }
 
 export class WebglShaders {
@@ -127,6 +128,7 @@ export class WebglShaders {
         this.prog_show_raw.uTexSamp = gl.getUniformLocation(this.prog_show_raw, "uTexSamp")!;
         this.prog_show_raw.pTexSamp = gl.getUniformLocation(this.prog_show_raw, "pTexSamp")!;
         this.prog_show_raw.gradTexSamp = gl.getUniformLocation(this.prog_show_raw, "gradTexSamp")!;
+        this.prog_show_raw.displayMode = gl.getUniformLocation(this.prog_show_raw, "displayMode")!;
     }
 
 }

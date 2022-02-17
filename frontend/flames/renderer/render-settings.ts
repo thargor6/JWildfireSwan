@@ -14,11 +14,20 @@
   if not, write to the Free Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 */
+
+export enum DisplayMode {
+    FLAME= 1,
+    POSITION_ITER = 2,
+    COLOR_ITER = 3,
+    GRADIENT = 4
+}
+
 export class FlameRenderSettings {
     constructor(
         public brightness: number,
         public canvas_size: number,
         public swarm_size: number,
         public frames: number,
-        public time: number) {}
+        public time: number,
+        public displayMode: DisplayMode) {}
 }

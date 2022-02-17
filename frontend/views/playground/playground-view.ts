@@ -65,7 +65,7 @@ export class PlaygroundView extends View  implements BeforeEnterObserver {
 
     lastProgressUpdate = 0.0
 
-    viewOptsPanel!: PlaygroundRenderPanel
+    renderSettingsPanel!: PlaygroundRenderPanel
     flamePanel!: PlaygroundFlamePanel
     loadExampleAtStartup: string | undefined = undefined
 
@@ -134,9 +134,9 @@ export class PlaygroundView extends View  implements BeforeEnterObserver {
         this.canvasContainer = document.querySelector('#canvas-container')!
         this.capturedImageContainer = document.querySelector('#captured-image-container')!
 
-        this.viewOptsPanel = document.querySelector('#viewOptsPnl')!
+        this.renderSettingsPanel = document.querySelector('#viewOptsPnl')!
         this.flamePanel = document.querySelector('#flamePnl')!
-        playgroundStore.registerInitCallback([this.flamePanel.tagName, this.viewOptsPanel.tagName], this.renderFirstFlame)
+        playgroundStore.registerInitCallback([this.flamePanel.tagName, this.renderSettingsPanel.tagName], this.renderFirstFlame)
     }
 
     private getTabStyle(ownTabIdx: number, selectedTab: number) {
@@ -162,13 +162,10 @@ export class PlaygroundView extends View  implements BeforeEnterObserver {
         if(playgroundStore.renderer) {
             playgroundStore.renderer.signalCancel()
         }
-        let brightnessElement = this.viewOptsPanel.brightnessElement
-        let param1Element = this.viewOptsPanel.param1Element
-        let radioButtonElements = this.viewOptsPanel.displayModeElements
         this.recreateCanvas()
         this.renderProgress = 0.0
         this.renderInfo = 'Rendering'
-        playgroundStore.renderer = new FlameRenderer(this.viewOptsPanel.imageSize, this.viewOptsPanel.swarmSize, this.canvas, playgroundStore.flame, brightnessElement, radioButtonElements, param1Element);
+        playgroundStore.renderer = new FlameRenderer(this.renderSettingsPanel.imageSize, this.renderSettingsPanel.swarmSize, this.renderSettingsPanel.displayMode, this.canvas, playgroundStore.flame);
         this.lastProgressUpdate = playgroundStore.renderer.getTimeStamp()
         playgroundStore.renderer.onRenderFinished = this.onRenderFinished
         playgroundStore.renderer.onRenderCancelled = this.onRenderCancelled
