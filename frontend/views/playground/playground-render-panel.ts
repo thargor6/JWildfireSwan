@@ -26,6 +26,8 @@ import {playgroundStore} from "Frontend/stores/playground-store";
 import {MobxLitElement} from "@adobe/lit-mobx";
 import {HasValue} from "@vaadin/form";
 import {DisplayMode} from "Frontend/flames/renderer/render-settings";
+import '@vaadin/vaadin-ordered-layout/vaadin-vertical-layout'
+import '@vaadin/vaadin-ordered-layout/vaadin-horizontal-layout'
 
 interface DisplayModeItem {
   displayMode: DisplayMode;
@@ -39,6 +41,9 @@ export class PlaygroundRenderPanel extends MobxLitElement {
 
   @property()
   onRefresh = ()=>{}
+
+  @property()
+  onCancelRender = ()=>{}
 
   @property()
   onImageSizeChanged: ()=>void = ()=>{}
@@ -64,25 +69,26 @@ export class PlaygroundRenderPanel extends MobxLitElement {
 
   render() {
     return html`
-      <div style="${this.visible ? `display:block;`: `display:none;`}">
-        <div style="display: flex; flex-direction: column;">
-        
+      <vertical-layout theme="spacing" style="${this.visible ? `display:block;`: `display:none;`}">
+
+          <vaadin-horizontal-layout theme="spacing">
           <vaadin-combo-box style="max-width: 10em;" label="Image size" .items="${this.imageSizes}" value="${this.imageSize}"
                             @change="${(event: Event) => this.imageSizeChanged(event)}"></vaadin-combo-box>
           <vaadin-combo-box style="max-width: 10em;" label="Swarm size" .items="${this.swarmSizes}" value="${this.swarmSize}"
                             @change="${(event: Event) => this.pointsSizeChanged(event)}"></vaadin-combo-box>
-  
-          <vaadin-button style="max-width: 10em;" @click="${this.onRefresh}">Refresh</vaadin-button>
-          
-          <div style="display: flex;">
-          <label>brightness</label><paper-slider id="brightness" step="0.0001" value="1.6" min="0" max="4"></paper-slider>
-           </div>
+          </vaadin-horizontal-layout>
+
+        <vaadin-horizontal-layout theme="spacing">
+          <vaadin-button theme="primary" style="max-width: 10em;" @click="${this.onRefresh}">Refresh</vaadin-button>
+          <vaadin-button style="max-width: 10em;" @click="${this.onCancelRender}">Cancel</vaadin-button>
+        </vaadin-horizontal-layout>  
+
           <vaadin-combo-box style="max-width: 10em;" label="Display mode" 
                             .items="${this.displayModes}" .value=${this.displayMode}
                             item-value-path="displayMode" item-label-path="caption"
                             @change="${(event: Event) => this.displayModeChanged(event)}"></vaadin-combo-box>
-          </div>
-      </div>
+
+      </vertical-layout>
 `;
   }
 
@@ -114,3 +120,9 @@ export class PlaygroundRenderPanel extends MobxLitElement {
   }
 
 }
+
+/*
+          <div style="display: flex;">
+          <label>brightness</label><paper-slider id="brightness" step="0.0001" value="1.6" min="0" max="4"></paper-slider>
+           </div>
+ */

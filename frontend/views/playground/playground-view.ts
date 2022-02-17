@@ -111,6 +111,7 @@ export class PlaygroundView extends View  implements BeforeEnterObserver {
                           .onRandomGradient="${this.createRandomGradient}" .onCaptureImage="${this.saveImage}"
                         .onFlameNameChanged="${this.importExampleFlame}"></playground-flame-panel>
                         <playground-render-panel id='viewOptsPnl' .onRefresh="${this.rerenderFlame}"
+                                                 .onCancelRender="${this.cancelRender}"
                           .visible=${this.selectedTab === 1} .onImageSizeChanged="${this.rerenderFlame}"></playground-render-panel>
                         <playground-variations-panel .visible=${this.selectedTab === 2}>
     
@@ -156,6 +157,12 @@ export class PlaygroundView extends View  implements BeforeEnterObserver {
     saveImage =()=> {
         this.capturedImageContainer.innerHTML = ''
         playgroundStore.renderer.saveCurrentImageToContainer(this.canvas, this.capturedImageContainer)
+    }
+
+    cancelRender = ()=> {
+        if(playgroundStore.renderer) {
+            playgroundStore.renderer.signalCancel()
+        }
     }
 
     rerenderFlame = ()=> {
