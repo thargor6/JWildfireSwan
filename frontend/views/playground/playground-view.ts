@@ -38,7 +38,6 @@ import {FlameMapper} from '../../flames/model/mapper/flame-mapper'
 import '@vaadin/vaadin-combo-box';
 import './playground-render-panel'
 import './playground-flame-panel'
-import './playground-variations-panel'
 import '@vaadin/split-layout';
 
 import {PlaygroundRenderPanel} from "Frontend/views/playground/playground-render-panel";
@@ -99,10 +98,6 @@ export class PlaygroundView extends View  implements BeforeEnterObserver {
                             <vaadin-icon icon="vaadin:eye"></vaadin-icon>
                             <span>Render</span>
                         </vaadin-tab>
-                        <vaadin-tab theme="icon-on-top">
-                            <vaadin-icon icon="vaadin:info-circle-o"></vaadin-icon>
-                            <span>Supported variations</span>
-                        </vaadin-tab>
                     </vaadin-tabs>
                     <div style="display: flex; flex-direction: column; width: 100%;">
                         <playground-flame-panel id='flamePnl' 
@@ -113,10 +108,6 @@ export class PlaygroundView extends View  implements BeforeEnterObserver {
                         <playground-render-panel id='viewOptsPnl' .onRefresh="${this.rerenderFlame}"
                                                  .onCancelRender="${this.cancelRender}"
                           .visible=${this.selectedTab === 1} .onImageSizeChanged="${this.rerenderFlame}"></playground-render-panel>
-                        <playground-variations-panel .visible=${this.selectedTab === 2}>
-    
-
-                        </playground-variations-panel>
                         <label>Captured image: (use right-click and save-as to export)</label>
                         <div style="max-height: 10em;max-width:20em;overflow: scroll;" id="captured-image-container"></div>
                     </div>

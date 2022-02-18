@@ -29,10 +29,11 @@ import '@vaadin/text-area';
 import '@vaadin/text-field';
 import '@vaadin/vertical-layout';
 import '@vaadin/vaadin-details'
+import '@vaadin/tabs'
 
-import {AppInfoEndpoint, GalleryEndpoint} from "Frontend/generated/endpoints";
 import '@vaadin/vaadin-combo-box';
-import {appStore} from "Frontend/stores/app-store";
+import './about-variations-panel'
+import './about-info-panel'
 
 @customElement('about-view')
 export class AboutView extends View {
@@ -46,6 +47,9 @@ export class AboutView extends View {
   @state()
   example_3 = "example025"
 
+  @state()
+  selectedTab = 0
+
   render() {
     return html`
 
@@ -54,6 +58,22 @@ export class AboutView extends View {
           style="min-height: 160px;">
         <img alt=${this.example_1} class="w-full" loading="lazy" src="./images/${this.example_1}.jpg" />
       </div>
+
+      <vaadin-tabs @selected-changed="${this.selectedChanged}">
+        <vaadin-tab theme="icon-on-top">
+          <vaadin-icon icon="vaadin:eye"></vaadin-icon>
+          <span>Program information</span>
+        </vaadin-tab>
+        <vaadin-tab theme="icon-on-top">
+          <vaadin-icon icon="vaadin:info-circle-o"></vaadin-icon>
+          <span>Supported variations</span>
+        </vaadin-tab>
+      </vaadin-tabs>
+      <div style="display: flex; flex-direction: column; width: 100%;">
+        <about-info-panel .visible=${this.selectedTab === 0}></about-info-panel>
+        <about-variations-panel .visible=${this.selectedTab === 1}></about-variations-panel>
+      </div>
+      
       <h1>Welcome to JWildfire Swan: awesome fractal flames, GPU accelerated!</h1>
       The basic idea is to use standard Web-technologies to create an application which 
       allows playful access to the fascinating world of fractal flames, without barriers. 
@@ -104,15 +124,13 @@ export class AboutView extends View {
           style="min-height: 160px;">
         <img alt=${this.example_3} class="w-full" loading="lazy" src="./images/${this.example_3}.jpg" />
       </div>
-      <h2>Program information</h2>
-      <p><b>Version</b>: ${until(AppInfoEndpoint.getAppVersion().then((data) =>  html`<span>${data}</span>`), html`<span>${appStore.loadingText}</span>`)}</p>
-      <p><b>Build date</b>: ${until(AppInfoEndpoint.getAppBuildDate().then((data) =>  html`<span>${data}</span>`), html`<span>${appStore.loadingText}</span>`)}</p>
-
-      <h2>Known Limitations/Bugs</h2>
-      The options at the Render-tab are currently not working as expected. 
-      It is recommended to leave them alone.
       
-`;
+
+    `;
+  }
+
+  selectedChanged(e: CustomEvent) {
+    this.selectedTab = e.detail.value;
   }
 
 }
