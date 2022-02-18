@@ -19,7 +19,6 @@ import {html, nothing, PropertyValues} from 'lit';
 import {customElement, state} from 'lit/decorators.js';
 import { View } from '../../views/view';
 
-import '@polymer/paper-slider/paper-slider'
 import '@vaadin/vaadin-button'
 import '@vaadin/vaadin-text-field'
 import '@vaadin/dialog';
@@ -38,6 +37,7 @@ import {FlameMapper} from '../../flames/model/mapper/flame-mapper'
 import '@vaadin/vaadin-combo-box';
 import './playground-render-panel'
 import './playground-flame-panel'
+import './playground-edit-panel'
 import '@vaadin/split-layout';
 
 import {PlaygroundRenderPanel} from "Frontend/views/playground/playground-render-panel";
@@ -72,7 +72,7 @@ export class PlaygroundView extends View  implements BeforeEnterObserver {
         return html`
             <swan-error-panel .errorMessage=${playgroundStore.lastError}></swan-error-panel>
             <vaadin-split-layout>
-                <vertical-layout>
+              <vertical-layout>
                 <div style="display: flex; align-items: center; justify-content: center;"
                      stylex="max-height: 70em;max-width:70em;overflow: scroll;" id="canvas-container">
                     <canvas id="screen1" width="512" height="512"></canvas>
@@ -83,7 +83,13 @@ export class PlaygroundView extends View  implements BeforeEnterObserver {
                     <div>${this.renderInfo}</div>
                     <vaadin-progress-bar .value=${this.renderProgress} theme="contrast"></vaadin-progress-bar>
                 </div>
-                </vertical-layout>
+                <div style="display: flex; align-items: center; justify-content: center; margin-top: 2em;"> 
+                    <vertical-layout>
+                      <label>Final image (use right-click and save-as to export):</label>
+                      <div style="max-height: 10em;max-width:24em;overflow: scroll;" id="captured-image-container"></div>
+                    </vertical-layout>
+                </div>
+              </vertical-layout>
                 <div style="display: flex; flex-direction: column; padding: 1em;">
 
                     <div style="display: flex; flex-direction: row; align-items: flex-end; margin-right: 1em;">
@@ -98,6 +104,10 @@ export class PlaygroundView extends View  implements BeforeEnterObserver {
                             <vaadin-icon icon="vaadin:eye"></vaadin-icon>
                             <span>Render</span>
                         </vaadin-tab>
+                        <vaadin-tab theme="icon-on-top">
+                            <vaadin-icon icon="vaadin:eye"></vaadin-icon>
+                            <span>Edit</span>
+                        </vaadin-tab>
                     </vaadin-tabs>
                     <div style="display: flex; flex-direction: column; width: 100%;">
                         <playground-flame-panel id='flamePnl' 
@@ -108,9 +118,10 @@ export class PlaygroundView extends View  implements BeforeEnterObserver {
                         <playground-render-panel id='viewOptsPnl' .onRefresh="${this.rerenderFlame}"
                                                  .onCancelRender="${this.cancelRender}"
                           .visible=${this.selectedTab === 1} .onImageSizeChanged="${this.rerenderFlame}"></playground-render-panel>
-                        <label>Captured image: (use right-click and save-as to export)</label>
-                        <div style="max-height: 10em;max-width:20em;overflow: scroll;" id="captured-image-container"></div>
-                    </div>
+                        <playground-edit-panel id='editPnl' .onRefresh="${this.rerenderFlame}"
+                                                 .visible=${this.selectedTab === 2}></playground-edit-panel>
+
+                     </div>
      
                 </div>
              </vaadin-split-layout>
@@ -177,7 +188,7 @@ export class PlaygroundView extends View  implements BeforeEnterObserver {
 
     onUpdateRenderProgress = (currSampleCount: number, maxSampleCount: number, frameCount: number, elapsedTimeInSeconds: number)=> {
         const currTimeStamp = playgroundStore.renderer.getTimeStamp()
-        if(currTimeStamp > this.lastProgressUpdate + 500) {
+        if(currTimeStamp > this.lastProgressUpdate + 333) {
             this.lastProgressUpdate = currTimeStamp
             this.renderProgress = currSampleCount / maxSampleCount
             this.renderInfo = 'Rendering in progress (frame: ' + frameCount + ')'

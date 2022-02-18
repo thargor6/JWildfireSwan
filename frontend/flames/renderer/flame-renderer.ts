@@ -68,7 +68,7 @@ export class FlameRenderer {
         renderFlame.height = imageHeight
 
         this.maxSampleCount = imageWidth * imageHeight * flame.sampleDensity.value
-        this.samplesPerFrame = swarm_size * swarm_size * 0.5
+        this.samplesPerFrame = swarm_size * swarm_size
         this.currSampleCount = 0
 
         canvas.width = this.canvas_size
@@ -111,7 +111,7 @@ export class FlameRenderer {
         //
         this.iterator.iterateIFS();
         //
-        if (this.currFrameCount > 1) {
+        if (this.currFrameCount > 5) {
             this.iterator.plotHistogram();
         }
 
@@ -144,12 +144,11 @@ export class FlameRenderer {
             this.onRenderCancelled(this.currFrameCount, elapsedTimeInSeconds)
         }
         else {
-            if (this.currSampleCount < this.maxSampleCount) {
+            if (this.currSampleCount - this.samplesPerFrame / 2 < this.maxSampleCount) {
                 this.onUpdateRenderProgress(this.currSampleCount, this.maxSampleCount, this.currFrameCount, elapsedTimeInSeconds)
                 window.requestAnimationFrame(this.drawScene.bind(this));
             }
             else {
-
                 if(this.autoCaptureImage && this.imgCaptureContainer) {
                     const imgData =  this.canvas.toDataURL("image/jpg")
                     const imgElement = document.createElement('img')

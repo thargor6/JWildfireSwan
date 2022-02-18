@@ -19,28 +19,40 @@ import {html} from 'lit';
 import {customElement, property, state} from 'lit/decorators.js';
 
 import '@polymer/paper-slider/paper-slider'
-import '@vaadin/vaadin-text-field'
-import '@vaadin/text-area'
+import '@vaadin/vaadin-button'
+import '@vaadin/vaadin-combo-box';
 import {playgroundStore} from "Frontend/stores/playground-store";
 
 import {MobxLitElement} from "@adobe/lit-mobx";
-import {HasValue} from "@vaadin/form";
 
-@customElement('playground-variations-panel')
-export class PlaygroundRenderPanel extends MobxLitElement {
+import '@vaadin/vaadin-ordered-layout/vaadin-vertical-layout'
+import '@vaadin/vaadin-ordered-layout/vaadin-horizontal-layout'
+import '@polymer/paper-slider/paper-slider'
+
+@customElement('playground-edit-panel')
+export class PlaygroundEditPanel extends MobxLitElement {
   @property({type: Boolean})
   visible = true
 
+  @property()
+  onRefresh = ()=>{}
+
   render() {
     return html`
-      <div style="${this.visible ? `display:block;`: `display:none;`}">
-        <div style="display: flex; flex-direction: column;">
-        <vaadin-text-field readonly label="Supported variations" value="${playgroundStore.variations.length}"></vaadin-text-field>
-        <vaadin-text-area style="max-height: 24em;" readonly value="${playgroundStore.variations.join('\n')}"></vaadin-text-area>
-        </div>          
-      </div>
+      <vertical-layout theme="spacing" style="${this.visible ? `display:block;`: `display:none;`}">
+        <label>brightness</label><paper-slider @immediate-value-change="${this.valueChanged}" id="brightness" step="0.0001" value="1.6" min="0" max="4"></paper-slider>
+      </vertical-layout>
 `;
   }
 
+  valueChanged(e: Event) {
+    const target: any = e.target
+    if(target.id) {
+      playgroundStore.flame.brightness.value =target.immediateValue
+   //   console.log(target.id, target.immediateValue)
+    }
+    this.onRefresh()
+  }
 
 }
+
