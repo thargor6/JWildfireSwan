@@ -47,8 +47,8 @@ export class PlaygroundStore {
       let vars = [...VariationShaders.varNameList]
       vars.sort()
       this.variations = vars
-
-      this.exampleFlamenames = await GalleryEndpoint.getExampleList()
+      const examples = await GalleryEndpoint.getExampleList()
+      this.exampleFlamenames = examples.sort((a, b) => a.localeCompare(b)  )
       this.initFlag = true
       this.notifyInit('store')
     }

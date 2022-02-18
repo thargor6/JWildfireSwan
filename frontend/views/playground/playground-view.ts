@@ -108,7 +108,7 @@ export class PlaygroundView extends View  implements BeforeEnterObserver {
                         <playground-flame-panel id='flamePnl' 
                           .visible=${this.selectedTab === 0}
                           .onImport="${this.importFlameFromXml}" .onRandomFlame="${this.createRandomFlame}"
-                          .onRandomGradient="${this.createRandomGradient}" .onCaptureImage="${this.saveImage}"
+                          .onRandomGradient="${this.createRandomGradient}"
                         .onFlameNameChanged="${this.importExampleFlame}"></playground-flame-panel>
                         <playground-render-panel id='viewOptsPnl' .onRefresh="${this.rerenderFlame}"
                                                  .onCancelRender="${this.cancelRender}"
@@ -154,11 +154,6 @@ export class PlaygroundView extends View  implements BeforeEnterObserver {
         this.canvasContainer.appendChild(this.canvas)
     }
 
-    saveImage =()=> {
-        this.capturedImageContainer.innerHTML = ''
-        playgroundStore.renderer.saveCurrentImageToContainer(this.canvas, this.capturedImageContainer)
-    }
-
     cancelRender = ()=> {
         if(playgroundStore.renderer) {
             playgroundStore.renderer.signalCancel()
@@ -172,7 +167,7 @@ export class PlaygroundView extends View  implements BeforeEnterObserver {
         this.recreateCanvas()
         this.renderProgress = 0.0
         this.renderInfo = 'Rendering'
-        playgroundStore.renderer = new FlameRenderer(this.renderSettingsPanel.imageSize, this.renderSettingsPanel.swarmSize, this.renderSettingsPanel.displayMode, this.canvas, playgroundStore.flame);
+        playgroundStore.renderer = new FlameRenderer(this.renderSettingsPanel.imageSize, this.renderSettingsPanel.swarmSize, this.renderSettingsPanel.displayMode, this.canvas, this.capturedImageContainer, true, playgroundStore.flame);
         this.lastProgressUpdate = playgroundStore.renderer.getTimeStamp()
         playgroundStore.renderer.onRenderFinished = this.onRenderFinished
         playgroundStore.renderer.onRenderCancelled = this.onRenderCancelled

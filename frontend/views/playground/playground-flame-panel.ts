@@ -76,7 +76,6 @@ export class PlaygroundFlamePanel extends MobxLitElement {
               <vaadin-button ?disabled=${playgroundStore.calculating} theme="primary" @click="${this.onRandomFlame}">Generate random flame</vaadin-button>
               <vaadin-button ?disabled=${playgroundStore.calculating} theme="secondary" @click="${this.onRandomGradient}">Generate random gradient</vaadin-button>
             </vaadin-horizontal-layout>
-            <vaadin-button ?disabled=${playgroundStore.calculating} theme="secondary" @click="${this.onCaptureImage}">Capture image</vaadin-button>
           </div>
           <swan-loading-indicator .loading=${playgroundStore.calculating} caption="Calculating..."></swan-loading-indicator>
           </vaadin-vertical-layout>

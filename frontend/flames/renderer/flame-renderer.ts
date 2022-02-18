@@ -37,7 +37,6 @@ export class FlameRenderer {
     settings: FlameRenderSettings
     iterator: FlameIterator
     display: FlameRendererDisplay
-    saveNextImage = false
     maxSampleCount: number
     currSampleCount: number
     samplesPerFrame: number
@@ -54,6 +53,8 @@ export class FlameRenderer {
                 private swarm_size: number,
                 private displayMode: DisplayMode,
                 private canvas: HTMLCanvasElement,
+                private imgCaptureContainer: HTMLDivElement,
+                private autoCaptureImage: boolean,
                 private flame: Flame) {
 
         const renderFlame = FlameMapper.mapForRendering(flame)
@@ -136,17 +137,6 @@ export class FlameRenderer {
        //   this.ctx.textures.clearHistogram();
         }
 
-        if(this.saveNextImage) {
-            this.saveNextImage = false
-            if(this.saveImageontainer && this.imageSourceCanvas) {
-                const imgData =  this.imageSourceCanvas.toDataURL("image/png");
-                const imgElement = document.createElement('img');
-                imgElement.src = imgData;
-                this.saveImageontainer.appendChild(imgElement);
-                this.saveImageontainer = undefined
-            }
-        }
-
         this.currSampleCount += this.samplesPerFrame
         this.currTimeStampInMs = this.getTimeStamp()
         const elapsedTimeInSeconds = (this.currTimeStampInMs-this.startTimeStampInMs)/1000
@@ -159,6 +149,14 @@ export class FlameRenderer {
                 window.requestAnimationFrame(this.drawScene.bind(this));
             }
             else {
+
+                if(this.autoCaptureImage && this.imgCaptureContainer) {
+                    const imgData =  this.canvas.toDataURL("image/jpg")
+                    const imgElement = document.createElement('img')
+                    imgElement.src = imgData;
+                    this.imgCaptureContainer.innerHTML = ''
+                    this.imgCaptureContainer.appendChild(imgElement)
+                }
                 this.onRenderFinished(this.currFrameCount, elapsedTimeInSeconds)
             }
         }
@@ -168,9 +166,4 @@ export class FlameRenderer {
         this.cancelSignalled = true
     }
 
-    saveCurrentImageToContainer(canvas: HTMLCanvasElement, destContainer: HTMLDivElement) {
-        this.saveImageontainer = destContainer
-        this.imageSourceCanvas = canvas
-        this.saveNextImage = true
-    }
 }
