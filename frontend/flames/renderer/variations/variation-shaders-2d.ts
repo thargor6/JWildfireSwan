@@ -19,7 +19,8 @@ import {VariationParam, VariationParamType, VariationShaderFunc2D, VariationType
 import {VariationShaders} from "Frontend/flames/renderer/variations/variation-shaders";
 import {RenderVariation, RenderXForm} from "Frontend/flames/model/render-flame";
 import {
-    FUNC_COSH, FUNC_HYPOT,
+    FUNC_COSH,
+    FUNC_HYPOT,
     FUNC_LOG10,
     FUNC_MODULO,
     FUNC_SGN,
@@ -430,14 +431,14 @@ class ButterflyFunc extends VariationShaderFunc2D {
 class BWraps7Func extends VariationShaderFunc2D {
     PARAM_CELLSIZE = "cellsize"
     PARAM_SPACE = "space"
-    PARAM_RIGHT = "gain"
+    PARAM_GAIN = "gain"
     PARAM_INNER_TWIST = "inner_twist"
     PARAM_OUTER_TWIST = "outer_twist"
 
     get params(): VariationParam[] {
         return [{ name: this.PARAM_CELLSIZE, type: VariationParamType.VP_NUMBER, initialValue: 1.00 },
             { name: this.PARAM_SPACE, type: VariationParamType.VP_NUMBER, initialValue: 0.00 },
-            { name: this.PARAM_RIGHT, type: VariationParamType.VP_NUMBER, initialValue: 2.00 },
+            { name: this.PARAM_GAIN, type: VariationParamType.VP_NUMBER, initialValue: 2.00 },
             { name: this.PARAM_INNER_TWIST, type: VariationParamType.VP_NUMBER, initialValue: 0.00 },
             { name: this.PARAM_OUTER_TWIST, type: VariationParamType.VP_NUMBER, initialValue: 0.00 }]
     }
@@ -450,7 +451,7 @@ class BWraps7Func extends VariationShaderFunc2D {
           float amount = float(${variation.amount});
           float cellsize = float(${variation.params.get(this.PARAM_CELLSIZE)});
           float space = float(${variation.params.get(this.PARAM_SPACE)});
-          float gain = float(${variation.params.get(this.PARAM_RIGHT)});
+          float gain = float(${variation.params.get(this.PARAM_GAIN)});
           float inner_twist = float(${variation.params.get(this.PARAM_INNER_TWIST)});
           float outer_twist = float(${variation.params.get(this.PARAM_OUTER_TWIST)});
           float radius = 0.5 * (cellsize / (1.0 + space * space));
@@ -684,6 +685,63 @@ class CloverLeafWFFunc extends VariationShaderFunc2D {
     }
 }
 
+class CollideoscopeFunc extends VariationShaderFunc2D {
+    PARAM_A = "a"
+    PARAM_NUM = "num"
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_A, type: VariationParamType.VP_NUMBER, initialValue: 0.20 },
+            { name: this.PARAM_NUM, type: VariationParamType.VP_NUMBER, initialValue: 1 }]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        /* collideoscope by Michael Faber, http://michaelfaber.deviantart.com/art/Collideoscope-251624597 */
+        return `{
+          float amount = float(${variation.amount});
+          float a = float(${variation.params.get(this.PARAM_A)});
+          int num = int(${variation.params.get(this.PARAM_NUM)});
+          float kn_pi = float(num) * (1.0 / M_PI);
+          float pi_kn = M_PI / float(num);
+          float ka = M_PI * a;
+          float ka_kn = ka / float(num);
+          float _theta = atan2(_ty, _tx);
+          float r = amount * sqrt(sqr(_tx) + sqr(_ty));
+          int alt;  
+          if (_theta >= 0.0) {
+            alt = int(_theta * kn_pi);
+            if (modulo(alt, 2) == 0) {
+              a = float(alt) * pi_kn + mod(ka_kn + _theta, pi_kn);
+            } else {
+              a = float(alt) * pi_kn + mod(-ka_kn + _theta, pi_kn);
+            }
+          } else {
+            alt = int(-_theta * kn_pi);
+            if (modulo(alt, 2) != 0) {
+              a = -(float(alt) * pi_kn + mod(-ka_kn - _theta, pi_kn));
+            } else {
+              a = -(float(alt) * pi_kn + mod(ka_kn - _theta, pi_kn));
+            }
+          }     
+          float s = sin(a);
+          float c = cos(a);  
+          _vx += r * c;
+          _vy += r * s;
+        }`;
+    }
+
+    get name(): string {
+        return "collideoscope";
+    }
+
+    get funcDependencies(): string[] {
+        return [FUNC_MODULO];
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
 class ConicFunc extends VariationShaderFunc2D {
     PARAM_ECCENTRICITY = "eccentricity"
     PARAM_HOLES = "holes"
@@ -760,6 +818,66 @@ class CPowFunc extends VariationShaderFunc2D {
     }
 }
 
+class CropFunc extends VariationShaderFunc2D {
+    PARAM_LEFT = "left"
+    PARAM_TOP = "top"
+    PARAM_RIGHT = "right"
+    PARAM_BOTTOM = "bottom"
+    PARAM_SCATTER_AREA = "scatter_area"
+    PARAM_ZERO = "zero"
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_LEFT, type: VariationParamType.VP_NUMBER, initialValue: -1.00 },
+            { name: this.PARAM_TOP, type: VariationParamType.VP_NUMBER, initialValue: -1.00 },
+            { name: this.PARAM_RIGHT, type: VariationParamType.VP_NUMBER, initialValue: 1.00 },
+            { name: this.PARAM_BOTTOM, type: VariationParamType.VP_NUMBER, initialValue: 1.00 },
+            { name: this.PARAM_SCATTER_AREA, type: VariationParamType.VP_NUMBER, initialValue: 0.00 },
+            { name: this.PARAM_ZERO, type: VariationParamType.VP_NUMBER, initialValue: 0 }]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        // crop by Xyrus02, http://xyrus02.deviantart.com/art/Crop-Plugin-Updated-169958881
+        return `{
+          float amount = float(${variation.amount});
+          float left = float(${variation.params.get(this.PARAM_LEFT)});
+          float top = float(${variation.params.get(this.PARAM_TOP)});
+          float right = float(${variation.params.get(this.PARAM_RIGHT)});
+          float bottom = float(${variation.params.get(this.PARAM_BOTTOM)});
+          float scatter_area = float(${variation.params.get(this.PARAM_SCATTER_AREA)});
+          int zero = int(${variation.params.get(this.PARAM_ZERO)});
+          float xmin = min(left, right);
+          float ymin = min(top, bottom);
+          float xmax = max(left, right);
+          float ymax = max(top, bottom);
+          float w = (xmax - xmin) * 0.5 * scatter_area;
+          float h = (ymax - ymin) * 0.5 * scatter_area;
+          float x = _tx;
+          float y = _ty;
+          if (((x < xmin) || (x > xmax) || (y < ymin) || (y > ymax)) && (zero != 0)) {
+            _vx = _vy = 0.0;
+          } else {
+            if (x < xmin)
+              x = xmin + rand2(tex) * w;
+            else if (x > xmax)
+              x = xmax - rand2(tex) * w;
+            if (y < ymin)
+              y = ymin + rand3(tex) * h;
+            else if (y > ymax)
+              y = ymax - rand3(tex) * h;
+            _vx = amount * x;
+            _vy = amount * y;
+          }
+        }`;
+    }
+
+    get name(): string {
+        return "crop";
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D, VariationTypes.VARTYPE_CROP];
+    }
+}
 
 class CrossFunc extends VariationShaderFunc2D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
@@ -4738,6 +4856,7 @@ export function register2DVars() {
     VariationShaders.registerVar(new CellFunc())
     VariationShaders.registerVar(new CirclizeFunc())
     VariationShaders.registerVar(new CloverLeafWFFunc())
+    VariationShaders.registerVar(new CollideoscopeFunc())
     VariationShaders.registerVar(new ConicFunc())
     VariationShaders.registerVar(new CosFunc())
     VariationShaders.registerVar(new CoshFunc())
@@ -4745,6 +4864,7 @@ export function register2DVars() {
     VariationShaders.registerVar(new CotFunc())
     VariationShaders.registerVar(new CothFunc())
     VariationShaders.registerVar(new CPowFunc())
+    VariationShaders.registerVar(new CropFunc())
     VariationShaders.registerVar(new CrossFunc())
     VariationShaders.registerVar(new CscFunc())
     VariationShaders.registerVar(new CschFunc())
