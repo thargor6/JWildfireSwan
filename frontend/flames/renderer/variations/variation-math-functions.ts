@@ -16,6 +16,7 @@
 */
 
 export const FUNC_COSH = 'cosh'
+export const FUNC_HYPOT = 'hypot'
 export const FUNC_LOG10 = 'log10'
 export const FUNC_MODULO = 'modulo'
 export const FUNC_SGN = 'sgn'
@@ -45,6 +46,13 @@ export class VariationMathFunctions {
 		   	  float cosH = (tmp + 1.0 / tmp) / 2.0;
 		       return cosH;
 			}`);
+        this.registerFunction(FUNC_HYPOT,
+            // most simple form for now:
+            `
+            float hypot(float x, float y) {
+              return sqrt(x * x + y * y);
+			}`);
+
         this.registerFunction(FUNC_LOG10,
             // COSH Function (Hyperbolic Cosine) http://machinesdontcare.wordpress.com/2008/03/10/glsl-cosh-sinh-tanh/
             `            

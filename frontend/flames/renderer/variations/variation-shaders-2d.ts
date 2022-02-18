@@ -19,7 +19,7 @@ import {VariationParam, VariationParamType, VariationShaderFunc2D, VariationType
 import {VariationShaders} from "Frontend/flames/renderer/variations/variation-shaders";
 import {RenderVariation, RenderXForm} from "Frontend/flames/model/render-flame";
 import {
-    FUNC_COSH,
+    FUNC_COSH, FUNC_HYPOT,
     FUNC_LOG10,
     FUNC_MODULO,
     FUNC_SGN,
@@ -3493,6 +3493,66 @@ class SinhFunc extends VariationShaderFunc2D {
     }
 }
 
+class SinqFunc extends VariationShaderFunc2D {
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        /* Sinq by zephyrtronium http://zephyrtronium.deviantart.com/art/Quaternion-Apo-Plugin-Pack-165451482 */
+        return `{
+                  float amount = float(${variation.amount});
+                  float abs_v = hypot(_ty, _tz);
+                  float s = sin(_tx);
+                  float c = cos(_tx);
+                  float sh = sinh(abs_v);
+                  float ch = cosh(abs_v);
+                  float C = amount * c * sh / abs_v;
+                  _vx += amount * s * ch;
+                  _vy += C * _ty;
+                  _vz += C * _tz;
+                }`;
+    }
+
+    get name(): string {
+        return "sinq";
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+
+    get funcDependencies(): string[] {
+        return [FUNC_SINH, FUNC_COSH, FUNC_HYPOT];
+    }
+}
+
+class SinhqFunc extends VariationShaderFunc2D {
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        /* Sinhq by zephyrtronium http://zephyrtronium.deviantart.com/art/Quaternion-Apo-Plugin-Pack-165451482 */
+        return `{
+                  float amount = float(${variation.amount});
+                  float abs_v = hypot(_ty, _tz);
+                  float s = sin(abs_v);
+                  float c = cos(abs_v);
+                  float sh = sinh(_tx);
+                  float ch = cosh(_tx);
+                  float C = amount * ch * s / abs_v;
+                  _vx += amount * sh * c;
+                  _vy += C * _ty;
+                  _vz += C * _tz;
+                }`;
+    }
+
+    get name(): string {
+        return "sinhq";
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+
+    get funcDependencies(): string[] {
+        return [FUNC_SINH, FUNC_COSH, FUNC_HYPOT];
+    }
+}
+
 class SinusoidalFunc extends VariationShaderFunc2D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         return `{
@@ -3800,6 +3860,42 @@ class TanhFunc extends VariationShaderFunc2D {
 
     get funcDependencies(): string[] {
         return [FUNC_SINH, FUNC_COSH];
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
+class TanhqFunc extends VariationShaderFunc2D {
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        /* Tanhq by zephyrtronium http://zephyrtronium.deviantart.com/art/Quaternion-Apo-Plugin-Pack-165451482 */
+        return `{
+          float amount = float(${variation.amount});
+          float abs_v = hypot(_ty, _tz);
+          float sysz = sqr(_ty) + sqr(_tz);
+          float ni = amount / (sqr(_tx) + sysz);
+          float s = sin(abs_v);
+          float c = cos(abs_v);
+          float sh = sinh(_tx);
+          float ch = cosh(_tx);
+          float C = ch * s / abs_v;
+          float B = sh * s / abs_v;
+          float stcv = sh * c;
+          float nstcv = -stcv;
+          float ctcv = ch * c;
+          _vx += (stcv * ctcv + C * B * sysz) * ni;
+          _vy += (nstcv * B * _ty + C * _ty * ctcv) * ni;
+          _vz += (nstcv * B * _tz + C * _tz * ctcv) * ni;
+        }`;
+    }
+
+    get name(): string {
+        return "tanhq";
+    }
+
+    get funcDependencies(): string[] {
+        return [FUNC_SINH, FUNC_COSH, FUNC_HYPOT];
     }
 
     get variationTypes(): VariationTypes[] {
@@ -4726,6 +4822,8 @@ export function register2DVars() {
     VariationShaders.registerVar(new SeparationFunc())
     VariationShaders.registerVar(new SinFunc())
     VariationShaders.registerVar(new SinhFunc())
+    VariationShaders.registerVar(new SinhqFunc())
+    VariationShaders.registerVar(new SinqFunc())
     VariationShaders.registerVar(new SinusoidalFunc())
     VariationShaders.registerVar(new SphericalFunc())
     VariationShaders.registerVar(new SpiralFunc())
@@ -4736,6 +4834,7 @@ export function register2DVars() {
     VariationShaders.registerVar(new SwirlFunc())
     VariationShaders.registerVar(new TanFunc())
     VariationShaders.registerVar(new TanhFunc())
+    VariationShaders.registerVar(new TanhqFunc())
     VariationShaders.registerVar(new TanCosFunc())
     VariationShaders.registerVar(new TangentFunc())
     VariationShaders.registerVar(new TargetFunc())
