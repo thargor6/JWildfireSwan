@@ -26,13 +26,47 @@ import {
     FUNC_SGN,
     FUNC_SINH,
     FUNC_SQRT1PM1,
-    FUNC_TANH
+    FUNC_TANH, LIB_COMPLEX
 } from "Frontend/flames/renderer/variations/variation-math-functions";
 import {M_PI} from "Frontend/flames/renderer/mathlib";
 
 /*
   be sure to import this class somewhere and call register2DVars()
  */
+
+// TODO: does not work
+class AcoshFunc extends VariationShaderFunc2D {
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        return `{
+              float amount = float(${variation.amount});
+              Complex z;
+              Complex_Init(z, _tx, _ty);
+              Complex_AcosH(z);
+              Complex_Scale(z, amount * 2.0 / M_PI);
+              if(rand2(tex)<0.5) {
+                _vy += z.im;
+                _vx += z.re;
+              }
+              else {
+                _vy += -z.im;
+                _vx += -z.re;
+              }
+        }`;
+    }
+
+    get name(): string {
+        return "acosh";
+    }
+
+    get funcDependencies(): string[] {
+        return [LIB_COMPLEX];
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
 class ArchFunc extends VariationShaderFunc2D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         return `{
@@ -4839,6 +4873,7 @@ class YinYangFunc extends VariationShaderFunc2D {
 }
 
 export function register2DVars() {
+    VariationShaders.registerVar(new AcoshFunc())
     VariationShaders.registerVar(new ArchFunc())
     VariationShaders.registerVar(new AugerFunc())
     VariationShaders.registerVar(new BentFunc())
