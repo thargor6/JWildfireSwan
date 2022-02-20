@@ -28,6 +28,92 @@ import {FUNC_SGN} from "Frontend/flames/renderer/variations/variation-math-funct
 /*
   be sure to import this class somewhere and call register3DVars()
  */
+class Affine3DFunc extends VariationShaderFunc3D {
+    PARAM_TRANSLATE_X = "translateX"
+    PARAM_TRANSLATE_Y = "translateY"
+    PARAM_TRANSLATE_Z = "translateZ"
+    PARAM_SCALE_X = "scaleX"
+    PARAM_SCALE_Y = "scaleY"
+    PARAM_SCALE_Z = "scaleZ"
+    PARAM_ROTATE_X = "rotateX"
+    PARAM_ROTATE_Y = "rotateY"
+    PARAM_ROTATE_Z = "rotateZ"
+    PARAM_SHEAR_XY = "shearXY"
+    PARAM_SHEAR_XZ = "shearXZ"
+    PARAM_SHEAR_YX = "shearYX"
+    PARAM_SHEAR_YZ = "shearYZ"
+    PARAM_SHEAR_ZX = "shearZX"
+    PARAM_SHEAR_ZY = "shearZY"
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_TRANSLATE_X, type: VariationParamType.VP_NUMBER, initialValue: 0.0 },
+            { name: this.PARAM_TRANSLATE_Y, type: VariationParamType.VP_NUMBER, initialValue: 0.00 },
+            { name: this.PARAM_TRANSLATE_Z, type: VariationParamType.VP_NUMBER, initialValue: 0.00 },
+            { name: this.PARAM_SCALE_X, type: VariationParamType.VP_NUMBER, initialValue: 1.00 },
+            { name: this.PARAM_SCALE_Y, type: VariationParamType.VP_NUMBER, initialValue: 1.00 },
+            { name: this.PARAM_SCALE_Z, type: VariationParamType.VP_NUMBER, initialValue: 1.00 },
+            { name: this.PARAM_ROTATE_X, type: VariationParamType.VP_NUMBER, initialValue: 0.00 },
+            { name: this.PARAM_ROTATE_Y, type: VariationParamType.VP_NUMBER, initialValue: 0.00 },
+            { name: this.PARAM_ROTATE_Z, type: VariationParamType.VP_NUMBER, initialValue: 0.00 },
+            { name: this.PARAM_SHEAR_XY, type: VariationParamType.VP_NUMBER, initialValue: 0.00 },
+            { name: this.PARAM_SHEAR_XZ, type: VariationParamType.VP_NUMBER, initialValue: 0.00 },
+            { name: this.PARAM_SHEAR_YX, type: VariationParamType.VP_NUMBER, initialValue: 0.00 },
+            { name: this.PARAM_SHEAR_YZ, type: VariationParamType.VP_NUMBER, initialValue: 0.00 },
+            { name: this.PARAM_SHEAR_ZX, type: VariationParamType.VP_NUMBER, initialValue: 0.00 },
+            { name: this.PARAM_SHEAR_ZY, type: VariationParamType.VP_NUMBER, initialValue: 0.00 }]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        // based on "affine3D" of Flamelet
+        return `{
+          float amount = float(${variation.amount});
+          float translateX = float(${variation.params.get(this.PARAM_TRANSLATE_X)});
+          float translateY = float(${variation.params.get(this.PARAM_TRANSLATE_Y)});
+          float translateZ = float(${variation.params.get(this.PARAM_TRANSLATE_Z)});
+          float scaleX = float(${variation.params.get(this.PARAM_SCALE_X)});
+          float scaleY = float(${variation.params.get(this.PARAM_SCALE_Y)});
+          float scaleZ = float(${variation.params.get(this.PARAM_SCALE_Z)});
+          float rotateX = float(${variation.params.get(this.PARAM_ROTATE_X)});
+          float rotateY = float(${variation.params.get(this.PARAM_ROTATE_Y)});
+          float rotateZ = float(${variation.params.get(this.PARAM_ROTATE_Z)});
+          float shearXY = float(${variation.params.get(this.PARAM_SHEAR_XY)});
+          float shearXZ = float(${variation.params.get(this.PARAM_SHEAR_XZ)});
+          float shearYX = float(${variation.params.get(this.PARAM_SHEAR_YX)});
+          float shearYZ = float(${variation.params.get(this.PARAM_SHEAR_YZ)});
+          float shearZX = float(${variation.params.get(this.PARAM_SHEAR_ZX)});
+          float shearZY = float(${variation.params.get(this.PARAM_SHEAR_ZY)});
+          float xa = rotateX * M_PI / 180.0;
+          float _sinX = sin(xa);
+          float _cosX = cos(xa);
+          float ya = rotateY * M_PI / 180.0;
+          float _sinY = sin(ya);
+          float _cosY = cos(ya);
+          float za = rotateZ * M_PI / 180.0;
+          float _sinZ = sin(za);
+          float _cosZ = cos(za);
+          bool _hasShear = abs(shearXY) > EPSILON || abs(shearXZ) > EPSILON || abs(shearYX) > EPSILON ||
+                    abs(shearYZ) > EPSILON || abs(shearZX) > EPSILON || abs(shearZY) > EPSILON; 
+          if (_hasShear) {
+            _vx += amount * (_cosZ * (_cosY * (shearXY * scaleY * _ty + shearXZ * scaleZ * _tz + scaleX * _tx) + _sinY * (_sinX * (shearYX * scaleX * _tx + shearYZ * scaleZ * _tz + scaleY * _ty) + _cosX * (shearZX * scaleX * _tx + shearZY * scaleY * _ty + scaleZ * _tz))) - _sinZ * (_cosX * (shearYX * scaleX * _tx + shearYZ * scaleZ * _tz + scaleY * _ty) - _sinX * (shearZX * scaleX * _tx + shearZY * scaleY * _ty + scaleZ * _tz)) + translateX);
+            _vy += amount * (_sinZ * (_cosY * (shearXY * scaleY * _ty + shearXZ * scaleZ * _tz + scaleX * _tx) + _sinY * (_sinX * (shearYX * scaleX * _tx + shearYZ * scaleZ * _tz + scaleY * _ty) + _cosX * (shearZX * scaleX * _tx + shearZY * scaleY * _ty + scaleZ * _tz))) + _cosZ * (_cosX * (shearYX * scaleX * _tx + shearYZ * scaleZ * _tz + scaleY * _ty) - _sinX * (shearZX * scaleX * _tx + shearZY * scaleY * _ty + scaleZ * _tz)) + translateY);
+            _vz += amount * (-_sinY * (shearXY * scaleY * _ty + shearXZ * scaleZ * _tz + scaleX * _tx) + _cosY * (_sinX * (shearYX * scaleX * _tx + shearYZ * scaleZ * _tz + scaleY * _ty) + _cosX * (shearZX * scaleX * _tx + shearZY * scaleY * _ty + scaleZ * _tz)) + translateZ);
+          } else {
+            _vx += amount * (_cosZ * (_cosY * scaleX * _tx + _sinY * (_cosX * scaleZ * _tz + _sinX * scaleY * _ty)) - _sinZ * (_cosX * scaleY * _ty - _sinX * scaleZ * _tz) + translateX);
+            _vy += amount * (_sinZ * (_cosY * scaleX * _tx + _sinY * (_cosX * scaleZ * _tz + _sinX * scaleY * _ty)) + _cosZ * (_cosX * scaleY * _ty - _sinX * scaleZ * _tz) + translateY);
+            _vz += amount * (-_sinY * scaleX * _tx + _cosY * (_cosX * scaleZ * _tz + _sinX * scaleY * _ty) + translateZ);
+          }
+        }`;
+    }
+
+    get name(): string {
+        return "affine3D";
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_3D];
+    }
+}
+
 class Blade3DFunc extends VariationShaderFunc3D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         /* Z+ variation Jan 07 */
@@ -699,6 +785,7 @@ class Waves2_3DFunc extends VariationShaderFunc3D {
 }
 
 export function register3DVars() {
+    VariationShaders.registerVar(new Affine3DFunc())
     VariationShaders.registerVar(new Blade3DFunc())
     VariationShaders.registerVar(new Blob3DFunc())
     VariationShaders.registerVar(new Blur3DFunc())

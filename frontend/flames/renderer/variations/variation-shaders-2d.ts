@@ -56,6 +56,58 @@ class ArchFunc extends VariationShaderFunc2D {
     }
 }
 
+class AsteriaFunc extends VariationShaderFunc2D {
+    PARAM_ALPHA = "alpha"
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_ALPHA, type: VariationParamType.VP_NUMBER, initialValue: 0.00 }]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        // asteria by dark-beam, http://jwildfire.org/forum/viewtopic.php?f=23&t=1464
+        return `{
+          float amount = float(${variation.amount});
+          float alpha = float(${variation.params.get(this.PARAM_ALPHA)});
+          float sina = sin(M_PI * alpha);
+          float cosa = cos(M_PI * alpha); 
+          float x0 = amount * _tx;
+          float y0 = amount * _ty;
+          float xx = x0;
+          float yy = y0;
+          float r = sqr(xx) + sqr(yy);
+          xx = sqr(abs(xx) - 1.0);
+          yy = sqr(abs(yy) - 1.0);
+          float r2 = sqrt(yy + xx);
+          bool in1 = r < 1.0;
+          bool out2 = r2 < 1.0;
+          if (in1 && out2)
+            in1 = ((rand2(tex)) > 0.35);
+          else
+            in1 = !in1;
+          if (in1) { 
+            _vx += x0;
+            _vy += y0;
+          } else { 
+            xx = x0 * cosa - y0 * sina;
+            yy = x0 * sina + y0 * cosa;
+            float nx = xx / sqrt(1.0 - yy * yy) * (1.0 - sqrt(1. - sqr(-abs(yy) + 1.0)));
+            xx = nx * cosa + yy * sina;
+            yy = -nx * sina + yy * cosa;
+            _vx += xx;
+            _vy += yy;
+          }  
+        }`;
+    }
+
+    get name(): string {
+        return "asteria";
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
 class AugerFunc extends VariationShaderFunc2D {
     PARAM_FREQ = "freq"
     PARAM_WEIGHT = "weight"
@@ -3699,6 +3751,33 @@ class SinqFunc extends VariationShaderFunc2D {
     }
 }
 
+class SintrangeFunc extends VariationShaderFunc2D {
+    PARAM_W = "w"
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_W, type: VariationParamType.VP_NUMBER, initialValue: 1.00 }]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        /* Sintrange from Ffey, http://ffey.deviantart.com/art/apoplugin-Sintrange-245146228 */
+        return `{
+          float amount = float(${variation.amount});
+          float w = float(${variation.params.get(this.PARAM_W)});
+          float v = ((sqr(_tx) + sqr(_ty)) * w);
+          _vx = amount * (sin(_tx)) * (_tx * _tx + w - v);
+          _vy = amount * (sin(_ty)) * (_ty * _ty + w - v);
+        }`;
+    }
+
+    get name(): string {
+        return "sintrange";
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
 class SinhqFunc extends VariationShaderFunc2D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         /* Sinhq by zephyrtronium http://zephyrtronium.deviantart.com/art/Quaternion-Apo-Plugin-Pack-165451482 */
@@ -4471,6 +4550,7 @@ class YinYangFunc extends VariationShaderFunc2D {
 
 export function register2DVars() {
     VariationShaders.registerVar(new ArchFunc())
+    VariationShaders.registerVar(new AsteriaFunc())
     VariationShaders.registerVar(new AugerFunc())
     VariationShaders.registerVar(new BentFunc())
     VariationShaders.registerVar(new Bent2Func())
@@ -4576,6 +4656,7 @@ export function register2DVars() {
     VariationShaders.registerVar(new SinhFunc())
     VariationShaders.registerVar(new SinhqFunc())
     VariationShaders.registerVar(new SinqFunc())
+    VariationShaders.registerVar(new SintrangeFunc())
     VariationShaders.registerVar(new SinusoidalFunc())
     VariationShaders.registerVar(new SphericalFunc())
     VariationShaders.registerVar(new SpiralFunc())

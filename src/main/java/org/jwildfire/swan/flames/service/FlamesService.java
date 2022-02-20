@@ -87,7 +87,7 @@ public class FlamesService {
 
     allGenerators.add(new BrokatRandomFlameGenerator());
     allGenerators.add(new Brokat3DRandomFlameGenerator());
-  //  allGenerators.add(new CrossRandomFlameGenerator());
+    allGenerators.add(new CrossRandomFlameGenerator());
   //  allGenerators.add(new DualityRandomFlameGenerator());
   //  allGenerators.add(new DuckiesRandomFlameGenerator());
 
@@ -105,9 +105,9 @@ public class FlamesService {
     allGenerators.add(new GnarlRandomFlameGenerator());
  //   allGenerators.add(new Gnarl3DRandomFlameGenerator());
 
-  //  allGenerators.add(new JulianRingsRandomFlameGenerator());
+    allGenerators.add(new JulianRingsRandomFlameGenerator());
 
-//    allGenerators.add(new Affine3DRandomFlameGenerator());
+    allGenerators.add(new Affine3DRandomFlameGenerator());
  //   allGenerators.add(new MachineRandomFlameGenerator());
 //   allGenerators.add(new OutlinesRandomFlameGenerator());
  //   allGenerators.add(new RasterRandomFlameGenerator());
