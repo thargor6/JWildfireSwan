@@ -23,6 +23,7 @@ import {registerZTransformVars} from "Frontend/flames/renderer/variations/variat
 import {Flame} from "Frontend/flames/model/flame";
 import {FlameRenderer} from "Frontend/flames/renderer/flame-renderer";
 import {GalleryEndpoint} from "Frontend/generated/endpoints";
+import {register2DComplexVars} from "Frontend/flames/renderer/variations/variation-shaders-2d-complex";
 
 type OnInitCallback = () => void
 
@@ -89,6 +90,7 @@ export class PlaygroundStore {
 
 
 register2DVars()
+register2DComplexVars()
 register3DVars()
 registerZTransformVars()
 

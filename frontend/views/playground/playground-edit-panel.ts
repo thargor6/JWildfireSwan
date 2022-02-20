@@ -28,15 +28,11 @@ import {MobxLitElement} from "@adobe/lit-mobx";
 import '@vaadin/vaadin-ordered-layout/vaadin-vertical-layout'
 import '@vaadin/vaadin-ordered-layout/vaadin-horizontal-layout'
 import '../../components/swan-slider'
+import '@vaadin/tabs';
 import {FlameParameter} from "Frontend/flames/model/parameters";
-
-
-interface PropertyDescriptor {
-  propName: string;
-  label: string;
-  minValue: number;
-  maxValue: number;
-}
+import './playground-edit-camera-panel'
+import './playground-edit-coloring-panel'
+import {OnPropertyChange} from "Frontend/components/property-edit";
 
 @customElement('playground-edit-panel')
 export class PlaygroundEditPanel extends MobxLitElement {
@@ -44,96 +40,49 @@ export class PlaygroundEditPanel extends MobxLitElement {
   visible = true
 
   @state()
-  cameraControls: PropertyDescriptor[] = [
-    {
-      propName: 'camRoll',
-      label: 'Roll',
-      minValue: -360.0,
-      maxValue: 360.0,
-    },
-    {
-      propName: 'camPitch',
-      label: 'Pitch',
-      minValue: -360.0,
-      maxValue: 360.0,
-    },
-    {
-      propName: 'camYaw',
-      label: 'Yaw',
-      minValue: -360.0,
-      maxValue: 360.0,
-    },
-    {
-      propName: 'camBank',
-      label: 'Bank',
-      minValue: -360.0,
-      maxValue: 360.0,
-    },
-    {
-      propName: 'camPerspective',
-      label: 'Perspective',
-      minValue: -1.0,
-      maxValue: 1.0,
-    },
-    {
-      propName: 'centreX',
-      label: 'CentreX',
-      minValue: -5.0,
-      maxValue: 5.0,
-    },
-    {
-      propName: 'centreY',
-      label: 'CentreY',
-      minValue: -5.0,
-      maxValue: 5.0,
-    },
-    {
-      propName: 'camZoom',
-      label: 'Zoom',
-      minValue: 0.30,
-      maxValue: 3.0,
-    }
-
-  ]
+  selectedTab = 0
 
   @property()
   onRefresh = ()=>{}
 
   render() {
     return html`
+      <vaadin-tabs @selected-changed="${this.selectedChanged}">
+        <vaadin-tab theme="icon-on-top">
+          <vaadin-icon icon="vaadin:fire"></vaadin-icon>
+          <span>Camera</span>
+        </vaadin-tab>
+        <vaadin-tab theme="icon-on-top">
+          <vaadin-icon icon="vaadin:eye"></vaadin-icon>
+          <span>Coloring</span>
+        </vaadin-tab>
+        <vaadin-tab theme="icon-on-top">
+          <vaadin-icon icon="vaadin:eye"></vaadin-icon>
+          <span>Misx</span>
+        </vaadin-tab>
+      </vaadin-tabs>
+      
       <vertical-layout theme="spacing" style="${this.visible ? `display:block;`: `display:none;`}">
-        ${this.cameraControls.map(ctrl=>html `<swan-slider .propName=${ctrl.propName} .label=${ctrl.label} .minValue=${ctrl.minValue} .maxValue=${ctrl.maxValue} prop="" .propTarget=${playgroundStore.flame} .onValueChange=${this.onValueChange}></swan-slider>`)}
+        <playground-edit-camera-panel .visible=${this.selectedTab===0} .onPropertyChange=${this.onPropertyChange} ></playground-edit-camera-panel>
+        <playground-edit-coloring-panel .visible=${this.selectedTab===1} .onPropertyChange=${this.onPropertyChange} ></playground-edit-coloring-panel>
       </vertical-layout>
 `;
   }
 
-  /*
-    public brightness = Parameters.dNumber(1.0)
-    public whiteLevel = Parameters.dNumber(200.0)
-    public contrast = Parameters.dNumber(1.0)
-    public sampleDensity = Parameters.dNumber(100.0)
-    public lowDensityBrightness = Parameters.dNumber(0.2)
-    public balanceRed = Parameters.dNumber(0.0)
-    public balanceGreen = Parameters.dNumber(0.0)
-    public balanceBlue = Parameters.dNumber(0.0)
-    public gamma = Parameters.dNumber(3.0)
-    public gammaThreshold = Parameters.dNumber(0.05)
-    public foregroundOpacity = Parameters.dNumber(0.0)
-    public vibrancy = Parameters.dNumber(1.0)
-    public saturation = Parameters.dNumber(1.0)
-    */
-
-  onValueChange = (propertyTarget: any, property: string, changing: boolean, value: number) => {
-   // console.log('CHANGE ', propertyTarget, property, changing, value);
-    const param: FlameParameter = propertyTarget[property]
+  onPropertyChange: OnPropertyChange = (propertyPath: string, changing: boolean, value: number) => {
+    console.log('CHANGE ', propertyPath, changing, value);
+    const param: FlameParameter = (playgroundStore.flame as any)[propertyPath]
     if(param) {
       param.value = value
     }
-    if(!changing) {
+   // if(!changing) {
       this.onRefresh()
-    }
+  //  }
   }
 
+  selectedChanged(e: CustomEvent) {
+    this.selectedTab = e.detail.value;
+  }
 
 }
 

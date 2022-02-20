@@ -21,6 +21,8 @@ import {html, nothing, PropertyValues} from "lit";
 import '@vaadin/vaadin-details'
 import '@vaadin/text-area';
 import '@polymer/paper-slider/paper-slider'
+import {OnPropertyChange} from "Frontend/components/property-edit";
+import {getTimeStamp} from "Frontend/components/utils";
 
 @customElement('swan-slider')
 export class SwanSlider extends MobxLitElement {
@@ -31,8 +33,6 @@ export class SwanSlider extends MobxLitElement {
     @property()
     label = ''
 
-    propTarget: any
-
     @property()
     value = 0.0
 
@@ -42,8 +42,9 @@ export class SwanSlider extends MobxLitElement {
     @property()
     maxValue = 5.0
 
+    lastValueChangeTimeStamp = 0
 
-    onValueChange: (propertyTarget: any, property: string, changing: boolean, value: number) => void = () =>{}
+    onPropertyChange: OnPropertyChange = (property: string, changing: boolean, value: number) => {}
 
     render() {
         return html  `
@@ -54,21 +55,21 @@ export class SwanSlider extends MobxLitElement {
 
     immediateValueChanged = (e: Event) => {
         const target: any = e.target
-        if(target && this.propTarget && this.propName) {
-            this.onValueChange(this.propTarget, this.propName, true, target.immediateValue)
+        if(target && this.propName) {
+            const currTimeStamp = getTimeStamp()
+            if(currTimeStamp > this.lastValueChangeTimeStamp + 250) {
+                this.onPropertyChange(this.propName, true, target.immediateValue)
+                this.lastValueChangeTimeStamp = getTimeStamp()
+            }
         }
     }
 
     valueChanged = (e: Event) => {
         const target: any = e.target
-        if(target && this.propTarget && this.propName) {
-            this.onValueChange(this.propTarget, this.propName, false, target.value)
+        if(target && this.propName) {
+            this.onPropertyChange(this.propName, false, target.value)
+            this.lastValueChangeTimeStamp = getTimeStamp()
         }
     }
 
-    protected firstUpdated(_changedProperties: PropertyValues) {
-        if(this.propTarget && this.propName) {
-            this.propName = this.propTarget[this.propName]
-        }
-    }
 }

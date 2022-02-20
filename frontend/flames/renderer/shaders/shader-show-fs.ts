@@ -47,7 +47,7 @@ void main(void) {
   float _contrast =  <%= CONTRAST %>;
    
   float logScale = 2.0 * swarmSizeScl / resolutionScl * _brightness * _contrast * log(x / _contrast) / (log(x) * frames);
-  bool simpleTonemap = frames < 6.0;
+  bool simpleTonemap = frames < 12.0;
   if(simpleTonemap) {
       float r = colorTexel.r * logScale * <%= BALANCE_RED %>;
       float g = colorTexel.g * logScale * <%= BALANCE_GREEN %>;

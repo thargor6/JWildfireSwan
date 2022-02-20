@@ -15,20 +15,20 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 */
 
-import {html, nothing, PropertyValues} from 'lit';
-import {customElement, state} from 'lit/decorators.js';
-import { View } from '../../views/view';
+import {html, nothing, PropertyValues} from 'lit'
+import {customElement, state} from 'lit/decorators.js'
+import { View } from '../../views/view'
 
 import '@vaadin/vaadin-button'
 import '@vaadin/vaadin-text-field'
-import '@vaadin/dialog';
-import '@vaadin/horizontal-layout';
-import '@vaadin/text-area';
-import '@vaadin/text-field';
-import '@vaadin/vertical-layout';
-import '@vaadin/icon';
-import '@vaadin/icons';
-import '@vaadin/tabs';
+import '@vaadin/dialog'
+import '@vaadin/horizontal-layout'
+import '@vaadin/text-area'
+import '@vaadin/text-field'
+import '@vaadin/vertical-layout'
+import '@vaadin/icon'
+import '@vaadin/icons'
+import '@vaadin/tabs'
 import '@vaadin/vaadin-progress-bar'
 
 import {FlameRenderer} from '../../flames/renderer/flame-renderer'
@@ -46,6 +46,7 @@ import {PlaygroundFlamePanel} from "Frontend/views/playground/playground-flame-p
 import '../../components/swan-loading-indicator'
 import '../../components/swan-error-panel'
 import {BeforeEnterObserver, PreventAndRedirectCommands, Router, RouterLocation} from "@vaadin/router";
+import {getTimeStamp} from "Frontend/components/utils";
 
 @customElement('playground-view')
 export class PlaygroundView extends View  implements BeforeEnterObserver {
@@ -170,7 +171,7 @@ export class PlaygroundView extends View  implements BeforeEnterObserver {
         this.renderProgress = 0.0
         this.renderInfo = 'Rendering'
         playgroundStore.renderer = new FlameRenderer(this.renderSettingsPanel.imageSize, this.renderSettingsPanel.swarmSize, this.renderSettingsPanel.displayMode, this.canvas, this.capturedImageContainer, true, playgroundStore.flame);
-        this.lastProgressUpdate = playgroundStore.renderer.getTimeStamp()
+        this.lastProgressUpdate = getTimeStamp()
         playgroundStore.renderer.onRenderFinished = this.onRenderFinished
         playgroundStore.renderer.onRenderCancelled = this.onRenderCancelled
         playgroundStore.renderer.onUpdateRenderProgress = this.onUpdateRenderProgress
@@ -187,7 +188,7 @@ export class PlaygroundView extends View  implements BeforeEnterObserver {
     }
 
     onUpdateRenderProgress = (currSampleCount: number, maxSampleCount: number, frameCount: number, elapsedTimeInSeconds: number)=> {
-        const currTimeStamp = playgroundStore.renderer.getTimeStamp()
+        const currTimeStamp = getTimeStamp()
         if(currTimeStamp > this.lastProgressUpdate + 333) {
             this.lastProgressUpdate = currTimeStamp
             this.renderProgress = currSampleCount / maxSampleCount

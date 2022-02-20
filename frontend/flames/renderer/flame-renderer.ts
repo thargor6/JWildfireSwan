@@ -27,6 +27,7 @@ import {FlameIterator} from "./iterator";
 import {Flame, GRADIENT_SIZE} from "Frontend/flames/model/flame";
 import {FlameMapper} from "Frontend/flames/model/mapper/flame-mapper";
 import {RenderColor, RenderFlame} from "Frontend/flames/model/render-flame";
+import {getTimeStamp} from "Frontend/components/utils";
 
 type RenderFinishedHandler = (frameCount: number, elapsedTimeInMs: number) => void
 type RenderProgressHandler = (currSampleCount: number, maxSampleCount: number, frameCount: number, elapsedTimeInMs: number) => void
@@ -85,14 +86,10 @@ export class FlameRenderer {
         this.display = new FlameRendererDisplay(this.ctx, this.settings)
         this.iterator = new FlameIterator(this.ctx, this.settings)
 
-        this.startTimeStampInMs = this.getTimeStamp()
+        this.startTimeStampInMs = getTimeStamp()
         this.currTimeStampInMs = this.startTimeStampInMs
     }
 
-    getTimeStamp() {
-      // @ts-ignore
-      return window.performance && window.performance.now && window.performance.timing && window.performance.timing.navigationStart ? window.performance.now() + window.performance.timing.navigationStart : Date.now()
-    }
 
     private prepareFlame(renderFlame: RenderFlame) {
        renderFlame.xforms.forEach(xform => {
@@ -111,7 +108,7 @@ export class FlameRenderer {
         //
         this.iterator.iterateIFS();
         //
-        if (this.currFrameCount > 5) {
+        if (this.currFrameCount > 7) {
             this.iterator.plotHistogram();
         }
 
@@ -138,7 +135,7 @@ export class FlameRenderer {
         }
 
         this.currSampleCount += this.samplesPerFrame
-        this.currTimeStampInMs = this.getTimeStamp()
+        this.currTimeStampInMs = getTimeStamp()
         const elapsedTimeInSeconds = (this.currTimeStampInMs-this.startTimeStampInMs)/1000
         if(this.cancelSignalled) {
             this.onRenderCancelled(this.currFrameCount, elapsedTimeInSeconds)
