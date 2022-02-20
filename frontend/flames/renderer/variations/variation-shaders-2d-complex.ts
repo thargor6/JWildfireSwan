@@ -237,6 +237,129 @@ class ArctanhFunc extends VariationShaderFunc2D {
     }
 }
 
+class PlusRecipFunc extends VariationShaderFunc2D {
+    PARAM_AR = "ar"
+    PARAM_AI = "ai"
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_AR, type: VariationParamType.VP_NUMBER, initialValue: 4.0 },
+            { name: this.PARAM_AI, type: VariationParamType.VP_NUMBER, initialValue: 0.0 }]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        // author DarkBeam. Implemented by DarkBeam 2019
+        return `{
+          float amount = float(${variation.amount});
+          float ar = float(${variation.params.get(this.PARAM_AR)});
+          float ai = float(${variation.params.get(this.PARAM_AI)});
+          Complex z;
+          Complex_Init(z, _tx, _ty);
+          Complex k;
+          Complex_Init(k, z.re, z.im);
+          Complex a;
+          Complex_Init(a, ar, ai);
+          float aa = sqrt(Complex_Mag2eps(a));
+          Complex_Sqr(k);
+          Complex_Sub(k, a);
+          Complex_Sqrt(k);
+          Complex_Add(k, z);
+          Complex_Copy(z, k);
+          Complex_Sqr(z);
+          if(sqrt(Complex_Mag2eps(z))<aa) {
+            Complex_Conj(k);
+            Complex_Scale(a, -1.0 / aa);
+            Complex_Mul(k, a);
+          }
+          if(k.re < 0.0) {
+            Complex_Neg(k);
+          }
+          Complex_Scale(k, amount);
+          _vx += k.re;
+          _vy += k.im;
+        }`;
+    }
+
+    get name(): string {
+        return "plusrecip";
+    }
+
+    get funcDependencies(): string[] {
+        return [LIB_COMPLEX];
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
+class Sqrt_AcosechFunc extends VariationShaderFunc2D {
+    //Sqrt AcosecH by Whittaker Courtney 12-19-2018
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        return `{
+              float amount = float(${variation.amount});
+              Complex z;
+              Complex_Init(z, _tx, _ty);
+              Complex_Sqrt(z);
+              Complex_AcosecH(z);
+              Complex_Scale(z, amount * 2.0 / M_PI);
+              if(rand2(tex)<0.5) {
+                _vy += z.im;
+                _vx += z.re;
+              }
+              else {
+                _vy += -z.im;
+                _vx += -z.re;
+              }
+        }`;
+    }
+
+    get name(): string {
+        return "sqrt_acosech";
+    }
+
+    get funcDependencies(): string[] {
+        return [LIB_COMPLEX];
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
+class Sqrt_AcoshFunc extends VariationShaderFunc2D {
+    //Sqrt AcosH by Whittaker Courtney 12-19-2018
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        return `{
+              float amount = float(${variation.amount});
+              Complex z;
+              Complex_Init(z, _tx, _ty);
+              Complex_Sqrt(z);
+              Complex_AcosH(z);
+              Complex_Scale(z, amount * 2.0 / M_PI);
+              if(rand2(tex)<0.5) {
+                _vy += z.im;
+                _vx += z.re;
+              }
+              else {
+                _vy += -z.im;
+                _vx += -z.re;
+              }
+        }`;
+    }
+
+    get name(): string {
+        return "sqrt_acosh";
+    }
+
+    get funcDependencies(): string[] {
+        return [LIB_COMPLEX];
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
 class Sqrt_AcothFunc extends VariationShaderFunc2D {
     //Sqrt AcotH by Whittaker Courtney 12-19-2018
     getCode(xform: RenderXForm, variation: RenderVariation): string {
@@ -380,6 +503,9 @@ export function register2DComplexVars() {
     VariationShaders.registerVar(new Arcsech2Func())
     VariationShaders.registerVar(new ArcsinhFunc())
     VariationShaders.registerVar(new ArctanhFunc())
+    VariationShaders.registerVar(new PlusRecipFunc())
+    VariationShaders.registerVar(new Sqrt_AcosechFunc())
+    VariationShaders.registerVar(new Sqrt_AcoshFunc())
     VariationShaders.registerVar(new Sqrt_AcothFunc())
     VariationShaders.registerVar(new Sqrt_AsechFunc())
     VariationShaders.registerVar(new Sqrt_AsinhFunc())
