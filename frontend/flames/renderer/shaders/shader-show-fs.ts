@@ -46,11 +46,12 @@ void main(void) {
   float _brightness = <%= BRIGHTNESS %>;
   float _contrast =  <%= CONTRAST %>;
    
-  float logScale = 0.5 * swarmSizeScl / resolutionScl * _brightness * _contrast * log(x * _contrast) / (log(x) * frames);
-  float r = colorTexel.r * logScale * <%= BALANCE_RED %>;
-  float g = colorTexel.g * logScale * <%= BALANCE_GREEN %>;
-  float b = colorTexel.b * logScale * <%= BALANCE_BLUE %>;
+  float logScale = swarmSizeScl / resolutionScl * _brightness * _contrast * log(x * _contrast) / (log(x) * frames);
+  float r = (sqrt(colorTexel.r)+colorTexel.r/5.0) * logScale * <%= BALANCE_RED %>;
+  float g = (sqrt(colorTexel.g)+colorTexel.g/5.0) * logScale * <%= BALANCE_GREEN %>;
+  float b = (sqrt(colorTexel.b)+colorTexel.b/5.0) * logScale * <%= BALANCE_BLUE %>;
   vec3 col = vec3(r, g, b);  
   gl_FragColor = vec4(col, 1.0);
+  
 }
 `;

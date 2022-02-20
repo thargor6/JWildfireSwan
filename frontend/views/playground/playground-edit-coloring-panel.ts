@@ -73,12 +73,7 @@ export class PlaygroundEditColoringPanel extends MobxLitElement {
       minValue: 0.0,
       maxValue: 3.0,
     },
-
   ]
-
-//  public sampleDensity = Parameters.dNumber(100.0)
- // public foregroundOpacity = Parameters.dNumber(0.0)
-//  public saturation = Parameters.dNumber(1.0)
 
   render() {
     return html`

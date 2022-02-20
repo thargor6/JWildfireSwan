@@ -31,7 +31,7 @@ import {
 import {M_PI} from "Frontend/flames/renderer/mathlib";
 
 /*
-  be sure to import this class somewhere and call register2DVars()
+  be sure to import this class somewhere and call register2DComplexVars()
  */
 
 class AcosechFunc extends VariationShaderFunc2D {
@@ -510,5 +510,4 @@ export function register2DComplexVars() {
     VariationShaders.registerVar(new Sqrt_AsechFunc())
     VariationShaders.registerVar(new Sqrt_AsinhFunc())
     VariationShaders.registerVar(new Sqrt_AtanhFunc())
-
 }

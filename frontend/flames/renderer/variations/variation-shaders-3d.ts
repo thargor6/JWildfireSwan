@@ -502,6 +502,27 @@ class Pie3DFunc extends VariationShaderFunc3D {
     }
 }
 
+class Sinusoidal3DFunc extends VariationShaderFunc3D {
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        // sinusoidal3d by gossamer_light
+        return `{
+          float amount = float(${variation.amount});
+          _vx += amount * sin(_tx);
+          _vy += amount * sin(_ty);
+          _vz += amount * (atan2(_tx * _tx, _ty * _ty) * cos(_tz));
+        }`;
+    }
+
+    get name(): string {
+        return "sinusoidal3d";
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_3D];
+    }
+}
+
 class Spherical3DFunc extends VariationShaderFunc3D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         return `{
@@ -693,6 +714,7 @@ export function register3DVars() {
     VariationShaders.registerVar(new Linear3DFunc())
     VariationShaders.registerVar(new LinearT3DFunc())
     VariationShaders.registerVar(new Pie3DFunc())
+    VariationShaders.registerVar(new Sinusoidal3DFunc())
     VariationShaders.registerVar(new Spherical3DFunc())
     VariationShaders.registerVar(new Spherical3DWFFunc())
     VariationShaders.registerVar(new Square3DFunc())
