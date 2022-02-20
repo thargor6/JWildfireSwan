@@ -16,12 +16,6 @@
 */
 
 import { makeAutoObservable } from 'mobx';
-import {VariationShaders} from "Frontend/flames/renderer/variations/variation-shaders";
-import {register2DVars} from "Frontend/flames/renderer/variations/variation-shaders-2d";
-import {register3DVars} from "Frontend/flames/renderer/variations/variation-shaders-3d";
-import {registerZTransformVars} from "Frontend/flames/renderer/variations/variation-shaders-ztransform";
-import {Flame} from "Frontend/flames/model/flame";
-import {FlameRenderer} from "Frontend/flames/renderer/flame-renderer";
 import {GalleryEndpoint} from "Frontend/generated/endpoints";
 
 interface ExampleFlame {
