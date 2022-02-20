@@ -108,6 +108,8 @@ export class WebglShaders {
             const params = {
                 BRIGHTNESS: this.flame.brightness,
                 CONTRAST: this.flame.contrast,
+                GAMMA: this.flame.gamma,
+                GAMMA_THRESHOLD: this.flame.gammaThreshold,
                 SWARM_SIZE: swarm_size,
                 BALANCE_RED: this.flame.balanceRed,
                 BALANCE_GREEN: this.flame.balanceGreen,

@@ -17,7 +17,6 @@
 
 /**
  Fragment shader to calculate the final colors.
- Based on the code originally created by Richard Assar ( https://github.com/richardassar/ElectricSheep_WebGL )
  */
 export const shader_show_fs = `
 #ifdef GL_ES
@@ -28,15 +27,6 @@ uniform sampler2D uTexSamp;
 uniform float frames;
 uniform float brightness;
 
-/* 
-  vec3 colorTexel = texture2D(uTexSamp, gl_FragCoord.xy / <%= RESOLUTION %>).rgb;
-  float alpha = texture2D(uTexSamp, gl_FragCoord.xy / <%= RESOLUTION %>).a;
-  vec3 col = colorTexel * log(alpha) / (log(alpha) * frames);
-  float brightnessScl = 1.0 / brightness;
-  col = vec3(pow(col.r, brightnessScl), pow(col.g, brightnessScl), pow(col.b, brightnessScl)); // Brightness correction
-  gl_FragColor = vec4(col, 1.0);
-*/
-
 void main(void) {
   vec3 colorTexel = texture2D(uTexSamp, gl_FragCoord.xy / <%= RESOLUTION %>).rgb;
   float x = texture2D(uTexSamp, gl_FragCoord.xy / <%= RESOLUTION %>).a;
@@ -45,13 +35,18 @@ void main(void) {
   
   float _brightness = <%= BRIGHTNESS %>;
   float _contrast =  <%= CONTRAST %>;
-   
-  float logScale = swarmSizeScl / resolutionScl * _brightness * _contrast * log(x * _contrast) / (log(x) * frames);
-  float r = (sqrt(colorTexel.r)+colorTexel.r/5.0) * logScale * <%= BALANCE_RED %>;
-  float g = (sqrt(colorTexel.g)+colorTexel.g/5.0) * logScale * <%= BALANCE_GREEN %>;
-  float b = (sqrt(colorTexel.b)+colorTexel.b/5.0) * logScale * <%= BALANCE_BLUE %>;
-  vec3 col = vec3(r, g, b);  
-  gl_FragColor = vec4(col, 1.0);
   
+  float _gamma = <%= GAMMA %>;
+  float _gammaThreshold = <%= GAMMA_THRESHOLD %> * 10.0 + 0.1;
+  float gammaInv = 1.0 / _gamma;
+   
+  float logScale = 2.0 * swarmSizeScl / resolutionScl * _brightness * _contrast * log(x * _contrast) / (log(x) * frames);
+
+  float r = (pow(colorTexel.r, gammaInv)+colorTexel.r * _gammaThreshold) * logScale * <%= BALANCE_RED %>;
+  float g = (pow(colorTexel.g, gammaInv)+colorTexel.g * _gammaThreshold) * logScale * <%= BALANCE_GREEN %>;
+  float b = (pow(colorTexel.b, gammaInv)+colorTexel.b * _gammaThreshold) * logScale * <%= BALANCE_BLUE %>;
+
+  vec3 col = vec3(r, g, b);  
+  gl_FragColor = vec4(col, 1.0);  
 }
 `;

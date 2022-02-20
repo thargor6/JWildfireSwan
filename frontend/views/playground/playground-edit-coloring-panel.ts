@@ -56,6 +56,18 @@ export class PlaygroundEditColoringPanel extends MobxLitElement {
       maxValue: 1.0,
     },
     {
+      propName: 'gamma',
+      label: 'Gamma',
+      minValue: 1.0,
+      maxValue: 10.0,
+    },
+    {
+      propName: 'gammaThreshold',
+      label: 'Gamma threshold',
+      minValue: 0.0002,
+      maxValue: 0.2,
+    },
+    {
       propName: 'balanceRed',
       label: 'Red balance',
       minValue: 0.0,
