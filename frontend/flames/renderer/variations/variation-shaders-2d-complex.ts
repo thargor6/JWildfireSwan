@@ -237,6 +237,108 @@ class ArctanhFunc extends VariationShaderFunc2D {
     }
 }
 
+class Sqrt_AcothFunc extends VariationShaderFunc2D {
+    //Sqrt AcotH by Whittaker Courtney 12-19-2018
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        return `{
+              float amount = float(${variation.amount});
+              Complex z;
+              Complex_Init(z, _tx, _ty);
+              Complex_Sqrt(z);
+              Complex_AcotH(z);
+              Complex_Scale(z, amount * 2.0 / M_PI);
+              if(rand2(tex)<0.5) {
+                _vy += z.im;
+                _vx += z.re;
+              }
+              else {
+                _vy += -z.im;
+                _vx += -z.re;
+              }
+        }`;
+    }
+
+    get name(): string {
+        return "sqrt_acoth";
+    }
+
+    get funcDependencies(): string[] {
+        return [LIB_COMPLEX];
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
+class Sqrt_AsechFunc extends VariationShaderFunc2D {
+    //Sqrt AsecH by Whittaker Courtney 12-19-2018
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        return `{
+              float amount = float(${variation.amount});
+              Complex z;
+              Complex_Init(z,_tx, _ty);
+              Complex_Sqrt(z);
+              Complex_AsecH(z);
+              Complex_Scale(z, amount * (2.0 / M_PI));
+              if (rand2(tex) < 0.5) {
+                _vy += z.im;
+                _vx += z.re;
+              }  
+              else{   
+                _vy += -z.im;
+                _vx += -z.re;
+              }
+        }`;
+    }
+
+    get name(): string {
+        return "sqrt_asech";
+    }
+
+    get funcDependencies(): string[] {
+        return [LIB_COMPLEX];
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
+class Sqrt_AsinhFunc extends VariationShaderFunc2D {
+    //Sqrt AsinH by Whittaker Courtney 12-19-2018
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        return `{
+              float amount = float(${variation.amount});
+              Complex z;
+              Complex_Init(z,_tx, _ty);
+              Complex_Sqrt(z);
+              Complex_AsinH(z);
+              Complex_Scale(z,amount * (2.0 / M_PI));
+              if (rand2(tex) < 0.5) {
+                _vy += z.im; 
+                _vx += z.re; 
+              } 
+              else {
+                _vy += -z.im;
+                _vx += -z.re;
+              }
+        }`;
+    }
+
+    get name(): string {
+        return "sqrt_asinh";
+    }
+
+    get funcDependencies(): string[] {
+        return [LIB_COMPLEX];
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
 class Sqrt_AtanhFunc extends VariationShaderFunc2D {
     //Sqrt AtanH by Whittaker Courtney 12-19-2018
     getCode(xform: RenderXForm, variation: RenderVariation): string {
@@ -278,5 +380,9 @@ export function register2DComplexVars() {
     VariationShaders.registerVar(new Arcsech2Func())
     VariationShaders.registerVar(new ArcsinhFunc())
     VariationShaders.registerVar(new ArctanhFunc())
+    VariationShaders.registerVar(new Sqrt_AcothFunc())
+    VariationShaders.registerVar(new Sqrt_AsechFunc())
+    VariationShaders.registerVar(new Sqrt_AsinhFunc())
     VariationShaders.registerVar(new Sqrt_AtanhFunc())
+
 }
