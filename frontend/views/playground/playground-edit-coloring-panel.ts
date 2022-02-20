@@ -50,22 +50,10 @@ export class PlaygroundEditColoringPanel extends MobxLitElement {
       maxValue: 25.0,
     },
     {
-      propName: 'whiteLevel',
-      label: 'Fade to white',
-      minValue: 20.0,
-      maxValue: 500.0,
-    },
-    {
       propName: 'contrast',
       label: 'Contrast',
       minValue: 0.0,
       maxValue: 1.0,
-    },
-    {
-      propName: 'lowDensityBrightness',
-      label: 'Low density brightness',
-      minValue: -10.0,
-      maxValue: 10.0,
     },
     {
       propName: 'balanceRed',
@@ -85,24 +73,6 @@ export class PlaygroundEditColoringPanel extends MobxLitElement {
       minValue: 0.0,
       maxValue: 3.0,
     },
-    {
-      propName: 'gamma',
-      label: 'Gamma',
-      minValue: 0.0,
-      maxValue: 10.0,
-    },
-    {
-      propName: 'gammaThreshold',
-      label: 'Gamma threshold',
-      minValue: 0.0002,
-      maxValue: 0.2,
-    },
-    {
-      propName: 'vibrancy',
-      label: 'Vibrancy',
-      minValue: 0.0,
-      maxValue: 1.0,
-    }
 
   ]
 
