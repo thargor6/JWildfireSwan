@@ -67,9 +67,11 @@ export class PlaygroundRenderPanel extends MobxLitElement {
   @state()
   displayMode: DisplayMode = DisplayMode.FLAME
 
+  capturedImageContainer!: HTMLDivElement
+
   render() {
     return html`
-      <vertical-layout theme="spacing" style="${this.visible ? `display:block;`: `display:none;`}">
+      <vertical-layout theme="spacing" style="${this.visible ? `display:block; width: 20em;`: `display:none;`}">
 
           <vaadin-horizontal-layout theme="spacing">
           <vaadin-combo-box style="max-width: 10em;" label="Image size" .items="${this.imageSizes}" value="${this.imageSize}"
@@ -88,6 +90,12 @@ export class PlaygroundRenderPanel extends MobxLitElement {
                             item-value-path="displayMode" item-label-path="caption"
                             @change="${(event: Event) => this.displayModeChanged(event)}"></vaadin-combo-box>
 
+        <div style="display: flex; align-items: center; justify-content: center; margin-top: 2em;">
+          <vertical-layout>
+            <label>Final image (use right-click and save-as to export):</label>
+            <div id="captured-image-container"></div>
+          </vertical-layout>
+        </div>
       </vertical-layout>
 `;
   }
@@ -116,13 +124,8 @@ export class PlaygroundRenderPanel extends MobxLitElement {
   }
 
   protected firstUpdated() {
-     playgroundStore.notifyInit(this.tagName)
+    this.capturedImageContainer = this.shadowRoot!.querySelector('#captured-image-container')!
+    playgroundStore.notifyInit(this.tagName)
   }
 
 }
-
-/*
-          <div style="display: flex;">
-          <label>brightness</label><paper-slider id="brightness" step="0.0001" value="1.6" min="0" max="4"></paper-slider>
-           </div>
- */

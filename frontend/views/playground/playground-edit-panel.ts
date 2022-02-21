@@ -33,6 +33,7 @@ import {FlameParameter} from "Frontend/flames/model/parameters";
 import './playground-edit-camera-panel'
 import './playground-edit-coloring-panel'
 import {OnPropertyChange} from "Frontend/components/property-edit";
+import {EPSILON} from "Frontend/flames/renderer/mathlib";
 
 @customElement('playground-edit-panel')
 export class PlaygroundEditPanel extends MobxLitElement {
@@ -47,22 +48,19 @@ export class PlaygroundEditPanel extends MobxLitElement {
 
   render() {
     return html`
-      <vaadin-tabs @selected-changed="${this.selectedChanged}">
-        <vaadin-tab theme="icon-on-top">
-          <vaadin-icon icon="vaadin:fire"></vaadin-icon>
-          <span>Camera</span>
-        </vaadin-tab>
-        <vaadin-tab theme="icon-on-top">
-          <vaadin-icon icon="vaadin:eye"></vaadin-icon>
-          <span>Coloring</span>
-        </vaadin-tab>
-        <vaadin-tab theme="icon-on-top">
-          <vaadin-icon icon="vaadin:eye"></vaadin-icon>
-          <span>Misx</span>
-        </vaadin-tab>
-      </vaadin-tabs>
+
       
-      <vertical-layout theme="spacing" style="${this.visible ? `display:block;`: `display:none;`}">
+      <vertical-layout theme="spacing" style="${this.visible ? `display:block; width: 20em;`: `display:none;`}">
+        <vaadin-tabs @selected-changed="${this.selectedChanged}">
+          <vaadin-tab theme="icon-on-top">
+            <vaadin-icon icon="vaadin:fire"></vaadin-icon>
+            <span>Camera</span>
+          </vaadin-tab>
+          <vaadin-tab theme="icon-on-top">
+            <vaadin-icon icon="vaadin:eye"></vaadin-icon>
+            <span>Coloring</span>
+          </vaadin-tab>
+        </vaadin-tabs>
         <playground-edit-camera-panel .visible=${this.selectedTab===0} .onPropertyChange=${this.onPropertyChange} ></playground-edit-camera-panel>
         <playground-edit-coloring-panel .visible=${this.selectedTab===1} .onPropertyChange=${this.onPropertyChange} ></playground-edit-coloring-panel>
       </vertical-layout>
@@ -70,14 +68,14 @@ export class PlaygroundEditPanel extends MobxLitElement {
   }
 
   onPropertyChange: OnPropertyChange = (propertyPath: string, changing: boolean, value: number) => {
-    console.log('CHANGE ', propertyPath, changing, value);
     const param: FlameParameter = (playgroundStore.flame as any)[propertyPath]
-    if(param) {
+    if(param && Math.abs(param.value-value)>EPSILON) {
       param.value = value
-    }
-   // if(!changing) {
+      console.log('CHANGE ', propertyPath, changing, value);
+      // if(!changing) {
       this.onRefresh()
-  //  }
+      //  }
+    }
   }
 
   selectedChanged(e: CustomEvent) {

@@ -52,7 +52,7 @@ import {getTimeStamp} from "Frontend/components/utils";
 export class PlaygroundView extends View  implements BeforeEnterObserver {
     canvas!: HTMLCanvasElement
     canvasContainer!: HTMLDivElement
-    capturedImageContainer!: HTMLDivElement
+
 
     @state()
     selectedTab = 0
@@ -84,19 +84,13 @@ export class PlaygroundView extends View  implements BeforeEnterObserver {
                     <div>${this.renderInfo}</div>
                     <vaadin-progress-bar .value=${this.renderProgress} theme="contrast"></vaadin-progress-bar>
                 </div>
-                <div style="display: flex; align-items: center; justify-content: center; margin-top: 2em;"> 
-                    <vertical-layout>
-                      <label>Final image (use right-click and save-as to export):</label>
-                      <div style="max-height: 10em;max-width:24em;overflow: scroll;" id="captured-image-container"></div>
-                    </vertical-layout>
-                </div>
               </vertical-layout>
                 <div style="display: flex; flex-direction: column; padding: 1em;">
 
                     <div style="display: flex; flex-direction: row; align-items: flex-end; margin-right: 1em;">
                        </div>
 
-                    <vaadin-tabs @selected-changed="${this.selectedChanged}">
+                    <vaadin-tabs theme="centered" @selected-changed="${this.selectedChanged}">
                         <vaadin-tab theme="icon-on-top">
                             <vaadin-icon icon="vaadin:fire"></vaadin-icon>
                             <span>Flame</span>
@@ -136,8 +130,6 @@ export class PlaygroundView extends View  implements BeforeEnterObserver {
     protected firstUpdated(_changedProperties: PropertyValues) {
         super.firstUpdated(_changedProperties);
         this.canvasContainer = document.querySelector('#canvas-container')!
-        this.capturedImageContainer = document.querySelector('#captured-image-container')!
-
         this.renderSettingsPanel = document.querySelector('#viewOptsPnl')!
         this.flamePanel = document.querySelector('#flamePnl')!
         playgroundStore.registerInitCallback([this.flamePanel.tagName, this.renderSettingsPanel.tagName], this.renderFirstFlame)
@@ -170,7 +162,7 @@ export class PlaygroundView extends View  implements BeforeEnterObserver {
         this.recreateCanvas()
         this.renderProgress = 0.0
         this.renderInfo = 'Rendering'
-        playgroundStore.renderer = new FlameRenderer(this.renderSettingsPanel.imageSize, this.renderSettingsPanel.swarmSize, this.renderSettingsPanel.displayMode, this.canvas, this.capturedImageContainer, true, playgroundStore.flame);
+        playgroundStore.renderer = new FlameRenderer(this.renderSettingsPanel.imageSize, this.renderSettingsPanel.swarmSize, this.renderSettingsPanel.displayMode, this.canvas, this.renderSettingsPanel.capturedImageContainer, true, playgroundStore.flame);
         this.lastProgressUpdate = getTimeStamp()
         playgroundStore.renderer.onRenderFinished = this.onRenderFinished
         playgroundStore.renderer.onRenderCancelled = this.onRenderCancelled
@@ -247,7 +239,6 @@ export class PlaygroundView extends View  implements BeforeEnterObserver {
         if(!this.flamePanel.flameName) {
             return
         }
-
         playgroundStore.calculating = true
         playgroundStore.lastError = ''
 

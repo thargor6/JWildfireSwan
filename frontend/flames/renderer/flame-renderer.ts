@@ -108,7 +108,7 @@ export class FlameRenderer {
         //
         this.iterator.iterateIFS();
         //
-        if (this.currFrameCount > 7) {
+        if (this.currFrameCount > 5) {
             this.iterator.plotHistogram();
         }
 
@@ -148,10 +148,15 @@ export class FlameRenderer {
             else {
                 if(this.autoCaptureImage && this.imgCaptureContainer) {
                     const imgData =  this.canvas.toDataURL("image/jpg")
-                    const imgElement = document.createElement('img')
+                    const imgElement: HTMLImageElement = document.createElement('img')
                     imgElement.src = imgData;
+                    imgElement.width = 128
                     this.imgCaptureContainer.innerHTML = ''
                     this.imgCaptureContainer.appendChild(imgElement)
+
+                    const divElement = document.createElement('div')
+                    divElement.innerText = `Resolution: ${this.canvas.width}x${this.canvas.height}, render time: ${Math.round(elapsedTimeInSeconds*100)/100}  s`
+                    this.imgCaptureContainer.appendChild(divElement)
                 }
                 this.onRenderFinished(this.currFrameCount, elapsedTimeInSeconds)
             }

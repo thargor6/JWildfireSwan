@@ -47,7 +47,7 @@ export class PlaygroundEditColoringPanel extends MobxLitElement {
       propName: 'brightness',
       label: 'Brightness',
       minValue: 0.0,
-      maxValue: 25.0,
+      maxValue: 12.0,
     },
     {
       propName: 'contrast',
