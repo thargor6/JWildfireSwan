@@ -37,7 +37,7 @@ void main(void) {
   float _contrast =  <%= CONTRAST %>;
   
   float _gamma = <%= GAMMA %>;
-  float _gammaThreshold = <%= GAMMA_THRESHOLD %> * 10.0 + 0.1;
+  float _gammaThreshold = <%= GAMMA_THRESHOLD %> * 10.00 + 0.01;
   float gammaInv = 1.0 / _gamma;
    
   float logScale = 2.0 * swarmSizeScl / resolutionScl * _brightness * _contrast * log(x * _contrast) / (log(x) * frames);
