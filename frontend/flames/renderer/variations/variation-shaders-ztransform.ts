@@ -52,7 +52,7 @@ class ZBlurFunc extends VariationShaderFunc3D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         return `{
            float amount = float(${variation.amount});
-           _vz += amount * (rand2(tex) + rand3(tex) + rand4(tex) + rand5(tex) - 2.0);
+           _vz += amount * (rand8(tex, rngState) + rand8(tex, rngState) + rand8(tex, rngState) + rand8(tex, rngState) - 2.0);
 
         }`;
     }

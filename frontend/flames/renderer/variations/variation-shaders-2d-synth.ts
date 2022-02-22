@@ -294,8 +294,8 @@ class SynthFunc extends VariationShaderFunc2D {
               _vy += amount * radius * c;
             }
             else if(params.mode==${MODE_BLUR_LEGACY}) {
-              radius = (rand2(tex) + rand3(tex) + 0.002 * rand4(tex)) / 2.002;
-              theta = 2.0 * M_PI * rand5(tex) - M_PI;
+              radius = (rand8(tex, rngState) + rand8(tex, rngState) + 0.002 * rand8(tex, rngState)) / 2.002;
+              theta = 2.0 * M_PI * rand8(tex, rngState) - M_PI;
               Vx = radius * sin(theta);
               Vy = radius * cos(theta);
               radius = pow(radius * radius + EPSILON, params.power / 2.0); 
@@ -305,8 +305,8 @@ class SynthFunc extends VariationShaderFunc2D {
               _vy += Vy * radius;
             }
             else if(params.mode==${MODE_BLUR_NEW}) {
-              radius = 0.5 * (rand2(tex) + rand3(tex));
-              theta = 2.0 * M_PI * rand2(tex) - M_PI;
+              radius = 0.5 * (rand8(tex, rngState) + rand8(tex, rngState));
+              theta = 2.0 * M_PI * rand8(tex, rngState) - M_PI;
               radius = pow(radius * radius + EPSILON, -params.power / 2.0);         
               theta_factor = synth_value(theta, params);
               radius = interpolate(radius, theta_factor, params.smooth);
@@ -316,8 +316,8 @@ class SynthFunc extends VariationShaderFunc2D {
               _vy += amount * radius * c;
             }
             else if(params.mode==${MODE_BLUR_RING}) { 
-              radius = 1.0 + 0.1 * (rand2(tex) + rand3(tex) - 1.0) * params.power;
-              theta = 2.0 * M_PI * rand4(tex) - M_PI;
+              radius = 1.0 + 0.1 * (rand8(tex, rngState) + rand8(tex, rngState) - 1.0) * params.power;
+              theta = 2.0 * M_PI * rand8(tex, rngState) - M_PI;
               theta_factor = synth_value(theta, params);
               radius = interpolate(radius, theta_factor, params.smooth);
               float s = sin(theta);
@@ -326,8 +326,8 @@ class SynthFunc extends VariationShaderFunc2D {
               _vy += amount * radius * c;
             }
             else if(params.mode==${MODE_BLUR_RING2}) {
-              theta = 2.0 * M_PI * rand2(tex) - M_PI;
-              radius = pow(rand3(tex) + EPSILON, params.power);
+              theta = 2.0 * M_PI * rand8(tex, rngState) - M_PI;
+              radius = pow(rand8(tex, rngState) + EPSILON, params.power);
               radius = synth_value(theta, params) + 0.1 * radius;
               float s = sin(theta);
               float c = cos(theta);
@@ -369,8 +369,8 @@ class SynthFunc extends VariationShaderFunc2D {
               _vy += amount * radius * c;
             }
             else if(params.mode==${MODE_BLUR_ZIGZAG}) {
-              Vy = 1.0 + 0.1 * (rand2(tex) + rand3(tex) - 1.0) * params.power;
-              theta = 2.0 * asin((rand4(tex) - 0.5) * 2.0);  
+              Vy = 1.0 + 0.1 * (rand8(tex, rngState) + rand8(tex, rngState) - 1.0) * params.power;
+              theta = 2.0 * asin((rand8(tex, rngState) - 0.5) * 2.0);  
               theta_factor = synth_value(theta, params);
               Vy = interpolate(Vy, theta_factor, params.smooth);
               _vx += amount * (theta / M_PI);
@@ -424,7 +424,7 @@ class SynthFunc extends VariationShaderFunc2D {
                Vy = _ty;
                radius = pow(Vx * Vx + Vy * Vy + EPSILON, params.power / 4.0);
                theta = atan2(Vx, Vy) / 2.0;
-               if (rand2(tex) < 0.5)
+               if (rand8(tex, rngState) < 0.5)
                  theta += M_PI;
                float s, c;
                synthsincos(theta, params.smooth, params, s, c);

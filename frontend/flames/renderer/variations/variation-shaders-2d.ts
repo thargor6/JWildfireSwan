@@ -37,7 +37,7 @@ class ArchFunc extends VariationShaderFunc2D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         return `{
               float amount = float(${variation.amount});
-              float ang = rand2(tex) * amount * M_PI;
+              float ang = rand8(tex, rngState) * amount * M_PI;
               float sinr = sin(ang);
               float cosr = cos(ang);
               if (cosr != 0.0) {
@@ -81,7 +81,7 @@ class AsteriaFunc extends VariationShaderFunc2D {
           bool in1 = r < 1.0;
           bool out2 = r2 < 1.0;
           if (in1 && out2)
-            in1 = ((rand2(tex)) > 0.35);
+            in1 = ((rand8(tex, rngState)) > 0.35);
           else
             in1 = !in1;
           if (in1) { 
@@ -274,7 +274,7 @@ class BladeFunc extends VariationShaderFunc2D {
         /* Z+ variation Jan 07 */
         return `{
           float amount = float(${variation.amount});
-          float r = rand2(tex) * amount * sqrt(_tx * _tx + _ty * _ty);
+          float r = rand8(tex, rngState) * amount * sqrt(_tx * _tx + _ty * _ty);
           float sinr = sin(r);
           float cosr = cos(r);
           _vx += amount * _tx * (cosr + sinr);
@@ -331,10 +331,10 @@ class BlurFunc extends VariationShaderFunc2D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         return `{
           float amount = float(${variation.amount});
-          float r = rand2(tex) * (M_PI + M_PI);
+          float r = rand8(tex, rngState) * (M_PI + M_PI);
           float sina = sin(r);
           float cosa = cos(r);
-          float r2 = amount * rand3(tex);
+          float r2 = amount * rand8(tex, rngState);
           _vx += r2 * cosa;
           _vy += r2 * sina;
         }`;
@@ -358,7 +358,7 @@ class BoardersFunc extends VariationShaderFunc2D {
           float roundY = float(int(_ty+0.5));
           float offsetX = _tx - roundX;
           float offsetY = _ty - roundY;
-          if (rand2(tex) >= 0.75) {
+          if (rand8(tex, rngState) >= 0.75) {
             _vx += amount * (offsetX * 0.5 + roundX);
             _vy += amount * (offsetY * 0.5 + roundY);
           } else {
@@ -424,7 +424,7 @@ class Boarders2Func extends VariationShaderFunc2D {
     
           float offsetX = _tx - roundX;
           float offsetY = _ty - roundY;
-          if (rand2(tex) >= _cr) {
+          if (rand8(tex, rngState) >= _cr) {
             _vx += amount * (offsetX * _c + roundX);
             _vy += amount * (offsetY * _c + roundY);
           } else {
@@ -576,8 +576,8 @@ class CannabisCurveWFFunc extends VariationShaderFunc2D {
           a += M_PI / 2.0;
         
           float filled = float(${variation.params.get(this.PARAM_FILLED)});
-          if (filled > 0.0 && filled > rand2(tex)) {
-            r *= rand3(tex);
+          if (filled > 0.0 && filled > rand8(tex, rngState)) {
+            r *= rand8(tex, rngState);
           }
         
           float nx = sin(a) * r;
@@ -716,8 +716,8 @@ class CloverLeafWFFunc extends VariationShaderFunc2D {
 
           float filled = float(${variation.params.get(this.PARAM_FILLED)});
 
-          if (filled > 0.0 && filled > rand2(tex)) {
-            r *= rand3(tex);
+          if (filled > 0.0 && filled > rand8(tex, rngState)) {
+            r *= rand8(tex, rngState);
           }
 
           float nx = sin(a) * r;
@@ -810,7 +810,7 @@ class ConicFunc extends VariationShaderFunc2D {
           float eccentricity = float(${variation.params.get(this.PARAM_ECCENTRICITY)});
           float holes = float(${variation.params.get(this.PARAM_HOLES)});
           float ct = _tx / _r;
-          float r = amount * (rand2(tex) - holes) * eccentricity / (1.0 + eccentricity * ct) / _r;
+          float r = amount * (rand8(tex, rngState) - holes) * eccentricity / (1.0 + eccentricity * ct) / _r;
          _vx += r * _tx;
          _vy += r * _ty;
         }`;
@@ -849,7 +849,7 @@ class CPowFunc extends VariationShaderFunc2D {
                   float va = 2.0 * M_PI / power;
                   float vc = r / power;
                   float vd = i / power;
-                  float ang = vc * a + vd * lnr + va * floor(power * rand2(tex));
+                  float ang = vc * a + vd * lnr + va * floor(power * rand8(tex, rngState));
                 
                   float m = amount * exp(vc * lnr - vd * a);
                   float sa = sin(ang);
@@ -909,13 +909,13 @@ class CropFunc extends VariationShaderFunc2D {
             _vx = _vy = 0.0;
           } else {
             if (x < xmin)
-              x = xmin + rand2(tex) * w;
+              x = xmin + rand8(tex, rngState) * w;
             else if (x > xmax)
-              x = xmax - rand2(tex) * w;
+              x = xmax - rand8(tex, rngState) * w;
             if (y < ymin)
-              y = ymin + rand3(tex) * h;
+              y = ymin + rand8(tex, rngState) * h;
             else if (y > ymax)
-              y = ymax - rand3(tex) * h;
+              y = ymax - rand8(tex, rngState) * h;
             _vx = amount * x;
             _vy = amount * y;
           }
@@ -1469,7 +1469,7 @@ class EllipticFunc extends VariationShaderFunc2D {
              
              int sign = (_ty > 0.0) ? 1 : -1;
              if (mode == ${this.MODE_MIRRORY}) {
-               sign = (rand2(tex) < 0.5) ? 1 : -1;
+               sign = (rand8(tex, rngState) < 0.5) ? 1 : -1;
              }
              _vx += _v * atan2(a, b);
              _vy += float(sign) * _v * log(xmax + sqrt_safe(xmax - 1.0));
@@ -1509,7 +1509,7 @@ class EpispiralFunc extends VariationShaderFunc2D {
           if (thickness > EPSILON || thickness < -EPSILON) {
              float d = cos(n * theta);
              if (d != 0.0) {
-               t += (rand2(tex) * thickness) * (1.0 / d);  
+               t += (rand8(tex, rngState) * thickness) * (1.0 / d);  
              }
           } 
           else {
@@ -1835,7 +1835,7 @@ class FlowerFunc extends VariationShaderFunc2D {
             float theta = _theta;
             float d = _r;
             if (d != 0.0) {
-              float r = amount * (rand2(tex) - holes) * cos(petals * theta) / d;
+              float r = amount * (rand8(tex, rngState) - holes) * cos(petals * theta) / d;
               _vx += r * _tx;
               _vy += r * _ty;
              }
@@ -1921,7 +1921,7 @@ class GlynniaFunc extends VariationShaderFunc2D {
             float r = sqrt(sqr(_tx) + sqr(_ty));
             float d;
             if (r >= 1.0) {
-              if (rand2(tex) > 0.5) {
+              if (rand8(tex, rngState) > 0.5) {
                 d = sqrt(r + _tx);
                 if (d != 0.0) {
                   _vx += _vvar2 * d;
@@ -1937,7 +1937,7 @@ class GlynniaFunc extends VariationShaderFunc2D {
                 }
               }
             } else {
-              if (rand2(tex) > 0.5) {
+              if (rand8(tex, rngState) > 0.5) {
                 d = sqrt(r + _tx);
                 if (d != 0.0) {
                   _vx -= _vvar2 * d;
@@ -1992,10 +1992,10 @@ class GaussianBlurFunc extends VariationShaderFunc2D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         return `{
           float amount = float(${variation.amount});
-          float r = rand2(tex) * 2.0 * M_PI;
+          float r = rand8(tex, rngState) * 2.0 * M_PI;
           float sina = sin(r);
           float cosa = cos(r);
-          r = amount * (rand3(tex) + rand4(tex) + rand5(tex) + rand6(tex) - 2.0);
+          r = amount * (rand8(tex, rngState) + rand8(tex, rngState) + rand8(tex, rngState) + rand8(tex, rngState) - 2.0);
           _vx += r * cosa;
           _vy += r * sina;
         }`;
@@ -2111,7 +2111,7 @@ class JuliaFunc extends VariationShaderFunc2D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         return `{
            float amount = float(${variation.amount});
-           float a = atan2(_tx, _ty) * 0.5 + M_PI * floor(2.0 * rand2(tex)*rand3(tex));
+           float a = atan2(_tx, _ty) * 0.5 + M_PI * floor(2.0 * rand8(tex, rngState)*rand8(tex, rngState));
            float sina = sin(a);
            float cosa = cos(a);
            float r = amount * sqrt(sqrt(_tx * _tx + _ty * _ty));
@@ -2149,7 +2149,7 @@ class JuliaCFunc extends VariationShaderFunc2D {
           float dist = float(${variation.params.get(this.PARAM_DIST)});
           float re = 1.0 / (_re + EPSILON);
           float im = _im / 100.0;
-          float arg = atan2(_ty, _tx) + mod(rand2(tex)*32768.0, _re) * 2.0 * M_PI;
+          float arg = atan2(_ty, _tx) + mod(rand8(tex, rngState)*32768.0, _re) * 2.0 * M_PI;
           float lnmod = dist * 0.5 * log(_tx * _tx + _ty * _ty);
           float a = arg * re + lnmod * im;
           float s = sin(a);
@@ -2187,7 +2187,7 @@ class JuliaNFunc extends VariationShaderFunc2D {
           int absPower = power > 0 ? power : -power;
           float cPower = dist / float(power) * 0.5; 
 
-          float a = (atan2(_ty, _tx) + 2.0 * M_PI * floor(float(absPower) * rand2(tex))) / float(power);
+          float a = (atan2(_ty, _tx) + 2.0 * M_PI * floor(float(absPower) * rand8(tex, rngState))) / float(power);
           float sina = sin(a);
           float cosa = cos(a);
           float r = amount * pow(sqr(_tx) + sqr(_ty), cPower);
@@ -2223,7 +2223,7 @@ class JuliaQFunc extends VariationShaderFunc2D {
           float half_inv_power = 0.5 * float(divisor) / float(power);
           float inv_power = float(divisor) / float(power);
           float inv_power_2pi = (2.0*M_PI) / float(power);
-          float a = atan2(_ty, _tx) * inv_power + rand2(tex)*32768.0 * inv_power_2pi;
+          float a = atan2(_ty, _tx) * inv_power + rand8(tex, rngState)*32768.0 * inv_power_2pi;
           float sina = sin(a);
           float cosa = cos(a);
           float r = amount * pow(sqr(_tx) + sqr(_ty), half_inv_power);
@@ -2259,7 +2259,7 @@ class JuliascopeFunc extends VariationShaderFunc2D {
           int absPower = power > 0 ? power : -power;
           float cPower = dist / float(power) * 0.5; 
 
-          int rnd = int(rand2(tex)*float(absPower));
+          int rnd = int(rand8(tex, rngState)*float(absPower));
           float a;
           if (modulo(rnd, 2) == 0)
             a = (2.0 * M_PI * float(rnd) + atan2(_ty, _tx)) / float(power);
@@ -2741,10 +2741,10 @@ class NoiseFunc extends VariationShaderFunc2D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         return `{
           float amount = float(${variation.amount});
-          float r = rand2(tex) * 2.0 * M_PI;
+          float r = rand8(tex, rngState) * 2.0 * M_PI;
           float sinr = sin(r);
           float cosr = cos(r);
-          r = amount * rand3(tex);
+          r = amount * rand8(tex, rngState);
           _vx += _tx * r * cosr;
           _vy += _ty * r * sinr;
         }`;
@@ -2782,7 +2782,7 @@ class NPolarFunc extends VariationShaderFunc2D {
           int _isodd = modulo((parity > 0 ? parity: -parity), 2); 
           float x = (_isodd != 0) ? _tx : _vvar * atan2(_tx, _ty);
           float y = (_isodd != 0) ? _ty : _vvar_2 * log(_tx * _tx + _ty * _ty);
-          float angle = (atan2(y, x) + (2.0*M_PI) * float(modulo( int(rand3(tex)*32768.0), int(_absn)))) / float(_nnz);
+          float angle = (atan2(y, x) + (2.0*M_PI) * float(modulo( int(rand8(tex, rngState)*32768.0), int(_absn)))) / float(_nnz);
           float r = amount * pow(sqr(x) + sqr(y), _cn) * ((_isodd == 0) ? 1.0 : float(parity));
           float sina = sin(angle);
           float cosa = cos(angle);
@@ -2931,8 +2931,8 @@ class ParabolaFunc extends VariationShaderFunc2D {
           float r = _r;
           float sr = sin(r);
           float cr = cos(r);
-          _vx += height * amount * sr * sr * rand2(tex);
-          _vy += width * amount * cr * rand2(tex);
+          _vx += height * amount * sr * sr * rand8(tex, rngState);
+          _vy += width * amount * cr * rand8(tex, rngState);
         }`;
     }
 
@@ -3018,9 +3018,9 @@ class PieFunc extends VariationShaderFunc2D {
           float slices = float(${variation.params.get(this.PARAM_SLICES)});
           float rotation = float(${variation.params.get(this.PARAM_ROTATION)});
           float thickness = float(${variation.params.get(this.PARAM_THICKNESS)});
-          int sl = int(rand2(tex) * slices + 0.5);
-          float a = rotation + 2.0 * M_PI * (float(sl) + rand3(tex) * thickness) / slices;
-          float r = amount * rand4(tex);
+          int sl = int(rand8(tex, rngState) * slices + 0.5);
+          float a = rotation + 2.0 * M_PI * (float(sl) + rand8(tex, rngState) * thickness) / slices;
+          float r = amount * rand8(tex, rngState);
           float sina = sin(a);
           float cosa = cos(a);
           _vx += r * cosa;
@@ -3160,10 +3160,10 @@ class PreBlurFunc extends VariationShaderFunc2D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         return `{
           float amount = float(${variation.amount});
-          float r = rand3(tex) * 2.0 * M_PI;
+          float r = rand8(tex, rngState) * 2.0 * M_PI;
           float sina = sin(r);
           float cosa = cos(r);
-          r =  amount * (rand2(tex) + rand3(tex) + rand4(tex) + rand5(tex) + rand6(tex) + rand7(tex) - 3.0);
+          r =  amount * (rand8(tex, rngState) + rand8(tex, rngState) + rand8(tex, rngState) + rand8(tex, rngState) + rand8(tex, rngState) + rand8(tex, rngState) - 3.0);
           _tx += r * cosa;
           _ty += r * sina;
         }`;
@@ -3193,7 +3193,7 @@ class RadialBlurFunc extends VariationShaderFunc2D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         return `{
           float amount = float(${variation.amount});    
-          float rndG = rand5(tex)+rand2(tex)+rand3(tex)+rand4(tex)-2.0;
+          float rndG = rand8(tex, rngState)+rand8(tex, rngState)+rand8(tex, rngState)+rand8(tex, rngState)-2.0;
           float angle = float(${variation.params.get(this.PARAM_ANGLE)});
           float a = angle * M_PI * 0.5;
           float sina = sin(a);
@@ -3223,7 +3223,7 @@ class RaysFunc extends VariationShaderFunc2D {
         /* Z+ variation Jan 07 */
         return `{
           float amount = float(${variation.amount});
-          float ang = amount * rand2(tex) * M_PI;
+          float ang = amount * rand8(tex, rngState) * M_PI;
           float r = amount / (_r2 + EPSILON);
           float tanr = amount * tan(ang) * r;
           _vx += tanr * cos(_tx);
@@ -3410,8 +3410,8 @@ class RoseWFFunc extends VariationShaderFunc2D {
           float amp = float(${variation.params.get(this.PARAM_AMP)});
           float r = amp * cos(float(waves) * a);
         
-          if (filled > 0.0 && filled > rand2(tex)) {
-             r *= rand3(tex);
+          if (filled > 0.0 && filled > rand8(tex, rngState)) {
+             r *= rand8(tex, rngState);
           }
         
           float nx = sin(a) * r;
@@ -3905,8 +3905,8 @@ class SpirographFunc extends VariationShaderFunc2D {
           float tmax = float(${variation.params.get(this.PARAM_TMAX)});
           float ymin = float(${variation.params.get(this.PARAM_YMIN)});
           float ymax = float(${variation.params.get(this.PARAM_YMAX)});
-          float t = (tmax - tmin) * rand2(tex) + tmin;
-          float y = (ymax - ymin) * rand3(tex) + ymin;
+          float t = (tmax - tmin) * rand8(tex, rngState) + tmin;
+          float y = (ymax - ymin) * rand8(tex, rngState) + ymin;
           float x1 = (a + b) * cos(t) - c1 * cos((a + b) / b * t);
           float y1 = (a + b) * sin(t) - c2 * sin((a + b) / b * t);
           _vx += amount * (x1 + d * cos(t) + y);
@@ -4021,8 +4021,8 @@ class SquareFunc extends VariationShaderFunc2D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         return `{
           float amount = float(${variation.amount});
-          _vx += amount * (rand2(tex) - 0.5);
-          _vy += amount * (rand3(tex) - 0.5);    
+          _vx += amount * (rand8(tex, rngState) - 0.5);
+          _vy += amount * (rand8(tex, rngState) - 0.5);    
         }`;
     }
 
@@ -4307,7 +4307,7 @@ class TwintrianFunc extends VariationShaderFunc2D {
         /* Z+ variation Jan 07 */
         return `{
           float amount = float(${variation.amount});
-          float r = rand2(tex) * amount * _r;
+          float r = rand8(tex, rngState) * amount * _r;
         
           float sinr = sin(r);
           float cosr = cos(r);
@@ -4507,7 +4507,7 @@ class YinYangFunc extends VariationShaderFunc2D {
           if (R2 < 1.0) {
             float nx = xx * cosa - yy * sina;
             float ny = xx * sina + yy * cosa;
-            if (dual_t == 1 && rand2(tex) > 0.5) {
+            if (dual_t == 1 && rand8(tex, rngState) > 0.5) {
               inv = -1.0;
               RR = 1.0 - radius;
               nx = xx * cosb - yy * sinb;

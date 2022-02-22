@@ -119,7 +119,7 @@ class Blade3DFunc extends VariationShaderFunc3D {
         /* Z+ variation Jan 07 */
         return `{
           float amount = float(${variation.amount});
-          float r = rand2(tex) * amount * sqrt(_tx * _tx + _ty * _ty);
+          float r = rand8(tex, rngState) * amount * sqrt(_tx * _tx + _ty * _ty);
           float sinr = sin(r);
           float cosr = cos(r);
           _vx += amount * _tx * (cosr + sinr);
@@ -179,13 +179,13 @@ class Blur3DFunc extends VariationShaderFunc3D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         return `{
           float amount = float(${variation.amount});
-          float angle = rand2(tex) * 2.0 * M_PI;
+          float angle = rand8(tex, rngState) * 2.0 * M_PI;
           float sina = sin(angle);
           float cosa = cos(angle);
      
-          float r = amount * (rand5(tex)+rand2(tex)+rand3(tex)+rand4(tex)-2.0);
+          float r = amount * (rand8(tex, rngState)+rand8(tex, rngState)+rand8(tex, rngState)+rand8(tex, rngState)-2.0);
            
-          angle = rand3(tex) * M_PI;
+          angle = rand8(tex, rngState) * M_PI;
           float sinb = sin(angle);
           float cosb = cos(angle);
           
@@ -272,7 +272,7 @@ class BubbleWFFunc extends VariationShaderFunc3D {
           float t = amount / r;
           _vx += t * _tx;
           _vy += t * _ty;
-          if (rand2(tex) < 0.5) {
+          if (rand8(tex, rngState) < 0.5) {
            _vz -= amount * (2.0 / r - 1.0);
           } else {
            _vz += amount * (2.0 / r - 1.0);
@@ -366,7 +366,7 @@ class ColorscaleWFFunc extends VariationShaderFunc3D {
             _vz = dz;
           } else {
             if (sides > 0.0) {
-              _vz += dz * rand2(tex);
+              _vz += dz * rand8(tex, rngState);
             } else {
               _vz += dz;
             }
@@ -440,7 +440,7 @@ class Julia3DFunc extends VariationShaderFunc3D {
           float r2d = _tx * _tx + _ty * _ty;
           float r = amount * pow(r2d + z * z, cPower);
           float r2 = r * sqrt(r2d);
-          int rnd = int(rand2(tex) * absPower);
+          int rnd = int(rand8(tex, rngState) * absPower);
           float angle = (atan2(_ty, _tx) + 2.0 * M_PI * float(rnd)) / float(power);
           float sina = sin(angle);
           float cosa = cos(angle);     
@@ -476,7 +476,7 @@ class Julia3DZFunc extends VariationShaderFunc3D {
           float r2d = _tx * _tx + _ty * _ty;
           float r = amount * pow(r2d, cPower);
         
-          int rnd = int(rand2(tex) * absPower);
+          int rnd = int(rand8(tex, rngState) * absPower);
           float angle = (atan2(_ty, _tx) + 2.0 * M_PI * float(rnd)) / float(power);
           float sina = sin(angle);
           float cosa = cos(angle);
@@ -568,9 +568,9 @@ class Pie3DFunc extends VariationShaderFunc3D {
           float slices = float(${variation.params.get(this.PARAM_SLICES)});
           float rotation = float(${variation.params.get(this.PARAM_ROTATION)});
           float thickness = float(${variation.params.get(this.PARAM_THICKNESS)});
-          int sl = int(rand2(tex) * slices + 0.5);
-          float a = rotation + 2.0 * M_PI * (float(sl) + rand3(tex) * thickness) / slices;
-          float r = amount * rand4(tex);
+          int sl = int(rand8(tex, rngState) * slices + 0.5);
+          float a = rotation + 2.0 * M_PI * (float(sl) + rand8(tex, rngState) * thickness) / slices;
+          float r = amount * rand8(tex, rngState);
           float sina = sin(a);
           float cosa = cos(a);
           _vx += r * cosa;
@@ -676,9 +676,9 @@ class Square3DFunc extends VariationShaderFunc3D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         return `{
           float amount = float(${variation.amount});
-          _vx += amount * (rand2(tex) - 0.5);
-          _vy += amount * (rand3(tex) - 0.5);    
-          _vz += amount * (rand4(tex) - 0.5);    
+          _vx += amount * (rand8(tex, rngState) - 0.5);
+          _vy += amount * (rand8(tex, rngState) - 0.5);    
+          _vz += amount * (rand8(tex, rngState) - 0.5);    
         }`;
     }
 

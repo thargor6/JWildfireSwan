@@ -45,7 +45,7 @@ class AcosechFunc extends VariationShaderFunc2D {
               Complex_AcosecH(z);
               Complex_Flip(z);
               Complex_Scale(z, amount  * 2.0 / M_PI);
-              if (rand2(tex) < 0.5) {
+              if (rand8(tex, rngState) < 0.5) {
                 _vy += z.im;
                 _vx += z.re;
               } else {
@@ -78,7 +78,7 @@ class AcoshFunc extends VariationShaderFunc2D {
               Complex_Init(z, _tx, _ty);
               Complex_AcosH(z);
               Complex_Scale(z, amount * 2.0 / M_PI);
-              if(rand2(tex)<0.5) {
+              if(rand8(tex, rngState)<0.5) {
                 _vy += z.im;
                 _vx += z.re;
               }
@@ -302,7 +302,7 @@ class Sqrt_AcosechFunc extends VariationShaderFunc2D {
               Complex_Sqrt(z);
               Complex_AcosecH(z);
               Complex_Scale(z, amount * 2.0 / M_PI);
-              if(rand2(tex)<0.5) {
+              if(rand8(tex, rngState)<0.5) {
                 _vy += z.im;
                 _vx += z.re;
               }
@@ -336,7 +336,7 @@ class Sqrt_AcoshFunc extends VariationShaderFunc2D {
               Complex_Sqrt(z);
               Complex_AcosH(z);
               Complex_Scale(z, amount * 2.0 / M_PI);
-              if(rand2(tex)<0.5) {
+              if(rand8(tex, rngState)<0.5) {
                 _vy += z.im;
                 _vx += z.re;
               }
@@ -370,7 +370,7 @@ class Sqrt_AcothFunc extends VariationShaderFunc2D {
               Complex_Sqrt(z);
               Complex_AcotH(z);
               Complex_Scale(z, amount * 2.0 / M_PI);
-              if(rand2(tex)<0.5) {
+              if(rand8(tex, rngState)<0.5) {
                 _vy += z.im;
                 _vx += z.re;
               }
@@ -404,7 +404,7 @@ class Sqrt_AsechFunc extends VariationShaderFunc2D {
               Complex_Sqrt(z);
               Complex_AsecH(z);
               Complex_Scale(z, amount * (2.0 / M_PI));
-              if (rand2(tex) < 0.5) {
+              if (rand8(tex, rngState) < 0.5) {
                 _vy += z.im;
                 _vx += z.re;
               }  
@@ -438,7 +438,7 @@ class Sqrt_AsinhFunc extends VariationShaderFunc2D {
               Complex_Sqrt(z);
               Complex_AsinH(z);
               Complex_Scale(z,amount * (2.0 / M_PI));
-              if (rand2(tex) < 0.5) {
+              if (rand8(tex, rngState) < 0.5) {
                 _vy += z.im; 
                 _vx += z.re; 
               } 
@@ -472,7 +472,7 @@ class Sqrt_AtanhFunc extends VariationShaderFunc2D {
               Complex_Sqrt(z);
               Complex_AtanH(z); 
               Complex_Scale(z,amount * (2.0 / M_PI));
-              if (rand2(tex) < 0.5) {
+              if (rand8(tex, rngState) < 0.5) {
                 _vy += z.im; 
                 _vx += z.re;
               } 
