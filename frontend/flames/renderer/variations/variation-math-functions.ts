@@ -24,7 +24,6 @@ export const FUNC_SINH = 'sinh'
 export const FUNC_SQRT1PM1 = 'sqrt1pm1'
 export const FUNC_TANH = 'tanh'
 export const LIB_COMPLEX = 'lib_complex'
-export const LIB_TEST = 'lib_test'
 
 // https://www.shaderific.com/glsl-functions
 
