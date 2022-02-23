@@ -15,12 +15,7 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 */
 
-import {
-    VariationParam,
-    VariationParamType,
-    VariationShaderFunc3D,
-    VariationTypes
-} from "./variation-shader-func";
+import {VariationParam, VariationParamType, VariationShaderFunc3D, VariationTypes} from "./variation-shader-func";
 import {VariationShaders} from "Frontend/flames/renderer/variations/variation-shaders";
 import {RenderVariation, RenderXForm} from "Frontend/flames/model/render-flame";
 import {FUNC_SGN} from "Frontend/flames/renderer/variations/variation-math-functions";
@@ -380,6 +375,61 @@ class ColorscaleWFFunc extends VariationShaderFunc3D {
 
     get variationTypes(): VariationTypes[] {
         return [VariationTypes.VARTYPE_3D, VariationTypes.VARTYPE_DC];
+    }
+}
+
+class ConeFunc extends VariationShaderFunc3D {
+    PARAM_RADIUS1 = "radius1"
+    PARAM_RADIUS2 = "radius2"
+    PARAM_SIZE1 = "size1"
+    PARAM_SIZE2 = "size2"
+    PARAM_YWAVE = "ywave"
+    PARAM_XWAVE = "xwave"
+    PARAM_HEIGHT = "height"
+    PARAM_WARP = "warp"
+    PARAM_WEIGHT = "weight"
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_RADIUS1, type: VariationParamType.VP_NUMBER, initialValue: 0.50 },
+            { name: this.PARAM_RADIUS2, type: VariationParamType.VP_NUMBER, initialValue: 1.00 },
+            { name: this.PARAM_SIZE1, type: VariationParamType.VP_NUMBER, initialValue: 0.50 },
+            { name: this.PARAM_SIZE2, type: VariationParamType.VP_NUMBER, initialValue: 2.00 },
+            { name: this.PARAM_YWAVE, type: VariationParamType.VP_NUMBER, initialValue: 1.00 },
+            { name: this.PARAM_XWAVE, type: VariationParamType.VP_NUMBER, initialValue: 1.00 },
+            { name: this.PARAM_HEIGHT, type: VariationParamType.VP_NUMBER, initialValue: 1.00 },
+            { name: this.PARAM_WARP, type: VariationParamType.VP_NUMBER, initialValue: 1.00 },
+            { name: this.PARAM_WEIGHT, type: VariationParamType.VP_NUMBER, initialValue: 2.00 }]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        //A mix of julia and hemisphere that creates a cone shape by Brad Stefanov
+        return `{
+          float amount = float(${variation.amount});
+          float radius1 = float(${variation.params.get(this.PARAM_RADIUS1)});
+          float radius2 = float(${variation.params.get(this.PARAM_RADIUS2)});
+          float size1 = float(${variation.params.get(this.PARAM_SIZE1)});
+          float size2 = float(${variation.params.get(this.PARAM_SIZE2)});
+          float ywave = float(${variation.params.get(this.PARAM_YWAVE)});
+          float xwave = float(${variation.params.get(this.PARAM_XWAVE)});
+          float height = float(${variation.params.get(this.PARAM_HEIGHT)});
+          float warp = float(${variation.params.get(this.PARAM_WARP)});
+          float weight = float(${variation.params.get(this.PARAM_WEIGHT)});
+          float r = amount / sqrt(_tx * _tx *warp+ _ty * _ty + size1)*size2;
+          float xx = _phi* radius1 + M_PI * float(int(weight * rand8(tex, rngState)*radius2));
+          float sina = sin(xx*ywave);
+          float cosa = cos(xx*xwave);
+          _vx += r * cosa;
+          _vy += r * sina;
+          _vz += r * height;
+        }`;
+    }
+
+    get name(): string {
+        return "cone";
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_3D, VariationTypes.VARTYPE_BASE_SHAPE];
     }
 }
 
@@ -793,6 +843,7 @@ export function register3DVars() {
     VariationShaders.registerVar(new Bubble2Func())
     VariationShaders.registerVar(new BubbleWFFunc())
     VariationShaders.registerVar(new ColorscaleWFFunc())
+    VariationShaders.registerVar(new ConeFunc())
     VariationShaders.registerVar(new Curl3DFunc())
     VariationShaders.registerVar(new CylinderApoFunc())
     VariationShaders.registerVar(new HemisphereFunc())
