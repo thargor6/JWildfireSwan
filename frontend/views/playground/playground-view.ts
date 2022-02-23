@@ -74,16 +74,17 @@ export class PlaygroundView extends View  implements BeforeEnterObserver {
             <swan-error-panel .errorMessage=${playgroundStore.lastError}></swan-error-panel>
             <vaadin-split-layout>
               <vertical-layout>
+                  <div style="width: 100%;">
+                      <div>${this.renderInfo}</div>
+                      <vaadin-progress-bar .value=${this.renderProgress} theme="contrast"></vaadin-progress-bar>
+                  </div>
                 <div style="display: flex; align-items: center; justify-content: center;"
                      stylex="max-height: 70em;max-width:70em;overflow: scroll;" id="canvas-container">
                     <canvas id="screen1" width="512" height="512"></canvas>
                     
                 </div>
 
-                <div style="width: 100%;">
-                    <div>${this.renderInfo}</div>
-                    <vaadin-progress-bar .value=${this.renderProgress} theme="contrast"></vaadin-progress-bar>
-                </div>
+
               </vertical-layout>
                 <div style="display: flex; flex-direction: column; padding: 1em;">
 
