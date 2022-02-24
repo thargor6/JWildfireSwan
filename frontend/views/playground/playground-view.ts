@@ -32,7 +32,7 @@ import '@vaadin/tabs'
 import '@vaadin/vaadin-progress-bar'
 
 import {FlameRenderer} from '../../flames/renderer/flame-renderer'
-import {FlamesEndpoint, GalleryEndpoint} from "Frontend/generated/endpoints";
+import {AppInfoEndpoint, FlamesEndpoint, GalleryEndpoint} from "Frontend/generated/endpoints";
 import {FlameMapper} from '../../flames/model/mapper/flame-mapper'
 import '@vaadin/vaadin-combo-box';
 import './playground-render-panel'
@@ -174,6 +174,7 @@ export class PlaygroundView extends View  implements BeforeEnterObserver {
     onRenderFinished = (frameCount: number, elapsedTimeInS: number) => {
        this.renderProgress = 1.0
        this.renderInfo = 'Rendering finished after ' + Math.round((elapsedTimeInS + Number.EPSILON) * 100) / 100 + ' s'
+       AppInfoEndpoint.incFlamesRendered()
     }
 
     onRenderCancelled = (frameCount: number, elapsedTimeInS: number) => {

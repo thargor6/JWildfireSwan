@@ -17,16 +17,17 @@
 
 import { makeAutoObservable } from 'mobx';
 import {VariationShaders} from "Frontend/flames/renderer/variations/variation-shaders";
-import {register2DPartAVars} from "Frontend/flames/renderer/variations/variation-shaders-2d-partA";
-import {register2DPartKVars} from "Frontend/flames/renderer/variations/variation-shaders-2d-partK";
-import {register3DVars} from "Frontend/flames/renderer/variations/variation-shaders-3d";
-import {registerZTransformVars} from "Frontend/flames/renderer/variations/variation-shaders-ztransform";
+import {registerVars_2D_PartA} from "Frontend/flames/renderer/variations/variation-shaders-2d-partA";
+import {registerVars_2D_PartK} from "Frontend/flames/renderer/variations/variation-shaders-2d-partK";
+import {registerVars_3D} from "Frontend/flames/renderer/variations/variation-shaders-3d";
+import {registerVars_ZTransforms} from "Frontend/flames/renderer/variations/variation-shaders-ztransform";
 import {Flame} from "Frontend/flames/model/flame";
 import {FlameRenderer} from "Frontend/flames/renderer/flame-renderer";
 import {GalleryEndpoint} from "Frontend/generated/endpoints";
-import {register2DComplexVars} from "Frontend/flames/renderer/variations/variation-shaders-2d-complex";
-import {register2DWavesVars} from "Frontend/flames/renderer/variations/variation-shaders-2d-waves";
-import {register2DSynthVar} from "Frontend/flames/renderer/variations/variation-shaders-2d-synth";
+import {registerVars_Complex} from "Frontend/flames/renderer/variations/variation-shaders-2d-complex";
+import {registerVars_Waves} from "Frontend/flames/renderer/variations/variation-shaders-waves";
+import {registerVar_Synth} from "Frontend/flames/renderer/variations/variation-shaders-synth";
+import {registerVars_Blur} from "Frontend/flames/renderer/variations/variation-shaders-blur";
 
 type OnInitCallback = () => void
 
@@ -92,12 +93,13 @@ export class PlaygroundStore {
 }
 
 
-register2DPartAVars()
-register2DPartKVars()
-register2DComplexVars()
-register2DWavesVars()
-register2DSynthVar()
-register3DVars()
-registerZTransformVars()
+registerVars_2D_PartA()
+registerVars_2D_PartK()
+registerVars_Blur()
+registerVars_Complex()
+registerVars_Waves()
+registerVar_Synth()
+registerVars_3D()
+registerVars_ZTransforms()
 
 export const playgroundStore = new PlaygroundStore()
