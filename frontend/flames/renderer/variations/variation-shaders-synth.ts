@@ -15,23 +15,13 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 */
 
-import {VariationParam, VariationParamType, VariationShaderFunc2D, VariationTypes} from "./variation-shader-func";
-import {VariationShaders} from "Frontend/flames/renderer/variations/variation-shaders";
-import {RenderVariation, RenderXForm} from "Frontend/flames/model/render-flame";
-import {
-    FUNC_COSH,
-    FUNC_HYPOT,
-    FUNC_LOG10,
-    FUNC_MODULO,
-    FUNC_SGN,
-    FUNC_SINH,
-    FUNC_SQRT1PM1,
-    FUNC_TANH, LIB_COMPLEX, VariationMathFunctions
-} from "Frontend/flames/renderer/variations/variation-math-functions";
-import {M_PI} from "Frontend/flames/renderer/mathlib";
+import {VariationParam, VariationParamType, VariationShaderFunc2D, VariationTypes} from './variation-shader-func';
+import {VariationShaders} from 'Frontend/flames/renderer/variations/variation-shaders';
+import {RenderVariation, RenderXForm} from 'Frontend/flames/model/render-flame';
+import {VariationMathFunctions} from "Frontend/flames/renderer/variations/variation-math-functions";
 
 /*
-  be sure to import this class somewhere and call register2DSynthVar()
+  be sure to import this class somewhere and call registerVar_Synth()
  */
 
 // Local functions
@@ -42,7 +32,7 @@ const LIB_SYNTH = 'lib_synth'
 const LERP_LINEAR = 0;
 const LERP_BEZIER = 1;
 // Modes
-// "Lagacy" modes from v1
+// 'Lagacy' modes from v1
 const MODE_SPHERICAL = 0;
 const MODE_BUBBLE = 1;
 const MODE_BLUR_LEGACY = 2;
@@ -101,46 +91,46 @@ const SINCOS_MULTIPLY = 0;
 const SINCOS_MIXIN = 1;
 
 class SynthFunc extends VariationShaderFunc2D {
-    PARAM_A = "a"
-    PARAM_MODE = "mode"
-    PARAM_POWER = "power"
-    PARAM_MIX = "mix"
-    PARAM_SMOOTH = "smooth"
+    PARAM_A = 'a'
+    PARAM_MODE = 'mode'
+    PARAM_POWER = 'power'
+    PARAM_MIX = 'mix'
+    PARAM_SMOOTH = 'smooth'
 
-    PARAM_B = "b"
-    PARAM_B_TYPE = "b_type"
-    PARAM_B_SKEW = "b_skew"
-    PARAM_B_FRQ = "b_frq"
-    PARAM_B_PHS = "b_phs"
-    PARAM_B_LAYER = "b_layer"
+    PARAM_B = 'b'
+    PARAM_B_TYPE = 'b_type'
+    PARAM_B_SKEW = 'b_skew'
+    PARAM_B_FRQ = 'b_frq'
+    PARAM_B_PHS = 'b_phs'
+    PARAM_B_LAYER = 'b_layer'
 
-    PARAM_C = "c"
-    PARAM_C_TYPE = "c_type"
-    PARAM_C_SKEW = "c_skew"
-    PARAM_C_FRQ = "c_frq"
-    PARAM_C_PHS = "c_phs"
-    PARAM_C_LAYER = "c_layer"
+    PARAM_C = 'c'
+    PARAM_C_TYPE = 'c_type'
+    PARAM_C_SKEW = 'c_skew'
+    PARAM_C_FRQ = 'c_frq'
+    PARAM_C_PHS = 'c_phs'
+    PARAM_C_LAYER = 'c_layer'
 
-    PARAM_D = "d"
-    PARAM_D_TYPE = "d_type"
-    PARAM_D_SKEW = "d_skew"
-    PARAM_D_FRQ = "d_frq"
-    PARAM_D_PHS = "d_phs"
-    PARAM_D_LAYER = "d_layer"
+    PARAM_D = 'd'
+    PARAM_D_TYPE = 'd_type'
+    PARAM_D_SKEW = 'd_skew'
+    PARAM_D_FRQ = 'd_frq'
+    PARAM_D_PHS = 'd_phs'
+    PARAM_D_LAYER = 'd_layer'
 
-    PARAM_E = "e"
-    PARAM_E_TYPE = "e_type"
-    PARAM_E_SKEW = "e_skew"
-    PARAM_E_FRQ = "e_frq"
-    PARAM_E_PHS = "e_phs"
-    PARAM_E_LAYER = "e_layer"
+    PARAM_E = 'e'
+    PARAM_E_TYPE = 'e_type'
+    PARAM_E_SKEW = 'e_skew'
+    PARAM_E_FRQ = 'e_frq'
+    PARAM_E_PHS = 'e_phs'
+    PARAM_E_LAYER = 'e_layer'
 
-    PARAM_F = "f"
-    PARAM_F_TYPE = "f_type"
-    PARAM_F_SKEW = "f_skew"
-    PARAM_F_FRQ = "f_frq"
-    PARAM_F_PHS = "f_phs"
-    PARAM_F_LAYER = "f_layer"
+    PARAM_F = 'f'
+    PARAM_F_TYPE = 'f_type'
+    PARAM_F_SKEW = 'f_skew'
+    PARAM_F_FRQ = 'f_frq'
+    PARAM_F_PHS = 'f_phs'
+    PARAM_F_LAYER = 'f_layer'
 
     get params(): VariationParam[] {
         return [{ name: this.PARAM_A, type: VariationParamType.VP_NUMBER, initialValue: 1.00 },
@@ -497,7 +487,7 @@ class SynthFunc extends VariationShaderFunc2D {
     }
 
     get name(): string {
-        return "synth";
+        return 'synth';
     }
 
     get funcDependencies(): string[] {
@@ -509,7 +499,7 @@ class SynthFunc extends VariationShaderFunc2D {
     }
 }
 
-export function register2DSynthVar() {
+export function registerVar_Synth() {
     VariationMathFunctions.registerFunction(LIB_SYNTH,
       `      
         struct SynthParams {
@@ -559,7 +549,7 @@ export function register2DSynthVar() {
       // angle that could come from any other calculation - for circular modes
       // it will be the angle between the positive y axis and the vector from
       // the origin to the pont i.e. atan2(x,y)
-      // You must call the argument "vp".
+      // You must call the argument 'vp'.
       float synth_value(float theta, SynthParams params) {
         float theta_factor = params.a;
         float x = 0.0, y, z;
@@ -889,14 +879,14 @@ export function register2DSynthVar() {
               theta_factor = (theta_factor < z ? theta_factor : z);
           }   
         }
-        // Mix is applied here, assuming 1.0 to be the "flat" line for legacy support
+        // Mix is applied here, assuming 1.0 to be the 'flat' line for legacy support
         return theta_factor * params.mix + (1.0 - params.mix);
       }
 
      // Mapping function y = fn(x) based on quadratic Bezier curves for smooth type 1
      // Returns close to y = x for high/low values of x, y = m when x = 1.0, and
      // something in-between y = m*x and y = x lines when x is close-ish to 1.0
-     // Function always has slope of 0.0 or greater, so no x' values "overlap"
+     // Function always has slope of 0.0 or greater, so no x' values 'overlap'
      float bezier_quad_map(float x, float m) {
         float a = 1.0; // a is used to control sign of result
         float t = 0.0; // t is the Bezier curve parameter
@@ -909,7 +899,7 @@ export function register2DSynthVar() {
           x = -x;
           a = -a;
         }
-        // iM is "inverse m" used in a few places below
+        // iM is 'inverse m' used in a few places below
         float iM = 1.0e10;
         if (m > 1.0e-10) {
           iM = 1.0 / m;
@@ -917,7 +907,7 @@ export function register2DSynthVar() {
     
         float L = (2.0 - m) > 2.0 * m ? (2.0 - m) : 2.0 * m;
     
-        // "Non Curved"
+        // 'Non Curved'
         // Covers x >= L, or always true if m == 1.0
         // y = x  i.e. not distorted
         if ((x > L) || (m == 1.0)) {
