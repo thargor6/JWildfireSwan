@@ -2103,6 +2103,99 @@ class HyperbolicFunc extends VariationShaderFunc2D {
     }
 }
 
+class Hypertile1Func extends VariationShaderFunc2D {
+    PARAM_P = "p"
+    PARAM_Q = "q"
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_P, type: VariationParamType.VP_NUMBER, initialValue: 3 },
+            { name: this.PARAM_Q, type: VariationParamType.VP_NUMBER, initialValue: 7 }
+        ]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        /* hypertile1 by Zueuk, http://zueuk.deviantart.com/art/Hyperbolic-tiling-plugins-165829025?q=sort%3Atime+gallery%3AZueuk&qo=0 */
+        return `{
+            float amount = float(${variation.amount});
+            float p = float(${variation.params.get(this.PARAM_P)});
+            float q = float(${variation.params.get(this.PARAM_Q)});
+            float pa = 2.0 * M_PI / float(p);
+            float r2 = 1.0 - (cos(2.0 * M_PI / float(p)) - 1.0) / (cos(2.0 * M_PI / float(p)) + cos(2.0 * M_PI / float(q)));
+            float r; 
+            if (r2 > 0.0)
+              r = 1.0 / sqrt(r2);
+            else
+              r = 1.0;
+            float rpa = float(iRand8(tex, 37678, rngState)) * pa;
+            float sina = sin(rpa);
+            float cosa = cos(rpa);
+            float re = r * cosa;
+            float im = r * sina;
+            float a = _tx + re, b = _ty - im;
+            float c = re * _tx - im * _ty + 1.0;
+            float d = re * _ty + im * _tx;
+            float vr = amount / (sqr(c) + sqr(d));
+            _vx += vr * (a * c + b * d);
+            _vy += vr * (b * c - a * d);
+        }`;
+    }
+
+    get name(): string {
+        return "hypertile1";
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
+class Hypertile2Func extends VariationShaderFunc2D {
+    PARAM_P = "p"
+    PARAM_Q = "q"
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_P, type: VariationParamType.VP_NUMBER, initialValue: 3 },
+            { name: this.PARAM_Q, type: VariationParamType.VP_NUMBER, initialValue: 7 }
+        ]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        /* hypertile2 by Zueuk, http://zueuk.deviantart.com/art/Hyperbolic-tiling-plugins-165829025?q=sort%3Atime+gallery%3AZueuk&qo=0 */
+        return `{
+            float amount = float(${variation.amount});
+            float p = float(${variation.params.get(this.PARAM_P)});
+            float q = float(${variation.params.get(this.PARAM_Q)});
+            float pa = 2.0 * M_PI / p;
+            float r2 = 1.0 - (cos(2.0 * M_PI / float(p)) - 1.0) / (cos(2.0 * M_PI / float(p)) + cos(2.0 * M_PI / float(q)));
+            float r; 
+            if (r2 > 0.0)
+              r = 1.0 / sqrt(r2);
+            else
+              r = 1.0;  
+            float a = _tx + r;
+            float b = _ty;
+            float c = r * _tx + 1.0;
+            float d = r * _ty;
+            float x = (a * c + b * d);
+            float y = (b * c - a * d);
+            float vr = amount / (sqr(c) + sqr(d));
+            float rpa = pa * float(iRand8(tex, 37678, rngState));
+            float sina = sin(rpa);
+            float cosa = cos(rpa);
+            _vx += vr * (x * cosa + y * sina);
+            _vy += vr * (y * cosa - x * sina);
+        }`;
+    }
+
+    get name(): string {
+        return "hypertile2";
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
 class JuliaFunc extends VariationShaderFunc2D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         return `{
@@ -2343,6 +2436,8 @@ export function register2DPartAVars() {
     VariationShaders.registerVar(new HeartWFFunc())
     VariationShaders.registerVar(new HorseshoeFunc())
     VariationShaders.registerVar(new HyperbolicFunc())
+    VariationShaders.registerVar(new Hypertile1Func())
+    VariationShaders.registerVar(new Hypertile2Func())
     VariationShaders.registerVar(new JuliaFunc())
     VariationShaders.registerVar(new JuliaCFunc())
     VariationShaders.registerVar(new JuliaNFunc())

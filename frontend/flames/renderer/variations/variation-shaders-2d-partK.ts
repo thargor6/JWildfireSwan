@@ -261,7 +261,6 @@ class LoonieFunc extends VariationShaderFunc2D {
     }
 }
 
-
 class Loonie2Func extends VariationShaderFunc2D {
     PARAM_RE_A = "sides"
     PARAM_RE_B = "star"
@@ -374,6 +373,46 @@ class Loonie2Func extends VariationShaderFunc2D {
 
     get name(): string {
         return "loonie2";
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
+class MCarpetFunc extends VariationShaderFunc2D {
+    PARAM_X = "x"
+    PARAM_Y = "y"
+    PARAM_TWIST = "twist"
+    PARAM_TILT = "tilt"
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_X, type: VariationParamType.VP_NUMBER, initialValue: 1.00 },
+            { name: this.PARAM_Y, type: VariationParamType.VP_NUMBER, initialValue: 0.75 },
+            { name: this.PARAM_TWIST, type: VariationParamType.VP_NUMBER, initialValue: 0.50 },
+            { name: this.PARAM_TILT, type: VariationParamType.VP_NUMBER, initialValue: -0.25 }
+        ]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        /* mcarpet from FracFx, http://fracfx.deviantart.com/art/FracFx-Plugin-Pack-171806681 */
+        return `{
+          float amount = float(${variation.amount});
+          float x = float(${variation.params.get(this.PARAM_X)});
+          float y = float(${variation.params.get(this.PARAM_Y)});   
+          float twist = float(${variation.params.get(this.PARAM_TWIST)});
+          float tilt = float(${variation.params.get(this.PARAM_TILT)});
+          float T = ((sqr(_tx) + sqr(_ty)) / 4.0 + 1.0);
+          float r = amount / T;
+          _vx += _tx * r * x;
+          _vy += _ty * r * y;
+          _vx += (1.0 - (twist * sqr(_tx)) + _ty) * amount;
+          _vy += tilt * _tx * amount;   
+        }`;
+    }
+
+    get name(): string {
+        return "mcarpet";
     }
 
     get variationTypes(): VariationTypes[] {
@@ -1860,6 +1899,38 @@ class SquareFunc extends VariationShaderFunc2D {
     }
 }
 
+class StripesFunc extends VariationShaderFunc2D {
+    PARAM_SPACE = "space"
+    PARAM_WARP = "warp"
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_SPACE, type: VariationParamType.VP_NUMBER, initialValue: 0.20 },
+            { name: this.PARAM_WARP, type: VariationParamType.VP_NUMBER, initialValue: 0.60 }]
+    }
+
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        /* Stripes from apo plugins pack */
+        return `{
+          float amount = float(${variation.amount});
+          float space = float(${variation.params.get(this.PARAM_SPACE)});
+          float warp = float(${variation.params.get(this.PARAM_WARP)});   
+          float roundx = floor(_tx + 0.5);
+          float offsetx = _tx - roundx;
+          _vx += amount * (offsetx * (1.0 - space) + roundx);
+          _vy += amount * (_ty + offsetx * offsetx * warp);
+        }`;
+    }
+
+    get name(): string {
+        return "stripes";
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
 class SwirlFunc extends VariationShaderFunc2D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
          return `{
@@ -2448,6 +2519,7 @@ export function register2DPartKVars() {
     VariationShaders.registerVar(new LogFunc())
     VariationShaders.registerVar(new LoonieFunc())
     VariationShaders.registerVar(new Loonie2Func())
+    VariationShaders.registerVar(new MCarpetFunc())
     VariationShaders.registerVar(new MobiusFunc())
     VariationShaders.registerVar(new ModulusFunc())
     VariationShaders.registerVar(new NGonFunc())
@@ -2493,6 +2565,7 @@ export function register2DPartKVars() {
     VariationShaders.registerVar(new SplitFunc())
     VariationShaders.registerVar(new SplitsFunc())
     VariationShaders.registerVar(new SquareFunc())
+    VariationShaders.registerVar(new StripesFunc())
     VariationShaders.registerVar(new SwirlFunc())
     VariationShaders.registerVar(new TanFunc())
     VariationShaders.registerVar(new TanhFunc())
