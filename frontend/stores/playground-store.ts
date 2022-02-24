@@ -17,7 +17,8 @@
 
 import { makeAutoObservable } from 'mobx';
 import {VariationShaders} from "Frontend/flames/renderer/variations/variation-shaders";
-import {register2DVars} from "Frontend/flames/renderer/variations/variation-shaders-2d";
+import {register2DPartAVars} from "Frontend/flames/renderer/variations/variation-shaders-2d-partA";
+import {register2DPartKVars} from "Frontend/flames/renderer/variations/variation-shaders-2d-partK";
 import {register3DVars} from "Frontend/flames/renderer/variations/variation-shaders-3d";
 import {registerZTransformVars} from "Frontend/flames/renderer/variations/variation-shaders-ztransform";
 import {Flame} from "Frontend/flames/model/flame";
@@ -91,7 +92,8 @@ export class PlaygroundStore {
 }
 
 
-register2DVars()
+register2DPartAVars()
+register2DPartKVars()
 register2DComplexVars()
 register2DWavesVars()
 register2DSynthVar()
