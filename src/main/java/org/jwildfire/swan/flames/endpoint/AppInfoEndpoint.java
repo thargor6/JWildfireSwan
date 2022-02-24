@@ -21,17 +21,24 @@ import com.vaadin.fusion.Endpoint;
 import com.vaadin.fusion.Nonnull;
 import lombok.extern.slf4j.Slf4j;
 
+import org.jwildfire.swan.flames.service.SessionInfoService;
 import org.springframework.beans.factory.annotation.Value;
 
 @Endpoint
 @AnonymousAllowed
 @Slf4j
 public class AppInfoEndpoint {
+  private final SessionInfoService sessionInfoService;
+
   @Value("${swan.appVersion}")
   private String appVersion;
 
   @Value("${swan.appBuildDate}")
   private String appBuildDate;
+
+  public AppInfoEndpoint(SessionInfoService sessionInfoService) {
+    this.sessionInfoService = sessionInfoService;
+  }
 
   public @Nonnull String getAppVersion() {
     return appVersion;
@@ -41,4 +48,31 @@ public class AppInfoEndpoint {
     return appBuildDate;
   }
 
+  public @Nonnull long getUpTimeInMs() {
+    return sessionInfoService.getUpTimeInMs();
+  }
+
+  public @Nonnull long getRandomFlamesCreated() {
+    return sessionInfoService.getRandomFlamesCreated();
+  }
+
+  public @Nonnull long getFlamesRendered() {
+    return sessionInfoService.getFlamesRendered();
+  }
+
+  public void incFlamesRendered() {
+    sessionInfoService.incFlamesRendered();
+  }
+
+  public @Nonnull long getRandomGradientsCreated() {
+    return sessionInfoService.getRandomGradientsCreated();
+  }
+
+  public @Nonnull long getExampleFlamesProvided() {
+    return sessionInfoService.getExampleFlamesProvided();
+  }
+
+  public @Nonnull long getFlamesParsed() {
+    return sessionInfoService.getFlamesParsed();
+  }
 }

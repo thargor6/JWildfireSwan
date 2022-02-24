@@ -24,6 +24,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.jwildfire.swan.flames.model.Flame;
 import org.jwildfire.swan.flames.model.RandomFlame;
 import org.jwildfire.swan.flames.service.FlamesService;
+import org.jwildfire.swan.flames.service.SessionInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.net.URL;
@@ -36,9 +37,11 @@ import java.util.List;
 public class FlamesEndpoint {
 
   private final FlamesService service;
+  private final SessionInfoService sessionInfoService;
 
-  public FlamesEndpoint(@Autowired FlamesService service) {
+  public FlamesEndpoint(@Autowired FlamesService service, SessionInfoService sessionInfoService) {
     this.service = service;
+    this.sessionInfoService = sessionInfoService;
   }
 
   public int count() {
@@ -49,7 +52,9 @@ public class FlamesEndpoint {
     URL url = Resources.getResource(String.format("examples/%s.flame", name));
     try {
       String flameXml = Resources.toString(url, StandardCharsets.UTF_8);
-      return service.parseFlame(flameXml);
+      Flame flame = service.parseFlame(flameXml);
+      sessionInfoService.incExampleFlamesProvided();
+      return flame;
     } catch (Throwable ex) {
       log.error(String.format("Error reading file %s", url), ex);
       throw new RuntimeException(ex);
@@ -58,7 +63,9 @@ public class FlamesEndpoint {
 
   public @Nonnull Flame parseFlame(String flameXml) {
     try {
-      return service.parseFlame(flameXml);
+      Flame flame = service.parseFlame(flameXml);
+      sessionInfoService.incFlamesParsed();
+      return flame;
     } catch (Throwable ex) {
       log.error("Error parsing flame", ex);
       throw new RuntimeException(ex);
@@ -67,7 +74,9 @@ public class FlamesEndpoint {
 
   public @Nonnull RandomFlame generateRandomFlame(@Nonnull List<@Nonnull String> supportedVariations) {
     try {
-      return service.generateRandomFlame(supportedVariations);
+      RandomFlame res = service.generateRandomFlame(supportedVariations);
+      sessionInfoService.incRandomFlamesCreated();
+      return res;
     } catch (Throwable ex) {
       log.error("Error generating random flame", ex);
       throw new RuntimeException(ex);
@@ -76,7 +85,9 @@ public class FlamesEndpoint {
 
   public @Nonnull RandomFlame generateRandomGradientForFlame(@Nonnull Flame refFlame) {
     try {
-      return service.generateRandomGradientForFlame(refFlame);
+      RandomFlame res = service.generateRandomGradientForFlame(refFlame);
+      sessionInfoService.getRandomGradientsCreated();
+      return res;
     } catch (Throwable ex) {
       log.error("Error generating random gradient", ex);
       throw new RuntimeException(ex);
