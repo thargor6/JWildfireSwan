@@ -16,7 +16,10 @@
 */
 
 export const FUNC_COSH = 'cosh'
+export const FUNC_SAFEDIV = 'safediv'
 export const FUNC_HYPOT = 'hypot'
+export const FUNC_J1 = 'j1'
+export const FUNC_JACOBI_ELLIPTIC = 'jacobi_elliptic'
 export const FUNC_LOG10 = 'log10'
 export const FUNC_MODULO = 'modulo'
 export const FUNC_SGN = 'sgn'
@@ -346,12 +349,170 @@ export class VariationMathFunctions {
               return sqrt(x * x + y * y);
 			}`);
 
-        this.registerFunction(FUNC_LOG10,
+      this.registerFunction(FUNC_J1,
+        // Bessel-Function from cern.jet.math.Bessel.j1
+           `            
+            float j1(float var0) {
+                float var2;
+                float var4;
+                float var6;
+                float var8;
+                if ((var2 = abs(var0)) < 8.0) {
+                  var4 = var0 * var0;
+                  var6 = var0 * (7.2362614232E10 + var4 * (-7.895059235E9 + var4 * (2.423968531E8 + var4 * (-2972611.439 + var4 * (15704.4826 + var4 * -30.16036606)))));
+                  var8 = 1.44725228442E11 + var4 * (2.300535178E9 + var4 * (1.858330474E7 + var4 * (99447.43394 + var4 * (376.9991397 + var4 * 1.0))));
+                  return var6 / var8;
+                } else {
+                  float var10 = 8.0 / var2;
+                  float var12 = var2 - 2.356194491;
+                  var4 = var10 * var10;
+                  var6 = 1.0 + var4 * (0.00183105 + var4 * (-3.516396496E-5 + var4 * (2.457520174E-6 + var4 * -2.40337019E-7)));
+                  var8 = 0.04687499995 + var4 * (-2.002690873E-4 + var4 * (8.449199096E-6 + var4 * (-8.8228987E-7 + var4 * 1.05787412E-7)));
+                  float var14 = sqrt(0.636619772 / var2) * (cos(var12) * var6 - var10 * sin(var12) * var8);
+                  if (var0 < 0.0) {
+                    var14 = -var14;
+                  }
+                  return var14;
+                }
+			      }`);
+
+      this.registerFunction(FUNC_JACOBI_ELLIPTIC,
+        `
+         float jacobi_elliptic(float uu, float emmc) {
+             float sn = 0.0;
+             // Code is taken from IROIRO++ library,
+             // released under CC share-alike license.
+             // less accurate for faster rendering (still very precise)
+             float CA = 0.0003; // (The accuracy is the square of CA.)
+             float a, b, c = 0.0, d = 0.0;
+             float em[13];
+             float en[13];
+             float dn, cn;
+             int bo;
+             int l = 0;
+             // LOGICAL bo
+             // main
+             float emc = emmc;
+             float u = uu;
+             if (emc != 0.0) {
+               bo = 0;
+               if (emc < 0.0)
+                 bo = 1;
+               if (bo != 0) {
+                 d = 1.0 - emc;
+                 emc = -emc / d;
+                 d = sqrt(d);
+                 u = d * u;
+               }
+               a = 1.0;
+               dn = 1.0;        
+               // for(i=0; i<13; i++){ original
+               for (int i = 0; i < 8; i++) {
+                 l = i;
+                 em[i] = a;
+                 emc = sqrt(emc);
+                 en[i] = emc;
+                 c = 0.5 * (a + emc);
+                 if (abs(a - emc) <= CA * a)
+                   break;
+                  emc = a * emc;
+                  a = c;
+                }
+            
+                u = c * u;
+                sn = sin(u);
+                cn = cos(u);
+                if (sn != 0.0) {
+                  a = cn / sn;
+                  c = a * c;
+                 /////////////////////////////////////////////////
+                 // Original:
+                 // 
+                 // for (int ii = l; ii >= 0; --ii) {
+                 //   b = em[ii];
+                 //   a = c * a;
+                 //   c = dn * c;
+                 //   dn = (en[ii] + a) / (b + a);
+                 //   a = c / b;
+                 // }
+                 if (l >= 7) {
+                    b = em[6];
+                    a = c * a;
+                    c = dn * c;
+                    dn = (en[6] + a) / (b + a);
+                    a = c / b;
+                  }                  
+                  if (l >= 6) {
+                    b = em[5];
+                    a = c * a;
+                    c = dn * c;
+                    dn = (en[5] + a) / (b + a);
+                    a = c / b;
+                  }  
+                  if (l >= 5) {
+                    b = em[4];
+                    a = c * a;
+                    c = dn * c;
+                    dn = (en[4] + a) / (b + a);
+                    a = c / b;
+                  }  
+                  if (l >= 4) {
+                    b = em[3];
+                    a = c * a;
+                    c = dn * c;
+                    dn = (en[3] + a) / (b + a);
+                    a = c / b;
+                  }  
+                  if (l >= 3) {
+                    b = em[2];
+                    a = c * a;
+                    c = dn * c;
+                    dn = (en[2] + a) / (b + a);
+                    a = c / b;
+                  }  
+                  if (l >= 2) {
+                    b = em[1];
+                    a = c * a;
+                    c = dn * c;
+                    dn = (en[1] + a) / (b + a);
+                    a = c / b;
+                  }  
+                  if (l >= 1) {
+                    b = em[0];
+                    a = c * a;
+                    c = dn * c;
+                    dn = (en[0] + a) / (b + a);
+                    a = c / b;
+                  }  
+                  ////////////////////////////////////////////////
+                  a = 1.0 / sqrt(c * c + 1.0);
+                  if (sn < 0.0)
+                    sn = -a;
+                  else
+                    sn = a;
+                  cn = c * sn;
+                }
+                if (bo != 0) {
+                  a = dn;
+                  dn = cn;
+                  cn = a;
+                  sn = sn / d;
+                }
+              } else {
+                // cn = 1.0/cosh(u);
+                // dn = cn;
+                sn = tanh(u);
+              }
+              return sn;
+            }
+        `)
+
+      this.registerFunction(FUNC_LOG10,
             // COSH Function (Hyperbolic Cosine) http://machinesdontcare.wordpress.com/2008/03/10/glsl-cosh-sinh-tanh/
             `            
             float log10(float val) {
-		       return log(val) / 2.30258509299; // log(10)
-			}`);
+		          return log(val) / 2.30258509299; // log(10)
+			      }`);
 
         this.registerFunction(FUNC_MODULO,
             // https://stackoverflow.com/questions/33908644/get-accurate-integer-modulo-in-webgl-shader
@@ -359,6 +520,13 @@ export class VariationMathFunctions {
                      float m=float(a)-floor((float(a)+0.5)/float(b))*float(b);
                      return int(floor(m+0.5));
                    }`)
+
+        this.registerFunction(FUNC_SAFEDIV,
+          `float safediv(float q, float r) {
+                   if (r < 1e-08)
+                     return 1.0 / r;
+                   return q / r;
+                 }`)
 
         this.registerFunction(FUNC_SGN,
             `float sgn(float arg) {
