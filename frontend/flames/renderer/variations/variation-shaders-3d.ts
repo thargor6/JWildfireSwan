@@ -15,30 +15,30 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 */
 
-import {VariationParam, VariationParamType, VariationShaderFunc3D, VariationTypes} from "./variation-shader-func";
-import {VariationShaders} from "Frontend/flames/renderer/variations/variation-shaders";
-import {RenderVariation, RenderXForm} from "Frontend/flames/model/render-flame";
-import {FUNC_SGN} from "Frontend/flames/renderer/variations/variation-math-functions";
+import {VariationParam, VariationParamType, VariationShaderFunc3D, VariationTypes} from './variation-shader-func';
+import {VariationShaders} from 'Frontend/flames/renderer/variations/variation-shaders';
+import {RenderVariation, RenderXForm} from 'Frontend/flames/model/render-flame';
+import {FUNC_SGN} from 'Frontend/flames/renderer/variations/variation-math-functions';
 
 /*
-  be sure to import this class somewhere and call register3DVars()
+  be sure to import this class somewhere and call registerVars_3D()
  */
 class Affine3DFunc extends VariationShaderFunc3D {
-    PARAM_TRANSLATE_X = "translateX"
-    PARAM_TRANSLATE_Y = "translateY"
-    PARAM_TRANSLATE_Z = "translateZ"
-    PARAM_SCALE_X = "scaleX"
-    PARAM_SCALE_Y = "scaleY"
-    PARAM_SCALE_Z = "scaleZ"
-    PARAM_ROTATE_X = "rotateX"
-    PARAM_ROTATE_Y = "rotateY"
-    PARAM_ROTATE_Z = "rotateZ"
-    PARAM_SHEAR_XY = "shearXY"
-    PARAM_SHEAR_XZ = "shearXZ"
-    PARAM_SHEAR_YX = "shearYX"
-    PARAM_SHEAR_YZ = "shearYZ"
-    PARAM_SHEAR_ZX = "shearZX"
-    PARAM_SHEAR_ZY = "shearZY"
+    PARAM_TRANSLATE_X = 'translateX'
+    PARAM_TRANSLATE_Y = 'translateY'
+    PARAM_TRANSLATE_Z = 'translateZ'
+    PARAM_SCALE_X = 'scaleX'
+    PARAM_SCALE_Y = 'scaleY'
+    PARAM_SCALE_Z = 'scaleZ'
+    PARAM_ROTATE_X = 'rotateX'
+    PARAM_ROTATE_Y = 'rotateY'
+    PARAM_ROTATE_Z = 'rotateZ'
+    PARAM_SHEAR_XY = 'shearXY'
+    PARAM_SHEAR_XZ = 'shearXZ'
+    PARAM_SHEAR_YX = 'shearYX'
+    PARAM_SHEAR_YZ = 'shearYZ'
+    PARAM_SHEAR_ZX = 'shearZX'
+    PARAM_SHEAR_ZY = 'shearZY'
 
     get params(): VariationParam[] {
         return [{ name: this.PARAM_TRANSLATE_X, type: VariationParamType.VP_NUMBER, initialValue: 0.0 },
@@ -59,7 +59,7 @@ class Affine3DFunc extends VariationShaderFunc3D {
     }
 
     getCode(xform: RenderXForm, variation: RenderVariation): string {
-        // based on "affine3D" of Flamelet
+        // based on 'affine3D' of Flamelet
         return `{
           float amount = float(${variation.amount});
           float translateX = float(${variation.params.get(this.PARAM_TRANSLATE_X)});
@@ -101,7 +101,7 @@ class Affine3DFunc extends VariationShaderFunc3D {
     }
 
     get name(): string {
-        return "affine3D";
+        return 'affine3D';
     }
 
     get variationTypes(): VariationTypes[] {
@@ -124,7 +124,7 @@ class Blade3DFunc extends VariationShaderFunc3D {
     }
 
     get name(): string {
-        return "blade3D";
+        return 'blade3D';
     }
 
     get variationTypes(): VariationTypes[] {
@@ -133,9 +133,9 @@ class Blade3DFunc extends VariationShaderFunc3D {
 }
 
 class Blob3DFunc extends VariationShaderFunc3D {
-    PARAM_LOW = "low"
-    PARAM_HIGH = "high"
-    PARAM_WAVES = "waves"
+    PARAM_LOW = 'low'
+    PARAM_HIGH = 'high'
+    PARAM_WAVES = 'waves'
 
     get params(): VariationParam[] {
         return [{ name: this.PARAM_LOW, type: VariationParamType.VP_NUMBER, initialValue: 0.3 },
@@ -162,7 +162,7 @@ class Blob3DFunc extends VariationShaderFunc3D {
     }
 
     get name(): string {
-        return "blob3D";
+        return 'blob3D';
     }
 
     get variationTypes(): VariationTypes[] {
@@ -191,7 +191,7 @@ class Blur3DFunc extends VariationShaderFunc3D {
     }
 
     get name(): string {
-        return "blur3D";
+        return 'blur3D';
     }
 
     get variationTypes(): VariationTypes[] {
@@ -212,7 +212,7 @@ class BubbleFunc extends VariationShaderFunc3D {
     }
 
     get name(): string {
-        return "bubble";
+        return 'bubble';
     }
 
     get variationTypes(): VariationTypes[] {
@@ -221,9 +221,9 @@ class BubbleFunc extends VariationShaderFunc3D {
 }
 
 class Bubble2Func extends VariationShaderFunc3D {
-    PARAM_X = "x"
-    PARAM_Y = "y"
-    PARAM_Z = "z"
+    PARAM_X = 'x'
+    PARAM_Y = 'y'
+    PARAM_Z = 'z'
 
     get params(): VariationParam[] {
         return [{ name: this.PARAM_X, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
@@ -251,7 +251,7 @@ class Bubble2Func extends VariationShaderFunc3D {
     }
 
     get name(): string {
-        return "bubble2";
+        return 'bubble2';
     }
 
     get variationTypes(): VariationTypes[] {
@@ -276,7 +276,7 @@ class BubbleWFFunc extends VariationShaderFunc3D {
     }
 
     get name(): string {
-        return "bubble_wf";
+        return 'bubble_wf';
     }
 
     get variationTypes(): VariationTypes[] {
@@ -285,9 +285,9 @@ class BubbleWFFunc extends VariationShaderFunc3D {
 }
 
 class Curl3DFunc extends VariationShaderFunc3D {
-    PARAM_CX = "cx"
-    PARAM_CY = "cy"
-    PARAM_CZ = "cz"
+    PARAM_CX = 'cx'
+    PARAM_CY = 'cy'
+    PARAM_CZ = 'cz'
 
     get params(): VariationParam[] {
         return [{ name: this.PARAM_CX, type: VariationParamType.VP_NUMBER, initialValue: 0.0 },
@@ -320,7 +320,7 @@ class Curl3DFunc extends VariationShaderFunc3D {
     }
 
     get name(): string {
-        return "curl3D";
+        return 'curl3D';
     }
 
     get variationTypes(): VariationTypes[] {
@@ -329,12 +329,12 @@ class Curl3DFunc extends VariationShaderFunc3D {
 }
 
 class ColorscaleWFFunc extends VariationShaderFunc3D {
-    PARAM_CX = "scale_x"
-    PARAM_CY = "scale_y"
-    PARAM_CZ = "scale_z"
-    PARAM_OFFSET_Z = "offset_z"
-    PARAM_RESET_Z = "reset_z"
-    PARAM_SIDES = "sides"
+    PARAM_CX = 'scale_x'
+    PARAM_CY = 'scale_y'
+    PARAM_CZ = 'scale_z'
+    PARAM_OFFSET_Z = 'offset_z'
+    PARAM_RESET_Z = 'reset_z'
+    PARAM_SIDES = 'sides'
 
     get params(): VariationParam[] {
         return [{ name: this.PARAM_CX, type: VariationParamType.VP_NUMBER, initialValue: 0.0 },
@@ -370,7 +370,7 @@ class ColorscaleWFFunc extends VariationShaderFunc3D {
     }
 
     get name(): string {
-        return "colorscale_wf";
+        return 'colorscale_wf';
     }
 
     get variationTypes(): VariationTypes[] {
@@ -379,15 +379,15 @@ class ColorscaleWFFunc extends VariationShaderFunc3D {
 }
 
 class ConeFunc extends VariationShaderFunc3D {
-    PARAM_RADIUS1 = "radius1"
-    PARAM_RADIUS2 = "radius2"
-    PARAM_SIZE1 = "size1"
-    PARAM_SIZE2 = "size2"
-    PARAM_YWAVE = "ywave"
-    PARAM_XWAVE = "xwave"
-    PARAM_HEIGHT = "height"
-    PARAM_WARP = "warp"
-    PARAM_WEIGHT = "weight"
+    PARAM_RADIUS1 = 'radius1'
+    PARAM_RADIUS2 = 'radius2'
+    PARAM_SIZE1 = 'size1'
+    PARAM_SIZE2 = 'size2'
+    PARAM_YWAVE = 'ywave'
+    PARAM_XWAVE = 'xwave'
+    PARAM_HEIGHT = 'height'
+    PARAM_WARP = 'warp'
+    PARAM_WEIGHT = 'weight'
 
     get params(): VariationParam[] {
         return [{ name: this.PARAM_RADIUS1, type: VariationParamType.VP_NUMBER, initialValue: 0.50 },
@@ -425,7 +425,7 @@ class ConeFunc extends VariationShaderFunc3D {
     }
 
     get name(): string {
-        return "cone";
+        return 'cone';
     }
 
     get variationTypes(): VariationTypes[] {
@@ -444,7 +444,7 @@ class CylinderApoFunc extends VariationShaderFunc3D {
     }
 
     get name(): string {
-        return "cylinder_apo";
+        return 'cylinder_apo';
     }
 
     get variationTypes(): VariationTypes[] {
@@ -464,7 +464,161 @@ class HemisphereFunc extends VariationShaderFunc3D {
     }
 
     get name(): string {
-        return "hemisphere";
+        return 'hemisphere';
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_3D];
+    }
+}
+
+class Hypertile3DFunc extends VariationShaderFunc3D {
+    PARAM_P = 'p'
+    PARAM_Q = 'q'
+    PARAM_N = 'n'
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_P, type: VariationParamType.VP_NUMBER, initialValue: 3 },
+            { name: this.PARAM_Q, type: VariationParamType.VP_NUMBER, initialValue: 7 },
+            { name: this.PARAM_N, type: VariationParamType.VP_NUMBER, initialValue: 0 }]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        /* hypertile3D by Zueuk, http://zueuk.deviantart.com/art/3D-Hyperbolic-tiling-plugins-169047926 */
+        return `{
+          float amount = float(${variation.amount});
+          int p = int(${variation.params.get(this.PARAM_P)});
+          int q = int(${variation.params.get(this.PARAM_Q)});
+          int n = int(${variation.params.get(this.PARAM_N)});        
+          float c2x, c2y, c2, s2x, s2y, s2z, cx, cy; 
+          float pa = 2.0 * M_PI / float(p), qa = 2.0 * M_PI / float(q);
+          float r = -(cos(pa) - 1.0) / (cos(pa) + cos(qa));
+          if (r > 0.0)
+            r = 1.0 / sqrt(1.0 + r);
+          else
+            r = 1.0;
+          float na = float(n) * pa;
+          cx = r * cos(na);
+          cy = r * sin(na);   
+          c2 = sqr(cx) + sqr(cy);  
+          c2x = 2.0 * cx;
+          c2y = 2.0 * cy;
+          s2x = 1.0 + sqr(cx) - sqr(cy);
+          s2y = 1.0 + sqr(cy) - sqr(cx);
+          s2z = 1.0 - sqr(cy) - sqr(cx);
+          float r2 = sqr(_tx) + sqr(_ty) + sqr(_tz);
+          float x2cx = c2x * _tx, y2cy = c2y * _ty;
+          float d = amount / (c2 * r2 + x2cx - y2cy + 1.0);
+          _vx += d * (_tx * s2x - cx * (y2cy - r2 - 1.0));
+          _vy += d * (_ty * s2y + cy * (-x2cx - r2 - 1.0));
+          _vz += d * (_tz * s2z); 
+        }`;
+    }
+
+    get name(): string {
+        return 'hypertile3D';
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_3D];
+    }
+}
+
+class Hypertile3D1Func extends VariationShaderFunc3D {
+    PARAM_P = 'p'
+    PARAM_Q = 'q'
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_P, type: VariationParamType.VP_NUMBER, initialValue: 3 },
+            { name: this.PARAM_Q, type: VariationParamType.VP_NUMBER, initialValue: 7 }]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        /* hypertile3D1 by Zueuk, http://zueuk.deviantart.com/art/3D-Hyperbolic-tiling-plugins-169047926 */
+        return `{
+          float amount = float(${variation.amount});
+          int p = int(${variation.params.get(this.PARAM_P)});
+          int q = int(${variation.params.get(this.PARAM_Q)});
+          float pa, qa, r, c2, s2z; 
+          pa = 2.0 * M_PI / float(p);
+          qa = 2.0 * M_PI / float(q);
+          r = -(cos(pa) - 1.0) / (cos(pa) + cos(qa));
+          if (r > 0.0)
+            r = 1.0 / sqrt(1.0 + r);
+          else
+            r = 1.0;
+          c2 = sqr(r);
+          s2z = 1.0 - c2;
+          float a = float(iRand8(tex, 32768, rngState)) * pa;
+          float sina = sin(a);
+          float cosa = cos(a);
+          float cx = r * cosa;
+          float cy = r * sina;
+          float s2x = 1.0 + sqr(cx) - sqr(cy);
+          float s2y = 1.0 + sqr(cy) - sqr(cx);
+          float r2 = sqr(_tx) + sqr(_ty) + sqr(_tz);
+          float x2cx = 2.0 * cx * _tx, y2cy = 2.0 * cy * _ty;
+          float d = amount / (c2 * r2 + x2cx - y2cy + 1.0);
+          _vx += d * (_tx * s2x - cx * (y2cy - r2 - 1.0));
+          _vy += d * (_ty * s2y + cy * (-x2cx - r2 - 1.0));
+          _vz += d * (_tz * s2z);
+        }`;
+    }
+
+    get name(): string {
+        return 'hypertile3D1';
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_3D];
+    }
+}
+
+class Hypertile3D2Func extends VariationShaderFunc3D {
+    PARAM_P = 'p'
+    PARAM_Q = 'q'
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_P, type: VariationParamType.VP_NUMBER, initialValue: 3 },
+            { name: this.PARAM_Q, type: VariationParamType.VP_NUMBER, initialValue: 7 }]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        /* hypertile3D2 by Zueuk, http://zueuk.deviantart.com/art/3D-Hyperbolic-tiling-plugins-169047926 */
+        return `{
+          float amount = float(${variation.amount});
+          int p = int(${variation.params.get(this.PARAM_P)});
+          int q = int(${variation.params.get(this.PARAM_Q)});
+          float pa, qa, cx, c2, c2x, s2x, s2y, s2z; 
+          pa = 2.0 * M_PI / float(p);
+          qa = 2.0 * M_PI / float(q);    
+          float r = -(cos(pa) - 1.0) / (cos(pa) + cos(qa));
+          if (r > 0.0)
+            r = 1.0 / sqrt(1.0 + r);
+          else
+            r = 1.0;    
+          cx = r;
+          c2 = sqr(cx);
+          c2x = 2.0 * cx;
+          s2x = 1.0 + sqr(cx);
+          s2y = 1.0 - sqr(cx);
+          s2z = 1.0 - sqr(cx);
+          float r2 = sqr(_tx) + sqr(_ty) + sqr(_tz);
+          float x2cx = c2x * _tx;
+          float x = _tx * s2x - cx * (-r2 - 1.0);
+          float y = _ty * s2y;
+          float vr = amount / (c2 * r2 + x2cx + 1.0);
+          float a = float(iRand8(tex, 32768, rngState)) * pa;
+          float sina = sin(a);
+          float cosa = cos(a);
+          _vx += vr * (x * cosa + y * sina);
+          _vy += vr * (y * cosa - x * sina);
+          _vz += vr * (_tz * s2z);
+        }`;
+    }
+
+    get name(): string {
+        return 'hypertile3D2';
     }
 
     get variationTypes(): VariationTypes[] {
@@ -473,7 +627,7 @@ class HemisphereFunc extends VariationShaderFunc3D {
 }
 
 class Julia3DFunc extends VariationShaderFunc3D {
-    PARAM_POWER = "power"
+    PARAM_POWER = 'power'
 
     get params(): VariationParam[] {
         return [{ name: this.PARAM_POWER, type: VariationParamType.VP_NUMBER, initialValue: 3 }]
@@ -501,7 +655,7 @@ class Julia3DFunc extends VariationShaderFunc3D {
     }
 
     get name(): string {
-        return "julia3D";
+        return 'julia3D';
     }
 
     get variationTypes(): VariationTypes[] {
@@ -510,7 +664,7 @@ class Julia3DFunc extends VariationShaderFunc3D {
 }
 
 class Julia3DZFunc extends VariationShaderFunc3D {
-    PARAM_POWER = "power"
+    PARAM_POWER = 'power'
 
     get params(): VariationParam[] {
         return [{ name: this.PARAM_POWER, type: VariationParamType.VP_NUMBER, initialValue: 3 }]
@@ -537,7 +691,7 @@ class Julia3DZFunc extends VariationShaderFunc3D {
     }
 
     get name(): string {
-        return "julia3Dz";
+        return 'julia3Dz';
     }
 
     get variationTypes(): VariationTypes[] {
@@ -556,7 +710,7 @@ class Linear3DFunc extends VariationShaderFunc3D {
     }
 
     get name(): string {
-        return "linear3D";
+        return 'linear3D';
     }
 
     get variationTypes(): VariationTypes[] {
@@ -565,9 +719,9 @@ class Linear3DFunc extends VariationShaderFunc3D {
 }
 
 class LinearT3DFunc extends VariationShaderFunc3D {
-    PARAM_POW_X = "powX"
-    PARAM_POW_Y= "powY"
-    PARAM_POW_Z= "powZ"
+    PARAM_POW_X = 'powX'
+    PARAM_POW_Y= 'powY'
+    PARAM_POW_Z= 'powZ'
 
     get params(): VariationParam[] {
         return [{ name: this.PARAM_POW_X, type: VariationParamType.VP_NUMBER, initialValue: 1.35 },
@@ -589,7 +743,7 @@ class LinearT3DFunc extends VariationShaderFunc3D {
     }
 
     get name(): string {
-        return "linearT3D";
+        return 'linearT3D';
     }
 
     get funcDependencies(): string[] {
@@ -602,9 +756,9 @@ class LinearT3DFunc extends VariationShaderFunc3D {
 }
 
 class Pie3DFunc extends VariationShaderFunc3D {
-    PARAM_SLICES = "slices"
-    PARAM_ROTATION = "rotation"
-    PARAM_THICKNESS = "thickness"
+    PARAM_SLICES = 'slices'
+    PARAM_ROTATION = 'rotation'
+    PARAM_THICKNESS = 'thickness'
 
     get params(): VariationParam[] {
         return [{ name: this.PARAM_SLICES, type: VariationParamType.VP_NUMBER, initialValue: 6.0 },
@@ -630,7 +784,7 @@ class Pie3DFunc extends VariationShaderFunc3D {
     }
 
     get name(): string {
-        return "pie3D";
+        return 'pie3D';
     }
 
     get variationTypes(): VariationTypes[] {
@@ -651,7 +805,7 @@ class Sinusoidal3DFunc extends VariationShaderFunc3D {
     }
 
     get name(): string {
-        return "sinusoidal3d";
+        return 'sinusoidal3d';
     }
 
     get variationTypes(): VariationTypes[] {
@@ -671,7 +825,7 @@ class Spherical3DFunc extends VariationShaderFunc3D {
     }
 
     get name(): string {
-        return "spherical3D";
+        return 'spherical3D';
     }
 
     get variationTypes(): VariationTypes[] {
@@ -680,8 +834,8 @@ class Spherical3DFunc extends VariationShaderFunc3D {
 }
 
 class Spherical3DWFFunc extends VariationShaderFunc3D {
-    PARAM_INVERT = "invert"
-    PARAM_EXPONENT = "exponent"
+    PARAM_INVERT = 'invert'
+    PARAM_EXPONENT = 'exponent'
 
     get params(): VariationParam[] {
         return [{ name: this.PARAM_INVERT, type: VariationParamType.VP_NUMBER, initialValue: 0 },
@@ -714,7 +868,7 @@ class Spherical3DWFFunc extends VariationShaderFunc3D {
     }
 
     get name(): string {
-        return "spherical3D_wf";
+        return 'spherical3D_wf';
     }
 
     get variationTypes(): VariationTypes[] {
@@ -733,7 +887,7 @@ class Square3DFunc extends VariationShaderFunc3D {
     }
 
     get name(): string {
-        return "square3D";
+        return 'square3D';
     }
 
     get variationTypes(): VariationTypes[] {
@@ -752,7 +906,7 @@ class Tangent3DFunc extends VariationShaderFunc3D {
     }
 
     get name(): string {
-        return "tangent3D";
+        return 'tangent3D';
     }
 
     get variationTypes(): VariationTypes[] {
@@ -761,10 +915,10 @@ class Tangent3DFunc extends VariationShaderFunc3D {
 }
 
 class TaurusFunc extends VariationShaderFunc3D {
-    PARAM_R = "r"
-    PARAM_N = "n"
-    PARAM_INV = "inv"
-    PARAM_SOR = "sor"
+    PARAM_R = 'r'
+    PARAM_N = 'n'
+    PARAM_INV = 'inv'
+    PARAM_SOR = 'sor'
 
     get params(): VariationParam[] {
         return [{ name: this.PARAM_R, type: VariationParamType.VP_NUMBER, initialValue: 3.00 },
@@ -794,7 +948,7 @@ class TaurusFunc extends VariationShaderFunc3D {
     }
 
     get name(): string {
-        return "taurus";
+        return 'taurus';
     }
 
     get variationTypes(): VariationTypes[] {
@@ -803,8 +957,8 @@ class TaurusFunc extends VariationShaderFunc3D {
 }
 
 class Waves2_3DFunc extends VariationShaderFunc3D {
-    PARAM_FREQ = "freq"
-    PARAM_SCALE = "scale"
+    PARAM_FREQ = 'freq'
+    PARAM_SCALE = 'scale'
 
     get params(): VariationParam[] {
         return [{ name: this.PARAM_FREQ, type: VariationParamType.VP_NUMBER, initialValue: 2.00 },
@@ -826,7 +980,7 @@ class Waves2_3DFunc extends VariationShaderFunc3D {
     }
 
     get name(): string {
-        return "waves2_3D";
+        return 'waves2_3D';
     }
 
     get variationTypes(): VariationTypes[] {
@@ -834,7 +988,7 @@ class Waves2_3DFunc extends VariationShaderFunc3D {
     }
 }
 
-export function register3DVars() {
+export function registerVars_3D() {
     VariationShaders.registerVar(new Affine3DFunc())
     VariationShaders.registerVar(new Blade3DFunc())
     VariationShaders.registerVar(new Blob3DFunc())
@@ -847,6 +1001,9 @@ export function register3DVars() {
     VariationShaders.registerVar(new Curl3DFunc())
     VariationShaders.registerVar(new CylinderApoFunc())
     VariationShaders.registerVar(new HemisphereFunc())
+    VariationShaders.registerVar(new Hypertile3DFunc())
+    VariationShaders.registerVar(new Hypertile3D1Func())
+    VariationShaders.registerVar(new Hypertile3D2Func())
     VariationShaders.registerVar(new Julia3DFunc())
     VariationShaders.registerVar(new Julia3DZFunc())
     VariationShaders.registerVar(new Linear3DFunc())

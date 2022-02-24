@@ -33,7 +33,8 @@ import '@vaadin/tabs'
 
 import '@vaadin/vaadin-combo-box';
 import './about-variations-panel'
-import './about-info-panel'
+import './about-app-info-panel'
+import './about-session-info-panel'
 
 @customElement('about-view')
 export class AboutView extends View {
@@ -65,10 +66,15 @@ export class AboutView extends View {
           <vaadin-icon icon="vaadin:info-circle-o"></vaadin-icon>
           <span>Supported variations</span>
         </vaadin-tab>
+          <vaadin-tab theme="icon-on-top">
+              <vaadin-icon icon="vaadin:eye"></vaadin-icon>
+              <span>Session information</span>
+          </vaadin-tab>
       </vaadin-tabs>
       <div style="display: flex; flex-direction: column; width: 100%;">
-        <about-info-panel .visible=${this.selectedTab === 0}></about-info-panel>
+        <about-app-info-panel .visible=${this.selectedTab === 0}></about-app-info-panel>
         <about-variations-panel .visible=${this.selectedTab === 1}></about-variations-panel>
+        <about-session-info-panel .visible=${this.selectedTab === 2}></about-session-info-panel>
       </div>
       
       <h1>Welcome to JWildfire Swan: awesome fractal flames, GPU accelerated!</h1>

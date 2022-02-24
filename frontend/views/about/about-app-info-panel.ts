@@ -29,18 +29,30 @@ import {appStore} from "Frontend/stores/app-store";
 import {AppInfoEndpoint} from "Frontend/generated/endpoints";
 import {until} from "lit/directives/until.js";
 
-@customElement('about-info-panel')
-export class AboutInfoPanel extends MobxLitElement {
+@customElement('about-app-info-panel')
+export class AboutAppInfoPanel extends MobxLitElement {
   @property({type: Boolean})
   visible = true
+
+  @state()
+  appVersion = ''
+
+  @state()
+  appBuildDate = ''
 
   render() {
     return html`
       <div style="${this.visible ? `display:block;`: `display:none;`}">
-        <p><b>Version</b>: ${until(AppInfoEndpoint.getAppVersion().then((data) =>  html`<span>${data}</span>`), html`<span>${appStore.loadingText}</span>`)}</p>
-        <p><b>Build date</b>: ${until(AppInfoEndpoint.getAppBuildDate().then((data) =>  html`<span>${data}</span>`), html`<span>${appStore.loadingText}</span>`)}</p>
+        <p><b>Version</b>: ${this.appVersion}</p>
+        <p><b>Build date</b>: ${this.appBuildDate}</p>
       </div>
 `;
+  }
+
+  async connectedCallback() {
+    super.connectedCallback();
+    this.appVersion = await AppInfoEndpoint.getAppVersion()
+    this.appBuildDate = await AppInfoEndpoint.getAppBuildDate()
   }
 
 
