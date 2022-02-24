@@ -51,13 +51,13 @@ export class GalleryView extends View {
           <vaadin-button @click="${this.refreshItems}">Refresh</vaadin-button>
         </vaadin-vertical-layout>
         </vaadin-horizontal-layout>
-        <ol class="gap-m grid list-none m-0 p-0">
+        <ol class="gap-m grid list-none m-0 p-0" style="grid-template-columns: repeat(auto-fill, minmax(20em, 1fr));">
           ${galleryStore.exampleFlames.map(
             (example) => html`
-              <li class="bg-contrast-5 flex flex-col items-start p-m rounded-l">
+              <li class="bg-contrast-5 items-start p-m rounded-l">
                 <div
                   class="bg-contrast flex items-center justify-center mb-m overflow-hidden rounded-m w-full"
-                  style="height: 160px;"
+                  style="max-height: 12em;"
                 >
                   <img alt=${example.title} @click="${this.renderExample.bind(this, example.name)}" class="w-full" style="cursor: pointer;" loading="lazy" src="./images/${example.name}.jpg" />
                 </div>
