@@ -15,9 +15,9 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 */
 
-import {VariationParam, VariationParamType, VariationShaderFunc2D, VariationTypes} from "./variation-shader-func";
-import {VariationShaders} from "Frontend/flames/renderer/variations/variation-shaders";
-import {RenderVariation, RenderXForm} from "Frontend/flames/model/render-flame";
+import {VariationParam, VariationParamType, VariationShaderFunc2D, VariationTypes} from './variation-shader-func';
+import {VariationShaders} from 'Frontend/flames/renderer/variations/variation-shaders';
+import {RenderVariation, RenderXForm} from 'Frontend/flames/model/render-flame';
 import {
     FUNC_COSH,
     FUNC_HYPOT,
@@ -26,18 +26,18 @@ import {
     FUNC_SGN,
     FUNC_SINH,
     FUNC_TANH
-} from "Frontend/flames/renderer/variations/variation-math-functions";
-import {M_PI} from "Frontend/flames/renderer/mathlib";
+} from 'Frontend/flames/renderer/variations/variation-math-functions';
+import {M_PI} from 'Frontend/flames/renderer/mathlib';
 
 /*
-  be sure to import this class somewhere and call register2DPartKVars()
+  be sure to import this class somewhere and call registerVars_2D_PartK()
  */
 class KaleidoscopeFunc extends VariationShaderFunc2D {
-    PARAM_PULL = "pull"
-    PARAM_ROTATE = "rotate"
-    PARAM_LINE_UP = "line_up"
-    PARAM_X = "x"
-    PARAM_Y = "y"
+    PARAM_PULL = 'pull'
+    PARAM_ROTATE = 'rotate'
+    PARAM_LINE_UP = 'line_up'
+    PARAM_X = 'x'
+    PARAM_Y = 'y'
 
     get params(): VariationParam[] {
         return [{ name: this.PARAM_PULL, type: VariationParamType.VP_NUMBER, initialValue: 0.00 },
@@ -70,7 +70,7 @@ class KaleidoscopeFunc extends VariationShaderFunc2D {
     }
 
     get name(): string {
-        return "kaleidoscope";
+        return 'kaleidoscope';
     }
 
     get variationTypes(): VariationTypes[] {
@@ -79,8 +79,7 @@ class KaleidoscopeFunc extends VariationShaderFunc2D {
 }
 
 class LayeredSpiralFunc extends VariationShaderFunc2D {
-    PARAM_RADIUS = "radius"
-
+    PARAM_RADIUS = 'radius'
 
     get params(): VariationParam[] {
         return [{ name: this.PARAM_RADIUS, type: VariationParamType.VP_NUMBER, initialValue: 1.00 }
@@ -100,7 +99,7 @@ class LayeredSpiralFunc extends VariationShaderFunc2D {
     }
 
     get name(): string {
-        return "layered_spiral";
+        return 'layered_spiral';
     }
 
     get variationTypes(): VariationTypes[] {
@@ -109,11 +108,11 @@ class LayeredSpiralFunc extends VariationShaderFunc2D {
 }
 
 class LazySusanFunc extends VariationShaderFunc2D {
-    PARAM_SPACE = "space"
-    PARAM_TWIST = "twist"
-    PARAM_SPIN = "spin"
-    PARAM_X = "x"
-    PARAM_Y = "y"
+    PARAM_SPACE = 'space'
+    PARAM_TWIST = 'twist'
+    PARAM_SPIN = 'spin'
+    PARAM_X = 'x'
+    PARAM_Y = 'y'
 
     get params(): VariationParam[] {
         return [{ name: this.PARAM_SPACE, type: VariationParamType.VP_NUMBER, initialValue: 0.40 },
@@ -152,7 +151,7 @@ class LazySusanFunc extends VariationShaderFunc2D {
     }
 
     get name(): string {
-        return "lazysusan";
+        return 'lazysusan';
     }
 
     get variationTypes(): VariationTypes[] {
@@ -170,7 +169,7 @@ class LinearFunc extends VariationShaderFunc2D {
     }
 
     get name(): string {
-        return "linear";
+        return 'linear';
     }
 
     get variationTypes(): VariationTypes[] {
@@ -179,8 +178,8 @@ class LinearFunc extends VariationShaderFunc2D {
 }
 
 class LinearTFunc extends VariationShaderFunc2D {
-    PARAM_POW_X = "powX"
-    PARAM_POW_Y= "powY"
+    PARAM_POW_X = 'powX'
+    PARAM_POW_Y= 'powY'
 
     get params(): VariationParam[] {
         return [{ name: this.PARAM_POW_X, type: VariationParamType.VP_NUMBER, initialValue: 1.2 },
@@ -199,7 +198,7 @@ class LinearTFunc extends VariationShaderFunc2D {
     }
 
     get name(): string {
-        return "linearT";
+        return 'linearT';
     }
 
     get funcDependencies(): string[] {
@@ -226,7 +225,7 @@ class LogFunc extends VariationShaderFunc2D {
     }
 
     get name(): string {
-        return "log";
+        return 'log';
     }
 
     get variationTypes(): VariationTypes[] {
@@ -253,7 +252,7 @@ class LoonieFunc extends VariationShaderFunc2D {
     }
 
     get name(): string {
-        return "loonie";
+        return 'loonie';
     }
 
     get variationTypes(): VariationTypes[] {
@@ -262,9 +261,9 @@ class LoonieFunc extends VariationShaderFunc2D {
 }
 
 class Loonie2Func extends VariationShaderFunc2D {
-    PARAM_RE_A = "sides"
-    PARAM_RE_B = "star"
-    PARAM_RE_C = "circle"
+    PARAM_RE_A = 'sides'
+    PARAM_RE_B = 'star'
+    PARAM_RE_C = 'circle'
 
     get params(): VariationParam[] {
         return [{ name: this.PARAM_RE_A, type: VariationParamType.VP_NUMBER, initialValue: 4 },
@@ -372,7 +371,7 @@ class Loonie2Func extends VariationShaderFunc2D {
     }
 
     get name(): string {
-        return "loonie2";
+        return 'loonie2';
     }
 
     get variationTypes(): VariationTypes[] {
@@ -381,10 +380,10 @@ class Loonie2Func extends VariationShaderFunc2D {
 }
 
 class MCarpetFunc extends VariationShaderFunc2D {
-    PARAM_X = "x"
-    PARAM_Y = "y"
-    PARAM_TWIST = "twist"
-    PARAM_TILT = "tilt"
+    PARAM_X = 'x'
+    PARAM_Y = 'y'
+    PARAM_TWIST = 'twist'
+    PARAM_TILT = 'tilt'
 
     get params(): VariationParam[] {
         return [{ name: this.PARAM_X, type: VariationParamType.VP_NUMBER, initialValue: 1.00 },
@@ -412,7 +411,7 @@ class MCarpetFunc extends VariationShaderFunc2D {
     }
 
     get name(): string {
-        return "mcarpet";
+        return 'mcarpet';
     }
 
     get variationTypes(): VariationTypes[] {
@@ -421,14 +420,14 @@ class MCarpetFunc extends VariationShaderFunc2D {
 }
 
 class MobiusFunc extends VariationShaderFunc2D {
-    PARAM_RE_A = "re_a"
-    PARAM_RE_B = "re_b"
-    PARAM_RE_C = "re_c"
-    PARAM_RE_D = "re_d"
-    PARAM_IM_A = "im_a"
-    PARAM_IM_B = "im_b"
-    PARAM_IM_C = "im_c"
-    PARAM_IM_D = "im_d"
+    PARAM_RE_A = 're_a'
+    PARAM_RE_B = 're_b'
+    PARAM_RE_C = 're_c'
+    PARAM_RE_D = 're_d'
+    PARAM_IM_A = 'im_a'
+    PARAM_IM_B = 'im_b'
+    PARAM_IM_C = 'im_c'
+    PARAM_IM_D = 'im_d'
     get params(): VariationParam[] {
         return [{ name: this.PARAM_RE_A, type: VariationParamType.VP_NUMBER, initialValue: 0.10 },
             { name: this.PARAM_RE_B, type: VariationParamType.VP_NUMBER, initialValue: 0.20 },
@@ -467,7 +466,7 @@ class MobiusFunc extends VariationShaderFunc2D {
     }
 
     get name(): string {
-        return "mobius";
+        return 'mobius';
     }
 
     get variationTypes(): VariationTypes[] {
@@ -476,8 +475,8 @@ class MobiusFunc extends VariationShaderFunc2D {
 }
 
 class ModulusFunc extends VariationShaderFunc2D {
-    PARAM_X = "x"
-    PARAM_Y = "y"
+    PARAM_X = 'x'
+    PARAM_Y = 'y'
 
     get params(): VariationParam[] {
         return [{ name: this.PARAM_X, type: VariationParamType.VP_NUMBER, initialValue: 0.20 },
@@ -511,7 +510,7 @@ class ModulusFunc extends VariationShaderFunc2D {
     }
 
     get name(): string {
-        return "modulus";
+        return 'modulus';
     }
 
     get variationTypes(): VariationTypes[] {
@@ -520,10 +519,10 @@ class ModulusFunc extends VariationShaderFunc2D {
 }
 
 class NGonFunc extends VariationShaderFunc2D {
-    PARAM_CIRCLE = "circle"
-    PARAM_CORNERS = "corners"
-    PARAM_POWER = "power"
-    PARAM_SIDES = "sides"
+    PARAM_CIRCLE = 'circle'
+    PARAM_CORNERS = 'corners'
+    PARAM_POWER = 'power'
+    PARAM_SIDES = 'sides'
 
     get params(): VariationParam[] {
         return [{ name: this.PARAM_CIRCLE, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
@@ -557,7 +556,7 @@ class NGonFunc extends VariationShaderFunc2D {
     }
 
     get name(): string {
-        return "ngon";
+        return 'ngon';
     }
 
     get variationTypes(): VariationTypes[] {
@@ -565,31 +564,9 @@ class NGonFunc extends VariationShaderFunc2D {
     }
 }
 
-class NoiseFunc extends VariationShaderFunc2D {
-    getCode(xform: RenderXForm, variation: RenderVariation): string {
-        return `{
-          float amount = float(${variation.amount});
-          float r = rand8(tex, rngState) * 2.0 * M_PI;
-          float sinr = sin(r);
-          float cosr = cos(r);
-          r = amount * rand8(tex, rngState);
-          _vx += _tx * r * cosr;
-          _vy += _ty * r * sinr;
-        }`;
-    }
-
-    get name(): string {
-        return "noise";
-    }
-
-    get variationTypes(): VariationTypes[] {
-        return [VariationTypes.VARTYPE_2D, VariationTypes.VARTYPE_BLUR];
-    }
-}
-
 class NPolarFunc extends VariationShaderFunc2D {
-    PARAM_PARITY = "parity"
-    PARAM_N = "n"
+    PARAM_PARITY = 'parity'
+    PARAM_N = 'n'
 
     get params(): VariationParam[] {
         return [{ name: this.PARAM_PARITY, type: VariationParamType.VP_NUMBER, initialValue: 0 },
@@ -624,7 +601,7 @@ class NPolarFunc extends VariationShaderFunc2D {
     }
 
     get name(): string {
-        return "npolar";
+        return 'npolar';
     }
 
 
@@ -638,10 +615,10 @@ class NPolarFunc extends VariationShaderFunc2D {
 }
 
 class OscilloscopeFunc extends VariationShaderFunc2D {
-    PARAM_SEPARATION = "separation"
-    PARAM_FREQUENCY = "frequency"
-    PARAM_AMPLITUDE = "amplitude"
-    PARAM_DAMPING = "damping"
+    PARAM_SEPARATION = 'separation'
+    PARAM_FREQUENCY = 'frequency'
+    PARAM_AMPLITUDE = 'amplitude'
+    PARAM_DAMPING = 'damping'
 
     get params(): VariationParam[] {
         return [{ name: this.PARAM_SEPARATION, type: VariationParamType.VP_NUMBER, initialValue: 1.00 },
@@ -677,7 +654,7 @@ class OscilloscopeFunc extends VariationShaderFunc2D {
     }
 
     get name(): string {
-        return "oscilloscope";
+        return 'oscilloscope';
     }
 
     get variationTypes(): VariationTypes[] {
@@ -686,12 +663,12 @@ class OscilloscopeFunc extends VariationShaderFunc2D {
 }
 
 class Oscilloscope2Func extends VariationShaderFunc2D {
-    PARAM_SEPARATION = "separation"
-    PARAM_FREQUENCYX = "frequencyx"
-    PARAM_FREQUENCYY = "frequencyy"
-    PARAM_AMPLITUDE = "amplitude"
-    PARAM_PERTUBATION = "perturbation"
-    PARAM_DAMPING = "damping"
+    PARAM_SEPARATION = 'separation'
+    PARAM_FREQUENCYX = 'frequencyx'
+    PARAM_FREQUENCYY = 'frequencyy'
+    PARAM_AMPLITUDE = 'amplitude'
+    PARAM_PERTUBATION = 'perturbation'
+    PARAM_DAMPING = 'damping'
 
     get params(): VariationParam[] {
         return [{ name: this.PARAM_SEPARATION, type: VariationParamType.VP_NUMBER, initialValue: 1.00 },
@@ -733,7 +710,7 @@ class Oscilloscope2Func extends VariationShaderFunc2D {
     }
 
     get name(): string {
-        return "oscilloscope2";
+        return 'oscilloscope2';
     }
 
     get variationTypes(): VariationTypes[] {
@@ -742,8 +719,8 @@ class Oscilloscope2Func extends VariationShaderFunc2D {
 }
 
 class ParabolaFunc extends VariationShaderFunc2D {
-    PARAM_WIDTH = "width"
-    PARAM_HEIGHT = "height"
+    PARAM_WIDTH = 'width'
+    PARAM_HEIGHT = 'height'
 
     get params(): VariationParam[] {
         return [{ name: this.PARAM_WIDTH, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
@@ -765,7 +742,7 @@ class ParabolaFunc extends VariationShaderFunc2D {
     }
 
     get name(): string {
-        return "parabola";
+        return 'parabola';
     }
 
     get variationTypes(): VariationTypes[] {
@@ -774,10 +751,10 @@ class ParabolaFunc extends VariationShaderFunc2D {
 }
 
 class PDJFunc extends VariationShaderFunc2D {
-    PARAM_A = "a"
-    PARAM_B = "b"
-    PARAM_C = "c"
-    PARAM_D = "d"
+    PARAM_A = 'a'
+    PARAM_B = 'b'
+    PARAM_C = 'c'
+    PARAM_D = 'd'
 
     get params(): VariationParam[] {
         return [{ name: this.PARAM_A, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
@@ -799,7 +776,7 @@ class PDJFunc extends VariationShaderFunc2D {
     }
 
     get name(): string {
-        return "pdj";
+        return 'pdj';
     }
 
     get variationTypes(): VariationTypes[] {
@@ -821,7 +798,7 @@ class PetalFunc extends VariationShaderFunc2D {
     }
 
     get name(): string {
-        return "petal";
+        return 'petal';
     }
 
     get variationTypes(): VariationTypes[] {
@@ -830,9 +807,9 @@ class PetalFunc extends VariationShaderFunc2D {
 }
 
 class PieFunc extends VariationShaderFunc2D {
-    PARAM_SLICES = "slices"
-    PARAM_ROTATION = "rotation"
-    PARAM_THICKNESS = "thickness"
+    PARAM_SLICES = 'slices'
+    PARAM_ROTATION = 'rotation'
+    PARAM_THICKNESS = 'thickness'
 
     get params(): VariationParam[] {
         return [{ name: this.PARAM_SLICES, type: VariationParamType.VP_NUMBER, initialValue: 6.0 },
@@ -857,7 +834,7 @@ class PieFunc extends VariationShaderFunc2D {
     }
 
     get name(): string {
-        return "pie";
+        return 'pie';
     }
 
     get variationTypes(): VariationTypes[] {
@@ -877,7 +854,7 @@ class PolarFunc extends VariationShaderFunc2D {
     }
 
     get name(): string {
-        return "polar";
+        return 'polar';
     }
 
     get variationTypes(): VariationTypes[] {
@@ -898,7 +875,7 @@ class Polar2Func extends VariationShaderFunc2D {
     }
 
     get name(): string {
-        return "polar2";
+        return 'polar2';
     }
 
     get variationTypes(): VariationTypes[] {
@@ -924,7 +901,7 @@ class PopcornFunc extends VariationShaderFunc2D {
     }
 
     get name(): string {
-        return "popcorn";
+        return 'popcorn';
     }
 
     get variationTypes(): VariationTypes[] {
@@ -933,9 +910,9 @@ class PopcornFunc extends VariationShaderFunc2D {
 }
 
 class Popcorn2Func extends VariationShaderFunc2D {
-    PARAM_X = "x"
-    PARAM_Y = "y"
-    PARAM_C = "c"
+    PARAM_X = 'x'
+    PARAM_Y = 'y'
+    PARAM_C = 'c'
 
     get params(): VariationParam[] {
         return [{ name: this.PARAM_X, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
@@ -957,7 +934,7 @@ class Popcorn2Func extends VariationShaderFunc2D {
     }
 
     get name(): string {
-        return "popcorn2";
+        return 'popcorn2';
     }
 
     get variationTypes(): VariationTypes[] {
@@ -976,73 +953,11 @@ class PowerFunc extends VariationShaderFunc2D {
     }
 
     get name(): string {
-        return "power";
+        return 'power';
     }
 
     get variationTypes(): VariationTypes[] {
         return [VariationTypes.VARTYPE_2D];
-    }
-}
-
-class PreBlurFunc extends VariationShaderFunc2D {
-    getCode(xform: RenderXForm, variation: RenderVariation): string {
-        return `{
-          float amount = float(${variation.amount});
-          float r = rand8(tex, rngState) * 2.0 * M_PI;
-          float sina = sin(r);
-          float cosa = cos(r);
-          r =  amount * (rand8(tex, rngState) + rand8(tex, rngState) + rand8(tex, rngState) + rand8(tex, rngState) + rand8(tex, rngState) + rand8(tex, rngState) - 3.0);
-          _tx += r * cosa;
-          _ty += r * sina;
-        }`;
-    }
-
-    get name(): string {
-        return "pre_blur"
-    }
-
-
-    get priority(): number {
-        return -1
-    }
-
-    get variationTypes(): VariationTypes[] {
-        return [VariationTypes.VARTYPE_2D, VariationTypes.VARTYPE_BLUR, VariationTypes.VARTYPE_PRE];
-    }
-}
-
-class RadialBlurFunc extends VariationShaderFunc2D {
-    PARAM_ANGLE = "angle"
-
-    get params(): VariationParam[] {
-        return [{ name: this.PARAM_ANGLE, type: VariationParamType.VP_NUMBER, initialValue: 0.5 }]
-    }
-
-    getCode(xform: RenderXForm, variation: RenderVariation): string {
-        return `{
-          float amount = float(${variation.amount});    
-          float rndG = rand8(tex, rngState)+rand8(tex, rngState)+rand8(tex, rngState)+rand8(tex, rngState)-2.0;
-          float angle = float(${variation.params.get(this.PARAM_ANGLE)});
-          float a = angle * M_PI * 0.5;
-          float sina = sin(a);
-          float cosa = cos(a);
-          float spin = amount * sina;
-          float zoom = amount * cosa;
-          float  alpha = atan2(_ty, _tx) + spin * rndG;
-          sina = sin(alpha);
-          cosa = cos(alpha);
-          float rz = zoom * rndG - 1.0;
-          _vx += _r * cosa + rz * _tx;
-          _vy += _r * sina + rz * _ty;
-        }`;
-    }
-
-    get name(): string {
-        return "radial_blur";
-    }
-
-    get variationTypes(): VariationTypes[] {
-        return [VariationTypes.VARTYPE_2D, VariationTypes.VARTYPE_BLUR];
     }
 }
 
@@ -1060,7 +975,7 @@ class RaysFunc extends VariationShaderFunc2D {
     }
 
     get name(): string {
-        return "rays";
+        return 'rays';
     }
 
     get variationTypes(): VariationTypes[] {
@@ -1081,7 +996,7 @@ class Rays1Func extends VariationShaderFunc2D {
     }
 
     get name(): string {
-        return "rays1";
+        return 'rays1';
     }
 
     get variationTypes(): VariationTypes[] {
@@ -1102,7 +1017,7 @@ class Rays2Func extends VariationShaderFunc2D {
     }
 
     get name(): string {
-        return "rays2";
+        return 'rays2';
     }
 
     get variationTypes(): VariationTypes[] {
@@ -1123,7 +1038,7 @@ class Rays3Func extends VariationShaderFunc2D {
     }
 
     get name(): string {
-        return "rays3";
+        return 'rays3';
     }
 
     get variationTypes(): VariationTypes[] {
@@ -1132,8 +1047,8 @@ class Rays3Func extends VariationShaderFunc2D {
 }
 
 class RectanglesFunc extends VariationShaderFunc2D {
-    PARAM_X = "x"
-    PARAM_Y = "y"
+    PARAM_X = 'x'
+    PARAM_Y = 'y'
 
     get params(): VariationParam[] {
         return [{ name: this.PARAM_X, type: VariationParamType.VP_NUMBER, initialValue: 0.3 },
@@ -1159,7 +1074,7 @@ class RectanglesFunc extends VariationShaderFunc2D {
     }
 
     get name(): string {
-        return "rectangles";
+        return 'rectangles';
     }
 
     get variationTypes(): VariationTypes[] {
@@ -1180,7 +1095,7 @@ class RingsFunc extends VariationShaderFunc2D {
     }
 
     get name(): string {
-        return "rings";
+        return 'rings';
     }
 
     get variationTypes(): VariationTypes[] {
@@ -1189,7 +1104,7 @@ class RingsFunc extends VariationShaderFunc2D {
 }
 
 class Rings2Func extends VariationShaderFunc2D {
-    PARAM_VAL = "val"
+    PARAM_VAL = 'val'
 
     get params(): VariationParam[] {
         return [{ name: this.PARAM_VAL, type: VariationParamType.VP_NUMBER, initialValue: 0.01 }]
@@ -1210,7 +1125,7 @@ class Rings2Func extends VariationShaderFunc2D {
     }
 
     get name(): string {
-        return "rings2";
+        return 'rings2';
     }
 
     get variationTypes(): VariationTypes[] {
@@ -1219,9 +1134,9 @@ class Rings2Func extends VariationShaderFunc2D {
 }
 
 class RoseWFFunc extends VariationShaderFunc2D {
-    PARAM_AMP = "amp"
-    PARAM_WAVES = "waves"
-    PARAM_FILLED = "filled"
+    PARAM_AMP = 'amp'
+    PARAM_WAVES = 'waves'
+    PARAM_FILLED = 'filled'
 
     get params(): VariationParam[] {
         return [{ name: this.PARAM_AMP, type: VariationParamType.VP_NUMBER, initialValue: 0.5 },
@@ -1251,7 +1166,7 @@ class RoseWFFunc extends VariationShaderFunc2D {
     }
 
     get name(): string {
-        return "rose_wf";
+        return 'rose_wf';
     }
 
     get variationTypes(): VariationTypes[] {
@@ -1275,7 +1190,7 @@ class ScryFunc extends VariationShaderFunc2D {
     }
 
     get name(): string {
-        return "scry";
+        return 'scry';
     }
 
     get variationTypes(): VariationTypes[] {
@@ -1309,7 +1224,7 @@ class SecFunc extends VariationShaderFunc2D {
     }
 
     get name(): string {
-        return "sec";
+        return 'sec';
     }
 
     get variationTypes(): VariationTypes[] {
@@ -1341,7 +1256,7 @@ class Secant2Func extends VariationShaderFunc2D {
     }
 
     get name(): string {
-        return "secant2";
+        return 'secant2';
     }
 
     get variationTypes(): VariationTypes[] {
@@ -1370,7 +1285,7 @@ class SechFunc extends VariationShaderFunc2D {
     }
 
     get name(): string {
-        return "sech";
+        return 'sech';
     }
 
     get variationTypes(): VariationTypes[] {
@@ -1383,10 +1298,10 @@ class SechFunc extends VariationShaderFunc2D {
 }
 
 class SeparationFunc extends VariationShaderFunc2D {
-    PARAM_X = "x"
-    PARAM_XINSIDE = "xinside"
-    PARAM_Y = "y"
-    PARAM_YINSIDE = "yinside"
+    PARAM_X = 'x'
+    PARAM_XINSIDE = 'xinside'
+    PARAM_Y = 'y'
+    PARAM_YINSIDE = 'yinside'
 
     get params(): VariationParam[] {
         return [{ name: this.PARAM_X, type: VariationParamType.VP_NUMBER, initialValue: 0.5 },
@@ -1421,7 +1336,7 @@ class SeparationFunc extends VariationShaderFunc2D {
     }
 
     get name(): string {
-        return "separation";
+        return 'separation';
     }
 
     get variationTypes(): VariationTypes[] {
@@ -1434,9 +1349,9 @@ class SeparationFunc extends VariationShaderFunc2D {
 }
 
 class ShiftFunc extends VariationShaderFunc2D {
-    PARAM_SHIFT_X = "shift_x"
-    PARAM_SHIFT_Y = "shift_y"
-    PARAM_ANGLE = "angle"
+    PARAM_SHIFT_X = 'shift_x'
+    PARAM_SHIFT_Y = 'shift_y'
+    PARAM_ANGLE = 'angle'
 
     get params(): VariationParam[] {
         return [{ name: this.PARAM_SHIFT_X, type: VariationParamType.VP_NUMBER, initialValue: 0.20 },
@@ -1446,7 +1361,7 @@ class ShiftFunc extends VariationShaderFunc2D {
     }
 
     getCode(xform: RenderXForm, variation: RenderVariation): string {
-         // "shift" variation created by Tatyana Zabanova implemented into JWildfire by Brad Stefanov
+         // 'shift' variation created by Tatyana Zabanova implemented into JWildfire by Brad Stefanov
          return `{
           float amount = float(${variation.amount});
           float shift_x = float(${variation.params.get(this.PARAM_SHIFT_X)});
@@ -1461,7 +1376,92 @@ class ShiftFunc extends VariationShaderFunc2D {
     }
 
     get name(): string {
-        return "shift";
+        return 'shift';
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
+class ShredlinFunc extends VariationShaderFunc2D {
+    PARAM_XDISTANCE = 'xdistance'
+    PARAM_XWIDTH = 'xwidth'
+    PARAM_YDISTANCE = 'ydistance'
+    PARAM_YWIDTH = 'ywidth'
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_XDISTANCE, type: VariationParamType.VP_NUMBER, initialValue: 1.00 },
+            { name: this.PARAM_XWIDTH, type: VariationParamType.VP_NUMBER, initialValue: 0.50 },
+            { name: this.PARAM_YDISTANCE, type: VariationParamType.VP_NUMBER, initialValue: 1.00 },
+            { name: this.PARAM_YWIDTH, type: VariationParamType.VP_NUMBER, initialValue: 0.50 }
+        ]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        // Shredlin by Zy0rg
+        return `{
+          float amount = float(${variation.amount});
+          float xdistance = float(${variation.params.get(this.PARAM_XDISTANCE)});
+          float xwidth = float(${variation.params.get(this.PARAM_XWIDTH)});   
+          float ydistance = float(${variation.params.get(this.PARAM_YDISTANCE)});
+          float ywidth = float(${variation.params.get(this.PARAM_YWIDTH)});          
+          float sxd = xdistance;
+          float sxw = xwidth;
+          float syd = ydistance;
+          float syw = ywidth;
+          float vv = amount;
+          int xpos = _tx < 0.0 ? 1 : 0;
+          int ypos = _ty < 0.0 ? 1 : 0;
+          float xrng = _tx / sxd;
+          float yrng = _ty / syd;
+          _vx = vv * sxd * ((xrng - float(int(xrng))) * sxw + float(int(xrng)) + (0.5 - float(xpos)) * (1.0 - sxw));
+          _vy = vv * syd * ((yrng - float(int(yrng))) * syw + float(int(yrng)) + (0.5 - float(ypos)) * (1.0 - syw)); 
+        }`;
+    }
+
+    get name(): string {
+        return 'shredlin';
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
+class ShredradFunc extends VariationShaderFunc2D {
+    PARAM_N = 'n'
+    PARAM_WIDTH = 'width'
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_N, type: VariationParamType.VP_NUMBER, initialValue: 4.00 },
+            { name: this.PARAM_WIDTH, type: VariationParamType.VP_NUMBER, initialValue: 0.50 }
+        ]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        /* shredrad by zy0rg */
+        return `{
+          float amount = float(${variation.amount});
+          float n = float(${variation.params.get(this.PARAM_N)});
+          float width = float(${variation.params.get(this.PARAM_WIDTH)});   
+          if(n==0.0) n=EPSILON;
+          float alpha = (2.0*M_PI) / n;
+          float sa = alpha;
+          float sw = width;
+          float ang = atan2(_ty, _tx); // _theta 
+          float rad = _r;
+          float xang = (ang + 3.0 * M_PI + sa / 2.0) / sa;
+          float zang = ((xang - float(int(xang))) * sw + float(int(xang))) * sa - M_PI - sa / 2.0 * sw;
+          float s = sin(zang);
+          float c = cos(zang);
+          _vx += amount * rad * c;
+          _vy += amount * rad * s;
+        }`;
+    }
+
+    get name(): string {
+        return 'shredrad';
     }
 
     get variationTypes(): VariationTypes[] {
@@ -1470,8 +1470,8 @@ class ShiftFunc extends VariationShaderFunc2D {
 }
 
 class SigmoidFunc extends VariationShaderFunc2D {
-    PARAM_SHIFTX = "shiftx"
-    PARAM_SHIFTY = "shifty"
+    PARAM_SHIFTX = 'shiftx'
+    PARAM_SHIFTY = 'shifty'
 
     get params(): VariationParam[] {
         return [{ name: this.PARAM_SHIFTX, type: VariationParamType.VP_NUMBER, initialValue: 1.00 },
@@ -1519,7 +1519,7 @@ class SigmoidFunc extends VariationShaderFunc2D {
     }
 
     get name(): string {
-        return "sigmoid";
+        return 'sigmoid';
     }
 
     get variationTypes(): VariationTypes[] {
@@ -1544,7 +1544,7 @@ class SinFunc extends VariationShaderFunc2D {
     }
 
     get name(): string {
-        return "sin";
+        return 'sin';
     }
 
     get variationTypes(): VariationTypes[] {
@@ -1573,7 +1573,7 @@ class SinhFunc extends VariationShaderFunc2D {
     }
 
     get name(): string {
-        return "sinh";
+        return 'sinh';
     }
 
     get variationTypes(): VariationTypes[] {
@@ -1603,7 +1603,7 @@ class SinqFunc extends VariationShaderFunc2D {
     }
 
     get name(): string {
-        return "sinq";
+        return 'sinq';
     }
 
     get variationTypes(): VariationTypes[] {
@@ -1616,7 +1616,7 @@ class SinqFunc extends VariationShaderFunc2D {
 }
 
 class SintrangeFunc extends VariationShaderFunc2D {
-    PARAM_W = "w"
+    PARAM_W = 'w'
 
     get params(): VariationParam[] {
         return [{ name: this.PARAM_W, type: VariationParamType.VP_NUMBER, initialValue: 1.00 }]
@@ -1634,7 +1634,7 @@ class SintrangeFunc extends VariationShaderFunc2D {
     }
 
     get name(): string {
-        return "sintrange";
+        return 'sintrange';
     }
 
     get variationTypes(): VariationTypes[] {
@@ -1660,7 +1660,7 @@ class SinhqFunc extends VariationShaderFunc2D {
     }
 
     get name(): string {
-        return "sinhq";
+        return 'sinhq';
     }
 
     get variationTypes(): VariationTypes[] {
@@ -1682,7 +1682,7 @@ class SinusoidalFunc extends VariationShaderFunc2D {
     }
 
     get name(): string {
-        return "sinusoidal";
+        return 'sinusoidal';
     }
 
     get variationTypes(): VariationTypes[] {
@@ -1702,7 +1702,45 @@ class SphericalFunc extends VariationShaderFunc2D {
     }
 
     get name(): string {
-        return "spherical";
+        return 'spherical';
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
+class SphericalNFunc extends VariationShaderFunc2D {
+    PARAM_POWER = 'power'
+    PARAM_DIST = 'dist'
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_POWER, type: VariationParamType.VP_NUMBER, initialValue: 3.00 },
+            { name: this.PARAM_DIST, type: VariationParamType.VP_NUMBER, initialValue: 1.00 }
+        ]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        // SphericalN by eralex61, http://eralex61.deviantart.com/art/SphericalN-plugin-166218657?q=gallery%3Aapophysis-plugins%2F24607713&qo=36
+        //R=sqrt(sqr(pAffineTP.x)+sqr(pAffineTP.y));
+        return `{
+          float amount = float(${variation.amount});
+          float power = float(${variation.params.get(this.PARAM_POWER)});
+          float dist = float(${variation.params.get(this.PARAM_DIST)});   
+          float R = pow(sqrt(sqr(_tx) + sqr(_ty)), dist);
+          if (R > EPSILON) {
+            int N = int(floor(power * rand8(tex, rngState)));
+            float alpha = atan2(_ty, _tx) + float(N) * (2.0*M_PI) / floor(power);
+            float sina = sin(alpha);
+            float cosa = cos(alpha);
+            _vx += amount * cosa / R;
+            _vy += amount * sina / R;
+          }
+        }`;
+    }
+
+    get name(): string {
+        return 'sphericalN';
     }
 
     get variationTypes(): VariationTypes[] {
@@ -1726,7 +1764,7 @@ class SpiralFunc extends VariationShaderFunc2D {
     }
 
     get name(): string {
-        return "spiral";
+        return 'spiral';
     }
 
     get variationTypes(): VariationTypes[] {
@@ -1735,15 +1773,15 @@ class SpiralFunc extends VariationShaderFunc2D {
 }
 
 class SpirographFunc extends VariationShaderFunc2D {
-    PARAM_A = "a"
-    PARAM_B = "b"
-    PARAM_D = "d"
-    PARAM_C1 = "c1"
-    PARAM_C2 = "c2"
-    PARAM_TMIN = "tmin"
-    PARAM_TMAX = "tmax"
-    PARAM_YMIN = "ymin"
-    PARAM_YMAX = "ymax"
+    PARAM_A = 'a'
+    PARAM_B = 'b'
+    PARAM_D = 'd'
+    PARAM_C1 = 'c1'
+    PARAM_C2 = 'c2'
+    PARAM_TMIN = 'tmin'
+    PARAM_TMAX = 'tmax'
+    PARAM_YMIN = 'ymin'
+    PARAM_YMAX = 'ymax'
 
     get params(): VariationParam[] {
         return [{ name: this.PARAM_A, type: VariationParamType.VP_NUMBER, initialValue: 3.00 },
@@ -1779,7 +1817,7 @@ class SpirographFunc extends VariationShaderFunc2D {
     }
 
     get name(): string {
-        return "spirograph";
+        return 'spirograph';
     }
 
     get variationTypes(): VariationTypes[] {
@@ -1788,8 +1826,8 @@ class SpirographFunc extends VariationShaderFunc2D {
 }
 
 class SplitFunc extends VariationShaderFunc2D {
-    PARAM_XSIZE = "xsize"
-    PARAM_YSIZE = "ysize"
+    PARAM_XSIZE = 'xsize'
+    PARAM_YSIZE = 'ysize'
 
     get params(): VariationParam[] {
         return [{ name: this.PARAM_XSIZE, type: VariationParamType.VP_NUMBER, initialValue: 0.4 },
@@ -1817,7 +1855,7 @@ class SplitFunc extends VariationShaderFunc2D {
     }
 
     get name(): string {
-        return "split";
+        return 'split';
     }
 
     get variationTypes(): VariationTypes[] {
@@ -1826,12 +1864,12 @@ class SplitFunc extends VariationShaderFunc2D {
 }
 
 class SplitsFunc extends VariationShaderFunc2D {
-    PARAM_X = "x"
-    PARAM_Y = "y"
-    PARAM_LSHEAR = "lshear"
-    PARAM_RSHEAR = "rshear"
-    PARAM_USHEAR = "ushear"
-    PARAM_DSHEAR = "dshear"
+    PARAM_X = 'x'
+    PARAM_Y = 'y'
+    PARAM_LSHEAR = 'lshear'
+    PARAM_RSHEAR = 'rshear'
+    PARAM_USHEAR = 'ushear'
+    PARAM_DSHEAR = 'dshear'
 
     get params(): VariationParam[] {
         return [{ name: this.PARAM_X, type: VariationParamType.VP_NUMBER, initialValue: 0.4 },
@@ -1873,7 +1911,7 @@ class SplitsFunc extends VariationShaderFunc2D {
     }
 
     get name(): string {
-        return "splits";
+        return 'splits';
     }
 
     get variationTypes(): VariationTypes[] {
@@ -1891,7 +1929,7 @@ class SquareFunc extends VariationShaderFunc2D {
     }
 
     get name(): string {
-        return "square";
+        return 'square';
     }
 
     get variationTypes(): VariationTypes[] {
@@ -1900,8 +1938,8 @@ class SquareFunc extends VariationShaderFunc2D {
 }
 
 class StripesFunc extends VariationShaderFunc2D {
-    PARAM_SPACE = "space"
-    PARAM_WARP = "warp"
+    PARAM_SPACE = 'space'
+    PARAM_WARP = 'warp'
 
     get params(): VariationParam[] {
         return [{ name: this.PARAM_SPACE, type: VariationParamType.VP_NUMBER, initialValue: 0.20 },
@@ -1923,7 +1961,7 @@ class StripesFunc extends VariationShaderFunc2D {
     }
 
     get name(): string {
-        return "stripes";
+        return 'stripes';
     }
 
     get variationTypes(): VariationTypes[] {
@@ -1944,7 +1982,7 @@ class SwirlFunc extends VariationShaderFunc2D {
     }
 
     get name(): string {
-        return "swirl";
+        return 'swirl';
     }
 
     get variationTypes(): VariationTypes[] {
@@ -1973,7 +2011,7 @@ class TanFunc extends VariationShaderFunc2D {
     }
 
     get name(): string {
-        return "tan";
+        return 'tan';
     }
 
     get funcDependencies(): string[] {
@@ -2006,7 +2044,7 @@ class TanhFunc extends VariationShaderFunc2D {
     }
 
     get name(): string {
-        return "tanh";
+        return 'tanh';
     }
 
     get funcDependencies(): string[] {
@@ -2042,7 +2080,7 @@ class TanhqFunc extends VariationShaderFunc2D {
     }
 
     get name(): string {
-        return "tanhq";
+        return 'tanhq';
     }
 
     get funcDependencies(): string[] {
@@ -2067,7 +2105,7 @@ class TanCosFunc extends VariationShaderFunc2D {
     }
 
     get name(): string {
-        return "tancos";
+        return 'tancos';
     }
 
     get funcDependencies(): string[] {
@@ -2092,7 +2130,7 @@ class TangentFunc extends VariationShaderFunc2D {
     }
 
     get name(): string {
-        return "tangent";
+        return 'tangent';
     }
 
     get variationTypes(): VariationTypes[] {
@@ -2101,9 +2139,9 @@ class TangentFunc extends VariationShaderFunc2D {
 }
 
 class TargetFunc extends VariationShaderFunc2D {
-    PARAM_EVEN = "even"
-    PARAM_ODD = "odd"
-    PARAM_SIZE = "size"
+    PARAM_EVEN = 'even'
+    PARAM_ODD = 'odd'
+    PARAM_SIZE = 'size'
 
     get params(): VariationParam[] {
         return [{ name: this.PARAM_EVEN, type: VariationParamType.VP_NUMBER, initialValue: 0.0 },
@@ -2139,7 +2177,7 @@ class TargetFunc extends VariationShaderFunc2D {
     }
 
     get name(): string {
-        return "target";
+        return 'target';
     }
 
     get variationTypes(): VariationTypes[] {
@@ -2148,10 +2186,10 @@ class TargetFunc extends VariationShaderFunc2D {
 }
 
 class TargetSpFunc extends VariationShaderFunc2D {
-    PARAM_TWIST = "twist"
-    PARAM_N_OF_SP = "n_of_sp"
-    PARAM_SIZE = "size"
-    PARAM_TIGHTNESS = "tightness"
+    PARAM_TWIST = 'twist'
+    PARAM_N_OF_SP = 'n_of_sp'
+    PARAM_SIZE = 'size'
+    PARAM_TIGHTNESS = 'tightness'
 
     get params(): VariationParam[] {
         return [{ name: this.PARAM_TWIST, type: VariationParamType.VP_NUMBER, initialValue: 0.0 },
@@ -2190,7 +2228,7 @@ class TargetSpFunc extends VariationShaderFunc2D {
     }
 
     get name(): string {
-        return "target_sp";
+        return 'target_sp';
     }
 
     get variationTypes(): VariationTypes[] {
@@ -2199,10 +2237,10 @@ class TargetSpFunc extends VariationShaderFunc2D {
 }
 
 class TradeFunc extends VariationShaderFunc2D {
-    PARAM_R1 = "r1"
-    PARAM_D1 = "d1"
-    PARAM_R2 = "r2"
-    PARAM_D2 = "d2"
+    PARAM_R1 = 'r1'
+    PARAM_D1 = 'd1'
+    PARAM_R2 = 'r2'
+    PARAM_D2 = 'd2'
 
     get params(): VariationParam[] {
         return [{ name: this.PARAM_R1, type: VariationParamType.VP_NUMBER, initialValue: 1.00 },
@@ -2256,7 +2294,7 @@ class TradeFunc extends VariationShaderFunc2D {
     }
 
     get name(): string {
-        return "trade";
+        return 'trade';
     }
 
     get variationTypes(): VariationTypes[] {
@@ -2289,7 +2327,7 @@ class TwintrianFunc extends VariationShaderFunc2D {
     }
 
     get name(): string {
-        return "twintrian";
+        return 'twintrian';
     }
 
     get variationTypes(): VariationTypes[] {
@@ -2312,7 +2350,7 @@ class TwoFaceFunc extends VariationShaderFunc2D {
     }
 
     get name(): string {
-        return "twoface";
+        return 'twoface';
     }
 
     get variationTypes(): VariationTypes[] {
@@ -2335,7 +2373,7 @@ class UnpolarFunc extends VariationShaderFunc2D {
     }
 
     get name(): string {
-        return "unpolar";
+        return 'unpolar';
     }
 
     get variationTypes(): VariationTypes[] {
@@ -2344,10 +2382,10 @@ class UnpolarFunc extends VariationShaderFunc2D {
 }
 
 class WedgeFunc extends VariationShaderFunc2D {
-    PARAM_ANGLE = "angle"
-    PARAM_HOLE = "hole"
-    PARAM_COUNT= "count"
-    PARAM_SWIRL = "swirl"
+    PARAM_ANGLE = 'angle'
+    PARAM_HOLE = 'hole'
+    PARAM_COUNT= 'count'
+    PARAM_SWIRL = 'swirl'
 
     get params(): VariationParam[] {
         return [{ name: this.PARAM_ANGLE, type: VariationParamType.VP_NUMBER, initialValue: M_PI * 0.5 },
@@ -2386,7 +2424,7 @@ class WedgeFunc extends VariationShaderFunc2D {
     }
 
     get name(): string {
-        return "wedge";
+        return 'wedge';
     }
 
     get variationTypes(): VariationTypes[] {
@@ -2395,8 +2433,8 @@ class WedgeFunc extends VariationShaderFunc2D {
 }
 
 class WhorlFunc extends VariationShaderFunc2D {
-    PARAM_INSIDE = "inside"
-    PARAM_OUTSIDE = "outside"
+    PARAM_INSIDE = 'inside'
+    PARAM_OUTSIDE = 'outside'
 
     get params(): VariationParam[] {
         return [{ name: this.PARAM_INSIDE, type: VariationParamType.VP_NUMBER, initialValue: 0.10 },
@@ -2424,7 +2462,7 @@ class WhorlFunc extends VariationShaderFunc2D {
     }
 
     get name(): string {
-        return "whorl";
+        return 'whorl';
     }
 
     get variationTypes(): VariationTypes[] {
@@ -2433,11 +2471,11 @@ class WhorlFunc extends VariationShaderFunc2D {
 }
 
 class YinYangFunc extends VariationShaderFunc2D {
-    PARAM_RADIUS = "radius"
-    PARAM_ANG1 = "ang1"
-    PARAM_ANG2 = "ang2"
-    PARAM_DUAL_T = "dual_t"
-    PARAM_OUTSIDE = "outside"
+    PARAM_RADIUS = 'radius'
+    PARAM_ANG1 = 'ang1'
+    PARAM_ANG2 = 'ang2'
+    PARAM_DUAL_T = 'dual_t'
+    PARAM_OUTSIDE = 'outside'
 
     get params(): VariationParam[] {
         return [{ name: this.PARAM_RADIUS, type: VariationParamType.VP_NUMBER, initialValue: 0.50 },
@@ -2502,7 +2540,7 @@ class YinYangFunc extends VariationShaderFunc2D {
     }
 
     get name(): string {
-        return "yin_yang";
+        return 'yin_yang';
     }
 
     get variationTypes(): VariationTypes[] {
@@ -2510,7 +2548,7 @@ class YinYangFunc extends VariationShaderFunc2D {
     }
 }
 
-export function register2DPartKVars() {
+export function registerVars_2D_PartK() {
     VariationShaders.registerVar(new KaleidoscopeFunc())
     VariationShaders.registerVar(new LayeredSpiralFunc())
     VariationShaders.registerVar(new LazySusanFunc())
@@ -2523,7 +2561,6 @@ export function register2DPartKVars() {
     VariationShaders.registerVar(new MobiusFunc())
     VariationShaders.registerVar(new ModulusFunc())
     VariationShaders.registerVar(new NGonFunc())
-    VariationShaders.registerVar(new NoiseFunc())
     VariationShaders.registerVar(new NPolarFunc())
     VariationShaders.registerVar(new OscilloscopeFunc())
     VariationShaders.registerVar(new Oscilloscope2Func())
@@ -2536,8 +2573,6 @@ export function register2DPartKVars() {
     VariationShaders.registerVar(new PopcornFunc())
     VariationShaders.registerVar(new Popcorn2Func())
     VariationShaders.registerVar(new PowerFunc())
-    VariationShaders.registerVar(new PreBlurFunc())
-    VariationShaders.registerVar(new RadialBlurFunc())
     VariationShaders.registerVar(new RaysFunc())
     VariationShaders.registerVar(new Rays1Func())
     VariationShaders.registerVar(new Rays2Func())
@@ -2552,6 +2587,8 @@ export function register2DPartKVars() {
     VariationShaders.registerVar(new SechFunc())
     VariationShaders.registerVar(new SeparationFunc())
     VariationShaders.registerVar(new ShiftFunc())
+    VariationShaders.registerVar(new ShredlinFunc())
+    VariationShaders.registerVar(new ShredradFunc())
     VariationShaders.registerVar(new SigmoidFunc())
     VariationShaders.registerVar(new SinFunc())
     VariationShaders.registerVar(new SinhFunc())
@@ -2560,6 +2597,7 @@ export function register2DPartKVars() {
     VariationShaders.registerVar(new SintrangeFunc())
     VariationShaders.registerVar(new SinusoidalFunc())
     VariationShaders.registerVar(new SphericalFunc())
+    VariationShaders.registerVar(new SphericalNFunc())
     VariationShaders.registerVar(new SpiralFunc())
     VariationShaders.registerVar(new SpirographFunc())
     VariationShaders.registerVar(new SplitFunc())
