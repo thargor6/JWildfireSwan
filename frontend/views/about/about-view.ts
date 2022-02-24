@@ -45,9 +45,6 @@ export class AboutView extends View {
   example_2 = "example029"
 
   @state()
-  example_3 = "example025"
-
-  @state()
   selectedTab = 0
 
   render() {
@@ -84,12 +81,7 @@ export class AboutView extends View {
       application, even you will be able to create real art with it.
 
       There shall be no special GPU mode, so GPU (when available) is used per default.
-
-      <div
-          class="bg-contrast flex items-center justify-center mb-m overflow-hidden rounded-m w-full"
-          style="min-height: 160px;">
-        <img alt=${this.example_2} class="w-full" loading="lazy" src="./images/${this.example_2}.jpg" />
-      </div>
+      
       <h2>Getting started</h2>
       <h3>Gallery live examples</h3>
    
@@ -120,9 +112,9 @@ export class AboutView extends View {
       This behaviour will improve over time.
 
       <div
-          class="bg-contrast flex items-center justify-center mb-m overflow-hidden rounded-m w-full"
-          style="min-height: 160px;">
-        <img alt=${this.example_3} class="w-full" loading="lazy" src="./images/${this.example_3}.jpg" />
+              class="bg-contrast flex items-center justify-center mb-m overflow-hidden rounded-m w-full"
+              style="min-height: 160px;">
+          <img alt=${this.example_2} class="w-full" loading="lazy" src="./images/${this.example_2}.jpg" />
       </div>
       
 
