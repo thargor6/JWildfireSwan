@@ -57,7 +57,7 @@ export class SwanSlider extends MobxLitElement {
         const target: any = e.target
         if(target && this.propName) {
             const currTimeStamp = getTimeStamp()
-            if(currTimeStamp > this.lastValueChangeTimeStamp + 250) {
+            if(currTimeStamp > this.lastValueChangeTimeStamp + 125) {
                 this.onPropertyChange(this.propName, true, target.immediateValue)
                 this.lastValueChangeTimeStamp = getTimeStamp()
             }
