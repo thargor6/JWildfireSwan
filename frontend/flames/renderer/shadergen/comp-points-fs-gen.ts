@@ -15,11 +15,15 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 */
 
-import {RenderFlame, RenderVariation, RenderXForm} from "Frontend/flames/model/render-flame";
+import {RenderFlame, RenderXForm} from "Frontend/flames/model/render-flame";
 import {VariationMathFunctions} from "Frontend/flames/renderer/variations/variation-math-functions";
 import {VariationShaders} from "Frontend/flames/renderer/variations/variation-shaders";
+import {XFormPartShaderGenerator} from "Frontend/flames/renderer/shadergen/xform-gen";
+import {DepFunctionsPartShaderGenerator} from "Frontend/flames/renderer/shadergen/dep-functions-gen";
 
 export class CompPointsFragmentShaderGenerator {
+    private xformGen = new XFormPartShaderGenerator();
+    private depFuncGen = new DepFunctionsPartShaderGenerator()
 
     addCalcedWeights(weights: number[]) {
         let offset = 0
@@ -74,96 +78,8 @@ export class CompPointsFragmentShaderGenerator {
             ? flame.xforms.map(xForm => this.addCalcXFormIndexWithModWeights(flame, xForm, flame.xforms.indexOf(xForm), flame.xforms.length)).join('')
             : this.addCalcXFormIndexWithoutModWeights(flame)
         }
-       ${flame.xforms.map(xForm => this.addXForm(xForm, flame.xforms.indexOf(xForm))).join('')}  
+       ${flame.xforms.map(xForm => this.xformGen.addXForm(xForm, flame.xforms.indexOf(xForm))).join('')}  
     `;
-    }
-
-    addDepFunction(func: string) {
-        return VariationMathFunctions.getCode(func);
-    }
-
-    addDepFunctions(flame: RenderFlame) {
-        let functions = new Array<string>()
-        flame.xforms.forEach(xform => {
-            xform.variations.forEach(variation => {
-                VariationShaders.getVariationDepFunctions(variation).forEach(func => {
-                    if (functions.indexOf(func) < 0) {
-                        functions.push(func)
-                    }
-                })
-            })
-        })
-        return functions.map(func => this.addDepFunction(func)).join('')
-    }
-
-    addXForm(xForm: RenderXForm, xFormIdx: number) {
-        return `if(xFormIdx==${xFormIdx}) {
-               _vx = _vy = 0.0;
-               ${this.addAffineTx(xForm)}
-               float _phi = atan2(_tx, _ty);
-               float _r2 = _tx * _tx + _ty * _ty;
-               float _r = sqrt(_tx * _tx + _ty * _ty) + EPSILON;    
-               
-               _color = _color * float(${xForm.c1}) + float(${xForm.c2});   
-               ${this.hasPreVariations(xForm) ? `
-                 ${this.addVariations(xForm, xFormIdx, -1)}    
-                 _phi = atan2(_tx, _ty);
-                 _r2 = _tx * _tx + _ty * _ty;
-                 _r = sqrt(_tx * _tx + _ty * _ty) + EPSILON;
-                 `
-               : '' }     
-               ${this.addVariations(xForm, xFormIdx, 0)}
-               ${this.addVariations(xForm, xFormIdx, 1)}
-               ${this.addPostAffineTx(xForm)}
-		       if(_color<0.0) {
-				 _color = 0.0;
-			   }
-			   else if(_color>1.0 - 1.0e-06) {
-				 _color = 1.0 - 1.0e-06; 
-			   }
-			}	
-	`;
-    }
-
-    addVariation(xform: RenderXForm, variation: RenderVariation) {
-        return VariationShaders.getVariationCode(xform, variation)
-    }
-
-    addVariations(xform: RenderXForm, xformIdx: number, priority: number) {
-        return `{
-          ${xform.variations.filter(variation => VariationShaders.getVariationPriority(variation)===priority).map(variation => this.addVariation(xform, variation)).join('')}
-          }`
-    }
-
-    hasPreVariations(xform: RenderXForm) {
-       return xform.variations.filter(variation => VariationShaders.getVariationPriority(variation)===-1).length > 0;
-    }
-
-    addAffineTx(xForm: RenderXForm) {
-        if (xForm.c00 != 1.0 || xForm.c01 != 0.0 || xForm.c11 != 1.0 || xForm.c10 != 0.0 || xForm.c20 != 0.0 || xForm.c21 != 0.0) {
-            return `
-              _tx = float(${xForm.c00}) * point.x + float(${xForm.c10}) * point.y + float(${xForm.c20});
-              _ty = float(${xForm.c01}) * point.x + float(${xForm.c11}) * point.y + float(${xForm.c21});
-        `
-        } else {
-            return `
-             _tx = point.x;
-             _ty = point.y;
-         `
-        }
-    }
-
-    addPostAffineTx(xForm: RenderXForm) {
-        if (xForm.p00 != 1.0 || xForm.p01 != 0.0 || xForm.p11 != 1.0 || xForm.p10 != 0.0 || xForm.p20 != 0.0 || xForm.p21 != 0.0) {
-            return `
-               float _px = float(${xForm.p00}) * _vx + float(${xForm.p10}) * _vy + float(${xForm.p20});
-               float _py = float(${xForm.p01}) * _vx + float(${xForm.p11}) * _vy + float(${xForm.p21});
-               _vx = _px;
-               _vy = _py;
-        `
-        } else {
-            return ``
-        }
     }
 
     public createShader(flame: RenderFlame) {
@@ -225,7 +141,7 @@ export class CompPointsFragmentShaderGenerator {
         return (x < EPSILON) ? 0.0 : sqrt(x);
       }
                  
-           ${this.addDepFunctions(flame)}
+      ${this.depFuncGen.addDepFunctions(flame.xforms)}
            
 			void main(void) {
 				vec2 tex = gl_FragCoord.xy / <%= RESOLUTION %>;
@@ -236,16 +152,13 @@ export class CompPointsFragmentShaderGenerator {
 				float _color = xFormIdxAndColor - float(xFormIdx);
 				
 				RNGState rngState = RNGState(rand0(tex));
-				
-	            float _tx, _ty, _tz;
-                float _vx = 0.0, _vy = 0.0, _vz = 0.0;
-                _tz = point.z;
+			  float _tx, _ty, _tz;
+        float _vx = 0.0, _vy = 0.0, _vz = 0.0;
+        _tz = point.z;
 				${this.addXForms(flame)}
 				point = vec3(_vx, _vy, _vz);
-			
-			    // must ensure that color is already in the range [0..1)
+			  // must ensure that color is already in the range [0..1)
 				xFormIdxAndColor = float(xFormIdx) + _color;
-
 				gl_FragColor = vec4(point, xFormIdxAndColor);
 			}
 			`;
