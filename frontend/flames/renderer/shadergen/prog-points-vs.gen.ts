@@ -15,10 +15,15 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 */
 
-import {RenderFlame} from "Frontend/flames/model/render-flame";
+import {RenderFlame, RenderXForm} from "Frontend/flames/model/render-flame";
 import {FlameRenderView} from "Frontend/flames/renderer/flame-render-view";
+import {XFormPartShaderGenerator} from "Frontend/flames/renderer/shadergen/xform-gen";
+import {DepFunctionsPartShaderGenerator} from "Frontend/flames/renderer/shadergen/dep-functions-gen";
 
 export class ProgPointsVertexShaderGenerator {
+    private xformGen = new XFormPartShaderGenerator();
+    private depFuncGen = new DepFunctionsPartShaderGenerator()
+
     public createShader(flame: RenderFlame, canvas_size:number) {
         const view = new FlameRenderView(flame, canvas_size, canvas_size)
 
@@ -27,10 +32,13 @@ export class ProgPointsVertexShaderGenerator {
         
         uniform sampler2D uTexSamp_Points;
         uniform sampler2D uTexSamp_Colors;
-                    
+        uniform float seed;            
         uniform float time;
                     
         varying vec4 fragColor;		
+        
+        ${this.depFuncGen.addStandardFunctions()}      
+        ${this.depFuncGen.addDepFunctions(flame.finalXforms)}
         
         void main(void) {
             gl_PointSize = 1.0;
@@ -41,18 +49,33 @@ export class ProgPointsVertexShaderGenerator {
             vec4 color = texture2D(uTexSamp_Colors, tex);
         
             fragColor = color;
+            RNGState rngState = RNGState(rand0(tex));
+            
+            ${this.addFinalXForms(flame)}
+            
             ${this.addCamera(view)}
         }
      `
     }
 
+    addFinalXForms(flame: RenderFlame) {
+        if(flame.finalXforms.length>0) {
+            return `
+               ${flame.finalXforms.map(xForm => this.xformGen.addFinalXForm(xForm)).join('')}  
+             `;
+        }
+        else {
+            return ''
+        }
+    }
+
     addCamera(view: FlameRenderView) {
         if (view.doProject3D) {
-            return `
+            return `             
+            
           float _px = point.x;
           float _py = point.y;
-          float _pz = point.z;
-             
+          float _pz = point.z;  
           float _cx = float(${view.m[0][0]}) * _px + float(${view.m[1][0]}) * _py + float(${view.m[2][0]}) * _pz;
           float _cy = float(${view.m[0][1]}) * _px + float(${view.m[1][1]}) * _py + float(${view.m[2][1]}) * _pz;
           float _cz = float(${view.m[0][2]}) * _px + float(${view.m[1][2]}) * _py + float(${view.m[2][2]}) * _pz;
@@ -116,13 +139,11 @@ export class ProgPointsVertexShaderGenerator {
         }
         else {
             return ` 
-            float prjX =  point.x * float(${view.cosa})+ point.y * float(${view.sina}) + float(${view.rcX});
-            float prjY = point.y * float(${view.cosa}) -  point.x * float(${view.sina}) + float(${view.rcY});
+            float prjX = point.x * float(${view.cosa}) + point.y * float(${view.sina}) + float(${view.rcX});
+            float prjY = point.y * float(${view.cosa}) - point.x * float(${view.sina}) + float(${view.rcY});
             gl_Position = vec4(prjX * float(${view.bws}), -prjY * float(${view.bhs}), 0.0, 1.0);
-        
         `
         }
-
     }
 }
 

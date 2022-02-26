@@ -207,6 +207,23 @@ class ZConeFunc extends VariationShaderFunc3D {
     }
 }
 
+class ZScaleFunc extends VariationShaderFunc3D {
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        return `{
+           float amount = float(${variation.amount});
+           _vz += amount * _tz;
+        }`;
+    }
+
+    get name(): string {
+        return 'zscale';
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_ZTRANSFORM];
+    }
+}
+
 class ZTranslateFunc extends VariationShaderFunc3D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         return `{
@@ -234,5 +251,6 @@ export function registerVars_ZTransforms() {
     VariationShaders.registerVar(new InflateZ_6Func())
     VariationShaders.registerVar(new ZBlurFunc())
     VariationShaders.registerVar(new ZConeFunc())
+    VariationShaders.registerVar(new ZScaleFunc())
     VariationShaders.registerVar(new ZTranslateFunc())
 }

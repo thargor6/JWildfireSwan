@@ -31,6 +31,7 @@ interface ComputePointsProgram extends WebGLProgram {
     uTexSamp_Points: WebGLUniformLocation;
     uTexSamp_Colors: WebGLUniformLocation;
     time: WebGLUniformLocation;
+    seed: WebGLUniformLocation;
 }
 
 interface IteratePointsProgram extends WebGLProgram {
@@ -83,6 +84,7 @@ export class WebglShaders {
         this.prog_points.uTexSamp_Points = gl.getUniformLocation(this.prog_points, "uTexSamp_Points")!;
         this.prog_points.uTexSamp_Colors = gl.getUniformLocation(this.prog_points, "uTexSamp_Colors")!;
         this.prog_points.time = gl.getUniformLocation(this.prog_points, "time")!;
+        this.prog_points.seed = gl.getUniformLocation(this.prog_points, "seed")!;
 
         this.compPointsFragmentShader = new CompPointsFragmentShaderGenerator().createShader(flame);
         this.prog_comp = compileShaderDirect(gl, shader_direct_vs, this.compPointsFragmentShader, {RESOLUTION: swarm_size}) as IteratePointsProgram;

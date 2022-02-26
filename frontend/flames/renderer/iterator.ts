@@ -108,6 +108,7 @@ export class FlameIterator {
         gl.uniform1i(this.ctx.shaders.prog_points.uTexSamp_Points, 0);
         gl.uniform1i(this.ctx.shaders.prog_points.uTexSamp_Colors, 1);
         gl.uniform1f(this.ctx.shaders.prog_points.time, this.settings.time );
+        gl.uniform1f(this.ctx.shaders.prog_points.seed, Math.random());
 
         if(this.flag) {
             gl.activeTexture(gl.TEXTURE0);

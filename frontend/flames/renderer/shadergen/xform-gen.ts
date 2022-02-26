@@ -50,13 +50,13 @@ export class XFormPartShaderGenerator {
 
   addFinalXForm(xForm: RenderXForm) {
     return `{
-           float _tx = _px; 
-           float _ty = _py; 
-           float _tz = _pz; 
+           float _tx = 0.0; 
+           float _ty = 0.0; 
+           float _tz = point.z; 
+           ${this.addAffineTx(xForm)}
            float _vx = 0.0;
            float _vy = 0.0;
            float _vz = 0.0;
-           ${this.addAffineTx(xForm)}
            float _phi = atan2(_tx, _ty);
            float _r2 = _tx * _tx + _ty * _ty;
            float _r = sqrt(_tx * _tx + _ty * _ty) + EPSILON;    
@@ -72,9 +72,9 @@ export class XFormPartShaderGenerator {
            ${this.addVariations(xForm, 1)}
            ${this.addPostAffineTx(xForm)}
            
-           _px = _vx;
-           _py = _vy;
-           _pz = _vz;
+           point.x = _vx;
+           point.y = _vy;
+           point.z = _vz;
   }	
 `;
   }
