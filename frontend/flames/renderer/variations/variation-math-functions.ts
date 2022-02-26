@@ -22,6 +22,7 @@ export const FUNC_J1 = 'j1'
 export const FUNC_JACOBI_ELLIPTIC = 'jacobi_elliptic'
 export const FUNC_LOG10 = 'log10'
 export const FUNC_MODULO = 'modulo'
+export const FUNC_RINT = 'rint'
 export const FUNC_SGN = 'sgn'
 export const FUNC_SINH = 'sinh'
 export const FUNC_SQRT1PM1 = 'sqrt1pm1'
@@ -520,6 +521,11 @@ export class VariationMathFunctions {
                      float m=float(a)-floor((float(a)+0.5)/float(b))*float(b);
                      return int(floor(m+0.5));
                    }`)
+
+      this.registerFunction(FUNC_RINT,
+        `float rint(float v) {
+                   return v<0.0 ? float(int(v-0.5)) : float(int(v+0.5));
+                 }`)
 
         this.registerFunction(FUNC_SAFEDIV,
           `float safediv(float q, float r) {

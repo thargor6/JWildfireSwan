@@ -20,7 +20,7 @@ import {VariationShaders} from 'Frontend/flames/renderer/variations/variation-sh
 import {RenderVariation, RenderXForm} from 'Frontend/flames/model/render-flame';
 import {
     FUNC_COSH,
-    FUNC_MODULO,
+    FUNC_MODULO, FUNC_RINT,
     FUNC_SINH,
     FUNC_SQRT1PM1
 } from 'Frontend/flames/renderer/variations/variation-math-functions';
@@ -570,6 +570,59 @@ class CannabisCurveWFFunc extends VariationShaderFunc2D {
     }
 }
 
+class ChecksFunc extends VariationShaderFunc2D {
+    PARAM_LEFT = 'x'
+    PARAM_TOP = 'y'
+    PARAM_RIGHT = 'size'
+    PARAM_BOTTOM = 'rnd'
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_LEFT, type: VariationParamType.VP_NUMBER, initialValue: 3.00 },
+            { name: this.PARAM_TOP, type: VariationParamType.VP_NUMBER, initialValue: 3.00 },
+            { name: this.PARAM_RIGHT, type: VariationParamType.VP_NUMBER, initialValue: 1.00 },
+            { name: this.PARAM_BOTTOM, type: VariationParamType.VP_NUMBER, initialValue: 0.50 }]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        // Fixed checks plugin by Keeps and Xyrus02, http://xyrus02.deviantart.com/art/Checks-The-fixed-version-138967784?q=favby%3Aapophysis-plugins%2F39181234&qo=3
+        return `{
+          float amount = float(${variation.amount});
+          float x = float(${variation.params.get(this.PARAM_LEFT)});
+          float y = float(${variation.params.get(this.PARAM_TOP)});
+          float size = float(${variation.params.get(this.PARAM_RIGHT)});
+          float rnd = float(${variation.params.get(this.PARAM_BOTTOM)});
+          float _cs = 1.0 / (size + EPSILON);
+          float _ncx = x * -1.0;
+          float _ncy = y * -1.0;
+          int isXY = int(rint(_tx * _cs)) + int(rint(_ty * _cs));
+          float rnx = rnd * rand8(tex, rngState);
+          float rny = rnd * rand8(tex, rngState);
+          float dx, dy;
+          if((isXY / 2) * isXY == isXY) {    
+            dx = _ncx + rnx;
+            dy = _ncy;
+          } else {
+            dx = x;
+            dy = y + rny;
+          }      
+          _vx += amount * (_tx + dx);
+          _vy += amount * (_ty + dy);   
+        }`;
+    }
+
+    get name(): string {
+        return 'checks';
+    }
+
+    get funcDependencies(): string[] {
+        return [FUNC_RINT];
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D, VariationTypes.VARTYPE_CROP];
+    }
+}
+
 class CellFunc extends VariationShaderFunc2D {
     PARAM_SIZE = 'size'
 
@@ -666,6 +719,41 @@ class CirclizeFunc extends VariationShaderFunc2D {
 
     get name(): string {
         return 'circlize';
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
+class CircusFunc extends VariationShaderFunc2D {
+    PARAM_SCALE = 'scale'
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_SCALE, type: VariationParamType.VP_NUMBER, initialValue: 0.92 }]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        /* circus from Michael Faber, http://michaelfaber.deviantart.com/art/The-Lost-Variations-258913970 */
+        return `{
+          float amount = float(${variation.amount});
+          float scale = float(${variation.params.get(this.PARAM_SCALE)});
+          float scale_1 = 1.0 / scale;
+          float r = sqrt(_tx * _tx + _ty * _ty);
+           float a = atan2(_ty, _tx);
+           float s = sin(a);
+           float c = cos(a);
+            if (r <= 1.0)
+              r *= scale;
+            else
+              r *= scale_1;
+            _vx += amount * r * c;
+            _vy += amount * r * s;
+        }`;
+    }
+
+    get name(): string {
+        return 'circus';
     }
 
     get variationTypes(): VariationTypes[] {
@@ -1840,6 +1928,28 @@ class FlipCircleFunc extends VariationShaderFunc2D {
     }
 }
 
+class FlipYFunc extends VariationShaderFunc2D {
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        // flipy by MichaelFaber, http://michaelfaber.deviantart.com/art/Flip-216005432
+        return `{
+            float amount = float(${variation.amount});
+            if (_tx > 0.0)
+              _vy -= amount * _ty;
+            else
+              _vy += amount * _ty;
+            _vx += amount * _tx;
+        }`;
+    }
+
+    get name(): string {
+        return 'flipy';
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
 class FlowerFunc extends VariationShaderFunc2D {
     PARAM_HOLES = 'holes'
     PARAM_PETALS = 'petals'
@@ -2491,8 +2601,10 @@ export function registerVars_2D_PartA() {
     VariationShaders.registerVar(new ButterflyFunc())
     VariationShaders.registerVar(new BWraps7Func())
     VariationShaders.registerVar(new CannabisCurveWFFunc())
+    VariationShaders.registerVar(new ChecksFunc())
     VariationShaders.registerVar(new CellFunc())
     VariationShaders.registerVar(new CirclizeFunc())
+    VariationShaders.registerVar(new CircusFunc())
     VariationShaders.registerVar(new CloverLeafWFFunc())
     VariationShaders.registerVar(new CollideoscopeFunc())
     VariationShaders.registerVar(new ConicFunc())
@@ -2527,6 +2639,7 @@ export function registerVars_2D_PartA() {
     VariationShaders.registerVar(new Fan2Func())
     VariationShaders.registerVar(new FisheyeFunc())
     VariationShaders.registerVar(new FlipCircleFunc())
+    VariationShaders.registerVar(new FlipYFunc())
     VariationShaders.registerVar(new FlowerFunc())
     VariationShaders.registerVar(new FluxFunc())
     VariationShaders.registerVar(new FociFunc())
