@@ -328,6 +328,28 @@ class Curl3DFunc extends VariationShaderFunc3D {
     }
 }
 
+class Butterfly3DFunc extends VariationShaderFunc3D {
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        return `{
+          float amount = float(${variation.amount});
+          float wx = amount * 1.3029400317411197908970256609023;
+          float y2 = _ty * 2.0;
+          float r = wx * sqrt(abs(_ty * _tx) / (EPSILON + _tx * _tx + y2 * y2));
+          _vx += r * _tx;
+          _vy += r * y2;
+          _vz += r * abs(y2) * sqrt(_tx * _tx + _ty * _ty) / 4.0;
+        }`;
+    }
+
+    get name(): string {
+        return 'butterfly3D';
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_3D];
+    }
+}
+
 class ColorscaleWFFunc extends VariationShaderFunc3D {
     PARAM_CX = 'scale_x'
     PARAM_CY = 'scale_y'
@@ -445,6 +467,39 @@ class CylinderApoFunc extends VariationShaderFunc3D {
 
     get name(): string {
         return 'cylinder_apo';
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_3D];
+    }
+}
+
+class Foci3DFunc extends VariationShaderFunc3D {
+    /* foci_3D by Larry Berlin, http://aporev.deviantart.com/art/New-3D-Plugins-136484533?q=gallery%3Aaporev%2F8229210&qo=22 */
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        return `{
+          float amount = float(${variation.amount});
+          float expx = exp(_tx) * 0.5;
+          float expnx = 0.25 / expx;
+          float kikr, boot;
+          boot = _tz;
+          kikr = atan2(_ty, _tx);
+          if (boot == 0.0) {
+            boot = kikr;
+          }
+          float siny = sin(_ty);
+          float cosy = cos(_ty);
+          float sinz = sin(boot);
+          float cosz = cos(boot);
+          float tmp = amount / (expx + expnx - (cosy * cosz));
+          _vx += (expx - expnx) * tmp;
+          _vy += siny * tmp;
+          _vz += sinz * tmp;
+        }`;
+    }
+
+    get name(): string {
+        return 'foci_3D';
     }
 
     get variationTypes(): VariationTypes[] {
@@ -996,10 +1051,12 @@ export function registerVars_3D() {
     VariationShaders.registerVar(new BubbleFunc())
     VariationShaders.registerVar(new Bubble2Func())
     VariationShaders.registerVar(new BubbleWFFunc())
+    VariationShaders.registerVar(new Butterfly3DFunc())
     VariationShaders.registerVar(new ColorscaleWFFunc())
     VariationShaders.registerVar(new ConeFunc())
     VariationShaders.registerVar(new Curl3DFunc())
     VariationShaders.registerVar(new CylinderApoFunc())
+    VariationShaders.registerVar(new Foci3DFunc())
     VariationShaders.registerVar(new HemisphereFunc())
     VariationShaders.registerVar(new Hypertile3DFunc())
     VariationShaders.registerVar(new Hypertile3D1Func())

@@ -2432,6 +2432,44 @@ class WedgeFunc extends VariationShaderFunc2D {
     }
 }
 
+class VogelFunc extends VariationShaderFunc2D {
+    PARAM_N = 'n'
+    PARAM_SCALE = 'scale'
+
+    M_PHI = 1.61803398874989484820
+    M_2PI = 2.0 * M_PI
+    M_2PI_PHI2 = this.M_2PI / (this.M_PHI * this.M_PHI)
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_N, type: VariationParamType.VP_NUMBER, initialValue:20 },
+            { name: this.PARAM_SCALE, type: VariationParamType.VP_NUMBER, initialValue: 1.00 }]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        // Vogel function by Victor Ganora
+        return `{
+          float amount = float(${variation.amount});
+          int n = int(${variation.params.get(this.PARAM_N)});
+          float scale = float(${variation.params.get(this.PARAM_SCALE)});
+          int i = iRand8(tex, n, rngState) + 1;
+          float a = float(i) * float(${this.M_2PI_PHI2});
+          float sina = sin(a);
+          float cosa = cos(a);
+          float r = amount * (_r + sqrt(float(i)));
+          _vx += r * (cosa + (scale * _tx));
+          _vy += r * (sina + (scale * _ty));
+        }`;
+    }
+
+    get name(): string {
+        return 'vogel';
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
 class WhorlFunc extends VariationShaderFunc2D {
     PARAM_INSIDE = 'inside'
     PARAM_OUTSIDE = 'outside'
@@ -2618,5 +2656,6 @@ export function registerVars_2D_PartK() {
     VariationShaders.registerVar(new UnpolarFunc())
     VariationShaders.registerVar(new WedgeFunc())
     VariationShaders.registerVar(new WhorlFunc())
+    VariationShaders.registerVar(new VogelFunc())
     VariationShaders.registerVar(new YinYangFunc())
 }
