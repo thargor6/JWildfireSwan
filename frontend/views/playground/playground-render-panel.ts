@@ -71,7 +71,7 @@ export class PlaygroundRenderPanel extends MobxLitElement {
 
   render() {
     return html`
-      <vertical-layout theme="spacing" style="${this.visible ? `display:block; width: 20em;`: `display:none;`}">
+      <vertical-layout theme="spacing" style="${this.visible ? `display:block; min-width: 34em;`: `display:none;`}">
 
           <vaadin-horizontal-layout theme="spacing">
           <vaadin-combo-box style="max-width: 10em;" label="Image size" .items="${this.imageSizes}" value="${this.imageSize}"

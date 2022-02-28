@@ -108,7 +108,7 @@ export class WebglShaders {
 
         {
             const params = {
-                BRIGHTNESS: this.flame.brightness,
+                BRIGHTNESS: this.flame.brightness * this.flame.camZoom,
                 CONTRAST: this.flame.contrast,
                 GAMMA: this.flame.gamma,
                 GAMMA_THRESHOLD: this.flame.gammaThreshold,

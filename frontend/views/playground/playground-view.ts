@@ -30,6 +30,7 @@ import '@vaadin/icon'
 import '@vaadin/icons'
 import '@vaadin/tabs'
 import '@vaadin/vaadin-progress-bar'
+import '@vaadin/scroller'
 
 import {FlameRenderer} from '../../flames/renderer/flame-renderer'
 import {AppInfoEndpoint, FlamesEndpoint, GalleryEndpoint} from "Frontend/generated/endpoints";
@@ -71,56 +72,13 @@ export class PlaygroundView extends View  implements BeforeEnterObserver {
 
     render() {
         return html`
-            <swan-error-panel .errorMessage=${playgroundStore.lastError}></swan-error-panel>
-            <vaadin-split-layout>
-              <vertical-layout>
-                  <div style="width: 100%;">
-                      <div>${this.renderInfo}</div>
-                      <vaadin-progress-bar .value=${this.renderProgress} theme="contrast"></vaadin-progress-bar>
-                  </div>
-                <div style="display: flex; align-items: center; justify-content: center;"
-                     stylex="max-height: 70em;max-width:70em;overflow: scroll;" id="canvas-container">
-                    <canvas id="screen1" width="512" height="512"></canvas>
-                    
-                </div>
-
-
-              </vertical-layout>
-                <div style="display: flex; flex-direction: column; padding: 1em;">
-
-                    <div style="display: flex; flex-direction: row; align-items: flex-end; margin-right: 1em;">
-                       </div>
-
-                    <vaadin-tabs theme="centered" @selected-changed="${this.selectedChanged}">
-                        <vaadin-tab theme="icon-on-top">
-                            <vaadin-icon icon="vaadin:fire"></vaadin-icon>
-                            <span>Flame</span>
-                        </vaadin-tab>
-                        <vaadin-tab theme="icon-on-top">
-                            <vaadin-icon icon="vaadin:eye"></vaadin-icon>
-                            <span>Render</span>
-                        </vaadin-tab>
-                        <vaadin-tab theme="icon-on-top">
-                            <vaadin-icon icon="vaadin:eye"></vaadin-icon>
-                            <span>Edit</span>
-                        </vaadin-tab>
-                    </vaadin-tabs>
-                    <div style="display: flex; flex-direction: column; width: 100%;">
-                        <playground-flame-panel id='flamePnl' 
-                          .visible=${this.selectedTab === 0}
-                          .onImport="${this.importFlameFromXml}" .onRandomFlame="${this.createRandomFlame}"
-                          .onRandomGradient="${this.createRandomGradient}"
-                        .onFlameNameChanged="${this.importExampleFlame}"></playground-flame-panel>
-                        <playground-render-panel id='viewOptsPnl' .onRefresh="${this.rerenderFlame}"
-                                                 .onCancelRender="${this.cancelRender}"
-                          .visible=${this.selectedTab === 1} .onImageSizeChanged="${this.rerenderFlame}"></playground-render-panel>
-                        <playground-edit-panel id='editPnl' .onRefresh="${this.rerenderFlame}"
-                                                 .visible=${this.selectedTab === 2}></playground-edit-panel>
-
-                     </div>
-     
-                </div>
-             </vaadin-split-layout>
+            <vertical-layout theme="spacing">
+              <swan-error-panel .errorMessage=${playgroundStore.lastError}></swan-error-panel>
+              <div class="gap-m grid list-none m-0 p-0" style="grid-template-columns: repeat(auto-fill, minmax(30em, 1fr));">
+                ${this.renderImageContainer()}    
+                ${this.renderMainTabs()}
+              </div>  
+            </vertical-layout>
         `;
     }
 
@@ -276,5 +234,53 @@ export class PlaygroundView extends View  implements BeforeEnterObserver {
         if(exampleName && exampleName!=='') {
             this.loadExampleAtStartup = exampleName
         }
+    }
+
+    private renderImageContainer = () => {
+        return html `
+          <vertical-layout>
+            <div style="display: flex; flex-direction: column; align-items: center;">  
+                <vaadin-scroller style="max-width: 34em; max-height: 34em;" id="canvas-container">
+                   <canvas id="screen1" width="512" height="512"></canvas>
+                </vaadin-scroller>
+                <div style="display: flex; flex-direction: column;">
+                    <div style="min-width: 26em;">${this.renderInfo}</div>
+                    <vaadin-progress-bar .value=${this.renderProgress} theme="contrast"></vaadin-progress-bar>
+                </div>
+            </div>
+          </vertical-layout>`
+    }
+
+    private renderMainTabs = () => {
+        return html `
+           <div style="display: flex; flex-direction: column; padding: 1em;">
+                <vaadin-tabs theme="centered" @selected-changed="${this.selectedChanged}">
+                    <vaadin-tab theme="icon-on-top">
+                        <vaadin-icon icon="vaadin:fire"></vaadin-icon>
+                        <span>Flame</span>
+                    </vaadin-tab>
+                    <vaadin-tab theme="icon-on-top">
+                        <vaadin-icon icon="vaadin:eye"></vaadin-icon>
+                        <span>Render</span>
+                    </vaadin-tab>
+                    <vaadin-tab theme="icon-on-top">
+                        <vaadin-icon icon="vaadin:eye"></vaadin-icon>
+                        <span>Edit</span>
+                    </vaadin-tab>
+                </vaadin-tabs>
+                <div style="display: flex; flex-direction: column; align-items: center; width: 100%;">
+                    <playground-flame-panel id='flamePnl' 
+                      .visible=${this.selectedTab === 0}
+                      .onImport="${this.importFlameFromXml}" .onRandomFlame="${this.createRandomFlame}"
+                      .onRandomGradient="${this.createRandomGradient}"
+                    .onFlameNameChanged="${this.importExampleFlame}"></playground-flame-panel>
+                    <playground-render-panel id='viewOptsPnl' .onRefresh="${this.rerenderFlame}"
+                                             .onCancelRender="${this.cancelRender}"
+                      .visible=${this.selectedTab === 1} .onImageSizeChanged="${this.rerenderFlame}"></playground-render-panel>
+                    <playground-edit-panel id='editPnl' .onRefresh="${this.rerenderFlame}"
+                                             .visible=${this.selectedTab === 2}></playground-edit-panel>
+
+                 </div>
+           </div>`
     }
 }

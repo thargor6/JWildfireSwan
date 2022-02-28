@@ -15,13 +15,12 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 */
 
-import {html} from 'lit';
+import {html, PropertyValues} from 'lit';
 import {customElement, property, state} from 'lit/decorators.js';
 
 import '@polymer/paper-slider/paper-slider'
 import '@vaadin/vaadin-button'
 import '@vaadin/vaadin-combo-box';
-import {playgroundStore} from "Frontend/stores/playground-store";
 
 import {MobxLitElement} from "@adobe/lit-mobx";
 
@@ -95,7 +94,6 @@ export class PlaygroundEditCameraPanel extends MobxLitElement {
   ]
 
   render() {
-
     return html`
       <vertical-layout theme="spacing" style="${this.visible ? `display:block;`: `display:none;`}">
         ${this.cameraControls.map(ctrl=>renderControl(ctrl, this.onPropertyChange))}
@@ -103,6 +101,9 @@ export class PlaygroundEditCameraPanel extends MobxLitElement {
 `;
   }
 
+  protected firstUpdated(_changedProperties: PropertyValues) {
+    super.firstUpdated(_changedProperties);
+  }
 
 }
 

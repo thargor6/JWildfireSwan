@@ -38,13 +38,12 @@ export class PlaygroundStore {
   onInitCallbacks = new Map<string[], OnInitCallback>()
   calculating = false
   lastError = ''
-  flame!: Flame
+  flame = new Flame()
   renderer!: FlameRenderer
   exampleFlamenames: string[] = []
 
   constructor() {
     makeAutoObservable(this);
-
   }
 
   async initialize() {

@@ -63,7 +63,7 @@ export class PlaygroundFlamePanel extends MobxLitElement {
 
   render() {
     return html`
-      <div style="${this.visible ? `display:block; width: 20em;`: `display:none;`}">
+      <div style="${this.visible ? `display:block; min-width: 34em;`: `display:none;`}">
         <div style="display:flex; flex-direction: column;">
           <vaadin-combo-box label="Example flame" .items="${playgroundStore.exampleFlamenames}" value="${this.flameName}"
                             @change="${(event: Event) => this.flameNameChanged(event)}"></vaadin-combo-box>
