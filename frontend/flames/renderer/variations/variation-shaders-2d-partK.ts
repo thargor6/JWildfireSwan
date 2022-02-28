@@ -78,6 +78,54 @@ class KaleidoscopeFunc extends VariationShaderFunc2D {
     }
 }
 
+class LaceJSFunc extends VariationShaderFunc2D {
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        /**
+         * Lace variation
+         *
+         * @author Jesus Sosa
+         * @date November 4, 2017
+         * based on a work of:
+         * http://paulbourke.net/fractals/lace/lace.c
+         */
+        return `{
+          float amount = float(${variation.amount});
+          float x = 0.5, y = 0.75;
+          float w = 0.0;
+          float r = 2.0;
+          float r0 = sqrt(_tx * _tx + _ty * _ty);
+          float weight = rand8(tex, rngState);
+          if (weight > 0.75) {
+            w = atan2(_ty, _tx - 1.0);
+            y = -r0 * cos(w) / r + 1.0;
+            x = -r0 * sin(w) / r;
+          } else if (weight > 0.50) {
+             w = atan2(_ty - sqrt(3.0) / 2.0, _tx + 0.5);
+             y = -r0 * cos(w) / r - 0.5;
+             x = -r0 * sin(w) / r + sqrt(3.0) / 2.0;
+          } else if (weight > 0.25) {
+             w = atan2(_ty + sqrt(3.0) / 2.0, _tx + 0.5);
+             y = -r0 * cos(w) / r - 0.5;
+             x = -r0 * sin(w) / r - sqrt(3.0) / 2.0;
+          } else {
+             w = atan2(_ty, _tx);
+             y = -r0 * cos(w) / r;
+             x = -r0 * sin(w) / r;
+          }
+          _vx += x * amount;
+          _vy += y * amount;
+        }`;
+    }
+
+    get name(): string {
+        return 'lace_js';
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
 class LayeredSpiralFunc extends VariationShaderFunc2D {
     PARAM_RADIUS = 'radius'
 
@@ -2588,6 +2636,7 @@ class YinYangFunc extends VariationShaderFunc2D {
 
 export function registerVars_2D_PartK() {
     VariationShaders.registerVar(new KaleidoscopeFunc())
+    VariationShaders.registerVar(new LaceJSFunc())
     VariationShaders.registerVar(new LayeredSpiralFunc())
     VariationShaders.registerVar(new LazySusanFunc())
     VariationShaders.registerVar(new LinearFunc())

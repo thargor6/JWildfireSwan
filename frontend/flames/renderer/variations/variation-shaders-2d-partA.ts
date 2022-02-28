@@ -1886,6 +1886,64 @@ class Fan2Func extends VariationShaderFunc2D {
     }
 }
 
+class FDiscFunc extends VariationShaderFunc2D {
+    PARAM_ASHIFT = 'ashift'
+    PARAM_RSHIFT = 'rshift'
+    PARAM_XSHIFT = 'xshift'
+    PARAM_YSHIFT = 'yshift'
+    PARAM_TERM1 = 'term1'
+    PARAM_TERM2 = 'term2'
+    PARAM_TERM3 = 'term3'
+    PARAM_TERM4 = 'term4'
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_ASHIFT, type: VariationParamType.VP_NUMBER, initialValue: 1.00 },
+            { name: this.PARAM_RSHIFT, type: VariationParamType.VP_NUMBER, initialValue: 1.00 },
+            { name: this.PARAM_XSHIFT, type: VariationParamType.VP_NUMBER, initialValue: 0.00 },
+            { name: this.PARAM_YSHIFT, type: VariationParamType.VP_NUMBER, initialValue: 0.00 },
+            { name: this.PARAM_TERM1, type: VariationParamType.VP_NUMBER, initialValue: 1.00 },
+            { name: this.PARAM_TERM2, type: VariationParamType.VP_NUMBER, initialValue: 0.00 },
+            { name: this.PARAM_TERM3, type: VariationParamType.VP_NUMBER, initialValue: 0.00 },
+            { name: this.PARAM_TERM4, type: VariationParamType.VP_NUMBER, initialValue: 0.00 }]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        /**
+         * ported from fdisc plugin for Apophysis7X, author unknown (couldn't find author name for plugin)
+         * ported to JWildfire variation by CozyG
+         * and enhanced with user-adjustable parameters
+         */
+        return `{
+          float amount = float(${variation.amount});
+          float ashift = float(${variation.params.get(this.PARAM_ASHIFT)});
+          float rshift = float(${variation.params.get(this.PARAM_RSHIFT)});
+          float xshift = float(${variation.params.get(this.PARAM_XSHIFT)});
+          float yshift = float(${variation.params.get(this.PARAM_YSHIFT)});
+          float term1 = float(${variation.params.get(this.PARAM_TERM1)});
+          float term2 = float(${variation.params.get(this.PARAM_TERM2)});
+          float term3 = float(${variation.params.get(this.PARAM_TERM3)});
+          float term4 = float(${variation.params.get(this.PARAM_TERM4)});
+          float afactor = (2.0*M_PI) / (_r + ashift);
+          float r = (atan2(_ty, _tx) * (1.0 / M_PI) + rshift) * 0.5;
+          float xfactor = cos(afactor + xshift);
+          float yfactor = sin(afactor + yshift);
+          float pr = amount * r;
+          float prx = pr * xfactor;
+          float pry = pr * yfactor;
+          _vx += (term1 * prx) + (term2 * _tx * prx) + (term3 * _tx * pr) + (term4 * _tx);
+          _vy += (term1 * pry) + (term2 * _ty * pry) + (term3 * _ty * pr) + (term4 * _ty);
+        }`;
+    }
+
+    get name(): string {
+        return 'fdisc';
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
 class FisheyeFunc extends VariationShaderFunc2D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         return `{
@@ -2382,6 +2440,43 @@ class Hypertile2Func extends VariationShaderFunc2D {
     }
 }
 
+class JapaneseMapleLeafFunc extends VariationShaderFunc2D {
+    PARAM_FILLED = 'filled'
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_FILLED, type: VariationParamType.VP_NUMBER, initialValue: 0.15 }]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        // japanese maple leaf formula by Hamid Naderi Yeganeh: https://blogs.scientificamerican.com/guest-blog/how-to-draw-with-math/
+        return `{
+          float amount = float(${variation.amount});
+          float filled = float(${variation.params.get(this.PARAM_FILLED)});
+          float t = _phi*0.5+(M_PI*0.5);
+          float scale = 0.667;
+          float r = (filled > 0.0 && filled > rand8(tex, rngState)) ? amount * rand8(tex, rngState) * scale : amount * scale;
+          float lx = (4.0/15.0+pow(cos(8.0*t),2.0) + 1.0/5.0 * pow(cos(8.0*t)*cos(24.0*t),10.0) +
+                    (1.0/6.0 * pow(cos(80.0*t),2.0) + 1.0/15.0 * pow(cos(80.0*t),10.0)))*
+                            (1.0-pow(sin(8.0*t),10.0)) *
+                            sin(2.0*t)*(1.0+sin(t))*(1.0-pow(cos(t),10.0) * pow(cos(3.0*t),2.0)+1.0/30.0*pow(cos(t),9.0)*pow(cos(5.0*t),10.0));
+          float ly = (8.0/30.0 + pow(cos(8.0*t),2.0) + 1.0/5.0*pow(cos(8.0*t)*cos(24.0*t),10.0)
+            +(1.0/6.0 * pow(cos(80.0*t),2.0) +1.0/15.0*pow(cos(80.0*t),10.0))
+            *(1.0-pow(cos(t),10.0) *pow(cos(3.0*t),2.0)) * (1.0-pow(sin(8.0*t),10.0)))
+            *cos(2.0*t)*(1.0+sin(t)+pow(cos(t)*cos(3.0*t),10.0));
+          _vx += r * lx;
+          _vy += r * ly;
+        }`;
+    }
+
+    get name(): string {
+        return 'japanese_maple_leaf';
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D, VariationTypes.VARTYPE_BASE_SHAPE];
+    }
+}
+
 class IDiscFunc extends VariationShaderFunc2D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         // idisc my Michael Faber, http://michaelfaber.deviantart.com/art/The-Lost-Variations-258913970 */
@@ -2637,6 +2732,7 @@ export function registerVars_2D_PartA() {
     VariationShaders.registerVar(new EyefishFunc())
     VariationShaders.registerVar(new FanFunc())
     VariationShaders.registerVar(new Fan2Func())
+    VariationShaders.registerVar(new FDiscFunc())
     VariationShaders.registerVar(new FisheyeFunc())
     VariationShaders.registerVar(new FlipCircleFunc())
     VariationShaders.registerVar(new FlipYFunc())
@@ -2652,6 +2748,7 @@ export function registerVars_2D_PartA() {
     VariationShaders.registerVar(new HypertileFunc())
     VariationShaders.registerVar(new Hypertile1Func())
     VariationShaders.registerVar(new Hypertile2Func())
+    VariationShaders.registerVar(new JapaneseMapleLeafFunc())
     VariationShaders.registerVar(new IDiscFunc())
     VariationShaders.registerVar(new JuliaFunc())
     VariationShaders.registerVar(new JuliaCFunc())
