@@ -66,17 +66,15 @@ export class DepFunctionsPartShaderGenerator {
       float SRT = 1.41421356237309504880169 * 10000.0; // Square Root of Two
     
       float random_0t1(in vec2 coordinate, in float seed) {
-          return fract(sin(dot(coordinate*seed, vec2(PHI, PI)))*SRT);
+          return fract(sin(dot(coordinate*seed+seed, vec2(PHI, PI)))*SRT);
       }
 
 			float rand0(vec2 co) {
-			  //return fract(sin(dot(co, vec2(12.9898 * (seed+3.0), 78.233 * (seed+5.0)))) * 43758.5453);
 		    return random_0t1(co, seed);
 			}
 			
 			float rand8(vec2 co, inout RNGState state) {
 			  state.seed = random_0t1(co, state.seed);
-			  //state.seed=fract(sin(dot(co, vec2(12.9898 * (state.seed+29.0), 78.233 * (state.seed+7.0)))) * 43758.5453) + gold_noise(co, state.seed);
 		    return state.seed;
 			}
 		

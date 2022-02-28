@@ -37,14 +37,19 @@ void main(void) {
   float _contrast =  <%= CONTRAST %>;
   
   float _gamma = <%= GAMMA %>;
-  float _gammaThreshold = <%= GAMMA_THRESHOLD %> * 10.00 + 0.01;
-  float gammaInv = 0.1 + 1.0 / _gamma;
+  float _gammaThreshold = <%= GAMMA_THRESHOLD %> * 20.00 + 0.001;
+  float gammaInv = 0.0001 + 1.0 / _gamma;
    
-  float logScale = 2.0 * swarmSizeScl / resolutionScl * _brightness * _contrast * log(x * _contrast) / (log(x) * frames);
+  float logScale = 4.0 * swarmSizeScl / resolutionScl * _brightness * _contrast * log(x * _contrast) / (log(x) * frames);
 
-  float r = (pow(colorTexel.r, gammaInv)+colorTexel.r * _gammaThreshold) * logScale * <%= BALANCE_RED %>;
-  float g = (pow(colorTexel.g, gammaInv)+colorTexel.g * _gammaThreshold) * logScale * <%= BALANCE_GREEN %>;
-  float b = (pow(colorTexel.b, gammaInv)+colorTexel.b * _gammaThreshold) * logScale * <%= BALANCE_BLUE %>;
+ // float r = (pow(colorTexel.r, gammaInv)+colorTexel.r * _gammaThreshold) * logScale * <%= BALANCE_RED %>;
+ // float g = (pow(colorTexel.g, gammaInv)+colorTexel.g * _gammaThreshold) * logScale * <%= BALANCE_GREEN %>;
+ // float b = (pow(colorTexel.b, gammaInv)+colorTexel.b * _gammaThreshold) * logScale * <%= BALANCE_BLUE %>;
+
+  float r = (pow(colorTexel.r, gammaInv)+colorTexel.r * _gammaThreshold/_gamma) * logScale * <%= BALANCE_RED %>;
+  float g = (pow(colorTexel.g, gammaInv)+colorTexel.g * _gammaThreshold/_gamma) * logScale * <%= BALANCE_GREEN %>;
+  float b = (pow(colorTexel.b, gammaInv)+colorTexel.b * _gammaThreshold/_gamma) * logScale * <%= BALANCE_BLUE %>;
+
 
   vec3 col = vec3(r, g, b);  
   gl_FragColor = vec4(col, 1.0);  
