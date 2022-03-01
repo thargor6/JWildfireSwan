@@ -63,7 +63,7 @@ export class PlaygroundFlamePanel extends MobxLitElement {
 
   render() {
     return html`
-      <div style="${this.visible ? `display:block; min-width: 34em;`: `display:none;`}">
+      <div style="${this.visible ? `display:block;`: `display:none;`}">
         <div style="display:flex; flex-direction: column;">
           <vaadin-combo-box label="Example flame" .items="${playgroundStore.exampleFlamenames}" value="${this.flameName}"
                             @change="${(event: Event) => this.flameNameChanged(event)}"></vaadin-combo-box>
@@ -72,8 +72,10 @@ export class PlaygroundFlamePanel extends MobxLitElement {
           
           <div style="display: grid;">
             <vaadin-button ?disabled=${playgroundStore.calculating} theme="primary" @click="${this.onImport}">Import flame from xml</vaadin-button>
+            <vaadin-horizontal-layout theme="spacing">
             <vaadin-button ?disabled=${playgroundStore.calculating} theme="primary" @click="${this.onRandomFlame}">Generate random flame</vaadin-button>
             <vaadin-button ?disabled=${playgroundStore.calculating} theme="secondary" @click="${this.onRandomGradient}">Generate random gradient</vaadin-button>
+            </vaadin-horizontal-layout>
           </div>
           <swan-loading-indicator .loading=${playgroundStore.calculating} caption="Calculating..."></swan-loading-indicator>
           </vaadin-vertical-layout>

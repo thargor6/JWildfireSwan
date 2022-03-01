@@ -103,6 +103,8 @@ export class PlaygroundView extends View  implements BeforeEnterObserver {
         this.canvasContainer.innerHTML = '';
         this.canvas = document.createElement('canvas')
         this.canvas.id = "screen1"
+        this.canvas.style.width = '28em'
+        this.canvas.style.height = '28em'
         this.canvas.width = 512
         this.canvas.height = 512
         this.canvasContainer.appendChild(this.canvas)
@@ -241,7 +243,7 @@ export class PlaygroundView extends View  implements BeforeEnterObserver {
           <vertical-layout>
             <div style="display: flex; flex-direction: column; align-items: center;">  
                 <vaadin-scroller style="max-width: 34em; max-height: 34em;" id="canvas-container">
-                   <canvas id="screen1" width="512" height="512"></canvas>
+                   <canvas id="screen1" style="width: 400px; height: 300px;" width="512" height="512"></canvas>
                 </vaadin-scroller>
                 <div style="display: flex; flex-direction: column;">
                     <div style="min-width: 26em;">${this.renderInfo}</div>

@@ -48,7 +48,7 @@ export class PlaygroundEditPanel extends MobxLitElement {
 
   render() {
     return html`
-      <vertical-layout theme="spacing" style="${this.visible ? `display:block; min-width: 34em;`: `display:none;`}">
+      <vertical-layout theme="spacing" style="${this.visible ? `display:block; min-width: 32em;`: `display:none;`}">
         <vaadin-tabs @selected-changed="${this.selectedChanged}">
           <vaadin-tab theme="icon-on-top">
             <vaadin-icon icon="vaadin:fire"></vaadin-icon>

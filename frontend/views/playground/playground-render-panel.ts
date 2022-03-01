@@ -71,30 +71,28 @@ export class PlaygroundRenderPanel extends MobxLitElement {
 
   render() {
     return html`
-      <vertical-layout theme="spacing" style="${this.visible ? `display:block; min-width: 34em;`: `display:none;`}">
-
-          <vaadin-horizontal-layout theme="spacing">
-          <vaadin-combo-box style="max-width: 10em;" label="Image size" .items="${this.imageSizes}" value="${this.imageSize}"
-                            @change="${(event: Event) => this.imageSizeChanged(event)}"></vaadin-combo-box>
-          <vaadin-combo-box style="max-width: 10em;" label="Swarm size" .items="${this.swarmSizes}" value="${this.swarmSize}"
-                            @change="${(event: Event) => this.pointsSizeChanged(event)}"></vaadin-combo-box>
-          </vaadin-horizontal-layout>
-
+      <vertical-layout theme="spacing" style="${this.visible ? `display:block;`: `display:none;`}">
         <vaadin-horizontal-layout theme="spacing">
-          <vaadin-button theme="primary" style="max-width: 10em;" @click="${this.onRefresh}">Refresh</vaadin-button>
-          <vaadin-button style="max-width: 10em;" @click="${this.onCancelRender}">Cancel</vaadin-button>
-        </vaadin-horizontal-layout>  
-
-          <vaadin-combo-box style="max-width: 10em;" label="Display mode" 
-                            .items="${this.displayModes}" .value=${this.displayMode}
-                            item-value-path="displayMode" item-label-path="caption"
-                            @change="${(event: Event) => this.displayModeChanged(event)}"></vaadin-combo-box>
-
-        <div style="display: flex; align-items: center; justify-content: center; margin-top: 2em;">
-          <vertical-layout>
+          <vaadin-combo-box style="max-width: 10em;" label="Image size" .items="${this.imageSizes}" value="${this.imageSize}"
+                          @change="${(event: Event) => this.imageSizeChanged(event)}"></vaadin-combo-box>
+          <vaadin-combo-box style="max-width: 10em;" label="Swarm size" .items="${this.swarmSizes}" value="${this.swarmSize}"
+                          @change="${(event: Event) => this.pointsSizeChanged(event)}"></vaadin-combo-box>
+          <vaadin-combo-box style="max-width: 10em;" label="Display mode"
+                              .items="${this.displayModes}" .value=${this.displayMode}
+                              item-value-path="displayMode" item-label-path="caption"
+                              @change="${(event: Event) => this.displayModeChanged(event)}"></vaadin-combo-box>
+        </vaadin-horizontal-layout>
+          
+ 
+        <div style="display: flex; margin-top: 2em;">
+          <div style="display: flex; flex-wrap: wrap;">
             <label>Final image (use right-click and save-as to export):</label>
             <div id="captured-image-container"></div>
-          </vertical-layout>
+          </div>
+            <div style="display: flex; align-items: center;">
+                <vaadin-button theme="primary" style="max-width: 10em;" @click="${this.onRefresh}">Refresh</vaadin-button>
+                <vaadin-button theme="tertiary" style="max-width: 10em;" @click="${this.onCancelRender}">Cancel</vaadin-button>
+            </div>
         </div>
       </vertical-layout>
 `;
