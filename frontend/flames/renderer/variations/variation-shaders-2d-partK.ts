@@ -1985,6 +1985,44 @@ class SquareFunc extends VariationShaderFunc2D {
     }
 }
 
+class SquarizeFunc extends VariationShaderFunc2D {
+    // squarize by MichaelFaber - The angle pack: http://michaelfaber.deviantart.com/art/The-Angle-Pack-277718538
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        return `{
+          float amount = float(${variation.amount});
+            float s = sqrt(sqr(_tx) + sqr(_ty));
+            float a = atan2(_ty, _tx);
+            if (a < 0.0)
+              a += (2.0*M_PI);
+            float p = 4.0 * s * a / M_PI;
+            if (p <= 1.0 * s) {
+              _vx += amount * s;
+              _vy += amount * p;
+            } else if (p <= 3.0 * s) {
+              _vx += amount * (2.0 * s - p);
+              _vy += amount * (s);
+            } else if (p <= 5.0 * s) {
+              _vx -= amount * (s);
+              _vy += amount * (4.0 * s - p);
+            } else if (p <= 7.0 * s) {
+              _vx -= amount * (6.0 * s - p);
+              _vy -= amount * (s);
+            } else {
+              _vx += amount * (s);
+              _vy -= amount * (8.0 * s - p);
+            }   
+        }`;
+    }
+
+    get name(): string {
+        return 'squarize';
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
 class StripesFunc extends VariationShaderFunc2D {
     PARAM_SPACE = 'space'
     PARAM_WARP = 'warp'
@@ -2429,6 +2467,65 @@ class UnpolarFunc extends VariationShaderFunc2D {
     }
 }
 
+class WaffleFunc extends VariationShaderFunc2D {
+    PARAM_SLICES = 'slices'
+    PARAM_XTHICKNESS = 'xthickness'
+    PARAM_YTHICKNESS = 'ythickness'
+    PARAM_ROTATION = 'rotation'
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_SLICES, type: VariationParamType.VP_NUMBER, initialValue: 6 },
+            { name: this.PARAM_XTHICKNESS, type: VariationParamType.VP_NUMBER, initialValue: 0.50 },
+            { name: this.PARAM_YTHICKNESS, type: VariationParamType.VP_NUMBER, initialValue: 0.50 },
+            { name: this.PARAM_ROTATION, type: VariationParamType.VP_NUMBER, initialValue: 0.00 }]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        // Waffle plugin by Jed Kelsey, http://lu-kout.deviantart.com/art/Apophysis-Plugin-Pack-1-v0-4-59907275
+        return `{
+          float amount = float(${variation.amount});
+          int slices = int(${variation.params.get(this.PARAM_SLICES)});
+          float xthickness = float(${variation.params.get(this.PARAM_XTHICKNESS)});
+          float ythickness = float(${variation.params.get(this.PARAM_YTHICKNESS)});
+          float rotation = float(${variation.params.get(this.PARAM_ROTATION)});
+          float a = 0.0, r = 0.0;
+          int mode = iRand8(tex, 5, rngState);
+          float vcosr = amount * cos(rotation);
+          float vsinr = amount * sin(rotation);
+          if(mode==0) {
+            a = (float(iRand8(tex, slices, rngState)) + rand8(tex, rngState) * xthickness) / float(slices);
+            r = (float(iRand8(tex, slices, rngState)) + rand8(tex, rngState) * ythickness) / float(slices);
+          }
+          else if(mode==1) {
+            a = (float(iRand8(tex, slices, rngState)) + rand8(tex, rngState)) / float(slices);
+            r = (float(iRand8(tex, slices, rngState)) + ythickness) / float(slices);
+          }
+          else if(mode==2) {
+            a = (float(iRand8(tex, slices, rngState)) + xthickness) / float(slices);
+            r = (float(iRand8(tex, slices, rngState)) + rand8(tex, rngState)) / float(slices);
+          }
+          else if(mode==3) {
+             a = rand8(tex, rngState);
+             r = (float(iRand8(tex, slices, rngState)) + ythickness + rand8(tex, rngState) * (1.0 - ythickness)) / float(slices);
+          }
+          else { // mode = 4
+            a = (float(iRand8(tex, slices, rngState)) + xthickness + rand8(tex, rngState) * (1.0 - xthickness)) / float(slices);
+            r = rand8(tex, rngState);
+          }
+          _vx += (vcosr * a + vsinr * r); 
+          _vy += (-vsinr * a + vcosr * r);
+        }`;
+    }
+
+    get name(): string {
+        return 'waffle';
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
 class WedgeFunc extends VariationShaderFunc2D {
     PARAM_ANGLE = 'angle'
     PARAM_HOLE = 'hole'
@@ -2690,6 +2787,7 @@ export function registerVars_2D_PartK() {
     VariationShaders.registerVar(new SplitFunc())
     VariationShaders.registerVar(new SplitsFunc())
     VariationShaders.registerVar(new SquareFunc())
+    VariationShaders.registerVar(new SquarizeFunc())
     VariationShaders.registerVar(new StripesFunc())
     VariationShaders.registerVar(new SwirlFunc())
     VariationShaders.registerVar(new TanFunc())
@@ -2703,8 +2801,9 @@ export function registerVars_2D_PartK() {
     VariationShaders.registerVar(new TwintrianFunc())
     VariationShaders.registerVar(new TwoFaceFunc())
     VariationShaders.registerVar(new UnpolarFunc())
+    VariationShaders.registerVar(new VogelFunc())
+    VariationShaders.registerVar(new WaffleFunc())
     VariationShaders.registerVar(new WedgeFunc())
     VariationShaders.registerVar(new WhorlFunc())
-    VariationShaders.registerVar(new VogelFunc())
     VariationShaders.registerVar(new YinYangFunc())
 }

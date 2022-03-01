@@ -26,11 +26,14 @@ import {VariationShaders} from 'Frontend/flames/renderer/variations/variation-sh
 import {RenderVariation, RenderXForm} from 'Frontend/flames/model/render-flame';
 import {M_PI} from 'Frontend/flames/renderer/mathlib';
 import {
-    FUNC_COSH, FUNC_J1, FUNC_JACOBI_ELLIPTIC,
+    FUNC_J1, FUNC_JACOBI_ELLIPTIC,
     FUNC_SAFEDIV,
     FUNC_SGN,
-    FUNC_SINH, FUNC_TANH
+    FUNC_TANH, VariationMathFunctions
 } from "Frontend/flames/renderer/variations/variation-math-functions";
+
+// Local functions
+const LIB_VIBRATION2 = 'lib_vibration2'
 
 /*
   be sure to import this class somewhere and call registerVars_Waves()
@@ -122,6 +125,155 @@ class PreWave3DWFFunc extends VariationShaderFunc3D {
         return [VariationTypes.VARTYPE_3D, VariationTypes.VARTYPE_PRE];
     }
 }
+
+class Vibration2Func extends VariationShaderFunc2D {
+    PARAM_DIR = 'dir'
+    PARAM_ANGLE = 'angle'
+    PARAM_FREQ = 'freq'
+    PARAM_AMP = 'amp'
+    PARAM_PHASE = 'phase'
+    PARAM_DIR2 = 'dir2'
+    PARAM_ANGLE2 = 'angle2'
+    PARAM_FREQ2 = 'freq2'
+    PARAM_AMP2 = 'amp2'
+    PARAM_PHASE2 = 'phase2'
+    PARAM_DM = 'dm'
+    PARAM_DMFREQ = 'dmfreq'
+    PARAM_TM = 'tm'
+    PARAM_TMFREQ = 'tmfreq'
+    PARAM_FM = 'fm'
+    PARAM_FMFREQ = 'fmfreq'
+    PARAM_AM = 'am'
+    PARAM_AMFREQ = 'amfreq'
+    PARAM_D2M = 'd2m'
+    PARAM_D2MFREQ = 'd2mfreq'
+    PARAM_T2M = 't2m'
+    PARAM_T2MFREQ = 't2mfreq'
+    PARAM_F2M = 'f2m'
+    PARAM_F2MFREQ = 'f2mfreq'
+    PARAM_A2M = 'a2m'
+    PARAM_A2MFREQ = 'a2mfreq'
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_DIR, type: VariationParamType.VP_NUMBER, initialValue: 0.00 },
+            { name: this.PARAM_ANGLE, type: VariationParamType.VP_NUMBER, initialValue: 1.5708 },
+            { name: this.PARAM_FREQ, type: VariationParamType.VP_NUMBER, initialValue: 1.00 },
+            { name: this.PARAM_AMP, type: VariationParamType.VP_NUMBER, initialValue: 0.25 },
+            { name: this.PARAM_PHASE, type: VariationParamType.VP_NUMBER, initialValue: 0.0 },
+            { name: this.PARAM_DIR2, type: VariationParamType.VP_NUMBER, initialValue: 1.5708 },
+            { name: this.PARAM_ANGLE2, type: VariationParamType.VP_NUMBER, initialValue: 1.5708 },
+            { name: this.PARAM_FREQ2, type: VariationParamType.VP_NUMBER, initialValue: 1.00 },
+            { name: this.PARAM_AMP2, type: VariationParamType.VP_NUMBER, initialValue: 0.25 },
+            { name: this.PARAM_PHASE2, type: VariationParamType.VP_NUMBER, initialValue: 0.00 },
+            { name: this.PARAM_DM, type: VariationParamType.VP_NUMBER, initialValue: 0.00 },
+            { name: this.PARAM_DMFREQ, type: VariationParamType.VP_NUMBER, initialValue: 0.10 },
+            { name: this.PARAM_TM, type: VariationParamType.VP_NUMBER, initialValue: 0.00 },
+            { name: this.PARAM_TMFREQ, type: VariationParamType.VP_NUMBER, initialValue: 0.10 },
+            { name: this.PARAM_FM, type: VariationParamType.VP_NUMBER, initialValue: 0.00 },
+            { name: this.PARAM_FMFREQ, type: VariationParamType.VP_NUMBER, initialValue: 0.10 },
+            { name: this.PARAM_AM, type: VariationParamType.VP_NUMBER, initialValue: 0.00 },
+            { name: this.PARAM_AMFREQ, type: VariationParamType.VP_NUMBER, initialValue: 0.10 },
+            { name: this.PARAM_D2M, type: VariationParamType.VP_NUMBER, initialValue: 0.00 },
+            { name: this.PARAM_D2MFREQ, type: VariationParamType.VP_NUMBER, initialValue: 0.10 },
+            { name: this.PARAM_T2M, type: VariationParamType.VP_NUMBER, initialValue: 0.00 },
+            { name: this.PARAM_T2MFREQ, type: VariationParamType.VP_NUMBER, initialValue: 0.10 },
+            { name: this.PARAM_F2M, type: VariationParamType.VP_NUMBER, initialValue: 0.00 },
+            { name: this.PARAM_F2MFREQ, type: VariationParamType.VP_NUMBER, initialValue: 0.10 },
+            { name: this.PARAM_A2M, type: VariationParamType.VP_NUMBER, initialValue: 0.00 },
+            { name: this.PARAM_A2MFREQ, type: VariationParamType.VP_NUMBER, initialValue: 0.10 }
+        ]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        /*
+        * vibration2 by FarDareisMai
+        * https://www.deviantart.com/fardareismai/art/Apo-Plugins-Vibration-1-and-2-252001851 converted by Brad Stefanov
+        */
+        return `{
+          float amount = float(${variation.amount});
+          float dir = float(${variation.params.get(this.PARAM_DIR)});
+          float angle = float(${variation.params.get(this.PARAM_ANGLE)});
+          float freq = float(${variation.params.get(this.PARAM_FREQ)});
+          float amp = float(${variation.params.get(this.PARAM_AMP)});
+          float phase = float(${variation.params.get(this.PARAM_PHASE)});
+          float dir2 = float(${variation.params.get(this.PARAM_DIR2)});
+          float angle2 = float(${variation.params.get(this.PARAM_ANGLE2)});
+          float freq2 = float(${variation.params.get(this.PARAM_FREQ2)});
+          float amp2 = float(${variation.params.get(this.PARAM_AMP2)});
+          float phase2 = float(${variation.params.get(this.PARAM_PHASE2)});
+          float dm = float(${variation.params.get(this.PARAM_DM)}); 
+          float dmfreq = float(${variation.params.get(this.PARAM_DMFREQ)});
+          float tm = float(${variation.params.get(this.PARAM_TM)});
+          float tmfreq = float(${variation.params.get(this.PARAM_TMFREQ)});
+          float fm = float(${variation.params.get(this.PARAM_FM)});
+          float fmfreq = float(${variation.params.get(this.PARAM_FMFREQ)});
+          float am = float(${variation.params.get(this.PARAM_AM)});       
+          float amfreq = float(${variation.params.get(this.PARAM_AMFREQ)});
+          float d2m = float(${variation.params.get(this.PARAM_D2M)});
+          float d2mfreq = float(${variation.params.get(this.PARAM_D2MFREQ)});
+          float t2m = float(${variation.params.get(this.PARAM_T2M)});
+          float t2mfreq = float(${variation.params.get(this.PARAM_T2MFREQ)});
+          float f2m = float(${variation.params.get(this.PARAM_F2M)});     
+          float f2mfreq = float(${variation.params.get(this.PARAM_F2MFREQ)});
+          float a2m = float(${variation.params.get(this.PARAM_A2M)});
+          float a2mfreq = float(${variation.params.get(this.PARAM_A2MFREQ)});
+        
+          float d_along_dir = _tx * cos(dir) + _ty * sin(dir);
+          float dirL = dir + vib2_modulate(dm, dmfreq, d_along_dir);
+          float angleL = angle + vib2_modulate(tm, tmfreq, d_along_dir);
+          float freqL = vib2_modulate(fm, fmfreq, d_along_dir) / freq;
+          float ampL = amp + amp * vib2_modulate(am, amfreq, d_along_dir);
+        
+          float total_angle = angleL + dirL;
+          float cos_dir = cos(dirL);
+          float sin_dir = sin(dirL);
+          float cos_tot = cos(total_angle);
+          float sin_tot = sin(total_angle);
+          float scaled_freq = freq * (2.0*M_PI);
+          float phase_shift = (2.0*M_PI) * phase / freq;
+          d_along_dir = _tx * cos_dir + _ty * sin_dir;
+          float local_amp = ampL * sin((d_along_dir * scaled_freq) + freqL + phase_shift);
+        
+          float x = _tx + local_amp * cos_tot;
+          float y = _ty + local_amp * sin_tot;
+        
+          d_along_dir = _tx * cos(dir2) + _ty * sin(dir2);
+          dirL = dir2 + vib2_modulate(d2m, d2mfreq, d_along_dir);
+          angleL = angle2 + vib2_modulate(t2m, t2mfreq, d_along_dir);
+          freqL = vib2_modulate(f2m, f2mfreq, d_along_dir) / freq2;
+          ampL = amp2 + amp2 * vib2_modulate(a2m, a2mfreq, d_along_dir);
+        
+          total_angle = angleL + dirL;
+          cos_dir = cos(dirL);
+          sin_dir = sin(dirL);
+          cos_tot = cos(total_angle);
+          sin_tot = sin(total_angle);
+          scaled_freq = freq2 * (2.0*M_PI);
+          phase_shift = (2.0*M_PI) * phase2 / freq2;
+          d_along_dir = _tx * cos_dir + _ty * sin_dir;
+          local_amp = ampL * sin((d_along_dir * scaled_freq) + freqL + phase_shift);
+        
+          x += local_amp * cos_tot;
+          y += local_amp * sin_tot;
+        
+          _vx += amount * x;
+          _vy += amount * y;
+        }`;
+    }
+
+    get name(): string {
+        return 'vibration2';
+    }
+
+    get funcDependencies(): string[] {
+        return [LIB_VIBRATION2];
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
 
 class WavesFunc extends VariationShaderFunc2D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
@@ -728,7 +880,14 @@ class Waves4WFFunc extends VariationShaderFunc2D {
 }
 
 export function registerVars_Waves() {
+    VariationMathFunctions.registerFunction(LIB_VIBRATION2,
+      `float vib2_modulate(float amp, float freq, float x) {
+               return amp * cos(x * freq * M_PI * 2.0);
+             }      
+        `);
+
     VariationShaders.registerVar(new PreWave3DWFFunc())
+    VariationShaders.registerVar(new Vibration2Func())
     VariationShaders.registerVar(new WavesFunc())
     VariationShaders.registerVar(new Waves2Func())
     VariationShaders.registerVar(new Waves22Func())
