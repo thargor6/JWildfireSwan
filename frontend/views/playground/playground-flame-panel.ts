@@ -101,4 +101,7 @@ export class PlaygroundFlamePanel extends MobxLitElement {
     playgroundStore.notifyInit(this.tagName)
   }
 
+  transferFlameToClipbord() {
+    navigator.clipboard.writeText(this.flameXml);
+  }
 }

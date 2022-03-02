@@ -15,9 +15,10 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 */
 
-import {html, nothing, PropertyValues} from 'lit'
+import {html, nothing, PropertyValues, render} from 'lit'
 import {customElement, state} from 'lit/decorators.js'
 import { View } from '../../views/view'
+import { guard } from 'lit/directives/guard.js';
 
 import '@vaadin/vaadin-button'
 import '@vaadin/vaadin-text-field'
@@ -31,6 +32,9 @@ import '@vaadin/icons'
 import '@vaadin/tabs'
 import '@vaadin/vaadin-progress-bar'
 import '@vaadin/scroller'
+import '@vaadin/split-layout';
+import '@vaadin/vaadin-notification'
+import type { Notification } from '@vaadin/notification';
 
 import {FlameRenderer} from '../../flames/renderer/flame-renderer'
 import {AppInfoEndpoint, FlamesEndpoint, GalleryEndpoint} from "Frontend/generated/endpoints";
@@ -39,7 +43,7 @@ import '@vaadin/vaadin-combo-box';
 import './playground-render-panel'
 import './playground-flame-panel'
 import './playground-edit-panel'
-import '@vaadin/split-layout';
+
 
 import {PlaygroundRenderPanel} from "Frontend/views/playground/playground-render-panel";
 import {playgroundStore} from "Frontend/stores/playground-store";
@@ -72,6 +76,7 @@ export class PlaygroundView extends View  implements BeforeEnterObserver {
 
     render() {
         return html`
+            ${this.renderNotification()}
             <vertical-layout theme="spacing">
               <swan-error-panel .errorMessage=${playgroundStore.lastError}></swan-error-panel>
               <div class="gap-m grid list-none m-0 p-0" style="grid-template-columns: repeat(auto-fill, minmax(30em, 1fr));">
@@ -198,10 +203,10 @@ export class PlaygroundView extends View  implements BeforeEnterObserver {
     }
 
     exportParamsAsXml = (): void => {
-        console.log("CURRFLAME", FlameMapper.mapToBackend(playgroundStore.flame))
-
         FlamesEndpoint.convertFlameToXml(FlameMapper.mapToBackend(playgroundStore.flame)).then(flameXml => {
             this.flamePanel.flameXml = flameXml
+            this.flamePanel.transferFlameToClipbord()
+            this.openNotification(1)
         })
           .catch(err=> {
               playgroundStore.lastError = err
@@ -297,5 +302,53 @@ export class PlaygroundView extends View  implements BeforeEnterObserver {
 
                  </div>
            </div>`
+    }
+
+    private renderNotification() {
+        return html `<vaadin-notification
+          .renderer="${guard([], () => (root: HTMLElement) => {
+              render(
+                html`
+        <vaadin-horizontal-layout theme="spacing" style="align-items: center">
+          <vaadin-icon
+            icon="vaadin:check-circle"
+            style="color: var(--lumo-success-color)"
+          ></vaadin-icon>
+          <div>
+            <b style="color: var(--lumo-success-text-color);">Export successful</b>
+            <div
+              style="font-size: var(--lumo-font-size-s); color: var(--lumo-secondary-text-color)"
+            >
+              <b>Parameters</b> are now available at the Flame-tab and were copied to the Clipboard
+            </div>
+          </div>
+          <vaadin-button
+            theme="tertiary-inline"
+            @click="${this.closeNotification.bind(this, 1)}"
+            aria-label="Close"
+          >
+            <vaadin-icon icon="lumo:cross"></vaadin-icon>
+          </vaadin-button>
+        </vaadin-horizontal-layout>
+      `,
+                root
+              );
+          })}"
+          position="middle"
+        ></vaadin-notification>`
+    }
+
+    openNotification(which: number) {
+        const notification = this.querySelector(
+          `vaadin-notification:nth-child(${which})`
+        ) as Notification;
+        notification?.open();
+    }
+
+    closeNotification(which: number) {
+        const notification = this.querySelector(
+          `vaadin-notification:nth-child(${which})`
+        ) as Notification;
+        notification?.close();
     }
 }
