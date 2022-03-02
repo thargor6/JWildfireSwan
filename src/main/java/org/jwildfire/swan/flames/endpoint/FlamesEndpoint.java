@@ -94,4 +94,12 @@ public class FlamesEndpoint {
     }
   }
 
+  public @Nonnull String convertFlameToXml(@Nonnull Flame flame) {
+    try {
+      return service.convertFlameToXml(flame);
+    } catch (Throwable ex) {
+      log.error("Error generating random gradient", ex);
+      throw new RuntimeException(ex);
+    }
+  }
 }

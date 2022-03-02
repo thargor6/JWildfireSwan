@@ -197,6 +197,18 @@ export class PlaygroundView extends View  implements BeforeEnterObserver {
         })
     }
 
+    exportParamsAsXml = (): void => {
+        console.log("CURRFLAME", FlameMapper.mapToBackend(playgroundStore.flame))
+
+        FlamesEndpoint.convertFlameToXml(FlameMapper.mapToBackend(playgroundStore.flame)).then(flameXml => {
+            this.flamePanel.flameXml = flameXml
+        })
+          .catch(err=> {
+              playgroundStore.lastError = err
+          })
+
+    }
+
     importExampleFlame = (): void => {
         if(!this.flamePanel.flameName) {
             return
@@ -280,6 +292,7 @@ export class PlaygroundView extends View  implements BeforeEnterObserver {
                                              .onCancelRender="${this.cancelRender}"
                       .visible=${this.selectedTab === 1} .onImageSizeChanged="${this.rerenderFlame}"></playground-render-panel>
                     <playground-edit-panel id='editPnl' .onRefresh="${this.rerenderFlame}"
+                                           .onExportParams="${this.exportParamsAsXml}"
                                              .visible=${this.selectedTab === 2}></playground-edit-panel>
 
                  </div>

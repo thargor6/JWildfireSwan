@@ -148,4 +148,13 @@ public class FlamesService {
     }
      return new RandomFlame(flameMapper.mapFromJwildfire(jwfFlame), flameXml);
   }
+
+  public String convertFlameToXml(Flame flame) {
+    org.jwildfire.create.tina.base.Flame jwfFlame = flameMapper.mapToJwildfire(flame);
+    try {
+      return new FlameWriter().getFlameXML(jwfFlame);
+    } catch (Exception e) {
+      throw new RuntimeException(e);
+    }
+  }
 }

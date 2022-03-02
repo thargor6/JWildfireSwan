@@ -46,6 +46,9 @@ export class PlaygroundEditPanel extends MobxLitElement {
   @property()
   onRefresh = ()=>{}
 
+  @property()
+  onExportParams = ()=>{}
+
   render() {
     return html`
       <vertical-layout theme="spacing" style="${this.visible ? `display:block; min-width: 32em;`: `display:none;`}">
@@ -61,6 +64,8 @@ export class PlaygroundEditPanel extends MobxLitElement {
         </vaadin-tabs>
         <playground-edit-camera-panel .visible=${this.selectedTab===0} .onPropertyChange=${this.onPropertyChange} ></playground-edit-camera-panel>
         <playground-edit-coloring-panel .visible=${this.selectedTab===1} .onPropertyChange=${this.onPropertyChange} ></playground-edit-coloring-panel>
+        <vaadin-button theme="primary" @click="${this.onExportParams}">Export flame as xml</vaadin-button>
+          
       </vertical-layout>
 `;
   }

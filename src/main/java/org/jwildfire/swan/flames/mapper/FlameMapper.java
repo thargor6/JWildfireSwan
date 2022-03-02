@@ -84,6 +84,18 @@ public class FlameMapper {
   public org.jwildfire.create.tina.base.Flame mapToJwildfire(Flame source) {
     org.jwildfire.create.tina.base.Flame res = new org.jwildfire.create.tina.base.Flame();
     res.setBrightness(source.getBrightness());
+    res.setWhiteLevel(source.getWhiteLevel());
+    res.setContrast(source.getContrast());
+    res.setSampleDensity(source.getSampleDensity());
+    res.setLowDensityBrightness(source.getLowDensityBrightness());
+    res.setBalanceRed(source.getBalanceRed());
+    res.setBalanceGreen(source.getBalanceGreen());
+    res.setBalanceBlue(source.getBalanceBlue());
+    res.setGamma(source.getGamma());
+    res.setGammaThreshold(source.getGammaThreshold());
+    res.setForegroundOpacity(source.getForegroundOpacity());
+    res.setVibrancy(source.getVibrancy());
+    res.setSaturation(source.getSaturation());
     res.setPixelsPerUnit(source.getPixelsPerUnit());
     res.setWidth(source.getWidth());
     res.setHeight(source.getHeight());
