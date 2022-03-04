@@ -22,7 +22,7 @@ import {
     FUNC_COSH,
     FUNC_HYPOT,
     FUNC_LOG10,
-    FUNC_MODULO,
+    FUNC_MODULO, FUNC_RINT, FUNC_ROUND,
     FUNC_SGN,
     FUNC_SINH,
     FUNC_TANH
@@ -2023,6 +2023,37 @@ class SquarizeFunc extends VariationShaderFunc2D {
     }
 }
 
+class SquirrelFunc extends VariationShaderFunc2D {
+    PARAM_A = 'a'
+    PARAM_B = 'b'
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_A, type: VariationParamType.VP_NUMBER, initialValue: 1.00 },
+            { name: this.PARAM_B, type: VariationParamType.VP_NUMBER, initialValue: 1.00 }]
+    }
+
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        // squirrel by Raykoid666, http://raykoid666.deviantart.com/art/re-pack-1-new-plugins-100092186
+        return `{
+          float amount = float(${variation.amount});
+          float a = float(${variation.params.get(this.PARAM_A)});
+          float b = float(${variation.params.get(this.PARAM_B)});   
+          float u = (a + EPSILON) * sqr(_tx) + (b + EPSILON) * sqr(_ty);
+          _vx = cos(sqrt(u)) * tan(_tx) * amount;
+          _vy = sin(sqrt(u)) * tan(_ty) * amount;
+        }`;
+    }
+
+    get name(): string {
+        return 'squirrel';
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
 class StripesFunc extends VariationShaderFunc2D {
     PARAM_SPACE = 'space'
     PARAM_WARP = 'warp'
@@ -2381,6 +2412,368 @@ class TradeFunc extends VariationShaderFunc2D {
 
     get name(): string {
         return 'trade';
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
+class TruchetFunc extends VariationShaderFunc2D {
+    PARAM_EXTENDED = 'extended'
+    PARAM_EXPONENT = 'exponent'
+    PARAM_ARC_WIDTH = 'arc_width'
+    PARAM_ROTATION = 'rotation'
+    PARAM_SIZE = 'size'
+    PARAM_SEED = 'seed'
+    PARAM_DIRECT_COLOR = 'direct_color'
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_EXTENDED, type: VariationParamType.VP_NUMBER, initialValue: 0 },
+            { name: this.PARAM_EXPONENT, type: VariationParamType.VP_NUMBER, initialValue: 2.00 },
+            { name: this.PARAM_ARC_WIDTH, type: VariationParamType.VP_NUMBER, initialValue: 0.50 },
+            { name: this.PARAM_ROTATION, type: VariationParamType.VP_NUMBER, initialValue: 0.00 },
+            { name: this.PARAM_SIZE, type: VariationParamType.VP_NUMBER, initialValue: 1.00 },
+            { name: this.PARAM_SEED, type: VariationParamType.VP_NUMBER, initialValue: 50.00 },
+            { name: this.PARAM_DIRECT_COLOR, type: VariationParamType.VP_NUMBER, initialValue: 0 }]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        return `{
+          float amount = float(${variation.amount});
+          int extended = int(${variation.params.get(this.PARAM_EXTENDED)});
+          float exponent = float(${variation.params.get(this.PARAM_EXPONENT)});
+          float arc_width = float(${variation.params.get(this.PARAM_ARC_WIDTH)});
+          float rotation = float(${variation.params.get(this.PARAM_ROTATION)});
+          float size = float(${variation.params.get(this.PARAM_SIZE)});
+          float seed = float(${variation.params.get(this.PARAM_SEED)});
+          int direct_color = int(${variation.params.get(this.PARAM_DIRECT_COLOR)});
+
+          if (extended < 0) {
+            extended = 0;
+          } else if (extended > 1) {
+            extended = 1;
+          }
+          if (exponent < 0.001) {
+            exponent = 0.001;
+          } else if (exponent > 2.0) {
+            exponent = 2.0;
+          }
+          if (arc_width < 0.001) {
+            arc_width = 0.001;
+          } else if (arc_width > 1.0) {
+            arc_width = 1.0;
+          }
+          if (size < 0.001) {
+            size = 0.001;
+          } else if (size > 10.0) {
+            size = 10.0;
+          }
+          
+          float n = exponent;
+          float onen = 1.0 / exponent;
+          float tdeg = rotation;
+          float width = arc_width;
+          seed = abs(seed);
+          float seed2 = sqrt(seed + (seed / 2.0) + EPSILON) / ((seed * 0.5) + EPSILON) * 0.25;
+        
+          float x, y;
+          int intx = 0;
+          int inty = 0;
+          float r = -tdeg;
+          float r0 = 0.0;
+          float r1 = 0.0;
+          float rmax = 0.5 * (pow(2.0, 1.0 / n) - 1.0) * width;
+          float scale = (cos(r) - sin(r)) / amount;
+          float tiletype = 0.0;
+          float randint = 0.0;
+          float modbase = 65535.0;
+          float multiplier = 32747.0;
+          float offset = 12345.0;
+          int randiter = 0;
+       
+          x = _tx * scale;
+          y = _ty * scale;
+          intx = int(round(x));
+          inty = int(round(y));
+    
+          r = x - float(intx);
+          if (r < 0.0) {
+            x = 1.0 + r;
+          } else {
+            x = r;
+          }
+    
+          r = y - float(inty);
+          if (r < 0.0) {
+            y = 1.0 + r;
+          } else {
+            y = r;
+          }
+        
+          if (seed == 0.0) {
+            tiletype = 0.0;
+          } else if (seed == 1.0) {
+            tiletype = 1.0;
+          } else {
+            if (extended == 0) {
+              float xrand = round(_tx);
+              float yrand = round(_ty);
+              xrand = xrand * seed2;
+              yrand = yrand * seed2;
+              float niter = xrand + yrand + xrand * yrand;
+              randint = (niter + seed) * seed2 / 2.0;
+              randint = mod((randint * multiplier + offset), modbase);
+            } else {
+              seed = floor(seed);
+              int xrand = int(round(_tx));
+              int yrand = int(round(_ty));
+              int niter = xrand + yrand + xrand * yrand;              
+              if (niter > 12)
+                niter = 12;
+              randiter = 0;
+              if(randiter < niter) {
+                randiter += 1;
+                randint = mod((randint * multiplier + offset), modbase);
+                if(randiter < niter) {
+                  randiter += 1;
+                  randint = mod((randint * multiplier + offset), modbase);
+                  if(randiter < niter) {
+                    randiter += 1;
+                    randint = mod((randint * multiplier + offset), modbase);
+                    if(randiter < niter) {
+                      randiter += 1;
+                      randint = mod((randint * multiplier + offset), modbase);
+                      if(randiter < niter) {
+                        randiter += 1;
+                        randint = mod((randint * multiplier + offset), modbase);
+                        if(randiter < niter) {
+                          randiter += 1;
+                          randint = mod((randint * multiplier + offset), modbase);
+                          if(randiter < niter) {
+                            randiter += 1;
+                            randint = mod((randint * multiplier + offset), modbase);
+                            if(randiter < niter) {
+                              randiter += 1;
+                              randint = mod((randint * multiplier + offset), modbase);
+                              if(randiter < niter) {
+                                randiter += 1;
+                                randint = mod((randint * multiplier + offset), modbase);
+                                if(randiter < niter) {
+                                  randiter += 1;
+                                  randint = mod((randint * multiplier + offset), modbase);
+                                  if(randiter < niter) {
+                                    randiter += 1;
+                                    randint = mod((randint * multiplier + offset), modbase);
+                                    if(randiter < niter) {
+                                      randiter += 1;
+                                      randint = mod((randint * multiplier + offset), modbase);
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+            tiletype = mod(randint, 2.0);
+          }
+        
+          if (extended == 0) { 
+            if (tiletype < 1.0) {
+              r0 = pow((pow(abs(x), n) + pow(abs(y), n)), onen);
+              r1 = pow((pow(abs(x - 1.0), n) + pow(abs(y - 1.0), n)), onen);
+            } else {
+              r0 = pow((pow(abs(x - 1.0), n) + pow(abs(y), n)), onen);
+              r1 = pow((pow(abs(x), n) + pow(abs(y - 1.0), n)), onen);
+            }
+          } else {
+            if (tiletype == 1.0) { 
+              r0 = pow((pow(abs(x), n) + pow(abs(y), n)), onen);
+              r1 = pow((pow(abs(x - 1.0), n) + pow(abs(y - 1.0), n)), onen);
+            } else {
+              r0 = pow((pow(abs(x - 1.0), n) + pow(abs(y), n)), onen);
+              r1 = pow((pow(abs(x), n) + pow(abs(y - 1.0), n)), onen);
+            }
+          }
+    
+          r = abs(r0 - 0.5) / rmax;
+          if (r < 1.0) {
+            if (direct_color == 1) {
+              _color = r0;
+              if(_color<0.0) {
+                _color = 0.0;
+              }
+              else if(_color>1.0) {
+                _color = 1.0;
+              }
+            }
+            _vx += size * (x + floor(_tx));
+            _vy += size * (y + floor(_ty));
+          }
+    
+          r = abs(r1 - 0.5) / rmax;
+          if (r < 1.0) {
+            if (direct_color == 1) {
+              _color = 1.0 - r1;
+              if(_color<0.0) {
+                _color = 0.0;
+              }
+              else if(_color>1.0) {
+                _color = 1.0;
+              }
+            }
+            _vx += size * (x + floor(_tx));
+            _vy += size * (y + floor(_ty));
+          }
+          
+        }`;
+    }
+
+    get name(): string {
+        return 'truchet';
+    }
+
+    get funcDependencies(): string[] {
+        return [FUNC_ROUND];
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D, VariationTypes.VARTYPE_DC];
+    }
+}
+
+class Truchet2Func extends VariationShaderFunc2D {
+    PARAM_EXPONENT1 = 'exponent1'
+    PARAM_EXPONENT2 = 'exponent2'
+    PARAM_WIDTH1 = 'width1'
+    PARAM_WIDTH2 = 'width2'
+    PARAM_SCALE = 'scale'
+    PARAM_SEED = 'seed'
+    PARAM_INVERSE = 'inverse'
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_EXPONENT1, type: VariationParamType.VP_NUMBER, initialValue: 1.00 },
+            { name: this.PARAM_EXPONENT2, type: VariationParamType.VP_NUMBER, initialValue: 2.00 },
+            { name: this.PARAM_WIDTH1, type: VariationParamType.VP_NUMBER, initialValue: 0.50 },
+            { name: this.PARAM_WIDTH2, type: VariationParamType.VP_NUMBER, initialValue: 0.50 },
+            { name: this.PARAM_SCALE, type: VariationParamType.VP_NUMBER, initialValue: 10.00 },
+            { name: this.PARAM_SEED, type: VariationParamType.VP_NUMBER, initialValue: 50.00 },
+            { name: this.PARAM_INVERSE, type: VariationParamType.VP_NUMBER, initialValue: 0 }]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        // truchet2 by tatasz
+        // https://www.deviantart.com/tatasz/art/Truchet2-plugin-730170455 converted to JWF by Brad Stefanov and Jesus Sosa
+        return `{
+          float amount = float(${variation.amount});
+          float exponent1 = float(${variation.params.get(this.PARAM_EXPONENT1)});
+          float exponent2 = float(${variation.params.get(this.PARAM_EXPONENT2)});
+          float width1 = float(${variation.params.get(this.PARAM_WIDTH1)});
+          float width2 = float(${variation.params.get(this.PARAM_WIDTH2)});
+          float scale = float(${variation.params.get(this.PARAM_SCALE)});
+          float seed = float(${variation.params.get(this.PARAM_SEED)});
+          int inverse = int(${variation.params.get(this.PARAM_INVERSE)});
+          
+          float xp = abs((_tx / scale - floor(_tx / scale)) - 0.5) * 2.0;
+          float width = width1 * (1.0 - xp) + xp * width2;
+          width = (width < 1.0) ? width : 1.0;
+          if (width <= 0.0) {
+            _vx += (_tx) * amount;
+            _vy += (_ty) * amount;
+          } else {
+            float xp2 = exponent1 * (1.0 - xp) + xp * exponent2;
+            float n = xp2;
+            n = (n < 2.0) ? n : 2.0;
+            if (n <= 0.0) {
+              _vx += (_tx) * amount;
+              _vy += (_ty) * amount;
+            } else {
+              float onen = 1.0 / xp2;
+              seed = abs(seed);
+              float seed2 = sqrt(seed + (seed / 2.0) + EPSILON) / ((seed * 0.5) + EPSILON) * 0.25;
+                      
+              float r0 = 0.0;
+              float r1 = 0.0;
+        
+              float x = _tx;
+              float y = _ty;
+              float intx = round(x);
+              float inty = round(y);
+        
+              float r = x - float(intx);
+              if (r < 0.0)
+                x = 1.0 + r;
+              else
+                x = r;
+        
+              r = y - float(inty);
+              if (r < 0.0)
+                y = 1.0 + r;
+              else
+                y = r;
+                        
+              float tiletype = 0.0;
+              if (seed == 0.0)
+                tiletype = 0.0;
+              else if (seed == 1.0)
+                tiletype = 1.0;
+              else {
+                float xrand = round(_tx);
+                float yrand = round(_ty);
+                xrand = xrand * seed2;
+                yrand = yrand * seed2;
+                float niter = xrand + yrand + xrand * yrand;
+                float randint = (niter + seed) * seed2 / 2.0;
+                randint = mod((randint * 32747.0 + 12345.0), 65535.0);
+                tiletype = mod(randint, 2.0);
+              }
+                      
+              if (tiletype < 1.0) {
+                r0 = pow((pow(abs(x), n) + pow(abs(y), n)), onen);
+                r1 = pow((pow(abs(x - 1.0), n) + pow(abs(y - 1.0), n)), onen);
+              } else {
+                r0 = pow((pow(abs(x - 1.0), n) + pow(abs(y), n)), onen);
+                r1 = pow((pow(abs(x), n) + pow(abs(y - 1.0), n)), onen);
+              }
+        
+              float rmax = 0.5 * (pow(2.0, onen) - 1.0) * width;
+              float r00 = abs(r0 - 0.5) / rmax;
+              float r11 = abs(r1 - 0.5) / rmax;
+           
+              if (inverse == 0) {
+                if (r00 < 1.0 || r11 < 1.0) {
+                  _vx += (x + floor(_tx)) * amount;
+                  _vy += (y + floor(_ty)) * amount;
+                } else {  
+                  _vx += 100.0;
+                  _vy += 100.0;
+                }
+              } else {
+                if (r00 > 1.0 && r11 > 1.0) {
+                  _vx += (x + floor(_tx)) * amount;
+                  _vy += (y + floor(_ty)) * amount;
+                } else {
+                  _vx += 10000.0;
+                  _vy += 10000.0;
+                }
+              }
+            }
+          }
+        }`;
+    }
+
+    get name(): string {
+        return 'truchet2';
+    }
+
+    get funcDependencies(): string[] {
+        return [FUNC_ROUND];
     }
 
     get variationTypes(): VariationTypes[] {
@@ -2788,6 +3181,7 @@ export function registerVars_2D_PartK() {
     VariationShaders.registerVar(new SplitsFunc())
     VariationShaders.registerVar(new SquareFunc())
     VariationShaders.registerVar(new SquarizeFunc())
+    VariationShaders.registerVar(new SquirrelFunc())
     VariationShaders.registerVar(new StripesFunc())
     VariationShaders.registerVar(new SwirlFunc())
     VariationShaders.registerVar(new TanFunc())
@@ -2798,6 +3192,8 @@ export function registerVars_2D_PartK() {
     VariationShaders.registerVar(new TargetFunc())
     VariationShaders.registerVar(new TargetSpFunc())
     VariationShaders.registerVar(new TradeFunc())
+    VariationShaders.registerVar(new TruchetFunc())
+    VariationShaders.registerVar(new Truchet2Func())
     VariationShaders.registerVar(new TwintrianFunc())
     VariationShaders.registerVar(new TwoFaceFunc())
     VariationShaders.registerVar(new UnpolarFunc())
