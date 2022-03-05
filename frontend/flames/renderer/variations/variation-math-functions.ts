@@ -28,6 +28,7 @@ export const FUNC_SGN = 'sgn'
 export const FUNC_SINH = 'sinh'
 export const FUNC_SQRT1PM1 = 'sqrt1pm1'
 export const FUNC_TANH = 'tanh'
+export const FUNC_TRUNC = 'trunc'
 export const LIB_COMPLEX = 'lib_complex'
 
 // https://www.shaderific.com/glsl-functions
@@ -594,6 +595,12 @@ export class VariationMathFunctions {
 				float tanH = (tmp - 1.0 / tmp) / (tmp + 1.0 / tmp);
 				return tanH;
 			}`);
+
+
+        this.registerFunction(FUNC_TRUNC,
+          `float trunc(float v) {
+                     return v<0.0 ? ceil(v) : floor(v);
+                   }`)
     }
 }
 

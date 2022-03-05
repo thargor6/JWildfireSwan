@@ -22,10 +22,9 @@ import {
     FUNC_COSH,
     FUNC_HYPOT,
     FUNC_LOG10,
-    FUNC_MODULO, FUNC_RINT, FUNC_ROUND,
-    FUNC_SGN,
+    FUNC_ROUND,
     FUNC_SINH,
-    FUNC_TANH
+    FUNC_TANH, FUNC_TRUNC
 } from 'Frontend/flames/renderer/variations/variation-math-functions';
 import {M_PI} from 'Frontend/flames/renderer/mathlib';
 
@@ -411,6 +410,38 @@ class SinFunc extends VariationShaderFunc2D {
 
     get funcDependencies(): string[] {
         return [FUNC_SINH, FUNC_COSH];
+    }
+}
+
+class SineBlurFunc extends VariationShaderFunc2D {
+    PARAM_POWER = 'power'
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_POWER, type: VariationParamType.VP_NUMBER, initialValue: 1.00 }]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        // sineblur by Zyorg, http://zy0rg.deviantart.com/art/Blur-Package-347648919
+        return `{
+          float amount = float(${variation.amount});
+          float power = float(${variation.params.get(this.PARAM_POWER)});
+          if (power < 0.0)
+            power = 0.0;
+          float ang = rand8(tex, rngState) * (2.0*M_PI);
+          float r = amount * (power == 1.0 ? acos(rand8(tex, rngState) * 2.0 - 1.0) / M_PI : acos(exp(log(rand8(tex, rngState)) * power) * 2.0 - 1.0) / M_PI);
+          float s = sin(ang);
+          float c = cos(ang);
+          _vx += r * c;
+          _vy += r * s;
+        }`;
+    }
+
+    get name(): string {
+        return 'sineblur';
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D, VariationTypes.VARTYPE_BLUR];
     }
 }
 
@@ -861,6 +892,125 @@ class SquirrelFunc extends VariationShaderFunc2D {
 
     get variationTypes(): VariationTypes[] {
         return [VariationTypes.VARTYPE_2D];
+    }
+}
+
+class SquishFunc extends VariationShaderFunc2D {
+    PARAM_POWER = 'power'
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_POWER, type: VariationParamType.VP_NUMBER, initialValue: 2 }]
+    }
+
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        // squish by MichaelFaber - The angle pack: http://michaelfaber.deviantart.com/art/The-Angle-Pack-277718538
+        return `{
+          float amount = float(${variation.amount});
+          int power = int(${variation.params.get(this.PARAM_POWER)});
+          float _inv_power = 1.0 / float(power); 
+          float x = abs(_tx);
+          float y = abs(_ty);
+          float s;
+          float p;
+        
+          if (x > y) {
+            s = x;
+            if (_tx > 0.0) {
+              p = _ty;
+            } else {
+              p = 4.0 * s - _ty;
+            }
+          } else {
+            s = y;
+            if (_ty > 0.0) {
+              p = 2.0 * s - _tx;
+            } else {
+              p = 6.0 * s + _tx;
+            }
+          }
+        
+          p = _inv_power * (p + 8.0 * s * floor(float(power) * rand8(tex, rngState)));
+        
+          if (p <= 1.0 * s) {
+            _vx += amount * s;
+            _vy += amount * p;
+          } else if (p <= 3.0 * s) {
+            _vx += amount * (2.0 * s - p);
+            _vy += amount * (s);
+          } else if (p <= 5.0 * s) {
+            _vx -= amount * (s);
+            _vy += amount * (4.0 * s - p);
+          } else if (p <= 7.0 * s) {
+            _vx -= amount * (6.0 * s - p);
+            _vy -= amount * (s);
+          } else {
+            _vx += amount * (s);
+            _vy -= amount * (8.0 * s - p);
+          }
+        }`;
+    }
+
+    get name(): string {
+        return 'squish';
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
+class StarBlurFunc extends VariationShaderFunc2D {
+    PARAM_POWER = 'power'
+    PARAM_RANGE = 'range'
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_POWER, type: VariationParamType.VP_NUMBER, initialValue: 5 },
+            { name: this.PARAM_RANGE, type: VariationParamType.VP_NUMBER, initialValue: 0.40162283177245455973959534526548 }
+        ]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        // starblur by Zyorg, http://zy0rg.deviantart.com/art/Blur-Package-347648919
+        return `{
+          float amount = float(${variation.amount});
+          int power = int(${variation.params.get(this.PARAM_POWER)});
+          float range = float(${variation.params.get(this.PARAM_RANGE)});
+          float starblur_alpha = M_PI / float(power);
+          float starblur_length = sqrt(1.0 + range*range - 2.0 * range * cos(starblur_alpha));
+          starblur_alpha = asin(sin(starblur_alpha) * range / starblur_length);
+          float f = rand8(tex, rngState) * float(power) * 2.0;
+          float angle = trunc(f);
+          f = f - angle;
+          float x = f * starblur_length;
+          float z = sqrt(1.0 + x*x - 2.0 * x * cos(starblur_alpha));
+          int iangle = int(angle);
+          if ((iangle/2)*2==iangle)
+            angle = 2.0*M_PI / float(power) * float((iangle) / 2) + asin(sin(starblur_alpha) * x / z);
+          else
+            angle = 2.0*M_PI / float(power) * float((iangle) / 2) - asin(sin(starblur_alpha) * x / z);
+          z = z * sqrt(rand8(tex, rngState));
+        
+          float ang = angle - PI*0.5;
+          float s = sin(ang);
+          float c = cos(ang);
+        
+          _vx += amount * z * c;
+          _vy += amount * z * s;
+
+        }`;
+    }
+
+    get name(): string {
+        return 'starblur';
+    }
+
+    get funcDependencies(): string[] {
+        return [FUNC_TRUNC];
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D, VariationTypes.VARTYPE_BASE_SHAPE];
     }
 }
 
@@ -1945,6 +2095,7 @@ export function registerVars_2D_PartS() {
     VariationShaders.registerVar(new ShredradFunc())
     VariationShaders.registerVar(new SigmoidFunc())
     VariationShaders.registerVar(new SinFunc())
+    VariationShaders.registerVar(new SineBlurFunc())
     VariationShaders.registerVar(new SinhFunc())
     VariationShaders.registerVar(new SinhqFunc())
     VariationShaders.registerVar(new SinqFunc())
@@ -1959,6 +2110,8 @@ export function registerVars_2D_PartS() {
     VariationShaders.registerVar(new SquareFunc())
     VariationShaders.registerVar(new SquarizeFunc())
     VariationShaders.registerVar(new SquirrelFunc())
+    VariationShaders.registerVar(new SquishFunc())
+    VariationShaders.registerVar(new StarBlurFunc())
     VariationShaders.registerVar(new StripesFunc())
     VariationShaders.registerVar(new SwirlFunc())
     VariationShaders.registerVar(new TanFunc())
