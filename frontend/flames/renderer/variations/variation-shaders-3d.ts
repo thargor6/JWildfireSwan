@@ -527,6 +527,64 @@ class HemisphereFunc extends VariationShaderFunc3D {
     }
 }
 
+class HOFunc extends VariationShaderFunc3D {
+    PARAM_XPOW = 'xpow'
+    PARAM_YPOW = 'ypow'
+    PARAM_ZPOW = 'zpow'
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_XPOW, type: VariationParamType.VP_NUMBER, initialValue: 3.0 },
+            { name: this.PARAM_YPOW, type: VariationParamType.VP_NUMBER, initialValue: 3.0},
+            { name: this.PARAM_ZPOW, type: VariationParamType.VP_NUMBER, initialValue: 3.0}
+        ]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        // ho by Larry Berlin, http://aporev.deviantart.com/gallery/#/d2blmhg
+        //    A Hyperbolic Octahedra
+        //    As described in "CRC Concise Encyclopedia of Mathematics" by Weisstein 2nd ed.
+        //
+        //    f[u_, v_] = (Cos[u] * Cos[v])^3
+        //    g[u_, v_] = (Sin[u] * Cos[v])^3
+        //    h[u_, v_] = Sin[v]^3
+        return `{
+            float amount = float(${variation.amount});
+            float xpow = float(${variation.params.get(this.PARAM_XPOW)});
+            float ypow = float(${variation.params.get(this.PARAM_YPOW)});
+            float zpow = float(${variation.params.get(this.PARAM_ZPOW)});
+            float u = _tx;
+            float v = _ty;
+            float w = _tz;
+        
+            float at_omega_x = atan2(v * v, w * w);
+            float at_omega_y = atan2(u * u, w * w);
+            float sv = sin(v);
+            float cv = cos(v);
+        
+            float su = sin(u);
+            float cu = cos(u);
+        
+            float x = pow((cu * cv), xpow) + ((cu * cv) * xpow) + (0.25 * at_omega_x);
+            float y = pow((su * cv), ypow) + ((su * cv) * ypow) + (0.25 * at_omega_y);
+            float z = pow(sv, zpow) + sv * zpow;
+        
+            float rr = amount;
+        
+            _vx += rr * x;
+            _vy += rr * y;
+            _vz += rr * z;
+        }`;
+    }
+
+    get name(): string {
+        return 'ho';
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_3D];
+    }
+}
+
 class Hypertile3DFunc extends VariationShaderFunc3D {
     PARAM_P = 'p'
     PARAM_Q = 'q'
@@ -810,6 +868,59 @@ class LinearT3DFunc extends VariationShaderFunc3D {
     }
 }
 
+class Poincare3DFunc extends VariationShaderFunc3D {
+    PARAM_R = 'r'
+    PARAM_A = 'a'
+    PARAM_B = 'b'
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_R, type: VariationParamType.VP_NUMBER, initialValue: 0.0 },
+            { name: this.PARAM_A, type: VariationParamType.VP_NUMBER, initialValue: 0.0},
+            { name: this.PARAM_B, type: VariationParamType.VP_NUMBER, initialValue: 0.0}
+        ]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        /* poincare3D by Zueuk, http://zueuk.deviantart.com/art/3D-Hyperbolic-tiling-plugins-169047926 */
+        return `{
+            float amount = float(${variation.amount});
+            float r = float(${variation.params.get(this.PARAM_R)});
+            float a = float(${variation.params.get(this.PARAM_A)});
+            float b = float(${variation.params.get(this.PARAM_B)});
+            float cx = -r * cos(a * (M_PI*0.5)) * cos(b * (M_PI*0.5));
+            float cy = r * sin(a * (M_PI*0.5)) * cos(b * (M_PI*0.5));
+            float cz = -r * sin(b * (M_PI*0.5));
+        
+            float c2 = sqr(cx) + sqr(cy) + sqr(cz);
+        
+            float c2x = 2.0 * cx;
+            float c2y = 2.0 * cy;
+            float c2z = 2.0 * cz;
+        
+            float s2x = sqr(cx) - sqr(cy) - sqr(cz) + 1.0;
+            float s2y = sqr(cy) - sqr(cx) - sqr(cz) + 1.0;
+            float s2z = sqr(cz) - sqr(cy) - sqr(cx) + 1.0;  
+            float r2 = sqr(_tx) + sqr(_ty) + sqr(_tz);
+        
+            float x2cx = c2x * _tx, y2cy = c2y * _ty, z2cz = c2z * _tz;
+        
+            float d = amount / (c2 * r2 - x2cx - y2cy - z2cz + 1.0);
+        
+            _vx += d * (_tx * s2x + cx * (y2cy + z2cz - r2 - 1.0));
+            _vy += d * (_ty * s2y + cy * (x2cx + z2cz - r2 - 1.0));
+            _vz += d * (_tz * s2z + cz * (y2cy + x2cx - r2 - 1.0));
+        }`;
+    }
+
+    get name(): string {
+        return 'poincare3D';
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_3D];
+    }
+}
+
 class Pie3DFunc extends VariationShaderFunc3D {
     PARAM_SLICES = 'slices'
     PARAM_ROTATION = 'rotation'
@@ -924,6 +1035,54 @@ class Spherical3DWFFunc extends VariationShaderFunc3D {
 
     get name(): string {
         return 'spherical3D_wf';
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_3D];
+    }
+}
+
+class Splits3DFunc extends VariationShaderFunc3D {
+    PARAM_XPOW = 'x'
+    PARAM_YPOW = 'y'
+    PARAM_ZPOW = 'z'
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_XPOW, type: VariationParamType.VP_NUMBER, initialValue: 0.10 },
+            { name: this.PARAM_YPOW, type: VariationParamType.VP_NUMBER, initialValue: 0.30},
+            { name: this.PARAM_ZPOW, type: VariationParamType.VP_NUMBER, initialValue: 0.20}
+        ]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        /* splits3D by TyrantWave, http://tyrantwave.deviantart.com/art/Splits3D-Plugin-107262795 */
+        return `{
+            float amount = float(${variation.amount});
+            float x = float(${variation.params.get(this.PARAM_XPOW)});
+            float y = float(${variation.params.get(this.PARAM_YPOW)});
+            float z = float(${variation.params.get(this.PARAM_ZPOW)});
+            if (_tx >= 0.0) {
+              _vx += amount * (_tx + x);
+            } else {
+              _vx += amount * (_tx - x);
+            }
+        
+            if (_ty >= 0.0) {
+              _vy += amount * (_ty + y);
+            } else {
+              _vy += amount * (_ty - y);
+            }
+        
+            if (_tz >= 0.0) {
+              _vz += amount * (_tz + z);
+            } else {
+              _vz += amount * (_tz - z);
+            }
+        }`;
+    }
+
+    get name(): string {
+        return 'splits3D';
     }
 
     get variationTypes(): VariationTypes[] {
@@ -1058,6 +1217,7 @@ export function registerVars_3D() {
     VariationShaders.registerVar(new CylinderApoFunc())
     VariationShaders.registerVar(new Foci3DFunc())
     VariationShaders.registerVar(new HemisphereFunc())
+    VariationShaders.registerVar(new HOFunc())
     VariationShaders.registerVar(new Hypertile3DFunc())
     VariationShaders.registerVar(new Hypertile3D1Func())
     VariationShaders.registerVar(new Hypertile3D2Func())
@@ -1065,10 +1225,12 @@ export function registerVars_3D() {
     VariationShaders.registerVar(new Julia3DZFunc())
     VariationShaders.registerVar(new Linear3DFunc())
     VariationShaders.registerVar(new LinearT3DFunc())
+    VariationShaders.registerVar(new Poincare3DFunc())
     VariationShaders.registerVar(new Pie3DFunc())
     VariationShaders.registerVar(new Sinusoidal3DFunc())
     VariationShaders.registerVar(new Spherical3DFunc())
     VariationShaders.registerVar(new Spherical3DWFFunc())
+    VariationShaders.registerVar(new Splits3DFunc())
     VariationShaders.registerVar(new Square3DFunc())
     VariationShaders.registerVar(new Tangent3DFunc())
     VariationShaders.registerVar(new TaurusFunc())
