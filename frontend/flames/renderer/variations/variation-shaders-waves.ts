@@ -126,6 +126,40 @@ class PreWave3DWFFunc extends VariationShaderFunc3D {
     }
 }
 
+class PulseFunc extends VariationShaderFunc2D {
+    PARAM_SCALEX = 'scalex'
+    PARAM_SCALEY = 'scaley'
+    PARAM_FREQX = 'freqx'
+    PARAM_FREQY = 'freqy'
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_SCALEX, type: VariationParamType.VP_NUMBER, initialValue: 1.00 },
+            { name: this.PARAM_SCALEY, type: VariationParamType.VP_NUMBER, initialValue: 1.00 },
+            { name: this.PARAM_FREQX, type: VariationParamType.VP_NUMBER, initialValue: 2.00 },
+            { name: this.PARAM_FREQY, type: VariationParamType.VP_NUMBER, initialValue: 2.00 }]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        return `{
+          float amount = float(${variation.amount});
+          float scalex = float(${variation.params.get(this.PARAM_SCALEX)});
+          float scaley = float(${variation.params.get(this.PARAM_SCALEY)});
+          float freqx = float(${variation.params.get(this.PARAM_FREQX)});
+          float freqy = float(${variation.params.get(this.PARAM_FREQY)});
+          _vx += amount * (_tx + scalex * sin(_tx * freqx));
+          _vy += amount * (_ty + scaley * sin(_ty * freqy));
+        }`;
+    }
+
+    get name(): string {
+        return 'pulse';
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
 class Vibration2Func extends VariationShaderFunc2D {
     PARAM_DIR = 'dir'
     PARAM_ANGLE = 'angle'
@@ -274,6 +308,29 @@ class Vibration2Func extends VariationShaderFunc2D {
     }
 }
 
+class RippledFunc extends VariationShaderFunc2D {
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        // rippled by Raykoid666, http://raykoid666.deviantart.com/art/plugin-pack-3-100510461?q=gallery%3ARaykoid666%2F11060240&qo=16
+        return `{
+          float amount = float(${variation.amount});
+          float d = sqr(_tx) + sqr(_ty);
+          _vx += amount / 2.0 * (tanh(d + EPSILON) * (2.0 * _tx));
+          _vy += amount / 2.0 * (cos(d + EPSILON) * (2.0 * _ty));
+        }`;
+    }
+
+    get name(): string {
+        return 'rippled';
+    }
+
+    get funcDependencies(): string[] {
+        return [FUNC_TANH];
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
 
 class WavesFunc extends VariationShaderFunc2D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
@@ -887,7 +944,9 @@ export function registerVars_Waves() {
         `);
 
     VariationShaders.registerVar(new PreWave3DWFFunc())
+    VariationShaders.registerVar(new PulseFunc())
     VariationShaders.registerVar(new Vibration2Func())
+    VariationShaders.registerVar(new RippledFunc())
     VariationShaders.registerVar(new WavesFunc())
     VariationShaders.registerVar(new Waves2Func())
     VariationShaders.registerVar(new Waves22Func())

@@ -28,6 +28,7 @@ import {registerVars_Complex} from "Frontend/flames/renderer/variations/variatio
 import {registerVars_Waves} from "Frontend/flames/renderer/variations/variation-shaders-waves";
 import {registerVar_Synth} from "Frontend/flames/renderer/variations/variation-shaders-synth";
 import {registerVars_Blur} from "Frontend/flames/renderer/variations/variation-shaders-blur";
+import {registerVars_2D_PartS} from "Frontend/flames/renderer/variations/variation-shaders-2d-partS";
 
 type OnInitCallback = () => void
 
@@ -94,6 +95,7 @@ export class PlaygroundStore {
 
 registerVars_2D_PartA()
 registerVars_2D_PartK()
+registerVars_2D_PartS()
 registerVars_Blur()
 registerVars_Complex()
 registerVars_Waves()
