@@ -760,6 +760,29 @@ class Oscilloscope2Func extends VariationShaderFunc2D {
     }
 }
 
+class Panorama1Func extends VariationShaderFunc2D {
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        // author Tatyana Zabanova 2017. Implemented by DarkBeam 2017
+        return `{
+          float amount = float(${variation.amount});
+          float aux = 1.0 / sqrt(_tx * _tx + _ty * _ty + 1.0);
+          float x1 = _tx * aux;
+          float y1 = _ty * aux;
+          aux = sqrt(x1 * x1 + y1 * y1);
+          _vx += amount * (atan2(x1, y1)) * (1.0 / M_PI);
+          _vy += amount * (aux - 0.5);       
+        }`;
+    }
+
+    get name(): string {
+        return 'panorama1';
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
 class ParabolaFunc extends VariationShaderFunc2D {
     PARAM_WIDTH = 'width'
     PARAM_HEIGHT = 'height'
@@ -819,6 +842,43 @@ class PDJFunc extends VariationShaderFunc2D {
 
     get name(): string {
         return 'pdj';
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
+class PerspectiveFunc extends VariationShaderFunc2D {
+    PARAM_ANGLE = 'angle'
+    PARAM_DIST = 'dist'
+    PARAM_C = 'c'
+    PARAM_D = 'd'
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_ANGLE, type: VariationParamType.VP_NUMBER, initialValue: 0.62 },
+            { name: this.PARAM_DIST, type: VariationParamType.VP_NUMBER, initialValue: 2.2 }]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        return `{
+          float amount = float(${variation.amount});
+          float angle = float(${variation.params.get(this.PARAM_ANGLE)});
+          float dist = float(${variation.params.get(this.PARAM_DIST)});
+          float ang = angle * M_PI / 2.0;
+          float vsin = sin(ang);
+          float vfcos = dist * cos(ang);
+          float d = (dist - _ty * vsin);
+          if (d != 0.0) {
+            float t = 1.0 / d;
+            _vx += amount * dist * _tx * t;
+            _vy += amount * vfcos * _ty * t;   
+          }
+        }`;
+    }
+
+    get name(): string {
+        return 'perspective';
     }
 
     get variationTypes(): VariationTypes[] {
@@ -1260,8 +1320,10 @@ export function registerVars_2D_PartK() {
     VariationShaders.registerVar(new NPolarFunc())
     VariationShaders.registerVar(new OscilloscopeFunc())
     VariationShaders.registerVar(new Oscilloscope2Func())
+    VariationShaders.registerVar(new Panorama1Func())
     VariationShaders.registerVar(new ParabolaFunc())
     VariationShaders.registerVar(new PDJFunc())
+    VariationShaders.registerVar(new PerspectiveFunc())
     VariationShaders.registerVar(new PetalFunc())
     VariationShaders.registerVar(new PieFunc())
     VariationShaders.registerVar(new PolarFunc())

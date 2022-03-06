@@ -868,6 +868,54 @@ class LinearT3DFunc extends VariationShaderFunc3D {
     }
 }
 
+class PDJ3DFunc extends VariationShaderFunc3D {
+    PARAM_A = 'a'
+    PARAM_B = 'b'
+    PARAM_C = 'c'
+    PARAM_D = 'd'
+    PARAM_E = 'e'
+    PARAM_F = 'f'
+    PARAM_G = 'g'
+    PARAM_H = 'h'
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_A, type: VariationParamType.VP_NUMBER, initialValue: 1.00 },
+            { name: this.PARAM_B, type: VariationParamType.VP_NUMBER, initialValue: 2.00 },
+            { name: this.PARAM_C, type: VariationParamType.VP_NUMBER, initialValue: 3.00 },
+            { name: this.PARAM_D, type: VariationParamType.VP_NUMBER, initialValue: 4.00 },
+            { name: this.PARAM_E, type: VariationParamType.VP_NUMBER, initialValue: 2.00 },
+            { name: this.PARAM_F, type: VariationParamType.VP_NUMBER, initialValue: 0.00 },
+            { name: this.PARAM_G, type: VariationParamType.VP_NUMBER, initialValue: 2.00 },
+            { name: this.PARAM_H, type: VariationParamType.VP_NUMBER, initialValue: 0.00 }]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        // 3D variables added by Brad Stefanov.
+        return `{
+          float amount = float(${variation.amount});
+          float a = float(${variation.params.get(this.PARAM_A)});
+          float b = float(${variation.params.get(this.PARAM_B)});
+          float c = float(${variation.params.get(this.PARAM_C)});
+          float d = float(${variation.params.get(this.PARAM_D)});
+          float e = float(${variation.params.get(this.PARAM_E)});
+          float f = float(${variation.params.get(this.PARAM_F)});
+          float g = float(${variation.params.get(this.PARAM_G)});
+          float h = float(${variation.params.get(this.PARAM_H)});
+          _vx += amount * (sin(a * _ty) - cos(b * _tx));
+          _vy += amount * (sin(c * _tx) - cos(d * _ty));
+          _vz += amount * (sin(e * _ty) - cos(f * _tz)) * cos(g * _tx) + sin(h * _tz) ;
+        }`;
+    }
+
+    get name(): string {
+        return 'pdj3D';
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_3D];
+    }
+}
+
 class Poincare3DFunc extends VariationShaderFunc3D {
     PARAM_R = 'r'
     PARAM_A = 'a'
@@ -1225,6 +1273,7 @@ export function registerVars_3D() {
     VariationShaders.registerVar(new Julia3DZFunc())
     VariationShaders.registerVar(new Linear3DFunc())
     VariationShaders.registerVar(new LinearT3DFunc())
+    VariationShaders.registerVar(new PDJ3DFunc())
     VariationShaders.registerVar(new Poincare3DFunc())
     VariationShaders.registerVar(new Pie3DFunc())
     VariationShaders.registerVar(new Sinusoidal3DFunc())

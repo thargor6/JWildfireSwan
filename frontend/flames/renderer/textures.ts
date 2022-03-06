@@ -53,7 +53,7 @@ export class Textures {
                 pixels.push(
                     -1 + 2 * Math.random(),
                     -1 + 2 * Math.random(),
-                    0, //-1 + 2 * Math.random(),
+                    -1 + 2 * Math.random(),
                     0
                 );
             }
