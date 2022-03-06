@@ -661,6 +661,29 @@ class SpiralFunc extends VariationShaderFunc2D {
     }
 }
 
+class SpiralwingFunc extends VariationShaderFunc2D {
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        // spiralwing by Raykoid666, http://raykoid666.deviantart.com/art/re-pack-1-new-plugins-100092186
+        return `{
+          float amount = float(${variation.amount});
+          float c1 = sqr(_tx);
+          float c2 = sqr(_ty);
+          float d = amount / (c1 + c2 + EPSILON);
+          c2 = sin(c2); 
+          _vx += d * cos(c1) * c2;
+          _vy += d * sin(c1) * c2;
+        }`;
+    }
+
+    get name(): string {
+        return 'spiralwing';
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
 class SpirographFunc extends VariationShaderFunc2D {
     PARAM_A = 'a'
     PARAM_B = 'b'
@@ -864,6 +887,34 @@ class SquarizeFunc extends VariationShaderFunc2D {
     }
 }
 
+class SquircularFunc extends VariationShaderFunc2D {
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        return `{
+          float amount = float(${variation.amount});
+          float u = _tx;
+          float v = _ty;
+          float r = u * u + v * v;
+          float rs = sqrt(r);
+          float xs = u > 0.0 ? 1.0 : -1.0;
+    
+          r = sqrt(amount * amount * r - 4.0* u * u * v * v);
+          r = sqrt(1.0 + u * u / (v * v) - rs / (amount * v * v) * r);
+          r = r / sqrt(2.0);
+    
+          _vx += xs * r;
+          _vy += v / u * r;
+        }`;
+    }
+
+    get name(): string {
+        return 'squircular';
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
 class SquirrelFunc extends VariationShaderFunc2D {
     PARAM_A = 'a'
     PARAM_B = 'b'
@@ -1060,6 +1111,36 @@ class SwirlFunc extends VariationShaderFunc2D {
 
     get name(): string {
         return 'swirl';
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
+class Swirl3Func extends VariationShaderFunc2D {
+    PARAM_SHIFT = 'shift'
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_SHIFT, type: VariationParamType.VP_NUMBER, initialValue: 0.50 }]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        return `{
+          float amount = float(${variation.amount});
+          float shift = float(${variation.params.get(this.PARAM_SHIFT)});
+          float rad = _r;
+          float _theta = atan2(_ty, _tx);
+          float ang = _theta + log(rad) * shift;
+          float s = sin(ang);
+          float c = cos(ang);
+          _vx += amount * rad * c;
+          _vy += amount * rad * s;
+        }`;
+    }
+
+    get name(): string {
+        return 'swirl3';
     }
 
     get variationTypes(): VariationTypes[] {
@@ -2104,16 +2185,19 @@ export function registerVars_2D_PartS() {
     VariationShaders.registerVar(new SphericalFunc())
     VariationShaders.registerVar(new SphericalNFunc())
     VariationShaders.registerVar(new SpiralFunc())
+    VariationShaders.registerVar(new SpiralwingFunc())
     VariationShaders.registerVar(new SpirographFunc())
     VariationShaders.registerVar(new SplitFunc())
     VariationShaders.registerVar(new SplitsFunc())
     VariationShaders.registerVar(new SquareFunc())
     VariationShaders.registerVar(new SquarizeFunc())
+    VariationShaders.registerVar(new SquircularFunc())
     VariationShaders.registerVar(new SquirrelFunc())
     VariationShaders.registerVar(new SquishFunc())
     VariationShaders.registerVar(new StarBlurFunc())
     VariationShaders.registerVar(new StripesFunc())
     VariationShaders.registerVar(new SwirlFunc())
+    VariationShaders.registerVar(new Swirl3Func())
     VariationShaders.registerVar(new TanFunc())
     VariationShaders.registerVar(new TanhFunc())
     VariationShaders.registerVar(new TanhqFunc())
