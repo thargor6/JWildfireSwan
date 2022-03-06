@@ -9,7 +9,6 @@
 
 @import url('./views/about-view.css');
 
-@import url('leaflet/dist/leaflet.css');
 @import url('line-awesome/dist/line-awesome/css/line-awesome.min.css');
 
 html {

@@ -22,9 +22,7 @@ import '@polymer/paper-slider/paper-slider'
 import '@vaadin/vaadin-text-field'
 import '@vaadin/text-area'
 import {playgroundStore} from "Frontend/stores/playground-store";
-
 import {MobxLitElement} from "@adobe/lit-mobx";
-import {HasValue} from "@vaadin/form";
 
 @customElement('about-variations-panel')
 export class AboutVariationsPanel extends MobxLitElement {

@@ -15,7 +15,7 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 */
 
-import {html, nothing, PropertyValues, render} from 'lit'
+import {html, PropertyValues, render} from 'lit'
 import {customElement, state} from 'lit/decorators.js'
 import { View } from '../../views/view'
 import { guard } from 'lit/directives/guard.js';
@@ -43,7 +43,6 @@ import '@vaadin/vaadin-combo-box';
 import './playground-render-panel'
 import './playground-flame-panel'
 import './playground-edit-panel'
-
 
 import {PlaygroundRenderPanel} from "Frontend/views/playground/playground-render-panel";
 import {playgroundStore} from "Frontend/stores/playground-store";

@@ -16,7 +16,6 @@
 */
 
 import {html} from 'lit';
-import { until } from 'lit/directives/until.js';
 import {customElement, state} from 'lit/decorators.js';
 import { View } from '../../views/view';
 

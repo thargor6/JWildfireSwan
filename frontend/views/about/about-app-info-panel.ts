@@ -21,13 +21,8 @@ import {customElement, property, state} from 'lit/decorators.js';
 import '@polymer/paper-slider/paper-slider'
 import '@vaadin/vaadin-text-field'
 import '@vaadin/text-area'
-import {playgroundStore} from "Frontend/stores/playground-store";
-
 import {MobxLitElement} from "@adobe/lit-mobx";
-import {HasValue} from "@vaadin/form";
-import {appStore} from "Frontend/stores/app-store";
 import {AppInfoEndpoint} from "Frontend/generated/endpoints";
-import {until} from "lit/directives/until.js";
 
 @customElement('about-app-info-panel')
 export class AboutAppInfoPanel extends MobxLitElement {

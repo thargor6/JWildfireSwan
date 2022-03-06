@@ -18,8 +18,8 @@ package org.jwildfire.swan.flames.endpoint;
 
 import com.google.common.io.Resources;
 import com.vaadin.flow.server.auth.AnonymousAllowed;
-import com.vaadin.fusion.Endpoint;
-import com.vaadin.fusion.Nonnull;
+import dev.hilla.Endpoint;
+import dev.hilla.Nonnull;
 import lombok.extern.slf4j.Slf4j;
 import org.jwildfire.swan.flames.model.Flame;
 import org.jwildfire.swan.flames.model.RandomFlame;

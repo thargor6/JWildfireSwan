@@ -33,7 +33,7 @@ import '@vaadin/vaadin-ordered-layout/vaadin-horizontal-layout'
 import {playgroundStore} from "Frontend/stores/playground-store";
 
 import {MobxLitElement} from "@adobe/lit-mobx";
-import {HasValue} from "@vaadin/form";
+import {HasValue} from "@hilla/form";
 
 @customElement('playground-flame-panel')
 export class PlaygroundFlamePanel extends MobxLitElement {

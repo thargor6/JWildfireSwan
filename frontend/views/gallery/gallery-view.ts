@@ -23,11 +23,10 @@ import '@vaadin/vertical-layout';
 import '@vaadin/vaadin-button'
 import '@vaadin/combo-box'
 import {html, nothing} from 'lit';
-import { customElement, state } from 'lit/decorators.js';
+import { customElement } from 'lit/decorators.js';
 import { View } from '../../views/view';
 import {galleryStore, SortOrder} from "Frontend/stores/gallery-store";
 import {Router} from "@vaadin/router";
-import {playgroundStore} from "Frontend/stores/playground-store";
 
 @customElement('gallery-view')
 export class GalleryView extends View {

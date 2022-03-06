@@ -17,7 +17,7 @@
 
 package org.jwildfire.swan.flames.model;
 
-import com.vaadin.fusion.Nonnull;
+import dev.hilla.Nonnull;
 import lombok.Data;
 
 import java.util.ArrayList;

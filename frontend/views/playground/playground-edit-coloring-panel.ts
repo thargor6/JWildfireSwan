@@ -17,14 +17,10 @@
 
 import {html} from 'lit';
 import {customElement, property, state} from 'lit/decorators.js';
-
 import '@polymer/paper-slider/paper-slider'
 import '@vaadin/vaadin-button'
 import '@vaadin/vaadin-combo-box';
-import {playgroundStore} from "Frontend/stores/playground-store";
-
 import {MobxLitElement} from "@adobe/lit-mobx";
-
 import '@vaadin/vaadin-ordered-layout/vaadin-vertical-layout'
 import '@vaadin/vaadin-ordered-layout/vaadin-horizontal-layout'
 import '../../components/swan-slider'

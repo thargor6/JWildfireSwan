@@ -24,7 +24,7 @@ import '@vaadin/vaadin-combo-box';
 import {playgroundStore} from "Frontend/stores/playground-store";
 
 import {MobxLitElement} from "@adobe/lit-mobx";
-import {HasValue} from "@vaadin/form";
+import {HasValue} from "@hilla/form";
 import {DisplayMode} from "Frontend/flames/renderer/render-settings";
 import '@vaadin/vaadin-ordered-layout/vaadin-vertical-layout'
 import '@vaadin/vaadin-ordered-layout/vaadin-horizontal-layout'
