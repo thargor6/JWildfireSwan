@@ -50,7 +50,6 @@ export class CompPointsFragmentShaderGenerator {
         for (let i = 0; i < xFormCount; i++) {
             weights[i] /= wsum;
         }
-        console.log("WEIGHTS", weights)
         return `${xFormIdx == 0 ? 'if' : 'else if'} (xFormIdx==${xFormIdx}) {
               ${this.addCalcedXFormWeights(weights)}
             }

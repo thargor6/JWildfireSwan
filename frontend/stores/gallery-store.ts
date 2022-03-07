@@ -17,6 +17,7 @@
 
 import { makeAutoObservable } from 'mobx';
 import {GalleryEndpoint} from "Frontend/generated/endpoints";
+import {debug} from "webpack";
 
 interface ExampleFlame {
   title: string;
@@ -42,7 +43,15 @@ export class GalleryStore {
     makeAutoObservable(this);
   }
 
-  private parseExampleFlame =(example: string): ExampleFlame => JSON.parse(example)
+  private parseExampleFlame =(example: string): ExampleFlame | undefined => {
+    try {
+      return JSON.parse(example)
+    }
+    catch(error) {
+      console.log('Error parsing example', example)
+      return undefined
+    }
+  }
 
   // https://stackoverflow.com/questions/2450954/how-to-randomize-shuffle-a-javascript-array
   private shuffle = (array: ExampleFlame[]) => {
@@ -85,8 +94,7 @@ export class GalleryStore {
   public async initialize() {
     if(!this.initFlag) {
       const examples = await GalleryEndpoint.getExampleMetaDataList().then(
-          examples => examples.map(example => this.parseExampleFlame(example))
-      )
+          examples => examples.map(example => this.parseExampleFlame(example)!).filter(example=>example!==undefined))
       this.exampleFlames = this.sortExamples(examples)
       this.initFlag = true
     }
