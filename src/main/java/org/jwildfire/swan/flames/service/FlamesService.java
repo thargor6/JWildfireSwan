@@ -132,8 +132,8 @@ public class FlamesService {
 
     RandomGradientGenerator rndGradGen = RandomGradientGeneratorList.getRandomGradientGeneratorInstance(randGenGradientName, true);
     int palettePoints = 3 + Tools.randomInt(21);
-    boolean fadePaletteColors = Math.random() > 0.09D;
-    boolean uniformSize = Math.random() > 0.75D;
+    boolean fadePaletteColors = Math.random() > 0.21;
+    boolean uniformSize = Math.random() > 0.75;
 
     RGBPalette palette = rndGradGen.generatePalette(palettePoints, fadePaletteColors, uniformSize);
 

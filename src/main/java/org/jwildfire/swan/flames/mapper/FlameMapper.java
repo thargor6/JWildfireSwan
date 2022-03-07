@@ -68,6 +68,7 @@ public class FlameMapper {
     res.setFocusY(source.getFocusY());
     res.setFocusZ(source.getFocusZ());
     res.setCamDOFExponent(source.getCamDOFExponent());
+    res.getLayers().clear();
     source.getLayers().stream()
         .forEach(layer -> res.getLayers().add(layerMapper.mapFromJwildfire(source, layer)));
     return res;
@@ -112,6 +113,7 @@ public class FlameMapper {
     res.setFocusY(source.getFocusY());
     res.setFocusZ(source.getFocusZ());
     res.setCamDOFExponent(source.getCamDOFExponent());
+    res.getLayers().clear();
     source.getLayers().stream()
             .forEach(layer -> res.getLayers().add(layerMapper.mapToJwildfire(layer)));
     return res;

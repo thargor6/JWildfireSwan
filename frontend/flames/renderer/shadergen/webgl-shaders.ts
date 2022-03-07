@@ -76,7 +76,7 @@ export class WebglShaders {
     compPointsFragmentShader: string
 
     constructor(gl: WebGLRenderingContext, canvas: HTMLCanvasElement, canvas_size: number, swarm_size: number, private flame: RenderFlame) {
-        this.progPointsVertexShader = new ProgPointsVertexShaderGenerator().createShader(flame, canvas_size);
+        this.progPointsVertexShader = new ProgPointsVertexShaderGenerator().createShader(flame, flame.layers[0], canvas_size);
         this.prog_points = compileShaderDirect(gl, this.progPointsVertexShader, shader_points_fs, {}) as ComputePointsProgram;
         this.prog_points.vertexPositionAttribute = gl.getAttribLocation(this.prog_points, "aVertexPosition");
         gl.enableVertexAttribArray(this.prog_points.vertexPositionAttribute);
@@ -86,7 +86,8 @@ export class WebglShaders {
         this.prog_points.time = gl.getUniformLocation(this.prog_points, "time")!;
         this.prog_points.seed = gl.getUniformLocation(this.prog_points, "seed")!;
 
-        this.compPointsFragmentShader = new CompPointsFragmentShaderGenerator().createShader(flame);
+        this.compPointsFragmentShader = new CompPointsFragmentShaderGenerator().createShader(flame, flame.layers[0]);
+        // console.log(this.compPointsFragmentShader)
         this.prog_comp = compileShaderDirect(gl, shader_direct_vs, this.compPointsFragmentShader, {RESOLUTION: swarm_size}) as IteratePointsProgram;
         this.prog_comp.vertexPositionAttribute = gl.getAttribLocation(this.prog_comp, "aVertexPosition");
         gl.enableVertexAttribArray(this.prog_comp.vertexPositionAttribute);

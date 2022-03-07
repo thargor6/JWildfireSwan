@@ -15,7 +15,7 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 */
 
-import {RenderFlame, RenderXForm} from "Frontend/flames/model/render-flame";
+import {RenderFlame, RenderLayer, RenderXForm} from "Frontend/flames/model/render-flame";
 import {FlameRenderView} from "Frontend/flames/renderer/flame-render-view";
 import {XFormPartShaderGenerator} from "Frontend/flames/renderer/shadergen/xform-gen";
 import {DepFunctionsPartShaderGenerator} from "Frontend/flames/renderer/shadergen/dep-functions-gen";
@@ -24,7 +24,7 @@ export class ProgPointsVertexShaderGenerator {
     private xformGen = new XFormPartShaderGenerator();
     private depFuncGen = new DepFunctionsPartShaderGenerator()
 
-    public createShader(flame: RenderFlame, canvas_size:number) {
+    public createShader(flame: RenderFlame, layer: RenderLayer, canvas_size:number) {
         const view = new FlameRenderView(flame, canvas_size, canvas_size)
 
         return  `
@@ -38,8 +38,7 @@ export class ProgPointsVertexShaderGenerator {
         varying vec4 fragColor;		
         
         ${this.depFuncGen.addStandardFunctions()}      
-        //// TODO
-        // {this.depFuncGen.addDepFunctions(flame.finalXforms)}
+        ${this.depFuncGen.addDepFunctions(layer.finalXforms)}
         
         void main(void) {
             gl_PointSize = 1.0;
@@ -52,27 +51,23 @@ export class ProgPointsVertexShaderGenerator {
             fragColor = color;
             RNGState rngState = RNGState(rand0(tex));
             
-            ${this.addFinalXForms(flame)}
+            ${this.addFinalXForms(layer)}
             
             ${this.addCamera(view)}
         }
      `
     }
 
-    addFinalXForms(flame: RenderFlame) {
-        /*
-        if(flame.finalXforms.length>0) {
+    addFinalXForms(layer: RenderLayer) {
+
+        if(layer.finalXforms.length>0) {
             return `
-               ${flame.finalXforms.map(xForm => this.xformGen.addFinalXForm(xForm)).join('')}  
+               ${layer.finalXforms.map(xForm => this.xformGen.addFinalXForm(xForm)).join('')}  
              `;
         }
         else {
             return ''
         }
-
-         */
-        //// TODO
-        return ''
     }
 
     addCamera(view: FlameRenderView) {

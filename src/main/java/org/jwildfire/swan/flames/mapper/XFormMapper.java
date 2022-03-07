@@ -30,12 +30,12 @@ import org.springframework.stereotype.Service;
 @Service
 public class XFormMapper {
 
-  public XForm mapFromJwildfire(org.jwildfire.create.tina.base.Flame sourceFlame, org.jwildfire.create.tina.base.XForm source) {
+  public XForm mapFromJwildfire(org.jwildfire.create.tina.base.Flame sourceFlame, org.jwildfire.create.tina.base.Layer sourceLayer, org.jwildfire.create.tina.base.XForm source) {
     XForm res = new XForm();
 
     res.setWeight(source.getWeight());
     res.getModifiedWeights().clear();
-    for(int i=0;i<sourceFlame.getFirstLayer().getXForms().size() && i<source.getModifiedWeights().length;i++) {
+    for(int i=0;i<sourceLayer.getXForms().size() && i<source.getModifiedWeights().length;i++) {
       res.getModifiedWeights().add(Double.valueOf(source.getModifiedWeights()[i]));
     }
     res.setColor(source.getColor());

@@ -39,9 +39,9 @@ public class LayerMapper {
       res.getGradient().add(new Color(color.getRed(), color.getGreen(), color.getBlue()));
     }
     source.getXForms().stream()
-        .forEach(xForm -> res.getXforms().add(xFormMapper.mapFromJwildfire(sourceFlame, xForm)));
+        .forEach(xForm -> res.getXforms().add(xFormMapper.mapFromJwildfire(sourceFlame, source, xForm)));
     source.getFinalXForms().stream()
-        .forEach(xForm -> res.getFinalXforms().add(xFormMapper.mapFromJwildfire(sourceFlame, xForm)));
+        .forEach(xForm -> res.getFinalXforms().add(xFormMapper.mapFromJwildfire(sourceFlame, source, xForm)));
     return res;
   }
 

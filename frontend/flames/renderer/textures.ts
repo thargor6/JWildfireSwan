@@ -25,7 +25,7 @@ export class Textures {
     texture2: WebGLTexture;
     gradient: WebGLTexture;
 
-    constructor(public flame: RenderFlame, public gl: WebGLRenderingContext, public swarm_size: number, public canvas_size: number) {
+    constructor(public flame: RenderFlame,  public gl: WebGLRenderingContext, public swarm_size: number, public canvas_size: number) {
         //
         this.gradient = gl.createTexture()!;
         gl.bindTexture(gl.TEXTURE_2D, this.gradient);
@@ -33,7 +33,6 @@ export class Textures {
         for(var i = 0; i < gradSize; i++) {
             for(var j = 0; j < gradSize; j++) {
                 grad.push(
-                  //// TODO
                     flame.layers[0].gradient[j].r,
                     flame.layers[0].gradient[j].g,
                     flame.layers[0].gradient[j].b,
