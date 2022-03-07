@@ -61,8 +61,40 @@ export class RenderXForm {
     }
 }
 
+export class RenderLayer {
+    weight = 1.0
+    density = 1.0
+    private _gradient = new Array<RenderColor>()
+    private _xforms = new Array<RenderXForm>()
+    private _finalXforms = new Array<RenderXForm>();
+
+    public get xforms() {
+        return this._xforms
+    }
+
+    public get gradient() {
+        return this._gradient
+    }
+
+    public get finalXforms() {
+        return this._finalXforms
+    }
+
+    public get hasModifiedWeights() {
+        for(let i=0;i<this.xforms.length;i++) {
+            const xForm = this.xforms[i]
+            for(let j=0;j<this.xforms.length;j++) {
+                if(xForm.modifiedWeights[j]!=1) {
+                    return true
+                }
+            }
+        }
+        return false
+    }
+}
+
 export class RenderFlame {
-    public brightness = 1.0
+    brightness = 1.0
     whiteLevel = 220
     contrast = 1.0
     sampleDensity = 100.0
@@ -100,32 +132,9 @@ export class RenderFlame {
     public focusZ = 0.0
     public camDOFExponent = 0.0
 
-    private _xforms = new Array<RenderXForm>()
-    private _gradient = new Array<RenderColor>()
+    private _layers = new Array<RenderLayer>()
 
-    public get xforms() {
-        return this._xforms
+    public get layers() {
+        return this._layers
     }
-
-    public get gradient() {
-        return this._gradient
-    }
-
-    private _finalXforms = new Array<RenderXForm>();
-    public get finalXforms() {
-        return this._finalXforms
-    }
-
-    public get hasModifiedWeights() {
-        for(let i=0;i<this.xforms.length;i++) {
-            const xForm = this.xforms[i]
-            for(let j=0;j<this.xforms.length;j++) {
-                if(xForm.modifiedWeights[j]!=1) {
-                    return true
-                }
-            }
-        }
-        return false
-    }
-
 }

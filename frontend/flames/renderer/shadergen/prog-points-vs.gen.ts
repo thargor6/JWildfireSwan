@@ -38,7 +38,8 @@ export class ProgPointsVertexShaderGenerator {
         varying vec4 fragColor;		
         
         ${this.depFuncGen.addStandardFunctions()}      
-        ${this.depFuncGen.addDepFunctions(flame.finalXforms)}
+        //// TODO
+        // {this.depFuncGen.addDepFunctions(flame.finalXforms)}
         
         void main(void) {
             gl_PointSize = 1.0;
@@ -59,6 +60,7 @@ export class ProgPointsVertexShaderGenerator {
     }
 
     addFinalXForms(flame: RenderFlame) {
+        /*
         if(flame.finalXforms.length>0) {
             return `
                ${flame.finalXforms.map(xForm => this.xformGen.addFinalXForm(xForm)).join('')}  
@@ -67,6 +69,10 @@ export class ProgPointsVertexShaderGenerator {
         else {
             return ''
         }
+
+         */
+        //// TODO
+        return ''
     }
 
     addCamera(view: FlameRenderView) {

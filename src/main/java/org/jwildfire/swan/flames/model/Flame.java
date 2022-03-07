@@ -140,11 +140,6 @@ public class Flame {
   private double camDOFExponent;
 
   @Nonnull
-  private final List<@Nonnull Color> gradient = new ArrayList<>();
+  private final List<@Nonnull Layer> layers = new ArrayList<>();
 
-  @Nonnull
-  private final List<@Nonnull XForm> xforms = new ArrayList<>();
-
-  @Nonnull
-  private final List<@Nonnull XForm> finalXforms = new ArrayList<>();
 }

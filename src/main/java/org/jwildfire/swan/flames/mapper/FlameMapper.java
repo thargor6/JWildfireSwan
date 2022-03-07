@@ -23,10 +23,10 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class FlameMapper {
-  private final XFormMapper xFormMapper;
+  private final LayerMapper layerMapper;
 
-  public FlameMapper(XFormMapper xFormMapper) {
-    this.xFormMapper = xFormMapper;
+  public FlameMapper(LayerMapper layerMapper) {
+    this.layerMapper = layerMapper;
   }
 
   public Flame mapFromJwildfire(org.jwildfire.create.tina.base.Flame source) {
@@ -68,16 +68,8 @@ public class FlameMapper {
     res.setFocusY(source.getFocusY());
     res.setFocusZ(source.getFocusZ());
     res.setCamDOFExponent(source.getCamDOFExponent());
-
-    for(int i=0;i<source.getFirstLayer().getPalette().getSize();i++) {
-      RGBColor color = source.getFirstLayer().getPalette().getColor(i);
-      res.getGradient().add(new Color(color.getRed(), color.getGreen(), color.getBlue()));
-    }
-
-    source.getFirstLayer().getXForms().stream()
-        .forEach(xForm -> res.getXforms().add(xFormMapper.mapFromJwildfire(source, xForm)));
-    source.getFirstLayer().getFinalXForms().stream()
-        .forEach(xForm -> res.getFinalXforms().add(xFormMapper.mapFromJwildfire(source, xForm)));
+    source.getLayers().stream()
+        .forEach(layer -> res.getLayers().add(layerMapper.mapFromJwildfire(source, layer)));
     return res;
   }
 
@@ -120,16 +112,8 @@ public class FlameMapper {
     res.setFocusY(source.getFocusY());
     res.setFocusZ(source.getFocusZ());
     res.setCamDOFExponent(source.getCamDOFExponent());
-
-    for(int i=0;i<source.getGradient().size();i++) {
-      Color color = source.getGradient().get(i);
-      res.getFirstLayer().getPalette().setColor(i, color.getR(), color.getG(), color.getB());
-    }
-
-    source.getXforms().stream()
-            .forEach(xForm -> res.getFirstLayer().getXForms().add(xFormMapper.mapToJwildfire(source, xForm)));
-    source.getFinalXforms().stream()
-            .forEach(xForm -> res.getFirstLayer().getFinalXForms().add(xFormMapper.mapToJwildfire(source, xForm)));
+    source.getLayers().stream()
+            .forEach(layer -> res.getLayers().add(layerMapper.mapToJwildfire(layer)));
     return res;
   }
 }

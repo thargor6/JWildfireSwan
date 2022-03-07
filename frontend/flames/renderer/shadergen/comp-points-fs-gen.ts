@@ -42,7 +42,8 @@ export class CompPointsFragmentShaderGenerator {
         const weights = new Array<number>()
         let wsum = 0.0
         for (let i = 0; i < xFormCount; i++) {
-            const w = flame.xforms[i].weight * xForm.modifiedWeights[i]
+            //// TODO
+            const w = flame.layers[0].xforms[i].weight * xForm.modifiedWeights[i]
             wsum += w
             weights.push(w)
         }
@@ -59,13 +60,16 @@ export class CompPointsFragmentShaderGenerator {
     addCalcXFormIndexWithoutModWeights(flame: RenderFlame) {
         const weights = new Array<number>()
         let wsum = 0.0
-        for (let i = 0; i < flame.xforms.length; i++) {
-            const w = flame.xforms[i].weight
+        //// TODO
+        for (let i = 0; i < flame.layers[0].xforms.length; i++) {
+            //// TODO
+            const w = flame.layers[0].xforms[i].weight
             wsum += w
             weights.push(w)
         }
         wsum = Math.max(wsum, 1.0e-06)
-        for (let i = 0; i < flame.xforms.length; i++) {
+        //// TODO
+        for (let i = 0; i < flame.layers[0].xforms.length; i++) {
             weights[i] /= wsum;
         }
         return this.addCalcedWeights(weights)
@@ -74,11 +78,13 @@ export class CompPointsFragmentShaderGenerator {
     addXForms(flame: RenderFlame) {
         return `
        float r = rand8(tex, rngState);
-       ${flame.hasModifiedWeights
-            ? flame.xforms.map(xForm => this.addCalcXFormIndexWithModWeights(flame, xForm, flame.xforms.indexOf(xForm), flame.xforms.length)).join('')
+       //// TODO
+       ${flame.layers[0].hasModifiedWeights
+            ? flame.layers[0].xforms.map(xForm => this.addCalcXFormIndexWithModWeights(flame, xForm, flame.layers[0].xforms.indexOf(xForm), flame.layers[0].xforms.length)).join('')
             : this.addCalcXFormIndexWithoutModWeights(flame)
         }
-       ${flame.xforms.map(xForm => this.xformGen.addXForm(xForm, flame.xforms.indexOf(xForm))).join('')}  
+        //// TODO
+       ${flame.layers[0].xforms.map(xForm => this.xformGen.addXForm(xForm, flame.layers[0].xforms.indexOf(xForm))).join('')}  
     `;
     }
 
@@ -96,7 +102,7 @@ export class CompPointsFragmentShaderGenerator {
 
    
       ${this.depFuncGen.addStandardFunctions()}           
-      ${this.depFuncGen.addDepFunctions(flame.xforms)}
+      ${this.depFuncGen.addDepFunctions(flame.layers[0].xforms)}
            
 			void main(void) {
 				vec2 tex = gl_FragCoord.xy / <%= RESOLUTION %>;

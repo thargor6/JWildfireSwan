@@ -17,11 +17,12 @@
 
 import {default as SourceColor} from '../../../generated/org/jwildfire/swan/flames/model/Color'
 import {default as SourceXForm} from '../../../generated/org/jwildfire/swan/flames/model/XForm'
+import {default as SourceLayer} from '../../../generated/org/jwildfire/swan/flames/model/Layer'
 import {default as SourceFlame} from '../../../generated/org/jwildfire/swan/flames/model/Flame'
 import {default as SourceVariation} from '../../../generated/org/jwildfire/swan/flames/model/Variation'
-import {Flame, XForm, Variation, Color} from "../flame";
+import {Flame, Layer, XForm, Variation, Color} from "../flame";
 import {Parameters} from "Frontend/flames/model/parameters";
-import {RenderColor, RenderFlame, RenderVariation, RenderXForm} from "Frontend/flames/model/render-flame";
+import {RenderColor, RenderLayer, RenderFlame, RenderVariation, RenderXForm} from "Frontend/flames/model/render-flame";
 import IParam from "Frontend/generated/org/jwildfire/swan/flames/model/IParam";
 import DParam from "Frontend/generated/org/jwildfire/swan/flames/model/DParam";
 import {spacing} from "@vaadin/vaadin-lumo-styles";
@@ -184,6 +185,68 @@ class ColorMapper {
     }
 }
 
+export class LayerMapper {
+    public static mapFromBackend(source: SourceLayer): Layer {
+        const res = new Layer()
+        res.weight = Parameters.dNumber(source.weight)
+        res.density = Parameters.dNumber(source.density)
+
+        res.gradient = []
+        source.gradient.forEach(color => res.gradient.push(
+          // TODO whitelevel
+          new Color(color.r / 200.0, color.g / 200.0, color.b / 200.0)))
+
+        source.xforms.map(sxf => {
+            res.xforms.push(XFormMapper.mapFromBackend(sxf))
+        })
+        source.finalXforms.map(sxf => {
+            res.finalXforms.push(XFormMapper.mapFromBackend(sxf))
+        })
+        return res
+    }
+
+    public static mapToBackend(source: Layer): SourceLayer {
+        const res: SourceLayer = {
+            weight: source.weight.value,
+            density: source.density.value,
+            gradient: new Array<Color>(),
+            xforms: new Array<SourceXForm>(),
+            finalXforms: new Array<SourceXForm>()
+        }
+
+        res.gradient = []
+        source.gradient.forEach(color => res.gradient.push(
+          // TODO whitelevel
+          { r: color.r * 200.0,
+              g: color.g * 200.0,
+              b: color.b * 200.0}))
+
+        source.xforms.map(sxf => {
+            res.xforms.push(XFormMapper.mapToBackend(sxf))
+        })
+        source.finalXforms.map(sxf => {
+            res.finalXforms.push(XFormMapper.mapToBackend(sxf))
+        })
+        return res
+    }
+
+    public static mapForRendering(source: Layer): RenderLayer {
+        const res = new RenderLayer();
+        res.weight = source.weight.value
+        res.density = source.density.value
+        source.gradient.map(color => {
+            res.gradient.push(ColorMapper.mapForRendering(color))
+        })
+        source.xforms.map(sxf => {
+            res.xforms.push(XFormMapper.mapForRendering(sxf))
+        })
+        source.finalXforms.map(sxf => {
+            res.finalXforms.push(XFormMapper.mapForRendering(sxf))
+        })
+        return res
+    }
+}
+
 export class FlameMapper {
     public static mapFromBackend(source: SourceFlame): Flame {
         const res = new Flame()
@@ -226,16 +289,8 @@ export class FlameMapper {
         res.focusZ = Parameters.dNumber(source.focusZ)
         res.camDOFExponent = Parameters.dNumber(source.camDOFExponent)
 
-        res.gradient = []
-        source.gradient.forEach(color => res.gradient.push(
-            // TODO whitelevel
-            new Color(color.r / 200.0, color.g / 200.0, color.b / 200.0)))
-
-        source.xforms.map(sxf => {
-            res.xforms.push(XFormMapper.mapFromBackend(sxf))
-        })
-        source.finalXforms.map(sxf => {
-            res.finalXforms.push(XFormMapper.mapFromBackend(sxf))
+        source.layers.map(layer => {
+            res.layers.push(LayerMapper.mapFromBackend(layer))
         })
         return res
     }
@@ -280,23 +335,11 @@ export class FlameMapper {
           focusY: source.focusY.value,
           focusZ: source.focusZ.value,
           camDOFExponent: source.camDOFExponent.value,
-          gradient: new Array<Color>(),
-          xforms: new Array<SourceXForm>(),
-          finalXforms: new Array<SourceXForm>()
+          layers: new Array<SourceLayer>()
         }
 
-        res.gradient = []
-        source.gradient.forEach(color => res.gradient.push(
-            // TODO whitelevel
-            { r: color.r * 200.0,
-              g: color.g * 200.0,
-              b: color.b * 200.0}))
-
-        source.xforms.map(sxf => {
-            res.xforms.push(XFormMapper.mapToBackend(sxf))
-        })
-        source.finalXforms.map(sxf => {
-            res.finalXforms.push(XFormMapper.mapToBackend(sxf))
+        source.layers.map(layer => {
+            res.layers.push(LayerMapper.mapToBackend(layer))
         })
         return res
     }
@@ -340,14 +383,8 @@ export class FlameMapper {
         res.focusY = source.focusY.value
         res.focusZ = source.focusZ.value
         res.camDOFExponent = source.camDOFExponent.value
-        source.gradient.map(color => {
-            res.gradient.push(ColorMapper.mapForRendering(color))
-        })
-        source.xforms.map(sxf => {
-            res.xforms.push(XFormMapper.mapForRendering(sxf))
-        })
-        source.finalXforms.map(sxf => {
-            res.finalXforms.push(XFormMapper.mapForRendering(sxf))
+        source.layers.map(layer => {
+            res.layers.push(LayerMapper.mapForRendering(layer))
         })
         return res
     }

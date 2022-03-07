@@ -64,6 +64,23 @@ export class XForm {
     }
 }
 
+export class Layer {
+    public weight = Parameters.dNumber(1.0)
+    public density = Parameters.dNumber(1.0)
+
+    public gradient = new Array<Color>(GRADIENT_SIZE);
+
+    private _xforms = new Array<XForm>();
+    private _finalXforms = new Array<XForm>();
+    public get xforms() {
+        return this._xforms;
+    }
+
+    public get finalXforms() {
+        return this._finalXforms;
+    }
+}
+
 export class Flame {
     public uid: string = '';
     public brightness = Parameters.dNumber(1.0)
@@ -103,16 +120,10 @@ export class Flame {
     public focusY = Parameters.dNumber(0.0)
     public focusZ = Parameters.dNumber(0.0)
     public camDOFExponent = Parameters.dNumber(0.0)
-    public gradient = new Array<Color>(GRADIENT_SIZE);
 
-    private _xforms = new Array<XForm>();
-    private _finalXforms = new Array<XForm>();
-    public get xforms() {
-        return this._xforms;
+    private _layers = new Array<Layer>();
+
+    public get layers() {
+        return this._layers;
     }
-
-    public get finalXforms() {
-        return this._finalXforms;
-    }
-
 }

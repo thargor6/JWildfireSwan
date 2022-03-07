@@ -22,11 +22,10 @@ import org.jwildfire.create.tina.variation.VariationFuncList;
 import org.jwildfire.swan.flames.model.DParam;
 import org.jwildfire.swan.flames.model.Flame;
 import org.jwildfire.swan.flames.model.IParam;
+import org.jwildfire.swan.flames.model.Layer;
 import org.jwildfire.swan.flames.model.Variation;
 import org.jwildfire.swan.flames.model.XForm;
 import org.springframework.stereotype.Service;
-
-import java.util.Arrays;
 
 @Service
 public class XFormMapper {
@@ -78,14 +77,14 @@ public class XFormMapper {
     return res;
   }
 
-  public org.jwildfire.create.tina.base.XForm mapToJwildfire(Flame sourceFlame, XForm source) {
+  public org.jwildfire.create.tina.base.XForm mapToJwildfire(Layer sourceLayer, XForm source) {
     org.jwildfire.create.tina.base.XForm res = new org.jwildfire.create.tina.base.XForm();
 
     res.setWeight(source.getWeight());
     for(int i=0;i<res.getModifiedWeights().length;i++) {
       res.getModifiedWeights()[i] = 0.0;
     }
-    for(int i=0;i<sourceFlame.getXforms().size() && i<source.getModifiedWeights().size();i++) {
+    for(int i=0;i<sourceLayer.getXforms().size() && i<source.getModifiedWeights().size();i++) {
       res.getModifiedWeights()[i]=source.getModifiedWeights().get(i);
     }
     res.setColor(source.getColor());

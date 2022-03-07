@@ -90,15 +90,16 @@ export class FlameRenderer {
         this.currTimeStampInMs = this.startTimeStampInMs
     }
 
-
     private prepareFlame(renderFlame: RenderFlame) {
-       renderFlame.xforms.forEach(xform => {
+       renderFlame.layers.forEach(layer=> {
+         layer.xforms.forEach(xform => {
            xform.c1 = (1.0 + xform.colorSymmetry) * 0.5;
            xform.c2 = xform.color * (1 - xform.colorSymmetry) * 0.5;
+         })
+         while(layer.gradient.length<GRADIENT_SIZE) {
+           layer.gradient.push(new RenderColor(0, 0, 0))
+         }
        })
-       while(renderFlame.gradient.length<GRADIENT_SIZE) {
-           renderFlame.gradient.push(new RenderColor(0, 0, 0))
-       }
     }
 
     public drawScene() {
