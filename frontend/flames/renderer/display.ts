@@ -30,13 +30,13 @@ export class FlameRendererDisplay {
         gl.useProgram(this.ctx.shaders.prog_show);
         gl.activeTexture(gl.TEXTURE0);
         gl.bindTexture(gl.TEXTURE_2D, this.ctx.textures.texture2);
-        gl.uniform1i(this.ctx.shaders.prog_show.uTexSamp, 0);
-        gl.uniform1f(this.ctx.shaders.prog_show.frames, this.settings.frames);
-        gl.uniform1f(this.ctx.shaders.prog_show.brightness, this.settings.brightness);
+        gl.uniform1i(this.ctx.shaders.prog_show!.uTexSamp, 0);
+        gl.uniform1f(this.ctx.shaders.prog_show!.frames, this.settings.frames);
+        gl.uniform1f(this.ctx.shaders.prog_show!.brightness, this.settings.brightness);
         gl.bindFramebuffer(gl.FRAMEBUFFER, null);
         gl.bindBuffer(gl.ARRAY_BUFFER, this.ctx.buffers.quadVertexPositionBuffer);
-        gl.vertexAttribPointer(this.ctx.shaders.prog_comp.vertexPositionAttribute, this.ctx.buffers.quadVertexPositionBuffer.itemSize, gl.FLOAT, false, 0, 0);
-        gl.drawArrays(gl.TRIANGLE_STRIP, 0, this.ctx.buffers.quadVertexPositionBuffer.numItems);
+        gl.vertexAttribPointer(this.ctx.shaders.prog_comp!.vertexPositionAttribute, this.ctx.buffers.quadVertexPositionBuffer!.itemSize, gl.FLOAT, false, 0, 0);
+        gl.drawArrays(gl.TRIANGLE_STRIP, 0, this.ctx.buffers.quadVertexPositionBuffer!.numItems);
     }
 
     public displayPositionIteration() {
@@ -47,14 +47,14 @@ export class FlameRendererDisplay {
         gl.useProgram(this.ctx.shaders.prog_show_raw);
         gl.activeTexture(gl.TEXTURE0);
         gl.bindTexture(gl.TEXTURE_2D, this.ctx.textures.texture1);
-        gl.uniform1i(this.ctx.shaders.prog_show_raw.uTexSamp, 0);
-        gl.uniform1i(this.ctx.shaders.prog_show_raw.pTexSamp, 1);
-        gl.uniform1i(this.ctx.shaders.prog_show_raw.gradTexSamp,2);
-        gl.uniform1i(this.ctx.shaders.prog_show_raw.displayMode, 0);
+        gl.uniform1i(this.ctx.shaders.prog_show_raw!.uTexSamp, 0);
+        gl.uniform1i(this.ctx.shaders.prog_show_raw!.pTexSamp, 1);
+        gl.uniform1i(this.ctx.shaders.prog_show_raw!.gradTexSamp,2);
+        gl.uniform1i(this.ctx.shaders.prog_show_raw!.displayMode, 0);
         gl.bindFramebuffer(gl.FRAMEBUFFER, null);
         gl.bindBuffer(gl.ARRAY_BUFFER, this.ctx.buffers.quadVertexPositionBuffer);
-        gl.vertexAttribPointer(this.ctx.shaders.prog_comp.vertexPositionAttribute, this.ctx.buffers.quadVertexPositionBuffer.itemSize, gl.FLOAT, false, 0, 0);
-        gl.drawArrays(gl.TRIANGLE_STRIP, 0, this.ctx.buffers.quadVertexPositionBuffer.numItems);
+        gl.vertexAttribPointer(this.ctx.shaders.prog_comp!.vertexPositionAttribute, this.ctx.buffers.quadVertexPositionBuffer!.itemSize, gl.FLOAT, false, 0, 0);
+        gl.drawArrays(gl.TRIANGLE_STRIP, 0, this.ctx.buffers.quadVertexPositionBuffer!.numItems);
     }
 
     public displayColorIteration() {
@@ -65,14 +65,14 @@ export class FlameRendererDisplay {
         gl.useProgram(this.ctx.shaders.prog_show_raw);
         gl.activeTexture(gl.TEXTURE0);
         gl.bindTexture(gl.TEXTURE_2D, this.ctx.textures._texture1);
-        gl.uniform1i(this.ctx.shaders.prog_show_raw.uTexSamp, 0);
-        gl.uniform1i(this.ctx.shaders.prog_show_raw.pTexSamp, 1);
-        gl.uniform1i(this.ctx.shaders.prog_show_raw.gradTexSamp, 2);
-        gl.uniform1i(this.ctx.shaders.prog_show_raw.displayMode, 0);
+        gl.uniform1i(this.ctx.shaders.prog_show_raw!.uTexSamp, 0);
+        gl.uniform1i(this.ctx.shaders.prog_show_raw!.pTexSamp, 1);
+        gl.uniform1i(this.ctx.shaders.prog_show_raw!.gradTexSamp, 2);
+        gl.uniform1i(this.ctx.shaders.prog_show_raw!.displayMode, 0);
         gl.bindFramebuffer(gl.FRAMEBUFFER, null);
         gl.bindBuffer(gl.ARRAY_BUFFER, this.ctx.buffers.quadVertexPositionBuffer);
-        gl.vertexAttribPointer(this.ctx.shaders.prog_comp.vertexPositionAttribute, this.ctx.buffers.quadVertexPositionBuffer.itemSize, gl.FLOAT, false, 0, 0);
-        gl.drawArrays(gl.TRIANGLE_STRIP, 0, this.ctx.buffers.quadVertexPositionBuffer.numItems);
+        gl.vertexAttribPointer(this.ctx.shaders.prog_comp!.vertexPositionAttribute, this.ctx.buffers.quadVertexPositionBuffer!.itemSize, gl.FLOAT, false, 0, 0);
+        gl.drawArrays(gl.TRIANGLE_STRIP, 0, this.ctx.buffers.quadVertexPositionBuffer!.numItems);
     }
 
     public displayGradient() {
@@ -83,14 +83,14 @@ export class FlameRendererDisplay {
         gl.useProgram(this.ctx.shaders.prog_show_raw);
         gl.activeTexture(gl.TEXTURE0);
         gl.bindTexture(gl.TEXTURE_2D, this.ctx.textures._texture1);
-        gl.uniform1i(this.ctx.shaders.prog_show_raw.uTexSamp, 0);
-        gl.uniform1i(this.ctx.shaders.prog_show_raw.pTexSamp, 1);
-        gl.uniform1i(this.ctx.shaders.prog_show_raw.gradTexSamp, 2);
-        gl.uniform1i(this.ctx.shaders.prog_show_raw.displayMode, 1);
+        gl.uniform1i(this.ctx.shaders.prog_show_raw!.uTexSamp, 0);
+        gl.uniform1i(this.ctx.shaders.prog_show_raw!.pTexSamp, 1);
+        gl.uniform1i(this.ctx.shaders.prog_show_raw!.gradTexSamp, 2);
+        gl.uniform1i(this.ctx.shaders.prog_show_raw!.displayMode, 1);
         gl.bindFramebuffer(gl.FRAMEBUFFER, null);
         gl.bindBuffer(gl.ARRAY_BUFFER, this.ctx.buffers.quadVertexPositionBuffer);
-        gl.vertexAttribPointer(this.ctx.shaders.prog_comp.vertexPositionAttribute, this.ctx.buffers.quadVertexPositionBuffer.itemSize, gl.FLOAT, false, 0, 0);
-        gl.drawArrays(gl.TRIANGLE_STRIP, 0, this.ctx.buffers.quadVertexPositionBuffer.numItems);
+        gl.vertexAttribPointer(this.ctx.shaders.prog_comp!.vertexPositionAttribute, this.ctx.buffers.quadVertexPositionBuffer!.itemSize, gl.FLOAT, false, 0, 0);
+        gl.drawArrays(gl.TRIANGLE_STRIP, 0, this.ctx.buffers.quadVertexPositionBuffer!.numItems);
     }
 
 }

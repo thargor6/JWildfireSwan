@@ -16,14 +16,15 @@
 */
 
 import {RenderFlame} from "Frontend/flames/model/render-flame";
+import {CloseableBuffers} from "Frontend/flames/renderer/shadergen/webgl-shader-utils";
 
-export class Textures {
-    texture0: WebGLTexture;
-    texture1: WebGLTexture;
-    _texture0: WebGLTexture;
-    _texture1: WebGLTexture;
-    texture2: WebGLTexture;
-    gradient: WebGLTexture;
+export class Textures implements CloseableBuffers {
+    texture0: WebGLTexture | null
+    texture1: WebGLTexture | null
+    _texture0: WebGLTexture | null
+    _texture1: WebGLTexture | null
+    texture2: WebGLTexture | null
+    gradient: WebGLTexture | null
 
     constructor(public flame: RenderFlame,  public gl: WebGLRenderingContext, public swarm_size: number, public canvas_size: number) {
         //
@@ -102,6 +103,32 @@ export class Textures {
     clearHistogram() {
         const gl = this.gl;
         gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, this.canvas_size, this.canvas_size, 0, gl.RGBA, gl.FLOAT, null);
+    }
 
+    closeBuffers = ()=> {
+      if(this.texture0) {
+          this.gl.deleteTexture(this.texture0)
+          this.texture0 = null
+      }
+      if(this.texture1) {
+        this.gl.deleteTexture(this.texture1)
+        this.texture1 = null
+      }
+      if(this._texture0) {
+        this.gl.deleteTexture(this._texture0)
+        this._texture0 = null
+      }
+      if(this._texture1) {
+        this.gl.deleteTexture(this._texture1)
+        this._texture1 = null
+      }
+      if(this.texture2) {
+        this.gl.deleteTexture(this.texture2)
+        this.texture2 = null
+      }
+      if(this.gradient) {
+        this.gl.deleteTexture(this.gradient)
+        this.gradient = null
+      }
     }
 }

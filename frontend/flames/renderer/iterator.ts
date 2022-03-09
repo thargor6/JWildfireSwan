@@ -42,11 +42,11 @@ export class FlameIterator {
         gl.useProgram(this.ctx.shaders.prog_comp);
 
 
-        gl.uniform1f(this.ctx.shaders.prog_comp.seed, seed);
-        gl.uniform1f(this.ctx.shaders.prog_comp.seed2, seed2);
-        gl.uniform1f(this.ctx.shaders.prog_comp.seed3, seed3);
-        gl.uniform1f(this.ctx.shaders.prog_comp.time, this.settings.time );
-        gl.uniform1i(this.ctx.shaders.prog_comp.uTexSamp, 0);
+        gl.uniform1f(this.ctx.shaders.prog_comp!.seed, seed);
+        gl.uniform1f(this.ctx.shaders.prog_comp!.seed2, seed2);
+        gl.uniform1f(this.ctx.shaders.prog_comp!.seed3, seed3);
+        gl.uniform1f(this.ctx.shaders.prog_comp!.time, this.settings.time );
+        gl.uniform1i(this.ctx.shaders.prog_comp!.uTexSamp, 0);
 
         if(this.flag) {
             gl.bindFramebuffer(gl.FRAMEBUFFER, this.ctx.framebuffers.FBO1);
@@ -57,20 +57,20 @@ export class FlameIterator {
         }
 
         gl.bindBuffer(gl.ARRAY_BUFFER, this.ctx.buffers.quadVertexPositionBuffer);
-        gl.vertexAttribPointer(this.ctx.shaders.prog_comp.vertexPositionAttribute, this.ctx.buffers.quadVertexPositionBuffer.itemSize, gl.FLOAT, false, 0, 0);
+        gl.vertexAttribPointer(this.ctx.shaders.prog_comp!.vertexPositionAttribute, this.ctx.buffers.quadVertexPositionBuffer!.itemSize, gl.FLOAT, false, 0, 0);
 
-        gl.drawArrays(gl.TRIANGLE_STRIP, 0, this.ctx.buffers.quadVertexPositionBuffer.numItems);
+        gl.drawArrays(gl.TRIANGLE_STRIP, 0, this.ctx.buffers.quadVertexPositionBuffer!.numItems);
 
         // C += Ci
         gl.useProgram(this.ctx.shaders.prog_comp_col);
 
         // TODO remove seed
-        gl.uniform1f(this.ctx.shaders.prog_comp_col.seed, seed);
-        gl.uniform1f(this.ctx.shaders.prog_comp_col.seed2, seed2);
-        gl.uniform1f(this.ctx.shaders.prog_comp_col.seed3, seed3);
-        gl.uniform1i(this.ctx.shaders.prog_comp_col.uTexSamp, 0);
-        gl.uniform1i(this.ctx.shaders.prog_comp_col.pTexSamp, 1);
-        gl.uniform1i(this.ctx.shaders.prog_comp_col.gradTexSamp, 2);
+        gl.uniform1f(this.ctx.shaders.prog_comp_col!.seed, seed);
+        gl.uniform1f(this.ctx.shaders.prog_comp_col!.seed2, seed2);
+        gl.uniform1f(this.ctx.shaders.prog_comp_col!.seed3, seed3);
+        gl.uniform1i(this.ctx.shaders.prog_comp_col!.uTexSamp, 0);
+        gl.uniform1i(this.ctx.shaders.prog_comp_col!.pTexSamp, 1);
+        gl.uniform1i(this.ctx.shaders.prog_comp_col!.gradTexSamp, 2);
 
         if(this.flag) {
             gl.bindFramebuffer(gl.FRAMEBUFFER, this.ctx.framebuffers._FBO1);
@@ -89,9 +89,9 @@ export class FlameIterator {
         gl.bindTexture(gl.TEXTURE_2D, this.ctx.textures.gradient);
 
         gl.bindBuffer(gl.ARRAY_BUFFER, this.ctx.buffers.quadVertexPositionBuffer);
-        gl.vertexAttribPointer(this.ctx.shaders.prog_comp_col.vertexPositionAttribute, this.ctx.buffers.quadVertexPositionBuffer.itemSize, gl.FLOAT, false, 0, 0);
+        gl.vertexAttribPointer(this.ctx.shaders.prog_comp_col!.vertexPositionAttribute, this.ctx.buffers.quadVertexPositionBuffer!.itemSize, gl.FLOAT, false, 0, 0);
 
-        gl.drawArrays(gl.TRIANGLE_STRIP, 0, this.ctx.buffers.quadVertexPositionBuffer.numItems);
+        gl.drawArrays(gl.TRIANGLE_STRIP, 0, this.ctx.buffers.quadVertexPositionBuffer!.numItems);
 
         this.flag = !this.flag
     }
@@ -105,10 +105,10 @@ export class FlameIterator {
 
         gl.useProgram(this.ctx.shaders.prog_points);
 
-        gl.uniform1i(this.ctx.shaders.prog_points.uTexSamp_Points, 0);
-        gl.uniform1i(this.ctx.shaders.prog_points.uTexSamp_Colors, 1);
-        gl.uniform1f(this.ctx.shaders.prog_points.time, this.settings.time );
-        gl.uniform1f(this.ctx.shaders.prog_points.seed, Math.random());
+        gl.uniform1i(this.ctx.shaders.prog_points!.uTexSamp_Points, 0);
+        gl.uniform1i(this.ctx.shaders.prog_points!.uTexSamp_Colors, 1);
+        gl.uniform1f(this.ctx.shaders.prog_points!.time, this.settings.time );
+        gl.uniform1f(this.ctx.shaders.prog_points!.seed, Math.random());
 
         if(this.flag) {
             gl.activeTexture(gl.TEXTURE0);
@@ -125,14 +125,14 @@ export class FlameIterator {
         }
 
         gl.bindBuffer(gl.ARRAY_BUFFER, this.ctx.buffers.pointsVertexPositionBuffer);
-        gl.vertexAttribPointer(this.ctx.shaders.prog_points.vertexPositionAttribute, this.ctx.buffers.pointsVertexPositionBuffer.itemSize, gl.FLOAT, false, 0, 0);
+        gl.vertexAttribPointer(this.ctx.shaders.prog_points!.vertexPositionAttribute, this.ctx.buffers.pointsVertexPositionBuffer!.itemSize, gl.FLOAT, false, 0, 0);
 
         gl.enable(gl.BLEND);
         gl.blendFunc(gl.ONE, gl.ONE);
 
         gl.bindFramebuffer(gl.FRAMEBUFFER, this.ctx.framebuffers.FBO2);
 
-        gl.drawArrays(gl.POINTS, 0, this.ctx.buffers.pointsVertexPositionBuffer.numItems);
+        gl.drawArrays(gl.POINTS, 0, this.ctx.buffers.pointsVertexPositionBuffer!.numItems);
 
         gl.disable(gl.BLEND);
     }

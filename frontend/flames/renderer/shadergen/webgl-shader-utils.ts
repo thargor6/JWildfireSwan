@@ -1,11 +1,15 @@
 
+export interface CloseableBuffers {
+    closeBuffers(): void
+}
+
 export function initGL(canvas: HTMLCanvasElement): WebGLRenderingContext {
+    // @ts-ignore
+    window.requestAnimFrame = window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || function(callback, element) { setTimeout(callback, 1000 / 60); };
     try {
         var webglOptions = { antialias: false, depth: false };
 
-        var gl =  canvas.getContext("webgl", webglOptions);
-        //     canvas.getContext("webgl", webglOptions) ||
-       //     canvas.getContext("experimental-webgl", webglOptions);
+        var gl =  canvas.getContext("webgl", webglOptions) || canvas.getContext("experimental-webgl", webglOptions);
 
         // @ts-ignore
         gl.viewportWidth = canvas.width;

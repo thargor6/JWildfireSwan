@@ -15,7 +15,7 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 */
 
-import {compileShaderDirect} from './webgl-shader-utils'
+import {CloseableBuffers, compileShaderDirect} from './webgl-shader-utils'
 import {shader_points_fs} from '../shaders/shader-points-fs'
 import {shader_direct_vs} from '../shaders/shader-direct-vs'
 import {shader_comp_col_fs} from '../shaders/shader-comp-col-fs'
@@ -66,16 +66,16 @@ interface ShowRawBufferProgram extends WebGLProgram {
     displayMode: WebGLUniformLocation;
 }
 
-export class WebglShaders {
-    prog_points: ComputePointsProgram
-    prog_comp: IteratePointsProgram
-    prog_comp_col: ComputeColorsProgram
-    prog_show: ShowHistogramProgram
-    prog_show_raw: ShowRawBufferProgram
+export class WebglShaders implements CloseableBuffers{
+    prog_points: ComputePointsProgram | null
+    prog_comp: IteratePointsProgram | null
+    prog_comp_col: ComputeColorsProgram | null
+    prog_show: ShowHistogramProgram | null
+    prog_show_raw: ShowRawBufferProgram | null
     progPointsVertexShader: string
     compPointsFragmentShader: string
 
-    constructor(gl: WebGLRenderingContext, canvas: HTMLCanvasElement, canvas_size: number, swarm_size: number, private flame: RenderFlame) {
+    constructor(private gl: WebGLRenderingContext, canvas: HTMLCanvasElement, canvas_size: number, swarm_size: number, private flame: RenderFlame) {
         this.progPointsVertexShader = new ProgPointsVertexShaderGenerator().createShader(flame, flame.layers[0], canvas_size);
         this.prog_points = compileShaderDirect(gl, this.progPointsVertexShader, shader_points_fs, {}) as ComputePointsProgram;
         this.prog_points.vertexPositionAttribute = gl.getAttribLocation(this.prog_points, "aVertexPosition");
@@ -131,4 +131,26 @@ export class WebglShaders {
         this.prog_show_raw.displayMode = gl.getUniformLocation(this.prog_show_raw, "displayMode")!;
     }
 
+    closeBuffers = ()=> {
+        if(this.prog_points) {
+            this.gl.deleteProgram(this.prog_points)
+            this.prog_points = null
+        }
+        if(this.prog_comp) {
+            this.gl.deleteProgram(this.prog_comp)
+            this.prog_comp = null
+        }
+        if(this.prog_comp_col) {
+            this.gl.deleteProgram(this.prog_comp_col)
+            this.prog_comp_col = null
+        }
+        if(this.prog_show) {
+            this.gl.deleteProgram(this.prog_show)
+            this.prog_show = null
+        }
+        if(this.prog_show_raw) {
+            this.gl.deleteProgram(this.prog_show_raw)
+            this.prog_show_raw = null
+        }
+    }
 }
