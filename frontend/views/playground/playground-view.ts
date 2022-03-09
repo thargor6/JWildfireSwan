@@ -102,7 +102,6 @@ export class PlaygroundView extends View  implements BeforeEnterObserver {
         return ownTabIdx === selectedTab ? html`display: block;` : html`display: none;`;
     }
 
-
     recreateCanvas = ()=> {
         this.canvasContainer.innerHTML = '';
         this.canvas = document.createElement('canvas')
@@ -122,9 +121,18 @@ export class PlaygroundView extends View  implements BeforeEnterObserver {
 
     rerenderFlame = ()=> {
         if(playgroundStore.renderer) {
-            playgroundStore.renderer.signalCancel()
+            playgroundStore.renderer.signalCancel(()=>{
+              playgroundStore.renderer.closeBuffers()
+              this.renderFlame()
+            })
         }
-        this.recreateCanvas()
+        else {
+            this.recreateCanvas()
+            this.renderFlame()
+        }
+    }
+
+    renderFlame =() => {
         this.renderProgress = 0.0
         this.renderInfo = 'Rendering'
         playgroundStore.renderer = new FlameRenderer(this.renderSettingsPanel.imageSize, this.renderSettingsPanel.swarmSize, this.renderSettingsPanel.displayMode, this.canvas, this.renderSettingsPanel.capturedImageContainer, true, playgroundStore.flame);
@@ -142,15 +150,15 @@ export class PlaygroundView extends View  implements BeforeEnterObserver {
     }
 
     onRenderCancelled = (frameCount: number, elapsedTimeInS: number) => {
-         console.log("CANCELLED")
+         // nothing
     }
 
     onUpdateRenderProgress = (currSampleCount: number, maxSampleCount: number, frameCount: number, elapsedTimeInSeconds: number)=> {
         const currTimeStamp = getTimeStamp()
         if(currTimeStamp > this.lastProgressUpdate + 333) {
-            this.lastProgressUpdate = currTimeStamp
             this.renderProgress = currSampleCount / maxSampleCount
-            this.renderInfo = 'Rendering in progress (frame: ' + frameCount + ')'
+            this.renderInfo = `Rendering in progress ${Math.round(currSampleCount/maxSampleCount*100)}% (frame: ${frameCount})`
+            this.lastProgressUpdate = currTimeStamp
         }
     }
 

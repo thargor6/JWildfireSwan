@@ -58,7 +58,7 @@ export class ProgPointsVertexShaderGenerator {
      `
     }
 
-    addFinalXForms(layer: RenderLayer) {
+    addFinalXForms = (layer: RenderLayer) => {
 
         if(layer.finalXforms.length>0) {
             return `

@@ -15,7 +15,7 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 */
 
-import {initGL} from './shadergen/webgl-shader-utils'
+import {CloseableBuffers, initGL} from './shadergen/webgl-shader-utils'
 import {WebglShaders} from './shadergen/webgl-shaders'
 import {Buffers} from "./buffers";
 import {Textures} from './textures'
@@ -32,7 +32,9 @@ import {getTimeStamp} from "Frontend/components/utils";
 type RenderFinishedHandler = (frameCount: number, elapsedTimeInMs: number) => void
 type RenderProgressHandler = (currSampleCount: number, maxSampleCount: number, frameCount: number, elapsedTimeInMs: number) => void
 
-export class FlameRenderer {
+export type OnRenderCancelledCallback = ()=>void
+
+export class FlameRenderer implements CloseableBuffers {
     currFrameCount = 0
     ctx: FlameRenderContext
     settings: FlameRenderSettings
@@ -49,6 +51,15 @@ export class FlameRenderer {
     onRenderFinished: RenderFinishedHandler = (frameCount: number, elapsedTimeInSeconds: number) => {}
     onRenderCancelled: RenderFinishedHandler = (frameCount: number, elapsedTimeInSeconds: number) => {}
     onUpdateRenderProgress: RenderProgressHandler = (currSampleCount: number, maxSampleCount: number, frameCount: number, elapsedTimeInSeconds: number) => {}
+
+    shaders: WebglShaders | null
+    buffers: Buffers | null
+    framebuffers: Framebuffers | null
+    textures: Textures | null
+
+
+    onRenderCancelledCallback: OnRenderCancelledCallback | undefined = undefined
+    isFinished = true
 
     constructor(private canvas_size: number,
                 private swarm_size: number,
@@ -77,17 +88,36 @@ export class FlameRenderer {
 
         const gl = initGL(canvas)
 
-        const shaders = new WebglShaders(gl, canvas, this.canvas_size, this.swarm_size, renderFlame)
-        const buffers = new Buffers(gl, shaders, this.swarm_size)
-        const textures = new Textures(renderFlame, gl, this.swarm_size, this.canvas_size)
-        const framebuffers = new Framebuffers(gl, textures)
-        this.ctx = new FlameRenderContext(gl, shaders, buffers, textures, framebuffers)
+        this.shaders = new WebglShaders(gl, canvas, this.canvas_size, this.swarm_size, renderFlame)
+        this.buffers = new Buffers(gl, this.shaders, this.swarm_size)
+        this.textures = new Textures(renderFlame, gl, this.swarm_size, this.canvas_size)
+        this.framebuffers = new Framebuffers(gl, this.textures)
+        this.ctx = new FlameRenderContext(gl, this.shaders, this.buffers, this.textures, this.framebuffers)
         this.settings = new FlameRenderSettings(1.2, this.canvas_size, this.swarm_size, 1, 0.0, displayMode)
         this.display = new FlameRendererDisplay(this.ctx, this.settings)
         this.iterator = new FlameIterator(this.ctx, this.settings)
 
         this.startTimeStampInMs = getTimeStamp()
         this.currTimeStampInMs = this.startTimeStampInMs
+    }
+
+    closeBuffers() {
+        if(this.framebuffers) {
+            this.framebuffers.closeBuffers()
+            this.framebuffers = null
+        }
+        if(this.textures) {
+            this.textures.closeBuffers()
+            this.textures = null
+        }
+        if(this.buffers) {
+            this.buffers.closeBuffers()
+            this.buffers = null
+        }
+        if(this.shaders) {
+            this.shaders.closeBuffers()
+            this.shaders = null
+        }
     }
 
     private prepareFlame(renderFlame: RenderFlame) {
@@ -103,7 +133,8 @@ export class FlameRenderer {
     }
 
     public drawScene() {
-        const MIN_FRAME_COUNT = 5
+        this.isFinished = false
+        const MIN_FRAME_COUNT = 0
         this.settings.frames = this.currFrameCount;
         this.settings.brightness = 1.0 // this.brightnessElement.value;
         this.settings.time += 0.01;
@@ -138,12 +169,18 @@ export class FlameRenderer {
 
         this.currSampleCount += this.samplesPerFrame
         this.currTimeStampInMs = getTimeStamp()
-        const elapsedTimeInSeconds = (this.currTimeStampInMs-this.startTimeStampInMs)/1000
+        const elapsedTimeInSeconds = (this.currTimeStampInMs-this.startTimeStampInMs) / 1000
         if(this.cancelSignalled) {
             this.onRenderCancelled(this.currFrameCount, elapsedTimeInSeconds)
+            this.isFinished = true
+            if(this.onRenderCancelledCallback) {
+                const cb = this.onRenderCancelledCallback
+                this.onRenderCancelledCallback = undefined
+                cb()
+            }
         }
         else {
-            if (this.currSampleCount - this.samplesPerFrame / 2 < this.maxSampleCount || this.currFrameCount<=MIN_FRAME_COUNT) {
+            if (this.currSampleCount  < this.maxSampleCount) {
                 this.onUpdateRenderProgress(this.currSampleCount, this.maxSampleCount, this.currFrameCount, elapsedTimeInSeconds)
                 window.requestAnimationFrame(this.drawScene.bind(this));
             }
@@ -161,11 +198,19 @@ export class FlameRenderer {
                     this.imgCaptureContainer.appendChild(divElement)
                 }
                 this.onRenderFinished(this.currFrameCount, elapsedTimeInSeconds)
-            }
+                this.isFinished = true
+              }
         }
     }
 
-    public signalCancel() {
+
+    public signalCancel(cb: OnRenderCancelledCallback | undefined) {
+        if(!this.isFinished) {
+            this.onRenderCancelledCallback = cb
+        }
+        else if(cb) {
+            cb()
+        }
         this.cancelSignalled = true
     }
 
