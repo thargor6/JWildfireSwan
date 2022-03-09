@@ -115,7 +115,7 @@ export class PlaygroundView extends View  implements BeforeEnterObserver {
 
     cancelRender = ()=> {
         if(playgroundStore.renderer) {
-            playgroundStore.renderer.signalCancel()
+            playgroundStore.renderer.signalCancel(undefined)
         }
     }
 
