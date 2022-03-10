@@ -134,14 +134,17 @@ export class FlameRenderer implements CloseableBuffers {
 
     public drawScene() {
         this.isFinished = false
-        const MIN_FRAME_COUNT = 0
         this.settings.frames = this.currFrameCount;
         this.settings.brightness = 1.0 // this.brightnessElement.value;
         this.settings.time += 0.01;
         //
         this.iterator.iterateIFS();
         //
-        if (this.currFrameCount >= MIN_FRAME_COUNT) {
+
+        this.currSampleCount += this.samplesPerFrame
+        const finishedPct = this.currSampleCount / this.maxSampleCount * 100.0
+
+        if (finishedPct>1.25) {
             this.iterator.plotHistogram();
         }
 
@@ -161,13 +164,12 @@ export class FlameRenderer implements CloseableBuffers {
                 this.display.displayFlame();
         }
         this.currFrameCount++;
-
-        if(this.currFrameCount>5) {
-         // this.frames=0;
-       //   this.ctx.textures.clearHistogram();
+/*
+        if(this.currFrameCount>3) {
+          this.currFrameCount=0;
+          this.ctx.textures.clearHistogram();
         }
-
-        this.currSampleCount += this.samplesPerFrame
+*/
         this.currTimeStampInMs = getTimeStamp()
         const elapsedTimeInSeconds = (this.currTimeStampInMs-this.startTimeStampInMs) / 1000
         if(this.cancelSignalled) {
@@ -180,7 +182,7 @@ export class FlameRenderer implements CloseableBuffers {
             }
         }
         else {
-            if (this.currSampleCount  < this.maxSampleCount) {
+            if (this.currSampleCount < this.maxSampleCount) {
                 this.onUpdateRenderProgress(this.currSampleCount, this.maxSampleCount, this.currFrameCount, elapsedTimeInSeconds)
                 window.requestAnimationFrame(this.drawScene.bind(this));
             }

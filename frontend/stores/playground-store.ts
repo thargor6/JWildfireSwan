@@ -34,6 +34,7 @@ type OnInitCallback = () => void
 
 export class PlaygroundStore {
   initFlag = false
+  refreshing = true
   variations: string[] = []
   initState = new Set<string>()
   onInitCallbacks = new Map<string[], OnInitCallback>()

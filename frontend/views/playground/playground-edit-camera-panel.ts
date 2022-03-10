@@ -101,9 +101,5 @@ export class PlaygroundEditCameraPanel extends MobxLitElement {
 `;
   }
 
-  protected firstUpdated(_changedProperties: PropertyValues) {
-    super.firstUpdated(_changedProperties);
-  }
-
 }
 

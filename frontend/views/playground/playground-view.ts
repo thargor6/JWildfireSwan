@@ -102,6 +102,10 @@ export class PlaygroundView extends View  implements BeforeEnterObserver {
         return ownTabIdx === selectedTab ? html`display: block;` : html`display: none;`;
     }
 
+    hasCanvas = ()=> {
+        return this.canvasContainer && this.canvasContainer.querySelector('#canvas')
+    }
+
     recreateCanvas = ()=> {
         this.canvasContainer.innerHTML = '';
         this.canvas = document.createElement('canvas')
@@ -121,8 +125,12 @@ export class PlaygroundView extends View  implements BeforeEnterObserver {
 
     rerenderFlame = ()=> {
         if(playgroundStore.renderer) {
+            const reuseCanvas = this.hasCanvas()
             playgroundStore.renderer.signalCancel(()=>{
               playgroundStore.renderer.closeBuffers()
+                if(!reuseCanvas) {
+                    this.recreateCanvas()
+                }
               this.renderFlame()
             })
         }
@@ -166,9 +174,15 @@ export class PlaygroundView extends View  implements BeforeEnterObserver {
         playgroundStore.calculating = true
         playgroundStore.lastError = ''
         FlamesEndpoint.parseFlame(this.flamePanel.flameXml).then(flame => {
-          playgroundStore.flame = FlameMapper.mapFromBackend(flame)
-          this.rerenderFlame()
-          playgroundStore.calculating = false
+          playgroundStore.refreshing = true
+          try {
+              playgroundStore.flame = FlameMapper.mapFromBackend(flame)
+              this.rerenderFlame()
+              playgroundStore.calculating = false
+          }
+          finally {
+              playgroundStore.refreshing = false
+          }
         }).catch(err=> {
             playgroundStore.calculating = false
             playgroundStore.lastError = err
@@ -182,9 +196,15 @@ export class PlaygroundView extends View  implements BeforeEnterObserver {
         FlamesEndpoint.generateRandomFlame(playgroundStore.variations).then(
             randomFlame => {
                 this.flamePanel.flameXml = randomFlame.flameXml
-                playgroundStore.flame = FlameMapper.mapFromBackend(randomFlame.flame)
-                this.rerenderFlame()
-                playgroundStore.calculating = false
+                playgroundStore.refreshing = true
+                try {
+                    playgroundStore.flame = FlameMapper.mapFromBackend(randomFlame.flame)
+                    this.rerenderFlame()
+                    playgroundStore.calculating = false
+                }
+                finally {
+                    playgroundStore.refreshing = false
+                }
             }
         ).catch(err=> {
             playgroundStore.calculating = false
@@ -198,10 +218,16 @@ export class PlaygroundView extends View  implements BeforeEnterObserver {
 
         FlamesEndpoint.generateRandomGradientForFlame(FlameMapper.mapToBackend(playgroundStore.flame)).then(
             randomFlame => {
-                this.flamePanel.flameXml = randomFlame.flameXml
-                playgroundStore.flame = FlameMapper.mapFromBackend(randomFlame.flame)
-                this.rerenderFlame()
-                playgroundStore.calculating = false
+                playgroundStore.refreshing = true
+                try {
+                    this.flamePanel.flameXml = randomFlame.flameXml
+                    playgroundStore.flame = FlameMapper.mapFromBackend(randomFlame.flame)
+                    this.rerenderFlame()
+                    playgroundStore.calculating = false
+                }
+                finally {
+                    playgroundStore.refreshing = false
+                }
             }
         ).catch(err=> {
             playgroundStore.calculating = false
@@ -229,13 +255,18 @@ export class PlaygroundView extends View  implements BeforeEnterObserver {
         playgroundStore.lastError = ''
 
         FlamesEndpoint.getExampleFlame(this.flamePanel.flameName).then(flame => {
-            playgroundStore.flame = FlameMapper.mapFromBackend(flame)
-            GalleryEndpoint.getExampleFlameXml(this.flamePanel.flameName).then(
-                flameXml => this.flamePanel.flameXml = flameXml
-            )
-
-            this.rerenderFlame()
-            playgroundStore.calculating = false
+            playgroundStore.refreshing = true
+            try {
+                playgroundStore.flame = FlameMapper.mapFromBackend(flame)
+                GalleryEndpoint.getExampleFlameXml(this.flamePanel.flameName).then(
+                  flameXml => this.flamePanel.flameXml = flameXml
+                )
+                this.rerenderFlame()
+                playgroundStore.calculating = false
+            }
+            finally {
+                playgroundStore.refreshing = false
+            }
         }).catch(err=> {
                 playgroundStore.calculating = false
                 playgroundStore.lastError = err

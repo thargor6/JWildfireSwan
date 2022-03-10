@@ -71,13 +71,15 @@ export class PlaygroundEditPanel extends MobxLitElement {
   }
 
   onPropertyChange: OnPropertyChange = (propertyPath: string, changing: boolean, value: number) => {
-    const param: FlameParameter = (playgroundStore.flame as any)[propertyPath]
-    if(param && Math.abs(param.value-value)>EPSILON) {
-      param.value = value
-      // console.log('CHANGE ', propertyPath, changing, value);
-      // if(!changing) {
-      this.onRefresh()
-      //  }
+    if(!playgroundStore.refreshing) {
+      const param: FlameParameter = (playgroundStore.flame as any)[propertyPath]
+      if (param && Math.abs(param.value - value) > EPSILON) {
+        param.value = value
+        console.log('CHANGE ', propertyPath, changing, value);
+        // if(!changing) {
+        this.onRefresh()
+        //  }
+      }
     }
   }
 
