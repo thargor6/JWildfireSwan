@@ -18,7 +18,7 @@
 import {VariationParam, VariationParamType, VariationShaderFunc3D, VariationTypes} from './variation-shader-func';
 import {VariationShaders} from 'Frontend/flames/renderer/variations/variation-shaders';
 import {RenderVariation, RenderXForm} from 'Frontend/flames/model/render-flame';
-import {FUNC_SGN} from 'Frontend/flames/renderer/variations/variation-math-functions';
+import {FUNC_ROUND, FUNC_SGN} from 'Frontend/flames/renderer/variations/variation-math-functions';
 
 /*
   be sure to import this class somewhere and call registerVars_3D()
@@ -1218,37 +1218,41 @@ class TaurusFunc extends VariationShaderFunc3D {
     }
 }
 
-class Waves2_3DFunc extends VariationShaderFunc3D {
-    PARAM_FREQ = 'freq'
-    PARAM_SCALE = 'scale'
+
+class Tile_LogFunc extends VariationShaderFunc3D {
+    PARAM_SPREAD = 'spread'
 
     get params(): VariationParam[] {
-        return [{ name: this.PARAM_FREQ, type: VariationParamType.VP_NUMBER, initialValue: 2.00 },
-            { name: this.PARAM_SCALE, type: VariationParamType.VP_NUMBER, initialValue: 1.00 }
-        ]
+        return [{ name: this.PARAM_SPREAD, type: VariationParamType.VP_NUMBER, initialValue: 1.0 }]
     }
 
     getCode(xform: RenderXForm, variation: RenderVariation): string {
-        /* waves2_3D by Larry Berlin, http://aporev.deviantart.com/art/New-3D-Plugins-136484533?q=gallery%3Aaporev%2F8229210&qo=22 */
+        // tile_log by Zy0rg implemented into JWildfire by Brad Stefanov
         return `{
           float amount = float(${variation.amount});
-          float freq = float(${variation.params.get(this.PARAM_FREQ)});
-          float scale = float(${variation.params.get(this.PARAM_SCALE)});
-          float avgxy = (_tx + _ty) / 2.0;
-          _vx += amount * (_tx + scale * sin(_ty * freq));
-          _vy += amount * (_ty + scale * sin(_tx * freq));
-          _vz += amount * (_tz + scale * sin(avgxy * freq)); 
+          float spread = float(${variation.params.get(this.PARAM_SPREAD)});
+           float x = -spread;
+           if (rand8(tex, rngState) < 0.5)
+              x = spread;   
+            _vx += amount * (_tx + round(x * log(rand8(tex, rngState))));
+            _vy += amount * _ty;
+            _vz += amount * _tz;
         }`;
     }
 
     get name(): string {
-        return 'waves2_3D';
+        return 'tile_log';
+    }
+
+    get funcDependencies(): string[] {
+        return [FUNC_ROUND];
     }
 
     get variationTypes(): VariationTypes[] {
         return [VariationTypes.VARTYPE_3D];
     }
 }
+
 
 export function registerVars_3D() {
     VariationShaders.registerVar(new Affine3DFunc())
@@ -1283,5 +1287,5 @@ export function registerVars_3D() {
     VariationShaders.registerVar(new Square3DFunc())
     VariationShaders.registerVar(new Tangent3DFunc())
     VariationShaders.registerVar(new TaurusFunc())
-    VariationShaders.registerVar(new Waves2_3DFunc())
+    VariationShaders.registerVar(new Tile_LogFunc())
 }

@@ -252,6 +252,54 @@ class LinearTFunc extends VariationShaderFunc2D {
     }
 }
 
+class LissajousFunc extends VariationShaderFunc2D {
+    PARAM_TMIN = 'tmin'
+    PARAM_TMAX = 'tmax'
+    PARAM_A = 'a'
+    PARAM_B = 'b'
+    PARAM_C = 'c'
+    PARAM_D = 'd'
+    PARAM_E = 'e'
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_TMIN, type: VariationParamType.VP_NUMBER, initialValue: -M_PI },
+            { name: this.PARAM_TMAX, type: VariationParamType.VP_NUMBER, initialValue: M_PI },
+            { name: this.PARAM_A, type: VariationParamType.VP_NUMBER, initialValue: 3.00 },
+            { name: this.PARAM_B, type: VariationParamType.VP_NUMBER, initialValue: 2.00 },
+            { name: this.PARAM_C, type: VariationParamType.VP_NUMBER, initialValue: 0.00 },
+            { name: this.PARAM_D, type: VariationParamType.VP_NUMBER, initialValue: 0.00 },
+            { name: this.PARAM_E, type: VariationParamType.VP_NUMBER, initialValue: 0.00 }]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        // Lissajous plugin by Jed Kelsey, http://lu-kout.deviantart.com/art/Apophysis-Plugin-Pack-1-v0-4-59907275
+        return `{
+          float amount = float(${variation.amount});
+          float tmin = float(${variation.params.get(this.PARAM_TMIN)});
+          float tmax = float(${variation.params.get(this.PARAM_TMAX)});
+          float a = float(${variation.params.get(this.PARAM_A)});
+          float b = float(${variation.params.get(this.PARAM_B)});
+          float c = float(${variation.params.get(this.PARAM_C)});
+          float d = float(${variation.params.get(this.PARAM_D)});
+          float e = float(${variation.params.get(this.PARAM_E)});
+          float t = (tmax - tmin) * rand8(tex, rngState) + tmin;
+          float y = rand8(tex, rngState) - 0.5;
+          float x1 = sin(a * t + d);
+          float y1 = sin(b * t);
+          _vx += amount * (x1 + c * t + e * y);
+          _vy += amount * (y1 + c * t + e * y);
+        }`;
+    }
+
+    get name(): string {
+        return 'lissajous';
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
 class LogFunc extends VariationShaderFunc2D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         /* complex vars by cothe */
@@ -1310,6 +1358,7 @@ export function registerVars_2D_PartK() {
     VariationShaders.registerVar(new LazySusanFunc())
     VariationShaders.registerVar(new LinearFunc())
     VariationShaders.registerVar(new LinearTFunc())
+    VariationShaders.registerVar(new LissajousFunc())
     VariationShaders.registerVar(new LogFunc())
     VariationShaders.registerVar(new LoonieFunc())
     VariationShaders.registerVar(new Loonie2Func())

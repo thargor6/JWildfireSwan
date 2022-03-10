@@ -676,6 +676,38 @@ class Waves2WFFunc extends VariationShaderFunc2D {
     }
 }
 
+class Waves2_3DFunc extends VariationShaderFunc3D {
+    PARAM_FREQ = 'freq'
+    PARAM_SCALE = 'scale'
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_FREQ, type: VariationParamType.VP_NUMBER, initialValue: 2.00 },
+            { name: this.PARAM_SCALE, type: VariationParamType.VP_NUMBER, initialValue: 1.00 }
+        ]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        /* waves2_3D by Larry Berlin, http://aporev.deviantart.com/art/New-3D-Plugins-136484533?q=gallery%3Aaporev%2F8229210&qo=22 */
+        return `{
+          float amount = float(${variation.amount});
+          float freq = float(${variation.params.get(this.PARAM_FREQ)});
+          float scale = float(${variation.params.get(this.PARAM_SCALE)});
+          float avgxy = (_tx + _ty) / 2.0;
+          _vx += amount * (_tx + scale * sin(_ty * freq));
+          _vy += amount * (_ty + scale * sin(_tx * freq));
+          _vz += amount * (_tz + scale * sin(avgxy * freq)); 
+        }`;
+    }
+
+    get name(): string {
+        return 'waves2_3D';
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_3D];
+    }
+}
+
 class Waves3Func extends VariationShaderFunc2D {
     PARAM_SCALEX = 'scalex'
     PARAM_SCALEY = 'scaley'
@@ -954,6 +986,7 @@ export function registerVars_Waves() {
     VariationShaders.registerVar(new Waves2BFunc())
     VariationShaders.registerVar(new Waves2RadialFunc())
     VariationShaders.registerVar(new Waves2WFFunc())
+    VariationShaders.registerVar(new Waves2_3DFunc())
     VariationShaders.registerVar(new Waves3Func())
     VariationShaders.registerVar(new Waves3WFFunc())
     VariationShaders.registerVar(new Waves4Func())
