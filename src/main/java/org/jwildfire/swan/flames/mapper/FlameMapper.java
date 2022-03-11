@@ -16,9 +16,7 @@
 */
 package org.jwildfire.swan.flames.mapper;
 
-import org.jwildfire.create.tina.palette.RGBColor;
-import org.jwildfire.swan.flames.model.Color;
-import org.jwildfire.swan.flames.model.Flame;
+import org.jwildfire.swan.flames.model.flame.Flame;
 import org.springframework.stereotype.Service;
 
 @Service

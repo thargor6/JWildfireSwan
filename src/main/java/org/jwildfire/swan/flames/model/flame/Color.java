@@ -15,7 +15,7 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 */
 
-package org.jwildfire.swan.flames.model;
+package org.jwildfire.swan.flames.model.flame;
 
 import dev.hilla.Nonnull;
 import lombok.AllArgsConstructor;
@@ -23,7 +23,8 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class IParam {
-  @Nonnull private String name;
-  @Nonnull private int value;
+public class Color {
+  @Nonnull private int r;
+  @Nonnull private int g;
+  @Nonnull private int b;
 }

@@ -33,21 +33,18 @@ export const views: ViewRoute[] = [
     icon: '',
     title: '',
   },
-
   {
     path: 'playground',
     component: 'playground-view',
     icon: 'la la-file',
     title: 'Playground',
   },
-
   {
     path: 'playground/:example',
     component: 'playground-view',
     icon: 'la la-file',
     title: 'Playground',
   },
-
   {
     path: 'gallery',
     component: 'gallery-view',
@@ -55,6 +52,16 @@ export const views: ViewRoute[] = [
     title: 'Example Gallery',
     action: async (_context, _command) => {
       await import('./views/gallery/gallery-view');
+      return;
+    },
+  },
+  {
+    path: 'renderer',
+    component: 'renderer-view',
+    icon: 'la la-th-list',
+    title: 'Renderer',
+    action: async (_context, _command) => {
+      await import('./views/renderer/renderer-view');
       return;
     },
   },

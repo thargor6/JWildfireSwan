@@ -19,9 +19,7 @@ package org.jwildfire.swan.flames.service;
 
 import org.jwildfire.base.Prefs;
 import org.jwildfire.base.Tools;
-import org.jwildfire.cli.CliOptions;
 import org.jwildfire.cli.CliUtils;
-import org.jwildfire.cli.OptionsParserUtil;
 import org.jwildfire.create.tina.io.FlameReader;
 import org.jwildfire.create.tina.io.FlameWriter;
 import org.jwildfire.create.tina.palette.RGBPalette;
@@ -33,15 +31,14 @@ import org.jwildfire.create.tina.randomsymmetry.RandomSymmetryGeneratorList;
 import org.jwildfire.create.tina.randomweightingfield.RandomWeightingFieldGeneratorList;
 import org.jwildfire.create.tina.variation.VariationFuncList;
 import org.jwildfire.swan.flames.mapper.FlameMapper;
-import org.jwildfire.swan.flames.model.Flame;
-import org.jwildfire.swan.flames.model.RandomFlame;
+import org.jwildfire.swan.flames.model.flame.Flame;
+import org.jwildfire.swan.flames.model.flame.RandomFlame;
 import org.jwildfire.swan.flames.repository.FlamesRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 @Service
 public class FlamesService {

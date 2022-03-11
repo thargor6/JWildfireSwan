@@ -15,17 +15,16 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 */
 
-import {default as SourceColor} from '../../../generated/org/jwildfire/swan/flames/model/Color'
-import {default as SourceXForm} from '../../../generated/org/jwildfire/swan/flames/model/XForm'
-import {default as SourceLayer} from '../../../generated/org/jwildfire/swan/flames/model/Layer'
-import {default as SourceFlame} from '../../../generated/org/jwildfire/swan/flames/model/Flame'
-import {default as SourceVariation} from '../../../generated/org/jwildfire/swan/flames/model/Variation'
+import {default as SourceColor} from '../../../generated/org/jwildfire/swan/flames/model/flame/Color'
+import {default as SourceXForm} from '../../../generated/org/jwildfire/swan/flames/model/flame/XForm'
+import {default as SourceLayer} from '../../../generated/org/jwildfire/swan/flames/model/flame/Layer'
+import {default as SourceFlame} from '../../../generated/org/jwildfire/swan/flames/model/flame/Flame'
+import {default as SourceVariation} from '../../../generated/org/jwildfire/swan/flames/model/flame/Variation'
 import {Flame, Layer, XForm, Variation, Color} from "../flame";
 import {Parameters} from "Frontend/flames/model/parameters";
 import {RenderColor, RenderLayer, RenderFlame, RenderVariation, RenderXForm} from "Frontend/flames/model/render-flame";
-import IParam from "Frontend/generated/org/jwildfire/swan/flames/model/IParam";
-import DParam from "Frontend/generated/org/jwildfire/swan/flames/model/DParam";
-import {spacing} from "@vaadin/vaadin-lumo-styles";
+import IParam from "Frontend/generated/org/jwildfire/swan/flames/model/flame/IParam";
+import DParam from "Frontend/generated/org/jwildfire/swan/flames/model/flame/DParam";
 
 class VariationMapper {
     static mapFromBackend(source: SourceVariation): Variation {

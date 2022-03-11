@@ -19,12 +19,11 @@ package org.jwildfire.swan.flames.mapper;
 
 import org.jwildfire.create.tina.variation.VariationFunc;
 import org.jwildfire.create.tina.variation.VariationFuncList;
-import org.jwildfire.swan.flames.model.DParam;
-import org.jwildfire.swan.flames.model.Flame;
-import org.jwildfire.swan.flames.model.IParam;
-import org.jwildfire.swan.flames.model.Layer;
-import org.jwildfire.swan.flames.model.Variation;
-import org.jwildfire.swan.flames.model.XForm;
+import org.jwildfire.swan.flames.model.flame.DParam;
+import org.jwildfire.swan.flames.model.flame.IParam;
+import org.jwildfire.swan.flames.model.flame.Layer;
+import org.jwildfire.swan.flames.model.flame.Variation;
+import org.jwildfire.swan.flames.model.flame.XForm;
 import org.springframework.stereotype.Service;
 
 @Service

@@ -98,10 +98,6 @@ export class PlaygroundView extends View  implements BeforeEnterObserver {
         playgroundStore.registerInitCallback([this.flamePanel.tagName, this.renderSettingsPanel.tagName], this.renderFirstFlame)
     }
 
-    private getTabStyle(ownTabIdx: number, selectedTab: number) {
-        return ownTabIdx === selectedTab ? html`display: block;` : html`display: none;`;
-    }
-
     hasCanvas = ()=> {
         return this.canvasContainer && this.canvasContainer.querySelector('#canvas')
     }

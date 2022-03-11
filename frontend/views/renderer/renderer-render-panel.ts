@@ -15,32 +15,26 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 */
 
-package org.jwildfire.swan.flames.model;
+import {html} from 'lit';
+import {customElement, property, state} from 'lit/decorators.js';
+import {MobxLitElement} from "@adobe/lit-mobx";
 
-import dev.hilla.Nonnull;
-import lombok.Data;
-import org.jwildfire.create.tina.base.Constants;
 
-import java.util.ArrayList;
-import java.util.List;
+@customElement('renderer-render-panel')
+export class RendererRenderPanel extends MobxLitElement {
+  @property({type: Boolean})
+  visible = true
 
-@Data
-public class XForm {
-  @Nonnull private double weight;
-  @Nonnull private double color;
-  @Nonnull private double colorSymmetry;
-  @Nonnull private double c00;
-  @Nonnull private double c01;
-  @Nonnull private double c10;
-  @Nonnull private double c11;
-  @Nonnull private double c20;
-  @Nonnull private double c21;
-  @Nonnull private double p00;
-  @Nonnull private double p01;
-  @Nonnull private double p10;
-  @Nonnull private double p11;
-  @Nonnull private double p20;
-  @Nonnull private double p21;
-  @Nonnull private final List<@Nonnull Double> modifiedWeights = new ArrayList<>();
-  @Nonnull private final List<@Nonnull Variation> variations = new ArrayList<>();
+
+  render() {
+    return html`
+      <div style="${this.visible ? `display:block;`: `display:none;`}">
+        <div style="display:flex; flex-direction: column;">
+  Render
+  
+        </div>
+      </div>
+     `;
+  }
+
 }

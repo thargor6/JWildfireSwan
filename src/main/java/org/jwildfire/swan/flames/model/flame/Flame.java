@@ -15,7 +15,7 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 */
 
-package org.jwildfire.swan.flames.model;
+package org.jwildfire.swan.flames.model.flame;
 import dev.hilla.Nonnull;
 import lombok.Data;
 

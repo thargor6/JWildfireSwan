@@ -15,16 +15,31 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 */
 
-package org.jwildfire.swan.flames.model;
+package org.jwildfire.swan.flames.model.flame;
 
 import dev.hilla.Nonnull;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Data
-@AllArgsConstructor
-public class Color {
-  @Nonnull private int r;
-  @Nonnull private int g;
-  @Nonnull private int b;
+public class XForm {
+  @Nonnull private double weight;
+  @Nonnull private double color;
+  @Nonnull private double colorSymmetry;
+  @Nonnull private double c00;
+  @Nonnull private double c01;
+  @Nonnull private double c10;
+  @Nonnull private double c11;
+  @Nonnull private double c20;
+  @Nonnull private double c21;
+  @Nonnull private double p00;
+  @Nonnull private double p01;
+  @Nonnull private double p10;
+  @Nonnull private double p11;
+  @Nonnull private double p20;
+  @Nonnull private double p21;
+  @Nonnull private final List<@Nonnull Double> modifiedWeights = new ArrayList<>();
+  @Nonnull private final List<@Nonnull Variation> variations = new ArrayList<>();
 }

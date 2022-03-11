@@ -15,18 +15,15 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 */
 
-package org.jwildfire.swan.flames.model;
+package org.jwildfire.swan.flames.model.flame;
 
 import dev.hilla.Nonnull;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Data
-public class Variation {
-  @Nonnull private double amount;
+@AllArgsConstructor
+public class IParam {
   @Nonnull private String name;
-  @Nonnull private final List<@Nonnull IParam> iParams = new ArrayList<>();
-  @Nonnull private final List<@Nonnull DParam> dParams = new ArrayList<>();
+  @Nonnull private int value;
 }
