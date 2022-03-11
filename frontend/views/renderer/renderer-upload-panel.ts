@@ -38,7 +38,6 @@ export class RendererUploadPanel extends MobxLitElement {
                     target="upload"
                     @upload-success="${this.uploadFileSuccessHandler}"
             ></vaadin-upload>
-  
         </div>
       </div>
      `;

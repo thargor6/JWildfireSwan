@@ -19,45 +19,105 @@ package org.jwildfire.swan.flames.repository;
 
 import org.jwildfire.swan.flames.model.upload.TempFileUpload;
 import org.springframework.stereotype.Component;
+import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Component
 public class TempFileUploadRepository {
-  private static final Map<UUID, TempFileUpload> uploads = new HashMap<>();
-  private static final Map<UUID, byte[]> content = new HashMap<>();
+  private static final Map<String, List<UUID>> uploads = new HashMap<>();
+  private static final Map<String,Map<UUID, TempFileUpload>> uploadMetadata = new HashMap<>();
+  private static final Map<String,Map<UUID, byte[]>> uploadContent = new HashMap<>();
+  private static final int MAX_CONTENT_SIZE = 10 * 1000 * 1000;
+  private static final int MAX_DURATION_IN_SECONDS = 30 * 60;
+
+  private String getSessionId() {
+    return RequestContextHolder.currentRequestAttributes().getSessionId();
+  }
 
   public UUID addFile(MultipartFile file) {
     try {
-      TempFileUpload upload = new TempFileUpload();
-      upload.setName(file.getOriginalFilename());
-      upload.setContenttype(file.getContentType());
-      byte[] fileContent;
-      if(!file.isEmpty()) {
-        fileContent = file.getInputStream().readAllBytes();
-        upload.setSize(fileContent.length);
-      }
-      else {
-        fileContent=null;
-        upload.setSize(0);
-      }
-      upload.setUuid(UUID.randomUUID());
-      this.uploads.put(upload.getUuid(), upload);
-      this.content.put(upload.getUuid(), fileContent);
-      return upload.getUuid();
+      final String filename = file.getOriginalFilename();
+      final byte[] fileContent = file.isEmpty() ? null : file.getInputStream().readAllBytes();
+      final int fileLength = file.isEmpty() | fileContent == null ? 0 : fileContent.length;
+      // actually store only files which are not in memory yet
+      return findUploadByNameAndContent(filename, fileContent).map(TempFileUpload::getUuid).orElseGet(() -> {
+          TempFileUpload upload = new TempFileUpload();
+          upload.setName(filename);
+          upload.setSize(fileLength);
+          upload.setContenttype(file.getContentType());
+          upload.setUuid(UUID.randomUUID());
+          upload.setSessionId(getSessionId());
+          upload.setTimestamp(System.currentTimeMillis());
+          addUpload(upload, fileContent);
+          return upload.getUuid();
+        }
+      );
     }
     catch (IOException e) {
-      throw new RuntimeException("Failed to store file.", e);
+      throw new RuntimeException("Failed to store temporary file.", e);
     }
   }
 
-  public List<TempFileUpload> getAllFiles() {
-    return new ArrayList<>(uploads.values());
+  private Optional<TempFileUpload> findUploadByNameAndContent(String name, byte[] content) {
+    final String sessionId = getSessionId();
+    Map<UUID, byte[]> contentOfSession = uploadContent.getOrDefault(sessionId, new HashMap<>());
+    Map<UUID, TempFileUpload> metaDataOfSession = uploadMetadata.getOrDefault(sessionId, new HashMap<>());
+
+    return metaDataOfSession.values().stream()
+        .filter(upload -> upload.getName().equals(name) && upload.getSessionId().equals(sessionId))
+        .filter(upload -> {
+          byte[] uploadedContent = contentOfSession.get(upload.getUuid());
+          return ((uploadedContent == null && content == null)
+                  || (uploadedContent != null
+                  && content != null
+                  && Arrays.equals(uploadedContent, content)));
+                }
+             ).findFirst();
   }
+
+  private void addUpload(TempFileUpload upload, byte[] fileContent) {
+    final String sessionId = getSessionId();
+    Map<UUID, byte[]> contentOfSession = uploadContent.computeIfAbsent(sessionId, k -> new HashMap<>());
+    Map<UUID, TempFileUpload> metaDataOfSession = uploadMetadata.computeIfAbsent(sessionId, k -> new HashMap<>());
+    List<UUID> uploadsOfSession = uploads.computeIfAbsent(sessionId, k -> new ArrayList<>());
+
+    // remove outdated entries regardless of session
+    long now = System.currentTimeMillis();
+    uploadMetadata.values().stream().map(uploads -> uploads.values()).flatMap(l -> l.stream())
+            .collect(Collectors.toList()).stream()
+            .filter(md -> md.getTimestamp() + MAX_DURATION_IN_SECONDS * 1000 < now).forEach(md -> {
+              final Map<UUID, byte[]> contentOfOtherSession = uploadContent.getOrDefault(md.getSessionId(), new HashMap<>());
+              contentOfOtherSession.remove(md.getUuid());
+              final Map<UUID, TempFileUpload> metaDataOfOtherSession = uploadMetadata.getOrDefault(md.getSessionId(), new HashMap<>());
+              metaDataOfOtherSession.remove(md.getUuid());
+              final List<UUID> uploadsOfOtherSession = uploads.getOrDefault(md.getSessionId(), new ArrayList<>());
+              uploadsOfOtherSession.remove(md.getUuid());
+            });
+    // remove entries of the same session to reduce session session size
+    int size = fileContent.length;
+    int currTotalSize = contentOfSession.values().stream().map(content -> content.length).reduce(0, (a, b) -> a + b);
+
+    while(size + currTotalSize > MAX_CONTENT_SIZE) {
+      UUID first = uploadsOfSession.get(0);
+      currTotalSize -= contentOfSession.get(first).length;
+      contentOfSession.remove(first);
+      metaDataOfSession.remove(first);
+      uploadsOfSession.remove(first);
+    }
+    // now add the recent file
+    uploadsOfSession.add(upload.getUuid());
+    metaDataOfSession.put(upload.getUuid(), upload);
+    contentOfSession.put(upload.getUuid(), fileContent);
+  }
+
 }

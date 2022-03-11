@@ -75,4 +75,5 @@ public class AppInfoEndpoint {
   public @Nonnull long getFlamesParsed() {
     return sessionInfoService.getFlamesParsed();
   }
+
 }

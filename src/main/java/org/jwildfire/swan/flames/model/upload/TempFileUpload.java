@@ -20,6 +20,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Date;
 import java.util.UUID;
 
 @Data
@@ -29,5 +30,7 @@ public class TempFileUpload {
     private UUID uuid;
     private String name;
     private String contenttype;
+    private long timestamp;
+    private String sessionId;
     private int size;
 }
