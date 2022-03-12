@@ -16,6 +16,7 @@
 */
 package org.jwildfire.swan.flames.endpoint;
 
+import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
 import com.vaadin.flow.server.auth.AnonymousAllowed;
 import dev.hilla.Endpoint;
@@ -23,6 +24,7 @@ import dev.hilla.Nonnull;
 import lombok.extern.slf4j.Slf4j;
 import org.jwildfire.swan.flames.model.flame.Flame;
 import org.jwildfire.swan.flames.model.flame.RandomFlame;
+import org.jwildfire.swan.flames.repository.TempFileUploadRepository;
 import org.jwildfire.swan.flames.service.FlamesService;
 import org.jwildfire.swan.flames.service.SessionInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +32,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.UUID;
 
 @Endpoint
 @AnonymousAllowed
@@ -38,10 +41,12 @@ public class FlamesEndpoint {
 
   private final FlamesService service;
   private final SessionInfoService sessionInfoService;
+  private final TempFileUploadRepository tempFileUploadRepository;
 
-  public FlamesEndpoint(@Autowired FlamesService service, SessionInfoService sessionInfoService) {
+  public FlamesEndpoint(@Autowired FlamesService service, SessionInfoService sessionInfoService, TempFileUploadRepository tempFileUploadRepository) {
     this.service = service;
     this.sessionInfoService = sessionInfoService;
+    this.tempFileUploadRepository = tempFileUploadRepository;
   }
 
   public int count() {
@@ -102,4 +107,27 @@ public class FlamesEndpoint {
       throw new RuntimeException(ex);
     }
   }
+
+  private String unquote(String uuidStr) {
+    if(uuidStr.length()>=2 && uuidStr.charAt(0)=='"' && uuidStr.charAt(uuidStr.length()-1)=='"') {
+      return uuidStr.substring(1, uuidStr.length()-1);
+    }
+    return uuidStr;
+  }
+
+  public @Nonnull Flame parseTempFlame(@Nonnull String uuidStr) {
+    try {
+      final UUID uuid = UUID.fromString(unquote(uuidStr));
+      byte[] flameData = tempFileUploadRepository.getContent(uuid);
+      String flameXml = new String(flameData, Charsets.UTF_8);
+      Flame flame = service.parseFlame(flameXml);
+      sessionInfoService.incFlamesParsed();
+      tempFileUploadRepository.removeTempFile(uuid);
+      return flame;
+    } catch (Throwable ex) {
+      log.error("Error parsing flame", ex);
+      throw new RuntimeException(ex);
+    }
+  }
+
 }

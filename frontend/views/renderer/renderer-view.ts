@@ -16,11 +16,12 @@
 */
 
 import {html} from 'lit'
-import {customElement, state} from 'lit/decorators.js'
+import {customElement, state, query} from 'lit/decorators.js'
 import { View } from '../../views/view'
-import {playgroundStore} from "Frontend/stores/playground-store";
 import './renderer-upload-panel';
 import './renderer-render-panel';
+import {rendererStore} from "Frontend/stores/renderer-store";
+import {RendererUploadPanel} from "Frontend/views/renderer/renderer-upload-panel";
 
 @customElement('renderer-view')
 export class RendererView extends View  {
@@ -28,19 +29,19 @@ export class RendererView extends View  {
     canvasContainer!: HTMLDivElement
 
     @state()
-    selectedTab = 0
-
-    @state()
     renderInfo = ''
 
     @state()
     renderProgress = 0.0
 
+    @query('#uploadPnl')
+    uploadPnl?: RendererUploadPanel
+
     render() {
         return html`
           
             <vertical-layout theme="spacing">
-              <swan-error-panel .errorMessage=${playgroundStore.lastError}></swan-error-panel>
+              <swan-error-panel .errorMessage=${rendererStore.lastError}></swan-error-panel>
               <div class="gap-m grid list-none m-0 p-0" style="grid-template-columns: repeat(auto-fill, minmax(30em, 1fr));">
                   ${this.renderMainTabs()}
               </div>  
@@ -51,25 +52,12 @@ export class RendererView extends View  {
     private renderMainTabs = () => {
         return html `
            <div style="display: flex; flex-direction: column; padding: 1em;">
-                <vaadin-tabs theme="centered" @selected-changed="${this.selectedChanged}">
-                    <vaadin-tab theme="icon-on-top">
-                        <vaadin-icon icon="vaadin:fire"></vaadin-icon>
-                        <span>Select files</span>
-                    </vaadin-tab>
-                    <vaadin-tab theme="icon-on-top">
-                        <vaadin-icon icon="vaadin:eye"></vaadin-icon>
-                        <span>Render</span>
-                    </vaadin-tab>
-                </vaadin-tabs>
-                <div style="display: flex; flex-direction: column; align-items: center; width: 100%;">
-                    <renderer-upload-panel id='uploadPnl' .visible=${this.selectedTab === 0}></renderer-upload-panel>
-                    <renderer-render-panel id='viewOptsPnl' .visible=${this.selectedTab === 1}></renderer-render-panel>
-                 </div>
-           </div>`
-    }
 
-    selectedChanged(e: CustomEvent) {
-        this.selectedTab = e.detail.value;
+ 
+               <renderer-upload-panel id='uploadPnl'></renderer-upload-panel>
+
+               <renderer-render-panel id='renderPnl'></renderer-render-panel>
+           </div>`
     }
 
 }

@@ -120,4 +120,25 @@ public class TempFileUploadRepository {
     contentOfSession.put(upload.getUuid(), fileContent);
   }
 
+  public byte[] getContent(UUID uuid) {
+    Map<UUID, byte[]> contentMap = uploadContent.get(getSessionId());
+    if(contentMap==null) {
+      throw new RuntimeException("No content found");
+    }
+    byte[] content = contentMap.get(uuid);
+    if(content==null) {
+      throw new RuntimeException("Content not found");
+    }
+    return content;
+  }
+
+  public void removeTempFile(UUID uuid) {
+    final String sessionId = getSessionId();
+    List<UUID> uploadsOfSession = uploads.getOrDefault(sessionId, new ArrayList<>());
+    Map<UUID, byte[]> contentOfSession = uploadContent.getOrDefault(sessionId, new HashMap<>());
+    Map<UUID, TempFileUpload> metaDataOfSession = uploadMetadata.getOrDefault(sessionId, new HashMap<>());
+    uploadsOfSession.remove(uuid);
+    contentOfSession.remove(uuid);
+    metaDataOfSession.remove(uuid);
+  }
 }

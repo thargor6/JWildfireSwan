@@ -15,26 +15,67 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 */
 
-import {html} from 'lit';
+import {html, render} from 'lit';
 import {customElement, property, state} from 'lit/decorators.js';
 import {MobxLitElement} from "@adobe/lit-mobx";
-
+import {RendererFlame, rendererStore} from "Frontend/stores/renderer-store";
+import '@vaadin/vaadin-grid'
+import '@vaadin/vaadin-grid/vaadin-grid-column'
+import {GridActiveItemChangedEvent, GridItemModel} from "@vaadin/grid";
 
 @customElement('renderer-render-panel')
 export class RendererRenderPanel extends MobxLitElement {
   @property({type: Boolean})
   visible = true
 
+  @state()
+  private selectedItems: RendererFlame[] = [];
 
   render() {
     return html`
       <div style="${this.visible ? `display:block;`: `display:none;`}">
-        <div style="display:flex; flex-direction: column;">
-  Render
-  
-        </div>
+          
+          <vaadin-grid .items=${rendererStore.flames}
+                  .selectedItems="${this.selectedItems}"
+                  @active-item-changed="${(e: GridActiveItemChangedEvent<RendererFlame>) => {
+                  const item = e.detail.value;
+                  this.selectedItems = item ? [item] : [];
+              }}">
+              <vaadin-grid-column
+                      header="Flame"
+                      path = "finished"
+                      .renderer="${this.flameRenderer}"
+                      auto-width
+              ></vaadin-grid-column>
+              <vaadin-grid-column
+                      header="Status"
+                      path="uuid"
+                      .renderer="${this.statusRenderer}"
+                      auto-width
+              ></vaadin-grid-column>
+          </vaadin-grid>
+
       </div>
      `;
   }
 
+  private flameRenderer = (root: HTMLElement, _: HTMLElement, model: GridItemModel<RendererFlame>) => {
+    const flame = model.item;
+    render(
+      html`
+         <span>${flame.uuid}</span>
+       `,
+      root
+    );
+  };
+
+  private statusRenderer = (root: HTMLElement, _: HTMLElement, model: GridItemModel<RendererFlame>) => {
+    const flame = model.item;
+    render(
+      html`
+        <span theme="badge ${flame.finished ? 'success' : 'info'}">${flame.finished ? 'finished' : 'idle'}</span>
+      `,
+      root
+    );
+  };
 }

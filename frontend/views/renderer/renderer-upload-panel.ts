@@ -20,12 +20,14 @@ import {customElement, property, state} from 'lit/decorators.js';
 import {MobxLitElement} from "@adobe/lit-mobx";
 import {UploadSuccessEvent} from "@vaadin/upload";
 import "@vaadin/upload";
+import {rendererStore} from "Frontend/stores/renderer-store";
+import {FlamesEndpoint, GalleryEndpoint} from "Frontend/generated/endpoints";
+import {FlameMapper} from "Frontend/flames/model/mapper/flame-mapper";
 
 @customElement('renderer-upload-panel')
 export class RendererUploadPanel extends MobxLitElement {
   @property({type: Boolean})
   visible = true
-
 
   render() {
     return html`
@@ -44,9 +46,23 @@ export class RendererUploadPanel extends MobxLitElement {
   }
 
   private uploadFileSuccessHandler(event:UploadSuccessEvent) {
-    //this.uploadedFileId = event.detail.xhr.response;
-    console.log(`File ${event.detail.file.name} sucessfully uploaded`);
-    console.log('  '+event.detail.xhr.response)
+    try {
+      const uuid = event.detail.xhr.response
+      if(!rendererStore.hasFlameWithUuid(uuid)) {
+        FlamesEndpoint.parseTempFlame(uuid).then(parsedFlame => {
+          const flame = FlameMapper.mapFromBackend(parsedFlame)
+          rendererStore.addFlameWithUuid(uuid, flame)
+        }).catch(err=> {
+          rendererStore.lastError = err
+        })
+      }
+      else {
+        console.log(`Flame with uuid ${uuid} skipped`)
+      }
+    }
+    catch(err) {
+      rendererStore.lastError = `${err}`
+    }
   }
 
 }
