@@ -22,6 +22,7 @@ import {RendererFlame, rendererStore} from "Frontend/stores/renderer-store";
 import '@vaadin/vaadin-grid'
 import '@vaadin/vaadin-grid/vaadin-grid-column'
 import {GridActiveItemChangedEvent, GridItemModel} from "@vaadin/grid";
+import { applyTheme } from 'Frontend/generated/theme';
 
 @customElement('renderer-render-panel')
 export class RendererRenderPanel extends MobxLitElement {
@@ -30,6 +31,13 @@ export class RendererRenderPanel extends MobxLitElement {
 
   @state()
   private selectedItems: RendererFlame[] = [];
+
+  // for displaying badges properly
+  protected createRenderRoot() {
+    const root = super.createRenderRoot();
+    applyTheme(root);
+    return root;
+  }
 
   render() {
     return html`
@@ -63,7 +71,10 @@ export class RendererRenderPanel extends MobxLitElement {
     const flame = model.item;
     render(
       html`
-         <span>${flame.uuid}</span>
+         <div style="display: flex; flex-direction: column;"> 
+           <span>${flame.filename}</span>
+           <span style="font-size: xx-small;">${flame.uuid}</span>
+         </div>
        `,
       root
     );
@@ -73,7 +84,7 @@ export class RendererRenderPanel extends MobxLitElement {
     const flame = model.item;
     render(
       html`
-        <span theme="badge ${flame.finished ? 'success' : 'info'}">${flame.finished ? 'finished' : 'idle'}</span>
+        <span theme="${flame.finished ? 'badge success' : 'badge'}">${flame.finished ? 'finished' : 'idle'}</span>
       `,
       root
     );

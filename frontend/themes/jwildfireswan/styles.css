@@ -24,7 +24,7 @@ html {
       --lumo-line-height-m: 1.4;
       --lumo-line-height-s: 1.2;
       --lumo-line-height-xs: 1.1;
-      --lumo-border-radius: calc(var(--lumo-size-m) / 3);
+      --lumo-border-radius: calc(var(--lumo-size-m) / 5);
 
 }
 
@@ -46,12 +46,15 @@ html {
       --lumo-success-color-50pct: rgba(62, 229, 170, 0.5);
       --lumo-success-color-10pct: rgba(62, 229, 170, 0.1);
       --lumo-shade: hsl(0, 0%, 13%);
-      --lumo-primary-color: hsl(47, 96%, 47%);
-      --lumo-primary-text-color: hsl(46, 96%, 47%);
+      --lumo-primary-color: hsl(34, 96%, 47%);
+      --lumo-primary-text-color: hsl(36, 96%, 47%);
       --lumo-error-color: hsl(0, 81%, 50%);
       --lumo-error-text-color: hsl(0, 86%, 45%);
       --lumo-success-color: hsl(159, 76%, 57%);
       --lumo-success-contrast-color: hsl(159, 29%, 10%);
       --lumo-success-text-color: hsl(159, 61%, 40%);
+
+      --paper-slider-active-color: var(--lumo-primary-color);
+      --paper-slider-knob-color: var(--lumo-primary-color);
 
 }

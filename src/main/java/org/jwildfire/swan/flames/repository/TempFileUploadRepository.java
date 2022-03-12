@@ -25,6 +25,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,7 +38,8 @@ public class TempFileUploadRepository {
   private static final Map<String, List<UUID>> uploads = new HashMap<>();
   private static final Map<String,Map<UUID, TempFileUpload>> uploadMetadata = new HashMap<>();
   private static final Map<String,Map<UUID, byte[]>> uploadContent = new HashMap<>();
-  private static final int MAX_CONTENT_SIZE = 10 * 1000 * 1000;
+  private static final int MAX_CONTENT_SIZE_PER_SESSION = 10 * 1000 * 1000; // 10 MB
+  private static final int MAX_FILE_SIZE = 2 * 1000 * 1000; // 2MB
   private static final int MAX_DURATION_IN_SECONDS = 30 * 60;
 
   private String getSessionId() {
@@ -49,6 +51,9 @@ public class TempFileUploadRepository {
       final String filename = file.getOriginalFilename();
       final byte[] fileContent = file.isEmpty() ? null : file.getInputStream().readAllBytes();
       final int fileLength = file.isEmpty() | fileContent == null ? 0 : fileContent.length;
+      if(fileLength>MAX_FILE_SIZE) {
+        throw new RuntimeException("Size of uploaded file is too large");
+      }
       // actually store only files which are not in memory yet
       return findUploadByNameAndContent(filename, fileContent).map(TempFileUpload::getUuid).orElseGet(() -> {
           TempFileUpload upload = new TempFileUpload();
@@ -93,7 +98,7 @@ public class TempFileUploadRepository {
 
     // remove outdated entries regardless of session
     long now = System.currentTimeMillis();
-    uploadMetadata.values().stream().map(uploads -> uploads.values()).flatMap(l -> l.stream())
+    uploadMetadata.values().stream().map(Map::values).flatMap(Collection::stream)
             .collect(Collectors.toList()).stream()
             .filter(md -> md.getTimestamp() + MAX_DURATION_IN_SECONDS * 1000 < now).forEach(md -> {
               final Map<UUID, byte[]> contentOfOtherSession = uploadContent.getOrDefault(md.getSessionId(), new HashMap<>());
@@ -105,9 +110,9 @@ public class TempFileUploadRepository {
             });
     // remove entries of the same session to reduce session session size
     int size = fileContent.length;
-    int currTotalSize = contentOfSession.values().stream().map(content -> content.length).reduce(0, (a, b) -> a + b);
+    int currTotalSize = contentOfSession.values().stream().map(content -> content.length).reduce(0, Integer::sum);
 
-    while(size + currTotalSize > MAX_CONTENT_SIZE) {
+    while(size + currTotalSize > MAX_CONTENT_SIZE_PER_SESSION) {
       UUID first = uploadsOfSession.get(0);
       currTotalSize -= contentOfSession.get(first).length;
       contentOfSession.remove(first);

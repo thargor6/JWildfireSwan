@@ -33,6 +33,7 @@ import {registerVars_2D_PartS} from "Frontend/flames/renderer/variations/variati
 export interface RendererFlame {
   finished: boolean;
   uuid: string;
+  filename: string;
   flame: Flame;
 }
 
@@ -58,10 +59,11 @@ export class RendererStore {
     return this.flames.find( flame => flame.uuid === uuid) != undefined
   }
 
-  addFlameWithUuid = (uuid: string, flame: Flame)=> {
+  addFlameWithUuid = (uuid: string, filename: string, flame: Flame)=> {
     this.flames = [...this.flames, {
       finished: false,
       uuid: uuid,
+      filename: filename,
       flame: flame
     }]
   }
