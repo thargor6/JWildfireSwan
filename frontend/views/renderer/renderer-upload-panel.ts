@@ -35,20 +35,16 @@ export class RendererUploadPanel extends MobxLitElement {
   render() {
     return html`
       <div style="${this.visible ? `display:block;`: `display:none;`}">
-        <div style="display:flex; flex-direction: column;">
             <vaadin-upload
                     id="upload"
                     accept="application/flame,.flame"
                     max-files="50"
                     target="upload"
-                    @upload-success="${this.uploadFileSuccessHandler}"
-            >
-                        <span slot="file-list" style="font-size: x-small;">
-          Most flame-files should work, but please note that not all features are implemented yet in Swan
-        </span>
-                
+                    @upload-success="${this.uploadFileSuccessHandler}">
+                <span slot="file-list" style="font-size: x-small;">
+                 Most flame-files should work, but please note that not all features are implemented yet in Swan
+               </span>
             </vaadin-upload>
-        </div>
       </div>
      `;
   }

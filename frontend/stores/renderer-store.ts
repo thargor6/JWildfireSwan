@@ -43,6 +43,7 @@ export class RendererStore {
   lastError = ''
   renderer!: FlameRenderer
   flames: RendererFlame[] = []
+  selectedFlames: RendererFlame[] = [];
 
   constructor() {
     makeAutoObservable(this);

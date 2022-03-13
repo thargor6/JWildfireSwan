@@ -37,40 +37,32 @@ import '@vaadin/vaadin-notification'
 import type { Notification } from '@vaadin/notification';
 
 import {FlameRenderer} from '../../flames/renderer/flame-renderer'
-import {AppInfoEndpoint, FlamesEndpoint, GalleryEndpoint} from "Frontend/generated/endpoints";
+import {FlamesEndpoint, GalleryEndpoint} from "Frontend/generated/endpoints";
 import {FlameMapper} from '../../flames/model/mapper/flame-mapper'
 import '@vaadin/vaadin-combo-box';
 import './playground-render-panel'
 import './playground-flame-panel'
 import './playground-edit-panel'
-
 import {PlaygroundRenderPanel} from "Frontend/views/playground/playground-render-panel";
 import {playgroundStore} from "Frontend/stores/playground-store";
 import {PlaygroundFlamePanel} from "Frontend/views/playground/playground-flame-panel";
 import '../../components/swan-loading-indicator'
 import '../../components/swan-error-panel'
+import '../../components/render-panel'
 import {BeforeEnterObserver, PreventAndRedirectCommands, Router, RouterLocation} from "@vaadin/router";
-import {getTimeStamp} from "Frontend/components/utils";
+import {RenderPanel} from "Frontend/components/render-panel";
 
 @customElement('playground-view')
-export class PlaygroundView extends View  implements BeforeEnterObserver {
-    canvas!: HTMLCanvasElement
-    canvasContainer!: HTMLDivElement
-
-
+export class PlaygroundView extends View implements BeforeEnterObserver {
     @state()
     selectedTab = 0
 
     @state()
     renderInfo = ''
 
-    @state()
-    renderProgress = 0.0
-
-    lastProgressUpdate = 0.0
-
     renderSettingsPanel!: PlaygroundRenderPanel
     flamePanel!: PlaygroundFlamePanel
+    renderPanel!: RenderPanel
     loadExampleAtStartup: string | undefined = undefined
 
     render() {
@@ -79,11 +71,17 @@ export class PlaygroundView extends View  implements BeforeEnterObserver {
             <vertical-layout theme="spacing">
               <swan-error-panel .errorMessage=${playgroundStore.lastError}></swan-error-panel>
               <div class="gap-m grid list-none m-0 p-0" style="grid-template-columns: repeat(auto-fill, minmax(30em, 1fr));">
-                ${this.renderImageContainer()}    
+                <render-panel .onCreateFlameRenderer=${this.createFlameRenderer}></render-panel> 
                 ${this.renderMainTabs()}
               </div>  
             </vertical-layout>
         `;
+    }
+
+    createFlameRenderer = ()=> {
+        return new FlameRenderer(this.renderSettingsPanel.imageSize, this.renderSettingsPanel.swarmSize,
+           this.renderSettingsPanel.displayMode, this.renderPanel.canvas, this.renderSettingsPanel.capturedImageContainer,
+          true, playgroundStore.flame)
     }
 
     selectedChanged(e: CustomEvent) {
@@ -92,78 +90,10 @@ export class PlaygroundView extends View  implements BeforeEnterObserver {
 
     protected firstUpdated(_changedProperties: PropertyValues) {
         super.firstUpdated(_changedProperties);
-        this.canvasContainer = document.querySelector('#canvas-container')!
         this.renderSettingsPanel = document.querySelector('#viewOptsPnl')!
+        this.renderPanel = document.querySelector('render-panel')!
         this.flamePanel = document.querySelector('#flamePnl')!
         playgroundStore.registerInitCallback([this.flamePanel.tagName, this.renderSettingsPanel.tagName], this.renderFirstFlame)
-    }
-
-    hasCanvas = ()=> {
-        return this.canvasContainer && this.canvasContainer.querySelector('#canvas')
-    }
-
-    recreateCanvas = ()=> {
-        this.canvasContainer.innerHTML = '';
-        this.canvas = document.createElement('canvas')
-        this.canvas.id = "screen1"
-        this.canvas.style.width = '28em'
-        this.canvas.style.height = '28em'
-        this.canvas.width = 512
-        this.canvas.height = 512
-        this.canvasContainer.appendChild(this.canvas)
-    }
-
-    cancelRender = ()=> {
-        if(playgroundStore.renderer) {
-            playgroundStore.renderer.signalCancel(undefined)
-        }
-    }
-
-    rerenderFlame = ()=> {
-        if(playgroundStore.renderer) {
-            const reuseCanvas = this.hasCanvas()
-            playgroundStore.renderer.signalCancel(()=>{
-              playgroundStore.renderer.closeBuffers()
-                if(!reuseCanvas) {
-                    this.recreateCanvas()
-                }
-              this.renderFlame()
-            })
-        }
-        else {
-            this.recreateCanvas()
-            this.renderFlame()
-        }
-    }
-
-    renderFlame =() => {
-        this.renderProgress = 0.0
-        this.renderInfo = 'Rendering'
-        playgroundStore.renderer = new FlameRenderer(this.renderSettingsPanel.imageSize, this.renderSettingsPanel.swarmSize, this.renderSettingsPanel.displayMode, this.canvas, this.renderSettingsPanel.capturedImageContainer, true, playgroundStore.flame);
-        this.lastProgressUpdate = getTimeStamp()
-        playgroundStore.renderer.onRenderFinished = this.onRenderFinished
-        playgroundStore.renderer.onRenderCancelled = this.onRenderCancelled
-        playgroundStore.renderer.onUpdateRenderProgress = this.onUpdateRenderProgress
-        playgroundStore.renderer.drawScene()
-    }
-
-    onRenderFinished = (frameCount: number, elapsedTimeInS: number) => {
-       this.renderProgress = 1.0
-       this.renderInfo = 'Rendering finished after ' + Math.round((elapsedTimeInS + Number.EPSILON) * 100) / 100 + ' s'
-       AppInfoEndpoint.incFlamesRendered()
-    }
-
-    onRenderCancelled = (frameCount: number, elapsedTimeInS: number) => {
-         // nothing
-    }
-
-    onUpdateRenderProgress = (currSampleCount: number, maxSampleCount: number, frameCount: number, elapsedTimeInSeconds: number)=> {
-        const currTimeStamp = getTimeStamp()
-        if(currTimeStamp > this.lastProgressUpdate + 333) {
-            this.renderProgress = currSampleCount / maxSampleCount
-            this.renderInfo = `Rendering in progress ${Math.round(currSampleCount/maxSampleCount*100)}% (frame: ${frameCount})`
-            this.lastProgressUpdate = currTimeStamp
-        }
     }
 
     importFlameFromXml = () => {
@@ -173,7 +103,7 @@ export class PlaygroundView extends View  implements BeforeEnterObserver {
           playgroundStore.refreshing = true
           try {
               playgroundStore.flame = FlameMapper.mapFromBackend(flame)
-              this.rerenderFlame()
+              this.renderPanel.rerenderFlame()
               playgroundStore.calculating = false
           }
           finally {
@@ -195,7 +125,7 @@ export class PlaygroundView extends View  implements BeforeEnterObserver {
                 playgroundStore.refreshing = true
                 try {
                     playgroundStore.flame = FlameMapper.mapFromBackend(randomFlame.flame)
-                    this.rerenderFlame()
+                    this.renderPanel.rerenderFlame()
                     playgroundStore.calculating = false
                 }
                 finally {
@@ -218,7 +148,7 @@ export class PlaygroundView extends View  implements BeforeEnterObserver {
                 try {
                     this.flamePanel.flameXml = randomFlame.flameXml
                     playgroundStore.flame = FlameMapper.mapFromBackend(randomFlame.flame)
-                    this.rerenderFlame()
+                    this.renderPanel.rerenderFlame()
                     playgroundStore.calculating = false
                 }
                 finally {
@@ -257,7 +187,7 @@ export class PlaygroundView extends View  implements BeforeEnterObserver {
                 GalleryEndpoint.getExampleFlameXml(this.flamePanel.flameName).then(
                   flameXml => this.flamePanel.flameXml = flameXml
                 )
-                this.rerenderFlame()
+                this.renderPanel.rerenderFlame()
                 playgroundStore.calculating = false
             }
             finally {
@@ -289,21 +219,6 @@ export class PlaygroundView extends View  implements BeforeEnterObserver {
         }
     }
 
-    private renderImageContainer = () => {
-        return html `
-          <vertical-layout>
-            <div style="display: flex; flex-direction: column; align-items: center;">  
-                <vaadin-scroller style="max-width: 34em; max-height: 34em;" id="canvas-container">
-                   <canvas id="screen1" style="width: 400px; height: 300px;" width="512" height="512"></canvas>
-                </vaadin-scroller>
-                <div style="display: flex; flex-direction: column;">
-                    <div style="min-width: 26em;">${this.renderInfo}</div>
-                    <vaadin-progress-bar .value=${this.renderProgress} theme="contrast"></vaadin-progress-bar>
-                </div>
-            </div>
-          </vertical-layout>`
-    }
-
     private renderMainTabs = () => {
         return html `
            <div style="display: flex; flex-direction: column; padding: 1em;">
@@ -327,10 +242,10 @@ export class PlaygroundView extends View  implements BeforeEnterObserver {
                       .onImport="${this.importFlameFromXml}" .onRandomFlame="${this.createRandomFlame}"
                       .onRandomGradient="${this.createRandomGradient}"
                     .onFlameNameChanged="${this.importExampleFlame}"></playground-flame-panel>
-                    <playground-render-panel id='viewOptsPnl' .onRefresh="${this.rerenderFlame}"
-                                             .onCancelRender="${this.cancelRender}"
-                      .visible=${this.selectedTab === 1} .onImageSizeChanged="${this.rerenderFlame}"></playground-render-panel>
-                    <playground-edit-panel id='editPnl' .onRefresh="${this.rerenderFlame}"
+                    <playground-render-panel id='viewOptsPnl' .onRefresh="${()=>this.renderPanel.rerenderFlame()}"
+                                             .onCancelRender="${()=>this.renderPanel.cancelRender()}"
+                      .visible=${this.selectedTab === 1} .onImageSizeChanged="${()=>this.renderPanel.rerenderFlame()}"></playground-render-panel>
+                    <playground-edit-panel id='editPnl' .onRefresh="${()=>this.renderPanel.rerenderFlame()}"
                                            .onExportParams="${this.exportParamsAsXml}"
                                              .visible=${this.selectedTab === 2}></playground-edit-panel>
 

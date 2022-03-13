@@ -65,7 +65,7 @@ export class FlameRenderer implements CloseableBuffers {
                 private swarm_size: number,
                 private displayMode: DisplayMode,
                 private canvas: HTMLCanvasElement,
-                private imgCaptureContainer: HTMLDivElement,
+                private imgCaptureContainer: HTMLDivElement | undefined,
                 private autoCaptureImage: boolean,
                 private flame: Flame) {
 

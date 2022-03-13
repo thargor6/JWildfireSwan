@@ -18,7 +18,7 @@ export function initGL(canvas: HTMLCanvasElement): WebGLRenderingContext {
         // @ts-ignore
         var ext = gl.getExtension("OES_texture_float");
     } catch (e) {
-
+        console.log(e)
     } finally {
         // @ts-ignore
         if (!gl) {

@@ -26,11 +26,6 @@ import { applyTheme } from 'Frontend/generated/theme';
 
 @customElement('renderer-render-panel')
 export class RendererRenderPanel extends MobxLitElement {
-  @property({type: Boolean})
-  visible = true
-
-  @state()
-  private selectedItems: RendererFlame[] = [];
 
   // for displaying badges properly
   protected createRenderRoot() {
@@ -41,13 +36,11 @@ export class RendererRenderPanel extends MobxLitElement {
 
   render() {
     return html`
-      <div style="${this.visible ? `display:block;`: `display:none;`}">
-          
           <vaadin-grid .items=${rendererStore.flames}
-                  .selectedItems="${this.selectedItems}"
+                  .selectedItems="${rendererStore.selectedFlames}"
                   @active-item-changed="${(e: GridActiveItemChangedEvent<RendererFlame>) => {
                   const item = e.detail.value;
-                  this.selectedItems = item ? [item] : [];
+                  rendererStore.selectedFlames = item ? [item] : [];
               }}">
               <vaadin-grid-column
                       header="Flame"
@@ -63,7 +56,6 @@ export class RendererRenderPanel extends MobxLitElement {
               ></vaadin-grid-column>
           </vaadin-grid>
 
-      </div>
      `;
   }
 
@@ -89,4 +81,9 @@ export class RendererRenderPanel extends MobxLitElement {
       root
     );
   };
+
+  disconnectedCallback() {
+    rendererStore.selectedFlames = [];
+    super.disconnectedCallback();
+  }
 }

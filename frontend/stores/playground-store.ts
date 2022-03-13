@@ -41,7 +41,6 @@ export class PlaygroundStore {
   calculating = false
   lastError = ''
   flame = new Flame()
-  renderer!: FlameRenderer
   exampleFlamenames: string[] = []
 
   constructor() {
