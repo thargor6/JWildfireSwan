@@ -115,9 +115,6 @@ export class PlaygroundRenderPanel extends MobxLitElement {
   private displayModeChanged(event: Event) {
     if ((event.target as HasValue<DisplayMode>).value) {
       this.displayMode = (event.target as HasValue<DisplayMode>).value!
-      if(this.displayMode && playgroundStore.renderer) {
-        playgroundStore.renderer.settings.displayMode = this.displayMode
-      }
     }
   }
 

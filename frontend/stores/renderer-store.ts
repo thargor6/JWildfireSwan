@@ -40,6 +40,7 @@ export interface RendererFlame {
 
 export class RendererStore {
   rendering = false
+  renderProgress = 0.0
   lastError = ''
   renderer!: FlameRenderer
   flames: RendererFlame[] = []

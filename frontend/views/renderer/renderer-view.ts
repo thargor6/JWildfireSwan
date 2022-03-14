@@ -23,6 +23,8 @@ import './renderer-render-panel';
 import '@vaadin/vaadin-button'
 import '@vaadin/vaadin-ordered-layout/vaadin-vertical-layout'
 import '@vaadin/vaadin-combo-box'
+import '@vaadin/scroller'
+import '@vaadin/vaadin-progress-bar'
 import {RendererFlame, rendererStore} from "Frontend/stores/renderer-store";
 import '../../components/render-panel'
 import '../../components/swan-error-panel'
@@ -32,7 +34,6 @@ import {RenderPanel} from "Frontend/components/render-panel";
 import {autorun} from "mobx";
 import {state} from "lit/decorators";
 import {HasValue} from "@hilla/form";
-import {Flame} from "Frontend/flames/model/flame";
 
 @customElement('renderer-view')
 export class RendererView extends View  {
@@ -46,9 +47,6 @@ export class RendererView extends View  {
 
     swarmSizes = [8, 16, 32, 64, 128, 256, 512, 1024]
 
-    @query('render-panel')
-    renderPanel!: RenderPanel
-
     @query('#imageContainer')
     imageContainer!: HTMLDivElement
 
@@ -59,21 +57,29 @@ export class RendererView extends View  {
         return html`
             <vertical-layout theme="spacing">
               <swan-error-panel .errorMessage=${rendererStore.lastError}></swan-error-panel>
-              <div class="gap-m grid list-none m-2 p-2" style="grid-template-columns: repeat(auto-fill, minmax(30em, 1fr));">
+              <div class="gap-m grid list-none m-2 p-2" style="grid-template-columns: repeat(auto-fill, minmax(24em, 1fr));">
                   <div style="display: flex; flex-direction: column; padding: 1em;">
                       <renderer-upload-panel></renderer-upload-panel>
                       <renderer-render-panel></renderer-render-panel>
                   </div>
-                  <render-panel .withProgressBar="${false}" containerWidth="24em" containerHeight="24em" 
-                    canvasDisplayWidth="21em" canvasDisplayHeight="21em" .onCreateFlameRenderer=${this.createFlameRenderer}></render-panel>
-                 </div>
-                          <vaadin-combo-box style="max-width: 10em;" label="Image size" .items="${this.imageSizes}" value="${this.imageSize}"
+                   <div>
+                       <vaadin-scroller
+                         scroll-direction="vertical"
+                         style="border-bottom: 1px solid var(--lumo-contrast-20pct); padding: var(--lumo-space-m);"
+                       >
+                       <render-panel .withProgressBar="${false}" containerWidth="24em" containerHeight="24em"
+                         canvasDisplayWidth="21em" canvasDisplayHeight="21em" .onCreateFlameRenderer=${this.createFlameRenderer}>
+                       </render-panel>
+                           </vaadin-scroller>
+                       <vaadin-combo-box style="max-width: 10em;" label="Image size" .items="${this.imageSizes}" value="${this.imageSize}"
                           @change="${(event: Event) => this.imageSizeChanged(event)}"></vaadin-combo-box>
-          <vaadin-combo-box style="max-width: 10em;" label="Swarm size" .items="${this.swarmSizes}" value="${this.swarmSize}"
-                          @change="${(event: Event) => this.pointsSizeChanged(event)}"></vaadin-combo-box>
-                 <vaadin-button @click="${this.renderFlames}">Render</vaadin-button>
-                <div id="imageContainer"></div>
-                <div id="allImageContainer"></div>
+                    <vaadin-combo-box style="max-width: 10em;" label="Swarm size" .items="${this.swarmSizes}" value="${this.swarmSize}"
+                         @change="${(event: Event) => this.pointsSizeChanged(event)}"></vaadin-combo-box>
+                    <vaadin-button @click="${this.renderFlames}">Render</vaadin-button>
+                    <div style="display: none;" id="imageContainer"></div>
+                    <div class="gap-m grid list-none m-2 p-2" style="grid-template-columns: repeat(auto-fill, minmax(7em, 1fr));" id="allImageContainer"></div>
+                       <vaadin-progress-bar value="${rendererStore.renderProgress}"></vaadin-progress-bar>
+                 </div>
             </vertical-layout>
         `;
     }
@@ -124,7 +130,7 @@ export class RendererView extends View  {
             const renderPanel = this.getRenderPanel()
             renderPanel.clearRenderer()
             this.getRenderPanel().recreateCanvas()
-            this.renderer =  new FlameRenderer(512, 256,
+            this.renderer =  new FlameRenderer(this.imageSize, this.swarmSize,
               DisplayMode.FLAME, this.getRenderPanel().canvas, this.imageContainer,
               true, flame.flame)
             this.renderer.onRenderFinished=this.onFlameFinished.bind(this, flame)
@@ -143,7 +149,14 @@ export class RendererView extends View  {
         else {
             rendererStore.updateFlameStatus(flame.uuid, true, elapsedTimeInSeconds)
             const img = this.imageContainer.querySelector("img")!
-            this.allImageContainer.appendChild(img)
+            const a = document.createElement('a')
+            const linkText = flame.filename
+            a.appendChild(img);
+            a.title = flame.filename
+            a.href = img.src
+            a.download = flame.filename.substr(0, flame.filename.lastIndexOf(".")) + ".png";
+            this.allImageContainer.appendChild(a)
+        //    setTimeout(()=>a.click(), 100)
             this.renderNextFlame()
         }
     }
