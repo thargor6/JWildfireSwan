@@ -16,7 +16,7 @@
 */
 
 import {html, PropertyValues} from 'lit';
-import {customElement, state} from 'lit/decorators.js';
+import {customElement, property, state} from 'lit/decorators.js';
 
 import '@polymer/paper-slider/paper-slider'
 import '@vaadin/vaadin-button'
@@ -27,6 +27,8 @@ import {MobxLitElement} from "@adobe/lit-mobx";
 import {FlameRenderer} from "Frontend/flames/renderer/flame-renderer";
 import {getTimeStamp} from "Frontend/components/utils";
 import {AppInfoEndpoint} from "Frontend/generated/endpoints";
+import {autorun} from "mobx";
+import {rendererStore} from "Frontend/stores/renderer-store";
 
 @customElement('render-panel')
 export class RenderPanel extends MobxLitElement {
@@ -35,6 +37,21 @@ export class RenderPanel extends MobxLitElement {
 
   @state()
   renderProgress = 0.0
+
+  @property()
+  containerWidth = '34em'
+
+  @property()
+  containerHeight = '34em'
+
+  @property()
+  canvasDisplayWidth = '28em'
+
+  @property()
+  canvasDisplayHeight = '28em'
+
+  @property({type: Boolean})
+  withProgressBar = true
 
   canvas!: HTMLCanvasElement
   canvasContainer!: HTMLDivElement
@@ -48,12 +65,12 @@ export class RenderPanel extends MobxLitElement {
   render() {
     return html `
             <div style="display: flex; flex-direction: column; align-items: center;">
-                <vaadin-scroller style="max-width: 34em; max-height: 34em;" id="canvas-container">
-                    <canvas style="width: 400px; height: 300px;" width="512" height="512"></canvas>
+                <vaadin-scroller style="max-width: ${this.containerWidth}; max-height: ${this.containerHeight};" id="canvas-container">
+                    <canvas  width="64" height="64"></canvas>
                 </vaadin-scroller>
-                <div style="display: flex; flex-direction: column;">
-                    <div style="min-width: 26em;">${this.renderInfo}</div>
-                    <vaadin-progress-bar .value=${this.renderProgress} theme="contrast"></vaadin-progress-bar>
+                <div style="display: flex; flex-direction: column; min-width: ${this.canvasDisplayWidth};">
+                    <div style="${this.withProgressBar ? `display:block;`: `display:none;`}">${this.renderInfo}</div>
+                    <vaadin-progress-bar style="${this.withProgressBar ? `display:block;`: `display:none;`}" .value=${this.renderProgress} theme="contrast"></vaadin-progress-bar>
                 </div>
             </div>
     `
@@ -72,8 +89,8 @@ export class RenderPanel extends MobxLitElement {
     this.canvasContainer.innerHTML = '';
     this.canvas = document.createElement('canvas')
     this.canvas.id = 'screen'
-    this.canvas.style.width = '28em'
-    this.canvas.style.height = '28em'
+    this.canvas.style.width = this.canvasDisplayWidth
+    this.canvas.style.height = this.canvasDisplayHeight
     this.canvas.width = 512
     this.canvas.height = 512
     this.canvasContainer.appendChild(this.canvas)
@@ -85,7 +102,7 @@ export class RenderPanel extends MobxLitElement {
     }
   }
 
-  rerenderFlame = ()=> {
+  public rerenderFlame = (renderer: FlameRenderer | undefined = undefined)=> {
     if(this.renderer) {
       const reuseCanvas = this.hasCanvas()
       const that = this
@@ -94,12 +111,12 @@ export class RenderPanel extends MobxLitElement {
         if(!reuseCanvas) {
           this.recreateCanvas()
         }
-        this.renderFlame()
+        this.renderFlame(renderer)
       })
     }
     else {
       this.recreateCanvas()
-      this.renderFlame()
+      this.renderFlame(renderer)
     }
   }
 
@@ -111,18 +128,23 @@ export class RenderPanel extends MobxLitElement {
     super.disconnectedCallback()
   }
 
-  renderFlame =() => {
+  renderFlame =(renderer: FlameRenderer | undefined = undefined) => {
     if(!this.hasCanvas()) {
-      console.log("NO CANVAS!")
+      console.log("NO CANVAS - creating one!")
       this.recreateCanvas()
     }
     this.renderProgress = 0.0
     this.renderInfo = 'Rendering'
-    this.renderer = this.onCreateFlameRenderer!();
+    if(renderer) {
+      this.renderer = renderer
+    }
+    else {
+      this.renderer = this.onCreateFlameRenderer!();
+      this.renderer.onRenderFinished = this.onRenderFinished
+      this.renderer.onRenderCancelled = this.onRenderCancelled
+      this.renderer.onUpdateRenderProgress = this.onUpdateRenderProgress
+    }
     this.lastProgressUpdate = getTimeStamp()
-    this.renderer.onRenderFinished = this.onRenderFinished
-    this.renderer.onRenderCancelled = this.onRenderCancelled
-    this.renderer.onUpdateRenderProgress = this.onUpdateRenderProgress
     this.renderer.drawScene()
   }
 
@@ -146,4 +168,10 @@ export class RenderPanel extends MobxLitElement {
   }
 
 
+  clearRenderer() {
+    if(this.renderer) {
+      this.renderer.signalCancel(undefined)
+      this.renderer = undefined
+    }
+  }
 }

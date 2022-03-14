@@ -32,14 +32,14 @@ import {registerVars_2D_PartS} from "Frontend/flames/renderer/variations/variati
 
 export interface RendererFlame {
   finished: boolean;
+  elapsedTimeInSeconds: number;
   uuid: string;
   filename: string;
   flame: Flame;
 }
 
 export class RendererStore {
-  initFlag = false
-  calculating = false
+  rendering = false
   lastError = ''
   renderer!: FlameRenderer
   flames: RendererFlame[] = []
@@ -49,13 +49,6 @@ export class RendererStore {
     makeAutoObservable(this);
   }
 
-  async initialize() {
-    if(!this.initFlag) {
-
-      this.initFlag = true
-    }
-  }
-
   hasFlameWithUuid(uuid: string) {
     return this.flames.find( flame => flame.uuid === uuid) != undefined
   }
@@ -63,11 +56,28 @@ export class RendererStore {
   addFlameWithUuid = (uuid: string, filename: string, flame: Flame)=> {
     this.flames = [...this.flames, {
       finished: false,
+      elapsedTimeInSeconds: 0,
       uuid: uuid,
       filename: filename,
       flame: flame
     }]
   }
+
+  updateFlameStatus = (uuid: string, finished: boolean, elapsedTimeInSeconds: number) => {
+    const flameIdx = this.flames.findIndex(flame => flame.uuid === uuid);
+    if(flameIdx>=0) {
+      const flame = this.flames[flameIdx]
+      const newFlame = {
+        finished: finished,
+        elapsedTimeInSeconds: elapsedTimeInSeconds,
+        uuid: uuid,
+        filename: flame.filename,
+        flame: flame.flame
+      }
+      this.flames = [...this.flames.slice(0, flameIdx), newFlame, ...this.flames.slice(flameIdx + 1)]
+    }
+  }
+
 }
 
 export const rendererStore = new RendererStore()

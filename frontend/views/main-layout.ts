@@ -30,6 +30,7 @@ import { views } from '../routes';
 import { appStore } from '../stores/app-store';
 import { Layout } from './view';
 import {galleryStore} from "Frontend/stores/gallery-store";
+import {rendererStore} from "Frontend/stores/renderer-store";
 
 interface RouteInfo {
   path: string;
@@ -51,15 +52,19 @@ export class MainLayout extends Layout {
                         ${this.getMenuRoutes().map(
                                 (viewRoute) => html`
                                     <li>
-                                        <a
-                                                ?highlight=${viewRoute.path == appStore.location}
-                                                class="flex 
-                  h-m items-center px-s relative text-secondary"
-                                                href=${router.urlForPath(viewRoute.path)}
-                                        >
-                                            <span class="${viewRoute.icon} me-s text-l"></span>
-                                            <span class="font-medium text-s whitespace-nowrap">${viewRoute.title}</span>
-                                        </a>
+                                        ${rendererStore.rendering ? 
+                                        html `
+                                                <span class="${viewRoute.icon} me-s text-l"></span>
+                                                <span class="font-medium text-s whitespace-nowrap">${viewRoute.title}</span>
+                                          `:
+                                        html `
+                                            <a ?highlight=${viewRoute.path == appStore.location}
+                                               class="flex h-m items-center px-s relative text-secondary"
+                                               href=${router.urlForPath(viewRoute.path)}>
+                                                <span class="${viewRoute.icon} me-s text-l"></span>
+                                                <span class="font-medium text-s whitespace-nowrap">${viewRoute.title}</span>
+                                            </a>
+                                         `}
                                     </li>
                                 `
                         )}
