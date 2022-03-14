@@ -15,7 +15,7 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 */
 
-import {html, render} from 'lit';
+import {html, nothing, render} from 'lit';
 import {customElement, property, state} from 'lit/decorators.js';
 import {MobxLitElement} from "@adobe/lit-mobx";
 import {RendererFlame, rendererStore} from "Frontend/stores/renderer-store";
@@ -76,7 +76,10 @@ export class RendererRenderPanel extends MobxLitElement {
     const flame = model.item;
     render(
       html`
+        <div style="display: flex; flex-direction: column;">  
         <span theme="${flame.finished ? 'badge success' : 'badge'}">${flame.finished ? 'finished' : 'idle'}</span>
+        ${flame.finished ? html `<span style="font-size: xx-small;">Elapsed time: ${flame.elapsedTimeInSeconds} s</span>` : nothing}
+        </div>            
       `,
       root
     );

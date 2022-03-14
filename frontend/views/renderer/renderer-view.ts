@@ -23,6 +23,7 @@ import './renderer-render-panel';
 import '@vaadin/vaadin-button'
 import '@vaadin/vaadin-ordered-layout/vaadin-vertical-layout'
 import '@vaadin/vaadin-combo-box'
+import '@vaadin/vaadin-checkbox'
 import '@vaadin/scroller'
 import '@vaadin/vaadin-progress-bar'
 import {RendererFlame, rendererStore} from "Frontend/stores/renderer-store";
@@ -34,6 +35,7 @@ import {RenderPanel} from "Frontend/components/render-panel";
 import {autorun} from "mobx";
 import {state} from "lit/decorators";
 import {HasValue} from "@hilla/form";
+import '../../components/swan-loading-indicator';
 
 @customElement('renderer-view')
 export class RendererView extends View  {
@@ -47,6 +49,9 @@ export class RendererView extends View  {
 
     swarmSizes = [8, 16, 32, 64, 128, 256, 512, 1024]
 
+    @state()
+    autoSave = true
+
     @query('#imageContainer')
     imageContainer!: HTMLDivElement
 
@@ -59,28 +64,33 @@ export class RendererView extends View  {
               <swan-error-panel .errorMessage=${rendererStore.lastError}></swan-error-panel>
               <div class="gap-m grid list-none m-2 p-2" style="grid-template-columns: repeat(auto-fill, minmax(24em, 1fr));">
                   <div style="display: flex; flex-direction: column; padding: 1em;">
-                      <renderer-upload-panel></renderer-upload-panel>
-                      <renderer-render-panel></renderer-render-panel>
+                      <renderer-upload-panel style="border-radius: var(--lumo-border-radius); border: 1px dashed gray;"></renderer-upload-panel>
+                      <div style="margin-top: 0.5em; display: flex; flex-direction: column; padding: 1.0em; border-radius: var(--lumo-border-radius); border: 1px dashed gray;">
+                         <div style="display: flex;"> 
+                             <vaadin-combo-box style="max-width: 10em;" label="Image size" .items="${this.imageSizes}" value="${this.imageSize}"
+                                @change="${(event: Event) => this.imageSizeChanged(event)}"></vaadin-combo-box>
+                             <vaadin-combo-box style="max-width: 10em; margin-left: 1em;" label="Swarm size" .items="${this.swarmSizes}" value="${this.swarmSize}"
+                               @change="${(event: Event) => this.pointsSizeChanged(event)}"></vaadin-combo-box>
+                          </div>
+                          <vaadin-checkbox ?checked=${this.autoSave} label="Automatic download generated files" @change="${(event: Event) => this.autoSaveChanged(event)}"></vaadin-checkbox>
+                          <div style="display: flex;">
+                             <vaadin-button @click="${this.renderFlames}">Render</vaadin-button>
+                           <vaadin-button theme="tertiary" @click="${this.signalCancel}">Cancel</vaadin-button>
+                          </div>    
+                         <vaadin-progress-bar value="${rendererStore.renderProgress}"></vaadin-progress-bar>
+                         <swan-loading-indicator .loading=${rendererStore.rendering} caption="${rendererStore.cancelSignalled ? 'Aborting...' : 'Rendering...'}"></swan-loading-indicator>
+                       </div>
                   </div>
-                   <div>
-                       <vaadin-scroller
-                         scroll-direction="vertical"
-                         style="border-bottom: 1px solid var(--lumo-contrast-20pct); padding: var(--lumo-space-m);"
-                       >
-                       <render-panel .withProgressBar="${false}" containerWidth="24em" containerHeight="24em"
-                         canvasDisplayWidth="21em" canvasDisplayHeight="21em" .onCreateFlameRenderer=${this.createFlameRenderer}>
-                       </render-panel>
-                           </vaadin-scroller>
-                       <vaadin-combo-box style="max-width: 10em;" label="Image size" .items="${this.imageSizes}" value="${this.imageSize}"
-                          @change="${(event: Event) => this.imageSizeChanged(event)}"></vaadin-combo-box>
-                    <vaadin-combo-box style="max-width: 10em;" label="Swarm size" .items="${this.swarmSizes}" value="${this.swarmSize}"
-                         @change="${(event: Event) => this.pointsSizeChanged(event)}"></vaadin-combo-box>
-                    <vaadin-button @click="${this.renderFlames}">Render</vaadin-button>
-                    <div style="display: none;" id="imageContainer"></div>
-                    <div class="gap-m grid list-none m-2 p-2" style="grid-template-columns: repeat(auto-fill, minmax(7em, 1fr));" id="allImageContainer"></div>
-                       <vaadin-progress-bar value="${rendererStore.renderProgress}"></vaadin-progress-bar>
-                 </div>
+                   <div style="border-radius: var(--lumo-border-radius); border: 1px dashed gray; margin: 1.0em;">
+                       <renderer-render-panel></renderer-render-panel>
+                       <render-panel style="margin: 1em;" .withProgressBar="${false}" containerWidth="12.5em" containerHeight="12.5em"
+                                     canvasDisplayWidth="12em" canvasDisplayHeight="12em" .onCreateFlameRenderer=${this.createFlameRenderer}></render-panel>
+
+                   </div>
+                  <div class="gap-m grid list-none m-2 p-2" style="grid-template-columns: repeat(auto-fill, minmax(7em, 1fr));" id="allImageContainer"></div>
+
             </vertical-layout>
+            <div style="display: none;" id="imageContainer"></div>
         `;
     }
 
@@ -93,6 +103,12 @@ export class RendererView extends View  {
     private pointsSizeChanged(event: Event) {
         if ((event.target as HasValue<string>).value) {
             this.swarmSize = parseInt((event.target as HasValue<string>).value!)
+        }
+    }
+
+    private autoSaveChanged(event: Event) {
+        if ((event.target as HasValue<string>).value) {
+            this.autoSave = (event.target as any).checked ? true: false
         }
     }
 
@@ -118,7 +134,9 @@ export class RendererView extends View  {
     }
 
     renderFlames = () => {
+      rendererStore.cancelSignalled = false
       rendererStore.rendering = true
+      rendererStore.renderFlameTotalCount = rendererStore.flames.filter(flame=>!flame.finished).length
       this.renderNextFlame();
     }
 
@@ -126,7 +144,9 @@ export class RendererView extends View  {
 
     renderNextFlame = ()=> {
         const flame = rendererStore.flames.find(flame => !flame.finished)
-        if(flame) {
+        if(flame && !rendererStore.cancelSignalled) {
+            const remaining = rendererStore.flames.filter(flame=>!flame.finished).length
+            rendererStore.renderProgress = (rendererStore.renderFlameTotalCount - remaining) / rendererStore.renderFlameTotalCount
             const renderPanel = this.getRenderPanel()
             renderPanel.clearRenderer()
             this.getRenderPanel().recreateCanvas()
@@ -138,6 +158,9 @@ export class RendererView extends View  {
         }
         else {
             rendererStore.rendering = false
+            if(!rendererStore.cancelSignalled) {
+                rendererStore.renderProgress = 1.0
+            }
         }
     }
 
@@ -156,8 +179,14 @@ export class RendererView extends View  {
             a.href = img.src
             a.download = flame.filename.substr(0, flame.filename.lastIndexOf(".")) + ".png";
             this.allImageContainer.appendChild(a)
-        //    setTimeout(()=>a.click(), 100)
+            if(this.autoSave) {
+                setTimeout(() => a.click(), 10)
+            }
             this.renderNextFlame()
         }
+    }
+
+    signalCancel = () => {
+        rendererStore.cancelSignalled = true
     }
 }

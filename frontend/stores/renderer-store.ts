@@ -45,6 +45,8 @@ export class RendererStore {
   renderer!: FlameRenderer
   flames: RendererFlame[] = []
   selectedFlames: RendererFlame[] = [];
+  cancelSignalled = false
+  renderFlameTotalCount = 0
 
   constructor() {
     makeAutoObservable(this);

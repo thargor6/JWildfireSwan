@@ -59,7 +59,7 @@ export const views: ViewRoute[] = [
     path: 'renderer',
     component: 'renderer-view',
     icon: 'la la-th-list',
-    title: 'Renderer',
+    title: 'Batch renderer',
     action: async (_context, _command) => {
       await import('./views/renderer/renderer-view');
       return;
