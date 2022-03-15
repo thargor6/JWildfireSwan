@@ -38,7 +38,7 @@ export class RendererUploadPanel extends MobxLitElement {
             <vaadin-upload
                     id="upload"
                     accept="application/flame,.flame"
-                    max-files="100"
+                    max-files="200"
                     target="upload"
                     @upload-success="${this.uploadFileSuccessHandler}">
                 <span slot="file-list" style="font-size: x-small;">

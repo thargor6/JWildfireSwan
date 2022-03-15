@@ -154,6 +154,7 @@ export class RendererView extends View  {
               DisplayMode.FLAME, this.getRenderPanel().canvas, this.imageContainer,
               true, flame.flame)
             this.renderer.onRenderFinished=this.onFlameFinished.bind(this, flame)
+            this.renderer.qualityScale = 2.0
             this.getRenderPanel().rerenderFlame(this.renderer)
         }
         else {

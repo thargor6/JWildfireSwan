@@ -60,6 +60,7 @@ export class FlameRenderer implements CloseableBuffers {
 
     onRenderCancelledCallback: OnRenderCancelledCallback | undefined = undefined
     isFinished = true
+    qualityScale = 1.0
 
     constructor(private canvas_size: number,
                 private swarm_size: number,
@@ -79,7 +80,7 @@ export class FlameRenderer implements CloseableBuffers {
         renderFlame.width = imageWidth
         renderFlame.height = imageHeight
 
-        this.maxSampleCount = imageWidth * imageHeight * flame.sampleDensity.value * 1.5
+        this.maxSampleCount = imageWidth * imageHeight * flame.sampleDensity.value * 1.5 * this.qualityScale
         this.samplesPerFrame = swarm_size * swarm_size
         this.currSampleCount = 0
 

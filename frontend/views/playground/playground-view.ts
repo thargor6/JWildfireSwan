@@ -60,9 +60,6 @@ export class PlaygroundView extends View implements BeforeEnterObserver {
     @state()
     renderInfo = ''
 
-    renderSettingsPanel!: PlaygroundRenderPanel
-    flamePanel!: PlaygroundFlamePanel
-    renderPanel!: RenderPanel
     loadExampleAtStartup: string | undefined = undefined
 
     render() {
@@ -79,8 +76,8 @@ export class PlaygroundView extends View implements BeforeEnterObserver {
     }
 
     createFlameRenderer = ()=> {
-        return new FlameRenderer(this.renderSettingsPanel.imageSize, this.renderSettingsPanel.swarmSize,
-           this.renderSettingsPanel.displayMode, this.renderPanel.canvas, this.renderSettingsPanel.capturedImageContainer,
+        return new FlameRenderer(this.getRenderSettingsPanel().imageSize, this.getRenderSettingsPanel().swarmSize,
+           this.getRenderSettingsPanel().displayMode, this.getRenderPanel().canvas, this.getRenderSettingsPanel().capturedImageContainer,
           true, playgroundStore.flame)
     }
 
@@ -88,22 +85,31 @@ export class PlaygroundView extends View implements BeforeEnterObserver {
         this.selectedTab = e.detail.value;
     }
 
+    getFlamePanel = (): PlaygroundFlamePanel => {
+        return document.querySelector('#flamePnl')!
+    }
+
+    getRenderSettingsPanel = (): PlaygroundRenderPanel => {
+        return document.querySelector('#viewOptsPnl')!
+    }
+
     protected firstUpdated(_changedProperties: PropertyValues) {
         super.firstUpdated(_changedProperties);
-        this.renderSettingsPanel = document.querySelector('#viewOptsPnl')!
-        this.renderPanel = document.querySelector('render-panel')!
-        this.flamePanel = document.querySelector('#flamePnl')!
-        playgroundStore.registerInitCallback([this.flamePanel.tagName, this.renderSettingsPanel.tagName], this.renderFirstFlame)
+        playgroundStore.registerInitCallback([this.getFlamePanel().tagName, this.getRenderSettingsPanel().tagName], this.renderFirstFlame)
+    }
+
+    connectedCallback() {
+        super.connectedCallback();
     }
 
     importFlameFromXml = () => {
         playgroundStore.calculating = true
         playgroundStore.lastError = ''
-        FlamesEndpoint.parseFlame(this.flamePanel.flameXml).then(flame => {
+        FlamesEndpoint.parseFlame(this.getFlamePanel().flameXml).then(flame => {
           playgroundStore.refreshing = true
           try {
               playgroundStore.flame = FlameMapper.mapFromBackend(flame)
-              this.renderPanel.rerenderFlame()
+              this.getRenderPanel().rerenderFlame()
               playgroundStore.calculating = false
           }
           finally {
@@ -121,11 +127,11 @@ export class PlaygroundView extends View implements BeforeEnterObserver {
 
         FlamesEndpoint.generateRandomFlame(playgroundStore.variations).then(
             randomFlame => {
-                this.flamePanel.flameXml = randomFlame.flameXml
+                this.getFlamePanel().flameXml = randomFlame.flameXml
                 playgroundStore.refreshing = true
                 try {
                     playgroundStore.flame = FlameMapper.mapFromBackend(randomFlame.flame)
-                    this.renderPanel.rerenderFlame()
+                    this.getRenderPanel().rerenderFlame()
                     playgroundStore.calculating = false
                 }
                 finally {
@@ -146,9 +152,9 @@ export class PlaygroundView extends View implements BeforeEnterObserver {
             randomFlame => {
                 playgroundStore.refreshing = true
                 try {
-                    this.flamePanel.flameXml = randomFlame.flameXml
+                    this.getFlamePanel().flameXml = randomFlame.flameXml
                     playgroundStore.flame = FlameMapper.mapFromBackend(randomFlame.flame)
-                    this.renderPanel.rerenderFlame()
+                    this.getRenderPanel().rerenderFlame()
                     playgroundStore.calculating = false
                 }
                 finally {
@@ -163,8 +169,8 @@ export class PlaygroundView extends View implements BeforeEnterObserver {
 
     exportParamsAsXml = (): void => {
         FlamesEndpoint.convertFlameToXml(FlameMapper.mapToBackend(playgroundStore.flame)).then(flameXml => {
-            this.flamePanel.flameXml = flameXml
-            this.flamePanel.transferFlameToClipbord()
+            this.getFlamePanel().flameXml = flameXml
+            this.getFlamePanel().transferFlameToClipbord()
             this.openNotification(1)
         })
           .catch(err=> {
@@ -174,23 +180,28 @@ export class PlaygroundView extends View implements BeforeEnterObserver {
     }
 
     importExampleFlame = (): void => {
-        if(!this.flamePanel.flameName) {
+        if(!this.getFlamePanel().flameName) {
             return
         }
         playgroundStore.calculating = true
         playgroundStore.lastError = ''
 
-        FlamesEndpoint.getExampleFlame(this.flamePanel.flameName).then(flame => {
+        FlamesEndpoint.getExampleFlame(this.getFlamePanel().flameName).then(flame => {
             playgroundStore.refreshing = true
             try {
+                console.log('M1')
                 playgroundStore.flame = FlameMapper.mapFromBackend(flame)
-                GalleryEndpoint.getExampleFlameXml(this.flamePanel.flameName).then(
-                  flameXml => this.flamePanel.flameXml = flameXml
+                console.log('M2')
+                GalleryEndpoint.getExampleFlameXml(this.getFlamePanel().flameName).then(
+                  flameXml => this.getFlamePanel().flameXml = flameXml
                 )
-                this.renderPanel.rerenderFlame()
+                console.log('M3')
+                this.getRenderPanel().rerenderFlame()
+                console.log('M4')
                 playgroundStore.calculating = false
             }
             finally {
+                console.log('M5')
                 playgroundStore.refreshing = false
             }
         }).catch(err=> {
@@ -200,11 +211,11 @@ export class PlaygroundView extends View implements BeforeEnterObserver {
     }
 
     renderFirstFlame = ()=> {
-        this.flamePanel.flameName = this.loadExampleAtStartup ? this.loadExampleAtStartup : playgroundStore.randomExampleFlamename()
+        this.getFlamePanel().flameName = this.loadExampleAtStartup ? this.loadExampleAtStartup : playgroundStore.randomExampleFlamename()
         this.importExampleFlame()
         if(this.loadExampleAtStartup) {
             GalleryEndpoint.getExampleFlameXml(this.loadExampleAtStartup).then(flameXml => {
-                this.flamePanel.flameXml = flameXml
+                this.getFlamePanel().flameXml = flameXml
             })
         }
     }
@@ -242,10 +253,10 @@ export class PlaygroundView extends View implements BeforeEnterObserver {
                       .onImport="${this.importFlameFromXml}" .onRandomFlame="${this.createRandomFlame}"
                       .onRandomGradient="${this.createRandomGradient}"
                     .onFlameNameChanged="${this.importExampleFlame}"></playground-flame-panel>
-                    <playground-render-panel id='viewOptsPnl' .onRefresh="${()=>this.renderPanel.rerenderFlame()}"
-                                             .onCancelRender="${()=>this.renderPanel.cancelRender()}"
-                      .visible=${this.selectedTab === 1} .onImageSizeChanged="${()=>this.renderPanel.rerenderFlame()}"></playground-render-panel>
-                    <playground-edit-panel id='editPnl' .onRefresh="${()=>this.renderPanel.rerenderFlame()}"
+                    <playground-render-panel id='viewOptsPnl' .onRefresh="${()=>this.getRenderPanel().rerenderFlame()}"
+                                             .onCancelRender="${()=>this.getRenderPanel().cancelRender()}"
+                      .visible=${this.selectedTab === 1} .onImageSizeChanged="${()=>this.getRenderPanel().rerenderFlame()}"></playground-render-panel>
+                    <playground-edit-panel id='editPnl' .onRefresh="${()=>this.getRenderPanel().rerenderFlame()}"
                                            .onExportParams="${this.exportParamsAsXml}"
                                              .visible=${this.selectedTab === 2}></playground-edit-panel>
 
@@ -300,4 +311,9 @@ export class PlaygroundView extends View implements BeforeEnterObserver {
         ) as Notification;
         notification?.close();
     }
+
+    getRenderPanel = (): RenderPanel =>  {
+        return document.querySelector('render-panel')!
+    }
+
 }
