@@ -26,7 +26,6 @@ export class FlameRendererDisplay {
         const canvas_size = this.settings.canvas_size;
         gl.disable(gl.BLEND);
         gl.viewport(0, 0, canvas_size, canvas_size);
-
         gl.useProgram(this.ctx.shaders.prog_show);
         gl.activeTexture(gl.TEXTURE0);
         gl.bindTexture(gl.TEXTURE_2D, this.ctx.textures.texture2);

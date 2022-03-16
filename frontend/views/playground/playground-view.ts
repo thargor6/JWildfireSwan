@@ -78,7 +78,7 @@ export class PlaygroundView extends View implements BeforeEnterObserver {
     createFlameRenderer = ()=> {
         return new FlameRenderer(this.getRenderSettingsPanel().imageSize, this.getRenderSettingsPanel().swarmSize,
            this.getRenderSettingsPanel().displayMode, this.getRenderPanel().canvas, this.getRenderSettingsPanel().capturedImageContainer,
-          true, playgroundStore.flame)
+          true, this.getCropRegion(), playgroundStore.flame)
     }
 
     selectedChanged(e: CustomEvent) {
@@ -316,4 +316,8 @@ export class PlaygroundView extends View implements BeforeEnterObserver {
         return document.querySelector('render-panel')!
     }
 
+    // TODO
+    private getCropRegion() {
+        return undefined
+    }
 }

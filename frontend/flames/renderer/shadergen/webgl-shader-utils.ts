@@ -7,7 +7,7 @@ export function initGL(canvas: HTMLCanvasElement): WebGLRenderingContext {
     // @ts-ignore
     window.requestAnimFrame = window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || function(callback, element) { setTimeout(callback, 1000 / 60); };
     try {
-        var webglOptions = { antialias: false, depth: false };
+        var webglOptions = { antialias: false, depth: false /*, preserveDrawingBuffer: true*/};
 
         var gl =  canvas.getContext("webgl", webglOptions) || canvas.getContext("experimental-webgl", webglOptions);
 

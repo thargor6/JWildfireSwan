@@ -29,7 +29,7 @@ import '@vaadin/vaadin-progress-bar'
 import {RendererFlame, rendererStore} from "Frontend/stores/renderer-store";
 import '../../components/render-panel'
 import '../../components/swan-error-panel'
-import {FlameRenderer} from "Frontend/flames/renderer/flame-renderer";
+import {CropRegion, FlameRenderer} from "Frontend/flames/renderer/flame-renderer";
 import {DisplayMode} from "Frontend/flames/renderer/render-settings";
 import {RenderPanel} from "Frontend/components/render-panel";
 import {autorun} from "mobx";
@@ -48,6 +48,8 @@ export class RendererView extends View  {
     swarmSize = 256
 
     swarmSizes = [8, 16, 32, 64, 128, 256, 512, 1024]
+
+    private cropRegion: CropRegion | undefined
 
     @state()
     autoSave = true
@@ -126,7 +128,7 @@ export class RendererView extends View  {
     createFlameRenderer = ()=> {
         return new FlameRenderer(256, 256,
           DisplayMode.FLAME, this.getRenderPanel().canvas, undefined,
-          false, rendererStore.selectedFlames[0].flame)
+          false, undefined, rendererStore.selectedFlames[0].flame)
     }
 
     getRenderPanel = (): RenderPanel =>  {
@@ -152,7 +154,7 @@ export class RendererView extends View  {
             this.getRenderPanel().recreateCanvas()
             this.renderer =  new FlameRenderer(this.imageSize, this.swarmSize,
               DisplayMode.FLAME, this.getRenderPanel().canvas, this.imageContainer,
-              true, flame.flame)
+              true, this.cropRegion, flame.flame)
             this.renderer.onRenderFinished=this.onFlameFinished.bind(this, flame)
             this.renderer.qualityScale = 2.0
             this.getRenderPanel().rerenderFlame(this.renderer)

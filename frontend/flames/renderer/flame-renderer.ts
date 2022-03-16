@@ -34,6 +34,13 @@ type RenderProgressHandler = (currSampleCount: number, maxSampleCount: number, f
 
 export type OnRenderCancelledCallback = ()=>void
 
+export interface CropRegion {
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+}
+
 export class FlameRenderer implements CloseableBuffers {
     currFrameCount = 0
     ctx: FlameRenderContext
@@ -68,6 +75,7 @@ export class FlameRenderer implements CloseableBuffers {
                 private canvas: HTMLCanvasElement,
                 private imgCaptureContainer: HTMLDivElement | undefined,
                 private autoCaptureImage: boolean,
+                private cropRegion: CropRegion | undefined,
                 private flame: Flame) {
 
         const renderFlame = FlameMapper.mapForRendering(flame)
@@ -189,17 +197,46 @@ export class FlameRenderer implements CloseableBuffers {
             }
             else {
                 if(this.autoCaptureImage && this.imgCaptureContainer) {
-                    const imgData =  this.canvas.toDataURL("image/jpg")
-                    const imgElement: HTMLImageElement = document.createElement('img')
-                    imgElement.src = imgData;
-                    imgElement.width = 128
-                    this.imgCaptureContainer.innerHTML = ''
-                    this.imgCaptureContainer.appendChild(imgElement)
+                    if(this.cropRegion) {
+                        const gl = this.canvas.getContext("webgl")!
+                        const croppedWidth = this.cropRegion.width
+                        const croppedHeight = this.cropRegion.height
+                        const offsetX = this.cropRegion.x
+                        const offsetY = this.cropRegion.y
+                        const pixels = new Uint8Array(croppedWidth * croppedHeight * 4)
+                        gl.readPixels(offsetX, offsetY, croppedWidth, croppedHeight, gl.RGBA, gl.UNSIGNED_BYTE, pixels);
 
-                    const divElement = document.createElement('div')
-                    divElement.innerText = `Resolution: ${this.canvas.width}x${this.canvas.height}, render time: ${Math.round(elapsedTimeInSeconds*100)/100}  s`
-                    this.imgCaptureContainer.appendChild(divElement)
+                        const canvas = document.createElement('canvas')
+                        canvas.width = croppedWidth
+                        canvas.height = croppedHeight
+                        const ctx = canvas.getContext('2d')!
+                        // Copy the pixels to a 2D canvas
+                        const imageData = ctx.createImageData(croppedWidth, croppedHeight)
+                        imageData.data.set(pixels)
+                        ctx.putImageData(imageData, 0, 0);
+
+                        const imgElement: HTMLImageElement = document.createElement('img')
+                        imgElement.src = canvas.toDataURL();
+                        imgElement.width = 128
+                        this.imgCaptureContainer.innerHTML = ''
+                        this.imgCaptureContainer.appendChild(imgElement)
+                    }
+                    else {
+                        const imgData =  this.canvas.toDataURL("image/jpg")
+                        const imgElement: HTMLImageElement = document.createElement('img')
+                        imgElement.src = imgData;
+                        imgElement.width = 128
+                        this.imgCaptureContainer.innerHTML = ''
+                        this.imgCaptureContainer.appendChild(imgElement)
+
+                        const divElement = document.createElement('div')
+                        divElement.innerText = `Resolution: ${this.canvas.width}x${this.canvas.height}, render time: ${Math.round(elapsedTimeInSeconds*100)/100}  s`
+                        this.imgCaptureContainer.appendChild(divElement)
+                    }
                 }
+
+
+
                 this.onRenderFinished(this.currFrameCount, elapsedTimeInSeconds)
                 this.isFinished = true
               }
