@@ -19,7 +19,7 @@ import {VariationParam, VariationParamType, VariationShaderFunc2D, VariationType
 import {VariationShaders} from 'Frontend/flames/renderer/variations/variation-shaders';
 import {RenderVariation, RenderXForm} from 'Frontend/flames/model/render-flame';
 import {
-    FUNC_MODULO, FUNC_SGN
+    FUNC_MODULO, FUNC_ROUND, FUNC_SGN
 } from 'Frontend/flames/renderer/variations/variation-math-functions';
 import {M_PI} from 'Frontend/flames/renderer/mathlib';
 
@@ -831,6 +831,29 @@ class Panorama1Func extends VariationShaderFunc2D {
     }
 }
 
+class Panorama2Func extends VariationShaderFunc2D {
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        // author Tatyana Zabanova 2017. Implemented by DarkBeam 2017
+        return `{
+          float amount = float(${variation.amount});
+          float aux = 1.0 / (sqrt(_tx * _tx + _ty * _ty) + 1.0);
+          float x1 = _tx * aux;
+          float y1 = _ty * aux;
+          aux = sqrt(x1 * x1 + y1 * y1);
+          _vx += amount * (atan2(x1, y1)) / M_PI;
+          _vy += amount * (aux - 0.5);
+        }`;
+    }
+
+    get name(): string {
+        return 'panorama2';
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
 class ParabolaFunc extends VariationShaderFunc2D {
     PARAM_WIDTH = 'width'
     PARAM_HEIGHT = 'height'
@@ -856,6 +879,95 @@ class ParabolaFunc extends VariationShaderFunc2D {
 
     get name(): string {
         return 'parabola';
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
+class ParallelFunc extends VariationShaderFunc2D {
+    PARAM_X1WIDTH = 'x1width'
+    PARAM_X1TILESIZE = 'x1tilesize'
+    PARAM_X1MOD1 = 'x1mod1'
+    PARAM_X1MOD2 = 'x1mod2'
+    PARAM_X1HEIGHT = 'x1height'
+    PARAM_X1MOVE = 'x1move'
+    PARAM_X2WIDTH = 'x2width'
+    PARAM_X2TILESIZE = 'x2tilesize'
+    PARAM_X2MOD1 = 'x2mod1'
+    PARAM_X2MOD2 = 'x2mod2'
+    PARAM_X2HEIGHT = 'x2height'
+    PARAM_X2MOVE = 'x2move'
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_X1WIDTH, type: VariationParamType.VP_NUMBER, initialValue: 5.0 },
+            { name: this.PARAM_X1TILESIZE, type: VariationParamType.VP_NUMBER, initialValue: 0.5 },
+            { name: this.PARAM_X1MOD1, type: VariationParamType.VP_NUMBER, initialValue: 0.3 },
+            { name: this.PARAM_X1MOD1, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
+            { name: this.PARAM_X1HEIGHT, type: VariationParamType.VP_NUMBER, initialValue: 0.5 },
+            { name: this.PARAM_X1MOVE, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
+            { name: this.PARAM_X2WIDTH, type: VariationParamType.VP_NUMBER, initialValue: 5.0 },
+            { name: this.PARAM_X2TILESIZE, type: VariationParamType.VP_NUMBER, initialValue: 0.5 },
+            { name: this.PARAM_X2MOD1, type: VariationParamType.VP_NUMBER, initialValue: 0.3 },
+            { name: this.PARAM_X2MOD2, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
+            { name: this.PARAM_X2HEIGHT, type: VariationParamType.VP_NUMBER, initialValue: 0.5 },
+            { name: this.PARAM_X2MOVE, type: VariationParamType.VP_NUMBER, initialValue: 1.0 }]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        /* parallel by Brad Stefanov */
+        return `{
+          float amount = float(${variation.amount});
+          float x1width = float(${variation.params.get(this.PARAM_X1WIDTH)});
+          float x1tilesize = float(${variation.params.get(this.PARAM_X1TILESIZE)});
+          float x1mod1 = float(${variation.params.get(this.PARAM_X1MOD1)});
+          float x1mod2 = float(${variation.params.get(this.PARAM_X1MOD2)});       
+          float x1height = float(${variation.params.get(this.PARAM_X1HEIGHT)});
+          float x1move = float(${variation.params.get(this.PARAM_X1MOVE)});
+          float x2width = float(${variation.params.get(this.PARAM_X2WIDTH)});
+          float x2tilesize = float(${variation.params.get(this.PARAM_X2TILESIZE)});
+          float x2mod1 = float(${variation.params.get(this.PARAM_X2MOD1)});
+          float x2mod2 = float(${variation.params.get(this.PARAM_X2MOD2)});
+          float x2height = float(${variation.params.get(this.PARAM_X2HEIGHT)});
+          float x2move = float(${variation.params.get(this.PARAM_X2MOVE)});
+          float _xr1 = x1mod2 * x1mod1;
+          float _xr2 = x2mod2 * x2mod1; 
+          if (rand8(tex, rngState) < 0.5) {
+            float x1 = -x1width;
+            if (rand8(tex, rngState) < 0.5)
+              x1 = x1width; 
+            _vx += x1tilesize * (_tx + round(x1 * log(rand8(tex, rngState))));
+            
+            if (_ty > x1mod1) {
+             _vy += x1height * (-x1mod1 + mod(_ty + x1mod1, _xr1)) + amount * x1move;
+            } else if (_ty < -x1mod1) {
+              _vy += x1height * (x1mod1 - mod(x1mod1 - _ty, _xr1)) + amount * x1move;
+            } else {
+              _vy += x1height * _ty + amount * x1move;
+            }
+          } else {    
+            float x2 = -x2width;
+            if (rand8(tex, rngState) < 0.5)
+              x2 = x2width;
+            _vx += x2tilesize * (_tx + round(x2 * log(rand8(tex, rngState)))); 
+            if (_ty > x2mod1) {
+              _vy += x2height * (-x2mod1 + mod(_ty + x2mod1, _xr2)) - amount * x2move;
+            } else if (_ty < -x2mod1) {
+              _vy += x2height * (x2mod1 - mod(x2mod1 - _ty, _xr2)) - amount * x2move;
+            } else {       
+              _vy += x2height * _ty - amount * x2move;
+            }
+          }    
+        }`;
+    }
+
+    get name(): string {
+        return 'parallel';
+    }
+
+    get funcDependencies(): string[] {
+        return [FUNC_ROUND];
     }
 
     get variationTypes(): VariationTypes[] {
@@ -1370,7 +1482,9 @@ export function registerVars_2D_PartK() {
     VariationShaders.registerVar(new OscilloscopeFunc())
     VariationShaders.registerVar(new Oscilloscope2Func())
     VariationShaders.registerVar(new Panorama1Func())
+    VariationShaders.registerVar(new Panorama2Func())
     VariationShaders.registerVar(new ParabolaFunc())
+    VariationShaders.registerVar(new ParallelFunc())
     VariationShaders.registerVar(new PDJFunc())
     VariationShaders.registerVar(new PerspectiveFunc())
     VariationShaders.registerVar(new PetalFunc())

@@ -737,6 +737,47 @@ class SpirographFunc extends VariationShaderFunc2D {
     }
 }
 
+class SpligonFunc extends VariationShaderFunc2D {
+    PARAM_SIDES = 'sides'
+    PARAM_R = 'r'
+    PARAM_I = 'i'
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_SIDES, type: VariationParamType.VP_NUMBER, initialValue: 3.0 },
+            { name: this.PARAM_R, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
+            { name: this.PARAM_I, type: VariationParamType.VP_NUMBER, initialValue: 1.0 }
+        ]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        // spligon by DarkBeam
+        return `{
+          float amount = float(${variation.amount});
+          float sides = float(${variation.params.get(this.PARAM_SIDES)});
+          float r = float(${variation.params.get(this.PARAM_R)});
+          float i = float(${variation.params.get(this.PARAM_I)});
+          float _theta = atan2(_ty, _tx);
+          float th = sides * (1.0 / (M_PI + M_PI));
+          float thi = 1.0 / th;
+          float j = 3.14159265358979323846 * i / (-2.0 * sides) ;  
+          float dx,dy;
+          float t = thi * floor(_theta * th ) + j;
+          dx = sin(t); 
+          dy = cos(t);
+          _vx += amount * (_tx + dy * r);
+          _vy += amount * (_ty + dx * r);
+        }`;
+    }
+
+    get name(): string {
+        return 'spligon';
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
 class SplitFunc extends VariationShaderFunc2D {
     PARAM_XSIZE = 'xsize'
     PARAM_YSIZE = 'ysize'
@@ -2187,6 +2228,7 @@ export function registerVars_2D_PartS() {
     VariationShaders.registerVar(new SpiralFunc())
     VariationShaders.registerVar(new SpiralwingFunc())
     VariationShaders.registerVar(new SpirographFunc())
+    VariationShaders.registerVar(new SpligonFunc())
     VariationShaders.registerVar(new SplitFunc())
     VariationShaders.registerVar(new SplitsFunc())
     VariationShaders.registerVar(new SquareFunc())
