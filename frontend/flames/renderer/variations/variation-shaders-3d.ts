@@ -1157,6 +1157,38 @@ class Square3DFunc extends VariationShaderFunc3D {
     }
 }
 
+class SVFFunc extends VariationShaderFunc3D {
+    PARAM_N = 'n'
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_N, type: VariationParamType.VP_NUMBER, initialValue: 2.0 }]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        /* svn (single value function) by gossamer light */
+        return `{
+            float amount = float(${variation.amount});
+            float n = float(${variation.params.get(this.PARAM_N)});
+            float cn = cos(n * _ty);
+            float sx = sin(_tx);
+            float cx = cos(_tx);
+            float sy = sin(_ty);
+            float cy = cos(_ty);
+            _vx += amount * (cy * (cn * cx));
+            _vy += amount * (cy * (cn * sx));
+            _vz += amount * (sy * cn);
+        }`;
+    }
+
+    get name(): string {
+        return 'svf';
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_3D];
+    }
+}
+
 class Tangent3DFunc extends VariationShaderFunc3D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         return `{
@@ -1285,6 +1317,7 @@ export function registerVars_3D() {
     VariationShaders.registerVar(new Spherical3DWFFunc())
     VariationShaders.registerVar(new Splits3DFunc())
     VariationShaders.registerVar(new Square3DFunc())
+    VariationShaders.registerVar(new SVFFunc())
     VariationShaders.registerVar(new Tangent3DFunc())
     VariationShaders.registerVar(new TaurusFunc())
     VariationShaders.registerVar(new Tile_LogFunc())

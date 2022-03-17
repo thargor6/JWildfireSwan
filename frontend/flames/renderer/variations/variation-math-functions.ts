@@ -20,6 +20,7 @@ export const FUNC_SAFEDIV = 'safediv'
 export const FUNC_HYPOT = 'hypot'
 export const FUNC_J1 = 'j1'
 export const FUNC_JACOBI_ELLIPTIC = 'jacobi_elliptic'
+export const FUNC_LERP = 'lerp'
 export const FUNC_LOG10 = 'log10'
 export const FUNC_MODULO = 'modulo'
 export const FUNC_RINT = 'rint'
@@ -509,6 +510,12 @@ export class VariationMathFunctions {
               return sn;
             }
         `)
+
+      this.registerFunction(FUNC_LERP,
+        `
+         float lerp(float a, float b, float p) {
+           return a + p * (b - a);
+         }`)
 
       this.registerFunction(FUNC_LOG10,
             // COSH Function (Hyperbolic Cosine) http://machinesdontcare.wordpress.com/2008/03/10/glsl-cosh-sinh-tanh/

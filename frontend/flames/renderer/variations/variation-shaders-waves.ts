@@ -26,7 +26,7 @@ import {VariationShaders} from 'Frontend/flames/renderer/variations/variation-sh
 import {RenderVariation, RenderXForm} from 'Frontend/flames/model/render-flame';
 import {M_PI} from 'Frontend/flames/renderer/mathlib';
 import {
-    FUNC_J1, FUNC_JACOBI_ELLIPTIC,
+    FUNC_J1, FUNC_JACOBI_ELLIPTIC, FUNC_LERP,
     FUNC_SAFEDIV,
     FUNC_SGN,
     FUNC_TANH, VariationMathFunctions
@@ -308,6 +308,75 @@ class Vibration2Func extends VariationShaderFunc2D {
     }
 }
 
+class RippleFunc extends VariationShaderFunc2D {
+    PARAM_FREQUENCY = 'frequency'
+    PARAM_VELOCITY = 'velocity'
+    PARAM_AMPLITUDE = 'amplitude'
+    PARAM_CENTERX = 'centerx'
+    PARAM_CENTERY = 'centery'
+    PARAM_PHASE = 'phase'
+    PARAM_SCALE = 'scale'
+    PARAM_FIXED_DIST_CALC = 'fixed_dist_calc'
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_FREQUENCY, type: VariationParamType.VP_NUMBER, initialValue:  2.0 },
+            { name: this.PARAM_VELOCITY, type: VariationParamType.VP_NUMBER, initialValue:  1.0 },
+            { name: this.PARAM_AMPLITUDE, type: VariationParamType.VP_NUMBER, initialValue: 0.5 },
+            { name: this.PARAM_CENTERX, type: VariationParamType.VP_NUMBER, initialValue: 0.0 },
+            { name: this.PARAM_CENTERY, type: VariationParamType.VP_NUMBER, initialValue: 0.0 },
+            { name: this.PARAM_PHASE, type: VariationParamType.VP_NUMBER, initialValue: 0.0 },
+            { name: this.PARAM_SCALE, type: VariationParamType.VP_NUMBER, initialValue:  1.0 },
+            { name: this.PARAM_FIXED_DIST_CALC, type: VariationParamType.VP_NUMBER, initialValue:  0 }]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        // Ripple by Xyrus02, http://xyrus02.deviantart.com/art/Ripple-Plugin-for-Apophysis-154713493
+        // align input x, y to given center and multiply with scale
+        return `{
+          float amount = float(${variation.amount});
+          float frequency = float(${variation.params.get(this.PARAM_FREQUENCY)});
+          float velocity = float(${variation.params.get(this.PARAM_VELOCITY)});
+          float amplitude = float(${variation.params.get(this.PARAM_AMPLITUDE)});
+          float centerx = float(${variation.params.get(this.PARAM_CENTERX)});
+          float centery = float(${variation.params.get(this.PARAM_CENTERY)});
+          float phase = float(${variation.params.get(this.PARAM_PHASE)});
+          float scale = float(${variation.params.get(this.PARAM_SCALE)});
+          int fixed_dist_calc = int(${variation.params.get(this.PARAM_FIXED_DIST_CALC)});
+          float _f = frequency * 5.0;
+          float a = amplitude * 0.01;
+          float _p = phase * 2.0 * M_PI - M_PI;         
+          float _s = (scale == 0.0) ? EPSILON : scale;
+          float _is = 1.0 / _s;
+          float _vxp = velocity * _p;
+          float _pxa = _p * a;
+          float _pixa = (M_PI - _p) * a;
+          float x = (_tx * _s) - centerx, y = (_ty * _s) + centery;    
+          float d = ( fixed_dist_calc != 0 )? sqrt(x * x + y * y) : sqrt(x * x * y * y);
+          if (d < EPSILON)
+            d = EPSILON;      
+          float nx = x / d, ny = y / d;
+          float wave = cos(_f * d - _vxp);
+          float d1 = wave * _pxa + d, d2 = wave * _pixa + d;   
+          float u1 = (centerx + nx * d1), v1 = (-centery + ny * d1);
+          float u2 = (centerx + nx * d2), v2 = (-centery + ny * d2);   
+          _vx = amount * (lerp(u1, u2, _p)) * _is;
+          _vy = amount * (lerp(v1, v2, _p)) * _is;
+        }`;
+    }
+
+    get name(): string {
+        return 'ripple';
+    }
+
+    get funcDependencies(): string[] {
+        return [FUNC_LERP];
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
 class RippledFunc extends VariationShaderFunc2D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         // rippled by Raykoid666, http://raykoid666.deviantart.com/art/plugin-pack-3-100510461?q=gallery%3ARaykoid666%2F11060240&qo=16
@@ -325,6 +394,54 @@ class RippledFunc extends VariationShaderFunc2D {
 
     get funcDependencies(): string[] {
         return [FUNC_TANH];
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
+class SinusGridFunc extends VariationShaderFunc2D {
+    PARAM_AMPX = 'ampx'
+    PARAM_AMPY = 'ampy'
+    PARAM_FREQX = 'freqx'
+    PARAM_FREQY = 'freqy'
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_AMPX, type: VariationParamType.VP_NUMBER, initialValue: 0.5 },
+            { name: this.PARAM_AMPY, type: VariationParamType.VP_NUMBER, initialValue: 0.6 },
+            { name: this.PARAM_FREQX, type: VariationParamType.VP_NUMBER, initialValue: 1.2 },
+            { name: this.PARAM_FREQY, type: VariationParamType.VP_NUMBER, initialValue: 1.0 }]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        /* SinusGrid, originally written by Georg K. (http://xyrus02.deviantart.com) */
+        return `{
+          float amount = float(${variation.amount});
+          float ampx = float(${variation.params.get(this.PARAM_AMPX)});
+          float ampy = float(${variation.params.get(this.PARAM_AMPY)});
+          float freqx = float(${variation.params.get(this.PARAM_FREQX)});
+          float freqy = float(${variation.params.get(this.PARAM_FREQY)});
+          float _fx = freqx * 2.0 *M_PI;
+          float _fy = freqy * 2.0 * M_PI;
+          if (_fx == 0.0) _fx = EPSILON;
+          if (_fy == 0.0) _fy = EPSILON;
+          float x = _tx, y = _ty;
+          float sx = -cos(x * _fx);
+          float sy = -cos(y * _fy);
+          float tx = lerp(_tx, sx, ampx), ty = lerp(_ty, sy, ampy), tz = _tz;
+          _vx += amount * tx;
+          _vy += amount * ty;
+          _vz += amount * tz;
+        }`;
+    }
+
+    get name(): string {
+        return 'sinusgrid';
+    }
+
+    get funcDependencies(): string[] {
+        return [FUNC_LERP];
     }
 
     get variationTypes(): VariationTypes[] {
@@ -978,7 +1095,9 @@ export function registerVars_Waves() {
     VariationShaders.registerVar(new PreWave3DWFFunc())
     VariationShaders.registerVar(new PulseFunc())
     VariationShaders.registerVar(new Vibration2Func())
+    VariationShaders.registerVar(new RippleFunc())
     VariationShaders.registerVar(new RippledFunc())
+    VariationShaders.registerVar(new SinusGridFunc())
     VariationShaders.registerVar(new WavesFunc())
     VariationShaders.registerVar(new Waves2Func())
     VariationShaders.registerVar(new Waves22Func())
