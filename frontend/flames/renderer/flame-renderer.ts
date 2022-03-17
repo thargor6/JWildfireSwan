@@ -28,18 +28,12 @@ import {Flame, GRADIENT_SIZE} from "Frontend/flames/model/flame";
 import {FlameMapper} from "Frontend/flames/model/mapper/flame-mapper";
 import {RenderColor, RenderFlame} from "Frontend/flames/model/render-flame";
 import {getTimeStamp} from "Frontend/components/utils";
+import {CropRegion} from "Frontend/flames/renderer/render-resolution";
 
 type RenderFinishedHandler = (frameCount: number, elapsedTimeInMs: number) => void
 type RenderProgressHandler = (currSampleCount: number, maxSampleCount: number, frameCount: number, elapsedTimeInMs: number) => void
 
 export type OnRenderCancelledCallback = ()=>void
-
-export interface CropRegion {
-    x: number;
-    y: number;
-    width: number;
-    height: number;
-}
 
 export class FlameRenderer implements CloseableBuffers {
     currFrameCount = 0
@@ -67,7 +61,6 @@ export class FlameRenderer implements CloseableBuffers {
 
     onRenderCancelledCallback: OnRenderCancelledCallback | undefined = undefined
     isFinished = true
-    qualityScale = 1.0
 
     constructor(private canvas_size: number,
                 private swarm_size: number,
@@ -76,6 +69,7 @@ export class FlameRenderer implements CloseableBuffers {
                 private imgCaptureContainer: HTMLDivElement | undefined,
                 private autoCaptureImage: boolean,
                 private cropRegion: CropRegion | undefined,
+                private qualityScale: number,
                 private flame: Flame) {
 
         const renderFlame = FlameMapper.mapForRendering(flame)
@@ -89,6 +83,7 @@ export class FlameRenderer implements CloseableBuffers {
         renderFlame.height = imageHeight
 
         this.maxSampleCount = imageWidth * imageHeight * flame.sampleDensity.value * 1.5 * this.qualityScale
+
         this.samplesPerFrame = swarm_size * swarm_size
         this.currSampleCount = 0
 
@@ -220,6 +215,10 @@ export class FlameRenderer implements CloseableBuffers {
                         imgElement.width = 128
                         this.imgCaptureContainer.innerHTML = ''
                         this.imgCaptureContainer.appendChild(imgElement)
+
+                        const divElement = document.createElement('div')
+                        divElement.innerText = `Cropped resolution: ${croppedWidth}x${croppedHeight}, render time: ${Math.round(elapsedTimeInSeconds*100)/100}  s`
+                        this.imgCaptureContainer.appendChild(divElement)
                     }
                     else {
                         const imgData =  this.canvas.toDataURL("image/jpg")

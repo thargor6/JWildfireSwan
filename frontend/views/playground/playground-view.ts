@@ -51,6 +51,7 @@ import '../../components/swan-error-panel'
 import '../../components/render-panel'
 import {BeforeEnterObserver, PreventAndRedirectCommands, Router, RouterLocation} from "@vaadin/router";
 import {RenderPanel} from "Frontend/components/render-panel";
+import {RenderResolutions} from "Frontend/flames/renderer/render-resolution";
 
 @customElement('playground-view')
 export class PlaygroundView extends View implements BeforeEnterObserver {
@@ -76,9 +77,11 @@ export class PlaygroundView extends View implements BeforeEnterObserver {
     }
 
     createFlameRenderer = ()=> {
-        return new FlameRenderer(this.getRenderSettingsPanel().imageSize, this.getRenderSettingsPanel().swarmSize,
-           this.getRenderSettingsPanel().displayMode, this.getRenderPanel().canvas, this.getRenderSettingsPanel().capturedImageContainer,
-          true, this.getCropRegion(), playgroundStore.flame)
+        return new FlameRenderer(this.getRenderSettingsPanel().renderSize, this.getRenderSettingsPanel().swarmSize,
+           this.getRenderSettingsPanel().displayMode, this.getRenderPanel().canvas,
+          this.getRenderSettingsPanel().capturedImageContainer, true,
+          RenderResolutions.getCropRegion(this.getRenderSettingsPanel().renderSize,
+            this.getRenderSettingsPanel().cropSize), 1.0, playgroundStore.flame)
     }
 
     selectedChanged(e: CustomEvent) {
@@ -316,8 +319,4 @@ export class PlaygroundView extends View implements BeforeEnterObserver {
         return document.querySelector('render-panel')!
     }
 
-    // TODO
-    private getCropRegion() {
-        return undefined
-    }
 }

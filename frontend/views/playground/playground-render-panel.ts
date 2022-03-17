@@ -15,7 +15,7 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 */
 
-import {html} from 'lit';
+import {html, render} from 'lit';
 import {customElement, property, state} from 'lit/decorators.js';
 
 import '@polymer/paper-slider/paper-slider'
@@ -28,6 +28,8 @@ import {HasValue} from "@hilla/form";
 import {DisplayMode} from "Frontend/flames/renderer/render-settings";
 import '@vaadin/vaadin-ordered-layout/vaadin-vertical-layout'
 import '@vaadin/vaadin-ordered-layout/vaadin-horizontal-layout'
+import {RenderResolution, RenderResolutions} from "Frontend/flames/renderer/render-resolution";
+import {ComboBoxRenderer} from "@vaadin/combo-box";
 
 interface DisplayModeItem {
   displayMode: DisplayMode;
@@ -49,14 +51,19 @@ export class PlaygroundRenderPanel extends MobxLitElement {
   onImageSizeChanged: ()=>void = ()=>{}
 
   @state()
-  imageSize = 512
+  renderSize = RenderResolutions.defaultRenderSize
 
-  imageSizes = [128, 256, 512, 1024, 2048]
+  renderSizes = RenderResolutions.renderSizes
 
   @state()
-  swarmSize = 256
+  swarmSize = RenderResolutions.defaultSwarmSize
 
-  swarmSizes = [8, 16, 32, 64, 128, 256, 512, 1024]
+  swarmSizes = RenderResolutions.swarmSizes
+
+  @state()
+  cropSize = RenderResolutions.defaultRenderResolution
+
+  cropSizes = RenderResolutions.getRenderResolutions(this.renderSize)
 
   displayModes: DisplayModeItem[] = [
       { displayMode: DisplayMode.FLAME, caption: "Flame"},
@@ -73,8 +80,11 @@ export class PlaygroundRenderPanel extends MobxLitElement {
     return html`
       <vertical-layout theme="spacing" style="${this.visible ? `display:block;`: `display:none;`}">
         <vaadin-horizontal-layout theme="spacing">
-          <vaadin-combo-box style="max-width: 10em;" label="Image size" .items="${this.imageSizes}" value="${this.imageSize}"
-                          @change="${(event: Event) => this.imageSizeChanged(event)}"></vaadin-combo-box>
+          <vaadin-combo-box style="max-width: 10em;" label="Render size" .items="${this.renderSizes}" value="${this.renderSize}"
+                            @change="${(event: Event) => this.renderSizeChanged(event)}"></vaadin-combo-box>
+          <vaadin-combo-box style="max-width: 10em;" label="Crop size" 
+              .items="${this.cropSizes!.map(cropSize => cropSize.displayName)}" value="${this.cropSize.displayName}" 
+                              @change="${(event: Event) => this.cropSizeChanged(event)}"></vaadin-combo-box>
           <vaadin-combo-box style="max-width: 10em;" label="Swarm size" .items="${this.swarmSizes}" value="${this.swarmSize}"
                           @change="${(event: Event) => this.pointsSizeChanged(event)}"></vaadin-combo-box>
           <vaadin-combo-box style="max-width: 10em;" label="Display mode"
@@ -98,9 +108,18 @@ export class PlaygroundRenderPanel extends MobxLitElement {
 `;
   }
 
-  private imageSizeChanged(event: Event) {
+  private renderSizeChanged(event: Event) {
     if ((event.target as HasValue<string>).value) {
-      this.imageSize = parseInt((event.target as HasValue<string>).value!)
+      this.renderSize = parseInt((event.target as HasValue<string>).value!)
+      this.cropSizes = RenderResolutions.getRenderResolutions(this.renderSize)
+      this.cropSize = this.cropSizes![0]
+      this.onImageSizeChanged()
+    }
+  }
+
+  private cropSizeChanged(event: Event) {
+    if ((event.target as HasValue<string>).value) {
+      this.cropSize = RenderResolutions.findRenderResolutionByName(this.renderSize, (event.target as HasValue<string>).value!)
       this.onImageSizeChanged()
     }
   }
@@ -123,4 +142,14 @@ export class PlaygroundRenderPanel extends MobxLitElement {
     playgroundStore.notifyInit(this.tagName)
   }
 
+  private cropSizesRenderer: ComboBoxRenderer<RenderResolutions> = (root, _, { item: resolution }) => {
+    render(
+      html`
+        <div>Jo
+         
+        </div>
+      `,
+      root
+    );
+  };
 }
