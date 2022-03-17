@@ -522,11 +522,11 @@ class MobiusFunc extends VariationShaderFunc2D {
         return [{ name: this.PARAM_RE_A, type: VariationParamType.VP_NUMBER, initialValue: 0.10 },
             { name: this.PARAM_RE_B, type: VariationParamType.VP_NUMBER, initialValue: 0.20 },
             { name: this.PARAM_RE_C, type: VariationParamType.VP_NUMBER, initialValue: -0.15 },
-            { name: this.PARAM_RE_C, type: VariationParamType.VP_NUMBER, initialValue: 0.21 },
+            { name: this.PARAM_RE_D, type: VariationParamType.VP_NUMBER, initialValue: 0.21 },
             { name: this.PARAM_IM_A, type: VariationParamType.VP_NUMBER, initialValue: 0.20 },
             { name: this.PARAM_IM_B, type: VariationParamType.VP_NUMBER, initialValue: -0.12 },
             { name: this.PARAM_IM_C, type: VariationParamType.VP_NUMBER, initialValue: -0.15 },
-            { name: this.PARAM_IM_C, type: VariationParamType.VP_NUMBER, initialValue: 0.10 }
+            { name: this.PARAM_IM_D, type: VariationParamType.VP_NUMBER, initialValue: 0.10 }
         ]
     }
 
@@ -1012,8 +1012,6 @@ class PDJFunc extends VariationShaderFunc2D {
 class PerspectiveFunc extends VariationShaderFunc2D {
     PARAM_ANGLE = 'angle'
     PARAM_DIST = 'dist'
-    PARAM_C = 'c'
-    PARAM_D = 'd'
 
     get params(): VariationParam[] {
         return [{ name: this.PARAM_ANGLE, type: VariationParamType.VP_NUMBER, initialValue: 0.62 },
@@ -1223,6 +1221,104 @@ class PowerFunc extends VariationShaderFunc2D {
     }
 }
 
+class ProjectiveFunc extends VariationShaderFunc2D {
+    PARAM_A = 'A'
+    PARAM_B = 'B'
+    PARAM_C = 'C'
+    PARAM_A1 = 'A1'
+    PARAM_B1 = 'B1'
+    PARAM_C1 = 'C1'
+    PARAM_A2 = 'A2'
+    PARAM_B2 = 'B2'
+    PARAM_C2 = 'C2'
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_A, type: VariationParamType.VP_NUMBER, initialValue: 0.0 },
+            { name: this.PARAM_B, type: VariationParamType.VP_NUMBER, initialValue: -0.4 },
+            { name: this.PARAM_C, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
+            { name: this.PARAM_A1, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
+            { name: this.PARAM_B1, type: VariationParamType.VP_NUMBER, initialValue: 0.1 },
+            { name: this.PARAM_C1, type: VariationParamType.VP_NUMBER, initialValue: 0.0 },
+            { name: this.PARAM_A2, type: VariationParamType.VP_NUMBER, initialValue: 0.0 },
+            { name: this.PARAM_B2, type: VariationParamType.VP_NUMBER, initialValue: 1.1 },
+            { name: this.PARAM_C2, type: VariationParamType.VP_NUMBER, initialValue: 1.0 }
+        ]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        // Projective by eralex61
+        // https://www.deviantart.com/eralex61/art/Projective-transform-295252418
+        return `{
+          float amount = float(${variation.amount});
+          float A = float(${variation.params.get(this.PARAM_A)});
+          float B = float(${variation.params.get(this.PARAM_B)});
+          float C = float(${variation.params.get(this.PARAM_C)});
+          float A1 = float(${variation.params.get(this.PARAM_A1)});
+          float B1 = float(${variation.params.get(this.PARAM_B1)});
+          float C1 = float(${variation.params.get(this.PARAM_C1)});
+          float A2 = float(${variation.params.get(this.PARAM_A2)});
+          float B2 = float(${variation.params.get(this.PARAM_B2)});
+          float C2 = float(${variation.params.get(this.PARAM_C2)});
+          float U = A * _tx + B * _ty + C;
+          _vx += amount * (A1 * _tx + B1 * _ty + C1) / U;
+          _vy += amount * (A2 * _tx + B2 * _ty + C2) / U;
+        }`;
+    }
+
+    get name(): string {
+        return 'projective';
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
+class PTransformFunc extends VariationShaderFunc2D {
+    PARAM_ROTATE = 'rotate'
+    PARAM_POWER = 'power'
+    PARAM_MOVE = 'move'
+    PARAM_SPLIT = 'split'
+    PARAM_USE_LOG = 'use_log'
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_ROTATE, type: VariationParamType.VP_NUMBER, initialValue: 0.3 },
+            { name: this.PARAM_POWER, type: VariationParamType.VP_NUMBER, initialValue: 2 },
+            { name: this.PARAM_MOVE, type: VariationParamType.VP_NUMBER, initialValue: 0.4 },
+            { name: this.PARAM_SPLIT, type: VariationParamType.VP_NUMBER, initialValue: 0.0 },
+            { name: this.PARAM_USE_LOG, type: VariationParamType.VP_NUMBER, initialValue: 1 }]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        return `{
+          float amount = float(${variation.amount});
+          float rotate = float(${variation.params.get(this.PARAM_ROTATE)});
+          int power = int(${variation.params.get(this.PARAM_POWER)});
+          float move = float(${variation.params.get(this.PARAM_MOVE)});
+          float split = float(${variation.params.get(this.PARAM_SPLIT)});
+          int use_log = int(${variation.params.get(this.PARAM_USE_LOG)});
+          float rho = (use_log != 0) ? log(_r) / float(power) + move : _r / float(power) + move;
+          float _theta = atan2(_ty, _tx);
+          float theta = _theta + rotate;
+          if (_tx >= 0.0)
+            rho += split;
+          else
+            rho -= split;   
+          if (use_log != 0) rho = exp(rho);  
+          _vx += amount * rho * cos(theta);
+          _vy += amount * rho * sin(theta);
+        }`;
+    }
+
+    get name(): string {
+        return 'pTransform';
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
 class PyramidFunc extends VariationShaderFunc2D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         // pyramid by Zueuk (transcribed into jwf by Dark)
@@ -1243,6 +1339,79 @@ class PyramidFunc extends VariationShaderFunc2D {
 
     get name(): string {
         return 'pyramid';
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
+class Rational3Func extends VariationShaderFunc2D {
+    PARAM_A = 'a'
+    PARAM_B = 'b'
+    PARAM_C = 'c'
+    PARAM_D = 'd'
+    PARAM_E = 'e'
+    PARAM_F = 'f'
+    PARAM_G = 'g'
+    PARAM_H = 'h'
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_A, type: VariationParamType.VP_NUMBER, initialValue: 0.5 },
+            { name: this.PARAM_B, type: VariationParamType.VP_NUMBER, initialValue: 0.0 },
+            { name: this.PARAM_C, type: VariationParamType.VP_NUMBER, initialValue: 0.25 },
+            { name: this.PARAM_D, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
+            { name: this.PARAM_E, type: VariationParamType.VP_NUMBER, initialValue: 0.0 },
+            { name: this.PARAM_F, type: VariationParamType.VP_NUMBER, initialValue: 0.9 },
+            { name: this.PARAM_G, type: VariationParamType.VP_NUMBER, initialValue: 0.0 },
+            { name: this.PARAM_H, type: VariationParamType.VP_NUMBER, initialValue: 1.0 }
+        ]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        /**
+         * Ported to JWildfire variation by CozyG
+         * from Apophysis7x rational3 plugin by xyrus02 at:
+         * http://sourceforge.net/p/apophysis7x/svn/HEAD/tree/trunk/Plugin/rational3.c
+         * <p>
+         * Explanation from rational3 plugin:
+         * Rational3 allows you to customize a rational function
+         * involving the complex variable z. It can be represented
+         * as the function...
+         * az^3 + bz^2 + cz + d
+         * ----------------------  division line
+         * ez^3 + fz^2 + gz + h
+         */
+        return `{
+          float amount = float(${variation.amount});
+          float a = float(${variation.params.get(this.PARAM_A)});
+          float b = float(${variation.params.get(this.PARAM_B)});
+          float c = float(${variation.params.get(this.PARAM_C)});
+          float d = float(${variation.params.get(this.PARAM_D)});
+          float e = float(${variation.params.get(this.PARAM_E)});
+          float f = float(${variation.params.get(this.PARAM_F)});
+          float g = float(${variation.params.get(this.PARAM_G)});
+          float h = float(${variation.params.get(this.PARAM_H)});
+          float xsqr = _tx * _tx;
+          float ysqr = _ty * _ty;
+          float xcb = xsqr * _tx;
+          float ycb = ysqr * _ty;
+          float zt3 = xcb - 3.0 * _tx * ysqr;
+          float zt2 = xsqr - ysqr;
+          float zb3 = 3.0 * xsqr * _ty - ycb;
+          float zb2 = 2.0 * _tx * _ty;
+          float tr = (a * zt3) + (b * zt2) + (c * _tx) + d;
+          float ti = (a * zb3) + (b * zb2) + (c * _ty);
+          float br = (e * zt3) + (f * zt2) + (g * _tx) + h;
+          float bi = (e * zb3) + (f * zb2) + (g * _ty);     
+          float r3den = 1.0 / (br * br + bi * bi);
+          _vx += amount * (tr * br + ti * bi) * r3den;
+          _vy += amount * (ti * br - tr * bi) * r3den;
+        }`;
+    }
+
+    get name(): string {
+        return 'rational3';
     }
 
     get variationTypes(): VariationTypes[] {
@@ -1494,7 +1663,10 @@ export function registerVars_2D_PartK() {
     VariationShaders.registerVar(new PopcornFunc())
     VariationShaders.registerVar(new Popcorn2Func())
     VariationShaders.registerVar(new PowerFunc())
+    VariationShaders.registerVar(new ProjectiveFunc())
+    VariationShaders.registerVar(new PTransformFunc())
     VariationShaders.registerVar(new PyramidFunc())
+    VariationShaders.registerVar(new Rational3Func())
     VariationShaders.registerVar(new RaysFunc())
     VariationShaders.registerVar(new Rays1Func())
     VariationShaders.registerVar(new Rays2Func())
