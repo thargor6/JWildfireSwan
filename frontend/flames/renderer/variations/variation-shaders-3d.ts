@@ -868,6 +868,43 @@ class LinearT3DFunc extends VariationShaderFunc3D {
     }
 }
 
+class Loonie_3DFunc extends VariationShaderFunc3D {
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        /* loonie_3D by Larry Berlin, http://aporev.deviantart.com/art/New-3D-Plugins-136484533?q=gallery%3Aaporev%2F8229210&qo=22 */
+        return `{
+          float amount = float(${variation.amount});
+          float sqrvvar = amount * amount;
+          float efTez = _tz;
+          float kikr;
+          kikr = atan2(_ty, _tx);
+          if (efTez == 0.0) {
+            efTez = kikr;
+          }
+          float r2 = sqr(_tx) + sqr(_ty) + sqr(efTez); 
+          if (r2 >= EPSILON) {
+            if (r2 < sqrvvar) {
+              float r = amount * sqrt(sqrvvar / r2 - 1.0);
+              _vx += r * _tx;
+              _vy += r * _ty;
+              _vz += r * efTez * 0.5;
+            } else {
+              _vx += amount * _tx;
+              _vy += amount * _ty;
+              _vz += amount * efTez * 0.5;
+            }       
+          }
+        }`;
+    }
+
+    get name(): string {
+        return 'loonie_3D';
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_3D];
+    }
+}
+
 class PDJ3DFunc extends VariationShaderFunc3D {
     PARAM_A = 'a'
     PARAM_B = 'b'
@@ -969,6 +1006,62 @@ class Poincare3DFunc extends VariationShaderFunc3D {
     }
 }
 
+class Popcorn2_3DFunc extends VariationShaderFunc3D {
+    PARAM_X = 'x'
+    PARAM_Y = 'y'
+    PARAM_Z = 'z'
+    PARAM_C = 'c'
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_X, type: VariationParamType.VP_NUMBER, initialValue: 0.1 },
+            { name: this.PARAM_Y, type: VariationParamType.VP_NUMBER, initialValue: 0.1},
+            { name: this.PARAM_Z, type: VariationParamType.VP_NUMBER, initialValue: 0.1},
+            { name: this.PARAM_C, type: VariationParamType.VP_NUMBER, initialValue: 3.0}
+        ]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        /* popcorn2_3D by Larry Berlin, http://aporev.deviantart.com/art/3D-Plugins-Collection-One-138514007?q=gallery%3Aaporev%2F8229210&qo=15 */
+        return `{
+            float amount = float(${variation.amount});
+            float x = float(${variation.params.get(this.PARAM_X)});
+            float y = float(${variation.params.get(this.PARAM_Y)});
+            float z = float(${variation.params.get(this.PARAM_Z)});
+            float c = float(${variation.params.get(this.PARAM_C)});
+            float inZ, otherZ, tempTZ, tempPZ, tmpVV;
+            inZ = _tz;
+            otherZ = _vz;
+        
+            if (abs(amount) <= 1.0) {
+              tmpVV = abs(amount) * amount; 
+            } else {
+              tmpVV = amount;
+            }
+            if (otherZ == 0.0) {
+              tempPZ = tmpVV * sin(tan(c)) * atan2(_ty, _tx);
+            } else {
+              tempPZ = _vz;
+            }
+            if (inZ == 0.0) {
+              tempTZ = tmpVV * sin(tan(c)) * atan2(_ty, _tx);
+            } else {
+              tempTZ = _tz;
+            }
+            _vx += amount * 0.5 * (_tx + x * sin(tan(c * _ty)));
+            _vy += amount * 0.5 * (_ty + y * sin(tan(c * _tx)));
+            _vz = tempPZ + tmpVV * (z * sin(tan(c)) * tempTZ);
+        }`;
+    }
+
+    get name(): string {
+        return 'popcorn2_3D';
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_3D];
+    }
+}
+
 class Pie3DFunc extends VariationShaderFunc3D {
     PARAM_SLICES = 'slices'
     PARAM_ROTATION = 'rotation'
@@ -999,6 +1092,37 @@ class Pie3DFunc extends VariationShaderFunc3D {
 
     get name(): string {
         return 'pie3D';
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_3D];
+    }
+}
+
+class Scry3DFunc extends VariationShaderFunc3D {
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        /* scry_3D by Larry Berlin, http://aporev.deviantart.com/art/New-3D-Plugins-136484533?q=gallery%3Aaporev%2F8229210&qo=22 */
+        return `{
+          float amount = float(${variation.amount});
+          float inv = 1.0 / (amount + EPSILON);
+          float t = sqr(_tx) + sqr(_ty) + sqr(_tz);
+          float r = 1.0 / (sqrt(t) * (t + inv));
+          float Footzee, kikr;
+          kikr = atan2(_ty, _tx);
+          Footzee = _tz;
+          _vx += _tx * r;
+          _vy += _ty * r;
+          if (Footzee != 0.0) {
+            _vz += Footzee * r;
+          } else {
+            Footzee = kikr;
+            _vz += Footzee * r;
+          }
+        }`;
+    }
+
+    get name(): string {
+        return 'scry_3D';
     }
 
     get variationTypes(): VariationTypes[] {
@@ -1309,9 +1433,12 @@ export function registerVars_3D() {
     VariationShaders.registerVar(new Julia3DZFunc())
     VariationShaders.registerVar(new Linear3DFunc())
     VariationShaders.registerVar(new LinearT3DFunc())
+    VariationShaders.registerVar(new Loonie_3DFunc())
     VariationShaders.registerVar(new PDJ3DFunc())
     VariationShaders.registerVar(new Poincare3DFunc())
+    VariationShaders.registerVar(new Popcorn2_3DFunc())
     VariationShaders.registerVar(new Pie3DFunc())
+    VariationShaders.registerVar(new Scry3DFunc())
     VariationShaders.registerVar(new Sinusoidal3DFunc())
     VariationShaders.registerVar(new Spherical3DFunc())
     VariationShaders.registerVar(new Spherical3DWFFunc())
