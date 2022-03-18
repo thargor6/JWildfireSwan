@@ -22,8 +22,14 @@ export class FlameRendererDisplay {
     constructor(public ctx: FlameRenderContext, public settings: FlameRenderSettings) {}
 
     public displayFlame() {
-        const gl = this.ctx.gl;
-        const canvas_size = this.settings.canvas_size;
+        const gl = this.ctx.gl
+        const canvas_size = this.settings.canvas_size
+        const cropRegion = this.settings.cropRegion
+        if(cropRegion) {
+            gl.enable(gl.SCISSOR_TEST);
+            gl.scissor(cropRegion.x,cropRegion.y,cropRegion.width, cropRegion.height);
+            gl.viewport(cropRegion.x,cropRegion.y,cropRegion.width, cropRegion.height);
+        }
         gl.disable(gl.BLEND);
         gl.viewport(0, 0, canvas_size, canvas_size);
         gl.useProgram(this.ctx.shaders.prog_show);
@@ -36,6 +42,7 @@ export class FlameRendererDisplay {
         gl.bindBuffer(gl.ARRAY_BUFFER, this.ctx.buffers.quadVertexPositionBuffer);
         gl.vertexAttribPointer(this.ctx.shaders.prog_comp!.vertexPositionAttribute, this.ctx.buffers.quadVertexPositionBuffer!.itemSize, gl.FLOAT, false, 0, 0);
         gl.drawArrays(gl.TRIANGLE_STRIP, 0, this.ctx.buffers.quadVertexPositionBuffer!.numItems);
+        gl.disable(gl.SCISSOR_TEST);
     }
 
     public displayPositionIteration() {

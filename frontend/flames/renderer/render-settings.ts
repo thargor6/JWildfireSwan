@@ -15,6 +15,8 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 */
 
+import {CropRegion} from "Frontend/flames/renderer/render-resolution";
+
 export enum DisplayMode {
     FLAME= 1,
     POSITION_ITER = 2,
@@ -27,6 +29,7 @@ export class FlameRenderSettings {
         public brightness: number,
         public canvas_size: number,
         public swarm_size: number,
+        public cropRegion: CropRegion | undefined,
         public frames: number,
         public time: number,
         public displayMode: DisplayMode) {}

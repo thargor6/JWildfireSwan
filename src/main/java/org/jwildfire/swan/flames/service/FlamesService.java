@@ -155,3 +155,5 @@ public class FlamesService {
     }
   }
 }
+
+// Flame renderFlame = AnimationService.evalMotionCurves(flame.makeCopy(), flame.getFrame());

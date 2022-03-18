@@ -97,7 +97,8 @@ export class FlameRenderer implements CloseableBuffers {
         this.textures = new Textures(renderFlame, gl, this.swarm_size, this.canvas_size)
         this.framebuffers = new Framebuffers(gl, this.textures)
         this.ctx = new FlameRenderContext(gl, this.shaders, this.buffers, this.textures, this.framebuffers)
-        this.settings = new FlameRenderSettings(1.2, this.canvas_size, this.swarm_size, 1, 0.0, displayMode)
+        this.settings = new FlameRenderSettings(1.2, this.canvas_size, this.swarm_size, cropRegion,
+          1, 0.0, displayMode)
         this.display = new FlameRendererDisplay(this.ctx, this.settings)
         this.iterator = new FlameIterator(this.ctx, this.settings)
 
@@ -198,24 +199,34 @@ export class FlameRenderer implements CloseableBuffers {
                         const croppedHeight = this.cropRegion.height
                         const offsetX = this.cropRegion.x
                         const offsetY = this.cropRegion.y
-                        const pixels = new Uint8Array(croppedWidth * croppedHeight * 4)
+                        let pixels = new Uint8Array(croppedWidth * croppedHeight * 4)
                         gl.readPixels(offsetX, offsetY, croppedWidth, croppedHeight, gl.RGBA, gl.UNSIGNED_BYTE, pixels);
 
                         const canvas = document.createElement('canvas')
                         canvas.width = croppedWidth
                         canvas.height = croppedHeight
                         const ctx = canvas.getContext('2d')!
-                        // Copy the pixels to a 2D canvas
+                        // copy the pixels to a 2D canvas
                         const imageData = ctx.createImageData(croppedWidth, croppedHeight)
+                        // flip the data at the y-axis
+                        // https://stackoverflow.com/questions/67811153/webgl-readpixels-returns-flipped-y-axis
+                        {
+                            const length = croppedWidth * croppedHeight * 4
+                            const row = croppedWidth * 4
+                            const end = (croppedHeight - 1) * row
+                            const flipped = new Uint8Array(length);
+                            for (let i = 0; i < length; i += row) {
+                                flipped.set(pixels.subarray(i, i + row), end - i)
+                            }
+                            pixels = flipped
+                        }
                         imageData.data.set(pixels)
                         ctx.putImageData(imageData, 0, 0);
-
                         const imgElement: HTMLImageElement = document.createElement('img')
                         imgElement.src = canvas.toDataURL();
                         imgElement.width = 128
                         this.imgCaptureContainer.innerHTML = ''
                         this.imgCaptureContainer.appendChild(imgElement)
-
                         const divElement = document.createElement('div')
                         divElement.innerText = `Cropped resolution: ${croppedWidth}x${croppedHeight}, render time: ${Math.round(elapsedTimeInSeconds*100)/100}  s`
                         this.imgCaptureContainer.appendChild(divElement)
