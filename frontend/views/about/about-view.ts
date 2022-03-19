@@ -42,18 +42,32 @@ export class AboutView extends View {
   example_1 = "example003"
 
   @state()
-  example_2 = "example029"
+  example_2 = "example002"
+
+  @state()
+  example_3 = "example068"
+
+  @state()
+  example_4 = "example035"
+
+  @state()
+  example_5 = "example092"
+
 
   @state()
   selectedTab = 0
 
   render() {
     return html`
-
+      <div style="margin: 1em;">
       <div
           class="bg-contrast flex items-center justify-center mb-m overflow-hidden rounded-m w-full"
-          style="min-height: 160px;">
-        <img alt=${this.example_1} class="w-full" loading="lazy" src="./images/${this.example_1}.jpg" />
+          style="max-height: 160px;">
+        <img alt=${this.example_1} loading="lazy" src="./images/${this.example_1}.jpg" />
+        <img alt=${this.example_2} loading="lazy" src="./images/${this.example_2}.jpg" />
+        <img alt=${this.example_3} loading="lazy" src="./images/${this.example_3}.jpg" />
+        <img alt=${this.example_4} loading="lazy" src="./images/${this.example_4}.jpg" />
+        <img alt=${this.example_5} loading="lazy" src="./images/${this.example_5}.jpg" />
       </div>
 
       <vaadin-tabs @selected-changed="${this.selectedChanged}">
@@ -70,11 +84,12 @@ export class AboutView extends View {
               <span>Session information</span>
           </vaadin-tab>
       </vaadin-tabs>
-      <div style="display: flex; flex-direction: column; width: 100%;">
+      <div style="display: flex; flex-direction: column; width: 100%; margin: 1em;">
         <about-app-info-panel .visible=${this.selectedTab === 0}></about-app-info-panel>
         <about-variations-panel .visible=${this.selectedTab === 1}></about-variations-panel>
         <about-session-info-panel .visible=${this.selectedTab === 2}></about-session-info-panel>
       </div>
+      <div style="margin: 1em;">    
       
       <h1>Welcome to JWildfire Swan: awesome fractal flames, GPU accelerated!</h1>
       The basic idea is to use standard Web-technologies to create an application which 
@@ -90,19 +105,22 @@ export class AboutView extends View {
       <h2>Getting started</h2>
       <h3>Gallery live examples</h3>
    
-      There is no editor yet, but you can experiment with the examples from the gallery.
+      You can experiment with the examples from the gallery.
       By clicking at an image you can load the fractal in the playground, which then starts
       to render it.
 
       <h3>Basic editing</h3>
-      
-      You can modify a fractal flame by editing the xml-description of the parameters directly in
+      At the edit-tab of the playground you can edit various settings of your flames interactively.
+          
+      You can also modify a fractal flame by editing the xml-description of the parameters directly in
       the browser. 
       Many parameters should be self-explanatory and are the same you know from JWildfire. 
       
       You can also use JWildfire to edit the parameters. But please note, that JWildfire Swan 
       only supports a small fearure set of JWildfire, so many changes you do in JWildfire
-      will have no effect
+      will have no effect.
+          
+          
       
       <h3>Create random gradients</h3>
       You can modify the colors of the fractal by generating random gradients in the playground.
@@ -116,12 +134,8 @@ export class AboutView extends View {
       But, most generators work not very well yet, because of limited features and variations.
       This behaviour will improve over time.
 
-      <div
-              class="bg-contrast flex items-center justify-center mb-m overflow-hidden rounded-m w-full"
-              style="min-height: 160px;">
-          <img alt=${this.example_2} class="w-full" loading="lazy" src="./images/${this.example_2}.jpg" />
       </div>
-      
+      </div>
 
     `;
   }
