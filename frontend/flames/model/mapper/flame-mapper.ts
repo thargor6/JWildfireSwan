@@ -21,10 +21,16 @@ import {default as SourceLayer} from '../../../generated/org/jwildfire/swan/flam
 import {default as SourceFlame} from '../../../generated/org/jwildfire/swan/flames/model/flame/Flame'
 import {default as SourceVariation} from '../../../generated/org/jwildfire/swan/flames/model/flame/Variation'
 import {Flame, Layer, XForm, Variation, Color} from "../flame";
-import {Parameters} from "Frontend/flames/model/parameters";
+import {FlameParameter, Parameters, RenderParameter, RenderParameters} from "Frontend/flames/model/parameters";
 import {RenderColor, RenderLayer, RenderFlame, RenderVariation, RenderXForm} from "Frontend/flames/model/render-flame";
 import IParam from "Frontend/generated/org/jwildfire/swan/flames/model/flame/IParam";
 import DParam from "Frontend/generated/org/jwildfire/swan/flames/model/flame/DParam";
+
+class ParamMapper {
+    static mapForRendering(source: FlameParameter): RenderParameter {
+       return RenderParameters.floatParam(source.value)
+    }
+}
 
 class VariationMapper {
     static mapFromBackend(source: SourceVariation): Variation {
@@ -157,19 +163,19 @@ class XFormMapper {
         res.color = source.color.value
         res.colorSymmetry = source.colorSymmetry.value
 
-        res.c00 = source.c00.value
-        res.c01 = source.c01.value
-        res.c10 = source.c10.value
-        res.c11 = source.c11.value
-        res.c20 = source.c20.value
-        res.c21 = source.c21.value
+        res.c00 = ParamMapper.mapForRendering(source.c00)
+        res.c01 = ParamMapper.mapForRendering(source.c01)
+        res.c10 = ParamMapper.mapForRendering(source.c10)
+        res.c11 = ParamMapper.mapForRendering(source.c11)
+        res.c20 = ParamMapper.mapForRendering(source.c20)
+        res.c21 = ParamMapper.mapForRendering(source.c21)
 
-        res.p00 = source.p00.value
-        res.p01 = source.p01.value
-        res.p10 = source.p10.value
-        res.p11 = source.p11.value
-        res.p20 = source.p20.value
-        res.p21 = source.p21.value
+        res.p00 = ParamMapper.mapForRendering(source.p00)
+        res.p01 = ParamMapper.mapForRendering(source.p01)
+        res.p10 = ParamMapper.mapForRendering(source.p10)
+        res.p11 = ParamMapper.mapForRendering(source.p11)
+        res.p20 = ParamMapper.mapForRendering(source.p20)
+        res.p21 = ParamMapper.mapForRendering(source.p21)
 
         source.variations.map(svar => {
             res.variations.push(VariationMapper.mapForRendering(svar))
@@ -189,11 +195,10 @@ export class LayerMapper {
         const res = new Layer()
         res.weight = Parameters.dNumber(source.weight)
         res.density = Parameters.dNumber(source.density)
-
         res.gradient = []
+        const whitelevel = 265.0
         source.gradient.forEach(color => res.gradient.push(
-          // TODO whitelevel
-          new Color(color.r / 200.0, color.g / 200.0, color.b / 200.0)))
+          new Color(color.r / whitelevel, color.g / whitelevel, color.b / whitelevel)))
 
         source.xforms.map(sxf => {
             res.xforms.push(XFormMapper.mapFromBackend(sxf))

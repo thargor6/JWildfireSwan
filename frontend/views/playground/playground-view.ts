@@ -192,19 +192,14 @@ export class PlaygroundView extends View implements BeforeEnterObserver {
         FlamesEndpoint.getExampleFlame(this.getFlamePanel().flameName).then(flame => {
             playgroundStore.refreshing = true
             try {
-                console.log('M1')
                 playgroundStore.flame = FlameMapper.mapFromBackend(flame)
-                console.log('M2')
                 GalleryEndpoint.getExampleFlameXml(this.getFlamePanel().flameName).then(
                   flameXml => this.getFlamePanel().flameXml = flameXml
                 )
-                console.log('M3')
                 this.getRenderPanel().rerenderFlame()
-                console.log('M4')
                 playgroundStore.calculating = false
             }
             finally {
-                console.log('M5')
                 playgroundStore.refreshing = false
             }
         }).catch(err=> {

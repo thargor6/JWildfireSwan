@@ -85,6 +85,10 @@ export class DepFunctionsPartShaderGenerator {
       float sqrt_safe(in float x) {
         return (x < EPSILON) ? 0.0 : sqrt(x);
       }
+      
+      float lerp(float a, float b, float p) {
+        return a + p * (b - a);
+      }
     `
   }
 

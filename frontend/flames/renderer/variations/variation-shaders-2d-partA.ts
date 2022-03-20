@@ -1813,10 +1813,10 @@ class FanFunc extends VariationShaderFunc2D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         return `{
             float amount = float(${variation.amount});
-            float dx = M_PI * float(${xform.c20}) * float(${xform.c20}) + EPSILON;
+            float dx = M_PI * ${xform.c20.toWebGl()} * ${xform.c20.toWebGl()} + EPSILON;
             float dx2 = dx / 2.0;
             float a;
-            if ((_phi + float(${xform.c21}) - (floor((_phi + float(${xform.c21})) / dx)) * dx) > dx2)
+            if ((_phi + ${xform.c21.toWebGl()} - (floor((_phi + ${xform.c21.toWebGl()}) / dx)) * dx) > dx2)
               a = _phi - dx2;
             else
               a = _phi + dx2;

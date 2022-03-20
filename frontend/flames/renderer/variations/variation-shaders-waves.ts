@@ -26,7 +26,7 @@ import {VariationShaders} from 'Frontend/flames/renderer/variations/variation-sh
 import {RenderVariation, RenderXForm} from 'Frontend/flames/model/render-flame';
 import {M_PI} from 'Frontend/flames/renderer/mathlib';
 import {
-    FUNC_J1, FUNC_JACOBI_ELLIPTIC, FUNC_LERP,
+    FUNC_J1, FUNC_JACOBI_ELLIPTIC,
     FUNC_SAFEDIV,
     FUNC_SGN,
     FUNC_TANH, VariationMathFunctions
@@ -368,10 +368,6 @@ class RippleFunc extends VariationShaderFunc2D {
         return 'ripple';
     }
 
-    get funcDependencies(): string[] {
-        return [FUNC_LERP];
-    }
-
     get variationTypes(): VariationTypes[] {
         return [VariationTypes.VARTYPE_2D];
     }
@@ -440,10 +436,6 @@ class SinusGridFunc extends VariationShaderFunc2D {
         return 'sinusgrid';
     }
 
-    get funcDependencies(): string[] {
-        return [FUNC_LERP];
-    }
-
     get variationTypes(): VariationTypes[] {
         return [VariationTypes.VARTYPE_2D];
     }
@@ -453,8 +445,8 @@ class WavesFunc extends VariationShaderFunc2D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         return `{
           float amount = float(${variation.amount});
-          _vx += amount * (_tx + float(${xform.c10}) * sin(_ty / (float(${xform.c20}) * float(${xform.c20}) + EPSILON)));
-          _vy += amount * (_ty + float(${xform.c11}) * sin(_tx / (float(${xform.c21}) * float(${xform.c21}) + EPSILON)));
+          _vx += amount * (_tx + ${xform.c10.toWebGl()} * sin(_ty / (${xform.c20.toWebGl()} * ${xform.c20.toWebGl()} + EPSILON)));
+          _vy += amount * (_ty + ${xform.c11.toWebGl()} * sin(_tx / (${xform.c21.toWebGl()} * ${xform.c21.toWebGl()} + EPSILON)));
         }`;
     }
 

@@ -1153,8 +1153,8 @@ class PopcornFunc extends VariationShaderFunc2D {
           float dy = tan(3.0 * _tx);
           if (dy != dy)
             dy = 0.0;
-          float nx = _tx + float(${xform.c20}) * sin(dx);
-          float ny = _ty + float(${xform.c21}) * sin(dy);
+          float nx = _tx + ${xform.c20.toWebGl()} * sin(dx);
+          float ny = _ty + ${xform.c21.toWebGl()} * sin(dy);
           _vx += amount * nx;
           _vy += amount * ny;
         }`;
@@ -1544,7 +1544,7 @@ class RingsFunc extends VariationShaderFunc2D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         return `{
           float amount = float(${variation.amount});
-          float dx = float(${xform.c20 * xform.c21}) + EPSILON;
+          float dx = ${xform.c20.toWebGl()} * ${xform.c21.toWebGl()} + EPSILON;
           float r = _r;
           r = r + dx - float(int((r + dx) / (2.0 * dx))) * 2.0 * dx - dx + r * (1.0 - dx);
           _vx += r * _ty / _r;

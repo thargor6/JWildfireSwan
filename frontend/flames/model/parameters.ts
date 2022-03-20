@@ -15,6 +15,8 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 */
 
+import {EPSILON} from "Frontend/flames/renderer/mathlib";
+
 export interface FlameParameter {
     type: "number" | "dynamic";
     value: number;
@@ -34,5 +36,65 @@ export class Parameters {
     }
     public static iNumber(value: number) {
         return new NumberParameter(value);
+    }
+}
+
+
+export interface RenderParameter {
+    toWebGl(): string
+    equals(refValue: number): boolean
+}
+
+export class FloatValueRenderParameter implements RenderParameter {
+    constructor(private _value: number) {
+    }
+
+    toWebGl(): string {
+        return `float(${this._value})`
+    }
+
+    equals(refValue: number): boolean {
+        return Math.abs(this._value -  refValue) < EPSILON
+    }
+
+}
+
+export class IntValueRenderParameter implements RenderParameter {
+    constructor(private _value: number) {
+    }
+
+    toWebGl(): string {
+        return `int(${Math.round(this._value)})`
+    }
+
+    equals(refValue: number): boolean {
+        return Math.abs(Math.round(this._value) - Math.round(refValue)) < EPSILON
+    }
+}
+
+export class LerpValueRenderParameter implements RenderParameter {
+    constructor(private _a: number, private _b: number) {
+    }
+
+    toWebGl(): string {
+        return `lerp(float(${this._a}), float(${this._b}), time * 0.1)`
+    }
+
+    equals(refValue: number): boolean {
+        return false
+    }
+}
+
+export class RenderParameters {
+    public static floatParam(value: number): RenderParameter {
+        return new FloatValueRenderParameter(value)
+    }
+
+    public static intParam(value: number): RenderParameter {
+        return new IntValueRenderParameter(value)
+    }
+
+    public static lerpParam(a: number, b: number): RenderParameter {
+        return new LerpValueRenderParameter(a, b)
     }
 }

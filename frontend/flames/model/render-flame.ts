@@ -15,6 +15,8 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 */
 
+import {RenderParameters} from "Frontend/flames/model/parameters";
+
 export class RenderColor {
   constructor(public r: number, public g: number, public b: number) {
   }
@@ -30,19 +32,19 @@ export class RenderVariation {
 }
 
 export class RenderXForm {
-    public c00 = 1.0
-    public c01 = 0.0
-    public c10 = 0.0
-    public c11 = 1.0
-    public c20 = 0.0
-    public c21 = 0.0
+    public c00 = RenderParameters.floatParam(1.0)
+    public c01 = RenderParameters.floatParam(0.0)
+    public c10 = RenderParameters.floatParam(0.0)
+    public c11 = RenderParameters.floatParam(1.0)
+    public c20 = RenderParameters.floatParam(0.0)
+    public c21 = RenderParameters.floatParam(0.0)
 
-    public p00 = 1.0
-    public p01 = 0.0
-    public p10 = 0.0
-    public p11 = 1.0
-    public p20 = 0.0
-    public p21 = 0.0
+    public p00 = RenderParameters.floatParam(1.0)
+    public p01 = RenderParameters.floatParam(0.0)
+    public p10 = RenderParameters.floatParam(0.0)
+    public p11 = RenderParameters.floatParam(1.0)
+    public p20 = RenderParameters.floatParam(0.0)
+    public p21 = RenderParameters.floatParam(0.0)
 
     public color = 0.0
     public colorSymmetry = 0.0
