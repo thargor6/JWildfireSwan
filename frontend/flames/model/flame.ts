@@ -27,7 +27,7 @@ export class Color {
 
 export class Variation {
     public name = 'linear';
-    public amount: FlameParameter = Parameters.dNumber(1.0);
+    public amount: FlameParameter = Parameters.floatParam(1.0);
     private _params = new Map<string, FlameParameter>();
     public get params() {
         return this._params
@@ -35,23 +35,23 @@ export class Variation {
 }
 
 export class XForm {
-    public c00: FlameParameter = Parameters.dNumber(1.0);
-    public c01: FlameParameter = Parameters.dNumber(0.0);
-    public c10: FlameParameter = Parameters.dNumber(0.0);
-    public c11: FlameParameter = Parameters.dNumber(1.0);
-    public c20: FlameParameter = Parameters.dNumber(0.0);
-    public c21: FlameParameter = Parameters.dNumber(0.0);
+    public c00: FlameParameter = Parameters.floatParam(1.0);
+    public c01: FlameParameter = Parameters.floatParam(0.0);
+    public c10: FlameParameter = Parameters.floatParam(0.0);
+    public c11: FlameParameter = Parameters.floatParam(1.0);
+    public c20: FlameParameter = Parameters.floatParam(0.0);
+    public c21: FlameParameter = Parameters.floatParam(0.0);
 
-    public p00: FlameParameter = Parameters.dNumber(1.0);
-    public p01: FlameParameter = Parameters.dNumber(0.0);
-    public p10: FlameParameter = Parameters.dNumber(0.0);
-    public p11: FlameParameter = Parameters.dNumber(1.0);
-    public p20: FlameParameter = Parameters.dNumber(0.0);
-    public p21: FlameParameter = Parameters.dNumber(0.0);
+    public p00: FlameParameter = Parameters.floatParam(1.0);
+    public p01: FlameParameter = Parameters.floatParam(0.0);
+    public p10: FlameParameter = Parameters.floatParam(0.0);
+    public p11: FlameParameter = Parameters.floatParam(1.0);
+    public p20: FlameParameter = Parameters.floatParam(0.0);
+    public p21: FlameParameter = Parameters.floatParam(0.0);
 
-    public color: FlameParameter = Parameters.dNumber(0.5);
-    public colorSymmetry: FlameParameter = Parameters.dNumber(0.0);
-    public weight: FlameParameter = Parameters.dNumber(1.0);
+    public color: FlameParameter = Parameters.floatParam(0.5);
+    public colorSymmetry: FlameParameter = Parameters.floatParam(0.0);
+    public weight: FlameParameter = Parameters.floatParam(1.0);
 
     private _modifiedWeights: number[] = [];
     public get modifiedWeights() {
@@ -65,8 +65,8 @@ export class XForm {
 }
 
 export class Layer {
-    public weight = Parameters.dNumber(1.0)
-    public density = Parameters.dNumber(1.0)
+    public weight = Parameters.floatParam(1.0)
+    public density = Parameters.floatParam(1.0)
 
     public gradient = new Array<Color>(GRADIENT_SIZE);
 
@@ -83,43 +83,43 @@ export class Layer {
 
 export class Flame {
     public uid: string = '';
-    public brightness = Parameters.dNumber(1.0)
-    public whiteLevel = Parameters.dNumber(200.0)
-    public contrast = Parameters.dNumber(1.0)
-    public sampleDensity = Parameters.dNumber(100.0)
-    public lowDensityBrightness = Parameters.dNumber(0.2)
-    public balanceRed = Parameters.dNumber(0.0)
-    public balanceGreen = Parameters.dNumber(0.0)
-    public balanceBlue = Parameters.dNumber(0.0)
-    public gamma = Parameters.dNumber(3.0)
-    public gammaThreshold = Parameters.dNumber(0.05)
-    public foregroundOpacity = Parameters.dNumber(0.0)
-    public vibrancy = Parameters.dNumber(1.0)
-    public saturation = Parameters.dNumber(1.0)
-    public pixelsPerUnit = Parameters.dNumber(100.0)
-    public width = Parameters.dNumber(512)
-    public height = Parameters.dNumber(512)
-    public camZoom = Parameters.dNumber(1.0)
-    public centreX = Parameters.dNumber(0.0)
-    public centreY = Parameters.dNumber(0.0)
-    public camYaw = Parameters.dNumber(0.0)
-    public camPitch = Parameters.dNumber(0.0)
-    public camRoll = Parameters.dNumber(0.0)
-    public camBank = Parameters.dNumber(0.0)
-    public camDOF = Parameters.dNumber(0.0)
-    public camDOFArea = Parameters.dNumber(0.0)
-    public camPerspective = Parameters.dNumber(0.0)
-    public diminishZ = Parameters.dNumber(0.0)
-    public camPosX = Parameters.dNumber(0.0)
-    public camPosY = Parameters.dNumber(0.0)
-    public camPosZ = Parameters.dNumber(0.0)
+    public brightness = Parameters.floatParam(1.0)
+    public whiteLevel = Parameters.floatParam(200.0)
+    public contrast = Parameters.floatParam(1.0)
+    public sampleDensity = Parameters.floatParam(100.0)
+    public lowDensityBrightness = Parameters.floatParam(0.2)
+    public balanceRed = Parameters.floatParam(0.0)
+    public balanceGreen = Parameters.floatParam(0.0)
+    public balanceBlue = Parameters.floatParam(0.0)
+    public gamma = Parameters.floatParam(3.0)
+    public gammaThreshold = Parameters.floatParam(0.05)
+    public foregroundOpacity = Parameters.floatParam(0.0)
+    public vibrancy = Parameters.floatParam(1.0)
+    public saturation = Parameters.floatParam(1.0)
+    public pixelsPerUnit = Parameters.floatParam(100.0)
+    public width = Parameters.floatParam(512)
+    public height = Parameters.floatParam(512)
+    public camZoom = Parameters.floatParam(1.0)
+    public centreX = Parameters.floatParam(0.0)
+    public centreY = Parameters.floatParam(0.0)
+    public camYaw = Parameters.floatParam(0.0)
+    public camPitch = Parameters.floatParam(0.0)
+    public camRoll = Parameters.floatParam(0.0)
+    public camBank = Parameters.floatParam(0.0)
+    public camDOF = Parameters.floatParam(0.0)
+    public camDOFArea = Parameters.floatParam(0.0)
+    public camPerspective = Parameters.floatParam(0.0)
+    public diminishZ = Parameters.floatParam(0.0)
+    public camPosX = Parameters.floatParam(0.0)
+    public camPosY = Parameters.floatParam(0.0)
+    public camPosZ = Parameters.floatParam(0.0)
     public newCamDOF = false
-    public dimZDistance = Parameters.dNumber(0.0)
-    public camZ = Parameters.dNumber(0.0)
-    public focusX = Parameters.dNumber(0.0)
-    public focusY = Parameters.dNumber(0.0)
-    public focusZ = Parameters.dNumber(0.0)
-    public camDOFExponent = Parameters.dNumber(0.0)
+    public dimZDistance = Parameters.floatParam(0.0)
+    public camZ = Parameters.floatParam(0.0)
+    public focusX = Parameters.floatParam(0.0)
+    public focusY = Parameters.floatParam(0.0)
+    public focusZ = Parameters.floatParam(0.0)
+    public camDOFExponent = Parameters.floatParam(0.0)
 
     private _layers = new Array<Layer>();
 

@@ -28,7 +28,12 @@ import DParam from "Frontend/generated/org/jwildfire/swan/flames/model/flame/DPa
 
 class ParamMapper {
     static mapForRendering(source: FlameParameter): RenderParameter {
-       return RenderParameters.floatParam(source.value)
+        if(source.datatype==='int') {
+            return RenderParameters.intParam(source.value)
+        }
+        else {
+            return RenderParameters.floatParam(source.value)
+        }
     }
 }
 
@@ -36,12 +41,12 @@ class VariationMapper {
     static mapFromBackend(source: SourceVariation): Variation {
         const res = new Variation()
         res.name = source.name
-        res.amount = Parameters.dNumber(source.amount)
+        res.amount = Parameters.floatParam(source.amount)
         source.dParams.map(sd => {
-          res.params.set(sd.name, Parameters.dNumber(sd.value))
+          res.params.set(sd.name, Parameters.floatParam(sd.value))
         })
         source.iParams.map(id => {
-            res.params.set(id.name, Parameters.iNumber(id.value))
+            res.params.set(id.name, Parameters.intParam(id.value))
         })
         return res;
     }
@@ -65,7 +70,7 @@ class VariationMapper {
     static mapForRendering(source: Variation): RenderVariation {
         const res = new RenderVariation()
         res.name = source.name
-        res.amount = source.amount.value
+        res.amount = ParamMapper.mapForRendering(source.amount)
         source.params.forEach((value, key) => {
             res.params.set(key, value.value)
         })
@@ -77,7 +82,7 @@ class XFormMapper {
     static mapFromBackend(source: SourceXForm): XForm {
         const res = new XForm()
 
-        res.weight = Parameters.dNumber(source.weight);
+        res.weight = Parameters.floatParam(source.weight);
         for(let i=0;i<source.modifiedWeights.length;i++) {
             if(i>=res.modifiedWeights.length) {
                 res.modifiedWeights.push(source.modifiedWeights[i])
@@ -87,22 +92,22 @@ class XFormMapper {
             }
         }
 
-        res.color = Parameters.dNumber(source.color)
-        res.colorSymmetry = Parameters.dNumber(source.colorSymmetry)
+        res.color = Parameters.floatParam(source.color)
+        res.colorSymmetry = Parameters.floatParam(source.colorSymmetry)
 
-        res.c00 = Parameters.dNumber(source.c00)
-        res.c01 = Parameters.dNumber(source.c01)
-        res.c10 = Parameters.dNumber(source.c10)
-        res.c11 = Parameters.dNumber(source.c11)
-        res.c20 = Parameters.dNumber(source.c20)
-        res.c21 = Parameters.dNumber(source.c21)
+        res.c00 = Parameters.floatParam(source.c00)
+        res.c01 = Parameters.floatParam(source.c01)
+        res.c10 = Parameters.floatParam(source.c10)
+        res.c11 = Parameters.floatParam(source.c11)
+        res.c20 = Parameters.floatParam(source.c20)
+        res.c21 = Parameters.floatParam(source.c21)
 
-        res.p00 = Parameters.dNumber(source.p00)
-        res.p01 = Parameters.dNumber(source.p01)
-        res.p10 = Parameters.dNumber(source.p10)
-        res.p11 = Parameters.dNumber(source.p11)
-        res.p20 = Parameters.dNumber(source.p20)
-        res.p21 = Parameters.dNumber(source.p21)
+        res.p00 = Parameters.floatParam(source.p00)
+        res.p01 = Parameters.floatParam(source.p01)
+        res.p10 = Parameters.floatParam(source.p10)
+        res.p11 = Parameters.floatParam(source.p11)
+        res.p20 = Parameters.floatParam(source.p20)
+        res.p21 = Parameters.floatParam(source.p21)
 
         source.variations.map(svar => {
             res.variations.push(VariationMapper.mapFromBackend(svar))
@@ -193,8 +198,8 @@ class ColorMapper {
 export class LayerMapper {
     public static mapFromBackend(source: SourceLayer): Layer {
         const res = new Layer()
-        res.weight = Parameters.dNumber(source.weight)
-        res.density = Parameters.dNumber(source.density)
+        res.weight = Parameters.floatParam(source.weight)
+        res.density = Parameters.floatParam(source.density)
         res.gradient = []
         const whitelevel = 265.0
         source.gradient.forEach(color => res.gradient.push(
@@ -255,43 +260,43 @@ export class FlameMapper {
     public static mapFromBackend(source: SourceFlame): Flame {
         const res = new Flame()
         res.uid = source.uid
-        res.brightness = Parameters.dNumber(source.brightness)
-        res.whiteLevel = Parameters.dNumber(source.whiteLevel)
-        res.contrast = Parameters.dNumber(source.contrast)
-        res.sampleDensity = Parameters.dNumber(source.sampleDensity)
-        res.lowDensityBrightness = Parameters.dNumber(source.lowDensityBrightness)
-        res.balanceRed = Parameters.dNumber(source.balanceRed)
-        res.balanceGreen = Parameters.dNumber(source.balanceGreen)
-        res.balanceBlue = Parameters.dNumber(source.balanceBlue)
-        res.gamma = Parameters.dNumber(source.gamma)
-        res.gammaThreshold = Parameters.dNumber(source.gammaThreshold)
-        res.foregroundOpacity = Parameters.dNumber(source.foregroundOpacity)
-        res.vibrancy = Parameters.dNumber(source.vibrancy)
-        res.saturation = Parameters.dNumber(source.saturation)
-        res.pixelsPerUnit = Parameters.dNumber(source.pixelsPerUnit)
-        res.width = Parameters.dNumber(source.width)
-        res.height = Parameters.dNumber(source.height)
-        res.camZoom = Parameters.dNumber(source.camZoom)
-        res.centreX = Parameters.dNumber(source.centreX)
-        res.centreY = Parameters.dNumber(source.centreY)
-        res.camYaw = Parameters.dNumber(source.camYaw)
-        res.camPitch = Parameters.dNumber(source.camPitch)
-        res.camRoll = Parameters.dNumber(source.camRoll)
-        res.camBank = Parameters.dNumber(source.camBank)
-        res.camDOF = Parameters.dNumber(source.camDOF)
-        res.camDOFArea = Parameters.dNumber(source.camDOFArea)
-        res.camPerspective = Parameters.dNumber(source.camPerspective)
-        res.diminishZ = Parameters.dNumber(source.diminishZ)
-        res.camPosX = Parameters.dNumber(source.camPosX)
-        res.camPosY = Parameters.dNumber(source.camPosY)
-        res.camPosZ = Parameters.dNumber(source.camPosZ)
+        res.brightness = Parameters.floatParam(source.brightness)
+        res.whiteLevel = Parameters.floatParam(source.whiteLevel)
+        res.contrast = Parameters.floatParam(source.contrast)
+        res.sampleDensity = Parameters.floatParam(source.sampleDensity)
+        res.lowDensityBrightness = Parameters.floatParam(source.lowDensityBrightness)
+        res.balanceRed = Parameters.floatParam(source.balanceRed)
+        res.balanceGreen = Parameters.floatParam(source.balanceGreen)
+        res.balanceBlue = Parameters.floatParam(source.balanceBlue)
+        res.gamma = Parameters.floatParam(source.gamma)
+        res.gammaThreshold = Parameters.floatParam(source.gammaThreshold)
+        res.foregroundOpacity = Parameters.floatParam(source.foregroundOpacity)
+        res.vibrancy = Parameters.floatParam(source.vibrancy)
+        res.saturation = Parameters.floatParam(source.saturation)
+        res.pixelsPerUnit = Parameters.floatParam(source.pixelsPerUnit)
+        res.width = Parameters.floatParam(source.width)
+        res.height = Parameters.floatParam(source.height)
+        res.camZoom = Parameters.floatParam(source.camZoom)
+        res.centreX = Parameters.floatParam(source.centreX)
+        res.centreY = Parameters.floatParam(source.centreY)
+        res.camYaw = Parameters.floatParam(source.camYaw)
+        res.camPitch = Parameters.floatParam(source.camPitch)
+        res.camRoll = Parameters.floatParam(source.camRoll)
+        res.camBank = Parameters.floatParam(source.camBank)
+        res.camDOF = Parameters.floatParam(source.camDOF)
+        res.camDOFArea = Parameters.floatParam(source.camDOFArea)
+        res.camPerspective = Parameters.floatParam(source.camPerspective)
+        res.diminishZ = Parameters.floatParam(source.diminishZ)
+        res.camPosX = Parameters.floatParam(source.camPosX)
+        res.camPosY = Parameters.floatParam(source.camPosY)
+        res.camPosZ = Parameters.floatParam(source.camPosZ)
         res.newCamDOF = source.newCamDOF
-        res.dimZDistance = Parameters.dNumber(source.dimZDistance)
-        res.camZ = Parameters.dNumber(source.camZ)
-        res.focusX = Parameters.dNumber(source.focusX)
-        res.focusY = Parameters.dNumber(source.focusY)
-        res.focusZ = Parameters.dNumber(source.focusZ)
-        res.camDOFExponent = Parameters.dNumber(source.camDOFExponent)
+        res.dimZDistance = Parameters.floatParam(source.dimZDistance)
+        res.camZ = Parameters.floatParam(source.camZ)
+        res.focusX = Parameters.floatParam(source.focusX)
+        res.focusY = Parameters.floatParam(source.focusY)
+        res.focusZ = Parameters.floatParam(source.focusZ)
+        res.camDOFExponent = Parameters.floatParam(source.camDOFExponent)
 
         source.layers.map(layer => {
             res.layers.push(LayerMapper.mapFromBackend(layer))

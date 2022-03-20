@@ -26,7 +26,7 @@ import {RenderVariation, RenderXForm} from 'Frontend/flames/model/render-flame';
 class BlurFunc extends VariationShaderFunc2D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         return `{
-          float amount = float(${variation.amount});
+          float amount = ${variation.amount.toWebGl()};
           float r = rand8(tex, rngState) * (M_PI + M_PI);
           float sina = sin(r);
           float cosa = cos(r);
@@ -59,7 +59,7 @@ class BlurZoomFunc extends VariationShaderFunc2D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         /* blur_zoom from Apo7X15C */
         return `{
-          float amount = float(${variation.amount});
+          float amount = ${variation.amount.toWebGl()};
           float length = float(${variation.params.get(this.PARAM_LENGTH)});
           float x = float(${variation.params.get(this.PARAM_X)});
           float y = float(${variation.params.get(this.PARAM_Y)});
@@ -97,7 +97,7 @@ class ExBlurFunc extends VariationShaderFunc2D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         /* Zephyrtronium ExBlur Apophysis Plugin (11-07-2010), Java translation by DarkBeam, 2014 */
         return `{
-          float amount = float(${variation.amount});
+          float amount = ${variation.amount.toWebGl()};
           float dist = float(${variation.params.get(this.PARAM_DIST)});
           float r = float(${variation.params.get(this.PARAM_R)});
           float x_origin = float(${variation.params.get(this.PARAM_X_ORIGIN)});
@@ -160,7 +160,7 @@ class FarBlurFunc extends VariationShaderFunc2D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         /* farblur by zephyrtronium, http://zephyrtronium.deviantart.com/art/Farblur-Apophysis-Plugin-170718419?q=gallery%3Afractal-resources%2F24660058&qo=10 */
         return `{
-          float amount = float(${variation.amount});
+          float amount = ${variation.amount.toWebGl()};
           float x = float(${variation.params.get(this.PARAM_X)});
           float y = float(${variation.params.get(this.PARAM_Y)});
           float z = float(${variation.params.get(this.PARAM_Z)});
@@ -195,7 +195,7 @@ class FarBlurFunc extends VariationShaderFunc2D {
 class NoiseFunc extends VariationShaderFunc2D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         return `{
-          float amount = float(${variation.amount});
+          float amount = ${variation.amount.toWebGl()};
           float r = rand8(tex, rngState) * 2.0 * M_PI;
           float sinr = sin(r);
           float cosr = cos(r);
@@ -217,7 +217,7 @@ class NoiseFunc extends VariationShaderFunc2D {
 class PreBlurFunc extends VariationShaderFunc2D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         return `{
-          float amount = float(${variation.amount});
+          float amount = ${variation.amount.toWebGl()};
           float r = rand8(tex, rngState) * 2.0 * M_PI;
           float sina = sin(r);
           float cosa = cos(r);
@@ -250,7 +250,7 @@ class RadialBlurFunc extends VariationShaderFunc2D {
 
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         return `{
-          float amount = float(${variation.amount});    
+          float amount = ${variation.amount.toWebGl()};    
           float rndG = rand8(tex, rngState)+rand8(tex, rngState)+rand8(tex, rngState)+rand8(tex, rngState)-2.0;
           float angle = float(${variation.params.get(this.PARAM_ANGLE)});
           float a = angle * M_PI * 0.5;

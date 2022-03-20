@@ -31,10 +31,10 @@ import {LIB_COMPLEX} from 'Frontend/flames/renderer/variations/variation-math-fu
  */
 class AcosechFunc extends VariationShaderFunc2D {
     //acosech by Whittaker Courtney,
-    //based on the hyperbolic variations by Tatyana Zabanova and DarkBeam's implementation of them.
+    //based on the float amount = ${variation.amount.toWebGl()}; variations by Tatyana Zabanova and DarkBeam's implementation of them.
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         return `{
-              float amount = float(${variation.amount});
+              float amount = ${variation.amount.toWebGl()};
               Complex z;
               Complex_Init(z, _tx, _ty);
               Complex_AcosecH(z);
@@ -65,10 +65,10 @@ class AcosechFunc extends VariationShaderFunc2D {
 
 class AcoshFunc extends VariationShaderFunc2D {
     //acosh by Whittaker Courtney,
-    //based on the hyperbolic variations by Tatyana Zabanova and DarkBeam's implementation of them.
+    //based on the float amount = ${variation.amount.toWebGl()}; variations by Tatyana Zabanova and DarkBeam's implementation of them.
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         return `{
-              float amount = float(${variation.amount});
+              float amount = ${variation.amount.toWebGl()};
               Complex z;
               Complex_Init(z, _tx, _ty);
               Complex_AcosH(z);
@@ -99,10 +99,10 @@ class AcoshFunc extends VariationShaderFunc2D {
 
 class AcothFunc extends VariationShaderFunc2D {
     //acoth by Whittaker Courtney,
-    //based on the hyperbolic variations by Tatyana Zabanova and DarkBeam's implementation of them.
+    //based on the float amount = ${variation.amount.toWebGl()}; variations by Tatyana Zabanova and DarkBeam's implementation of them.
      getCode(xform: RenderXForm, variation: RenderVariation): string {
         return `{
-              float amount = float(${variation.amount});
+              float amount = ${variation.amount.toWebGl()};
               Complex z;
               Complex_Init(z, _tx, _ty);
               Complex_AcotH(z);
@@ -130,7 +130,7 @@ class Arcsech2Func extends VariationShaderFunc2D {
     // author Tatyana Zabanova 2017. Implemented by DarkBeam 2018
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         return `{
-              float amount = float(${variation.amount});
+              float amount = ${variation.amount.toWebGl()};
               Complex z;
               Complex_Init(z, _tx, _ty);
               Complex_Recip(z);
@@ -174,7 +174,7 @@ class ArcsinhFunc extends VariationShaderFunc2D {
     // author Tatyana Zabanova 2017. Implemented by DarkBeam 2018
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         return `{
-              float amount = float(${variation.amount});
+              float amount = ${variation.amount.toWebGl()};
               Complex z;
               Complex_Init(z, _tx, _ty);
               Complex_AsinH(z);
@@ -201,7 +201,7 @@ class ArctanhFunc extends VariationShaderFunc2D {
     // author Tatyana Zabanova 2017. Implemented by DarkBeam 2018
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         return `{
-              float amount = float(${variation.amount});
+              float amount = ${variation.amount.toWebGl()};
               Complex z;
               Complex_Init(z, _tx, _ty);
               Complex z2;
@@ -271,7 +271,7 @@ class CombimirrorFunc extends VariationShaderFunc3D {
         https://www.jwfsanctuary.club/custom-variations/custom-variation-combimirror-final-release/
         */
         return `{
-          float amount = float(${variation.amount});
+          float amount = ${variation.amount.toWebGl()};
           float vmirror = float(${variation.params.get(this.PARAM_VMIRROR)});
           float vmove = float(${variation.params.get(this.PARAM_VMOVE)});
           float hmirror = float(${variation.params.get(this.PARAM_HMIRROR)});
@@ -338,7 +338,7 @@ class CSinFunc extends VariationShaderFunc2D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         // csin by 2010 Branden Brown, a.k.a. zephyrtronium
         return `{
-              float amount = float(${variation.amount});
+              float amount = ${variation.amount.toWebGl()};
               float stretch = float(${variation.params.get(this.PARAM_STRETCH)});
               Complex c;     
               Complex_Init(c,_tx * stretch ,_ty * stretch );
@@ -375,7 +375,7 @@ class JuliaOutsideFunc extends VariationShaderFunc2D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         //julia_outside by Whittaker Courtney
         return `{
-          float amount = float(${variation.amount});
+          float amount = ${variation.amount.toWebGl()};
           float re_div = float(${variation.params.get(this.PARAM_RE_DIV)});
           float im_div = float(${variation.params.get(this.PARAM_IM_DIV)});
           int mode = int(${variation.params.get(this.PARAM_MODE)});
@@ -443,7 +443,7 @@ class PlusRecipFunc extends VariationShaderFunc2D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         // author DarkBeam. Implemented by DarkBeam 2019
         return `{
-          float amount = float(${variation.amount});
+          float amount = ${variation.amount.toWebGl()};
           float ar = float(${variation.params.get(this.PARAM_AR)});
           float ai = float(${variation.params.get(this.PARAM_AI)});
           Complex z;
@@ -490,7 +490,7 @@ class Sqrt_AcosechFunc extends VariationShaderFunc2D {
     //Sqrt AcosecH by Whittaker Courtney 12-19-2018
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         return `{
-              float amount = float(${variation.amount});
+              float amount = ${variation.amount.toWebGl()};
               Complex z;
               Complex_Init(z, _tx, _ty);
               Complex_Sqrt(z);
@@ -524,7 +524,7 @@ class Sqrt_AcoshFunc extends VariationShaderFunc2D {
     //Sqrt AcosH by Whittaker Courtney 12-19-2018
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         return `{
-              float amount = float(${variation.amount});
+              float amount = ${variation.amount.toWebGl()};
               Complex z;
               Complex_Init(z, _tx, _ty);
               Complex_Sqrt(z);
@@ -558,7 +558,7 @@ class Sqrt_AcothFunc extends VariationShaderFunc2D {
     //Sqrt AcotH by Whittaker Courtney 12-19-2018
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         return `{
-              float amount = float(${variation.amount});
+              float amount = ${variation.amount.toWebGl()};
               Complex z;
               Complex_Init(z, _tx, _ty);
               Complex_Sqrt(z);
@@ -592,7 +592,7 @@ class Sqrt_AsechFunc extends VariationShaderFunc2D {
     //Sqrt AsecH by Whittaker Courtney 12-19-2018
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         return `{
-              float amount = float(${variation.amount});
+              float amount = ${variation.amount.toWebGl()};
               Complex z;
               Complex_Init(z,_tx, _ty);
               Complex_Sqrt(z);
@@ -626,7 +626,7 @@ class Sqrt_AsinhFunc extends VariationShaderFunc2D {
     //Sqrt AsinH by Whittaker Courtney 12-19-2018
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         return `{
-              float amount = float(${variation.amount});
+              float amount = ${variation.amount.toWebGl()};
               Complex z;
               Complex_Init(z,_tx, _ty);
               Complex_Sqrt(z);
@@ -660,7 +660,7 @@ class Sqrt_AtanhFunc extends VariationShaderFunc2D {
     //Sqrt AtanH by Whittaker Courtney 12-19-2018
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         return `{
-              float amount = float(${variation.amount});
+              float amount = ${variation.amount.toWebGl()};
               Complex z;
               Complex_Init(z,_tx, _ty);    
               Complex_Sqrt(z);

@@ -50,7 +50,7 @@ class InflateZ_1Func extends VariationShaderFunc3D {
     /* inflateZ_1 by Larry Berlin, http://aporev.deviantart.com/art/New-3D-Plugins-136484533?q=gallery%3Aaporev%2F8229210&qo=22 */
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         return `{
-          float amount = float(${variation.amount});
+          float amount = ${variation.amount.toWebGl()};
           float ang = atan2(_ty, _tx);
           float val1 = _ty * 2.0;
           _vz += amount * (sin(ang) - val1);
@@ -70,7 +70,7 @@ class InflateZ_2Func extends VariationShaderFunc3D {
     /* inflateZ_2 by Larry Berlin, http://aporev.deviantart.com/art/New-3D-Plugins-136484533?q=gallery%3Aaporev%2F8229210&qo=22 */
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         return `{
-          float amount = float(${variation.amount});
+          float amount = ${variation.amount.toWebGl()};
           float val1 = _ty * 2.0;
           float val2 = _tx * 2.0;
           float aval = (val1 + val2) * 0.333333;
@@ -91,7 +91,7 @@ class InflateZ_3Func extends VariationShaderFunc3D {
     /* inflateZ_3 by Larry Berlin, http://aporev.deviantart.com/art/New-3D-Plugins-136484533?q=gallery%3Aaporev%2F8229210&qo=22 */
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         return `{
-          float amount = float(${variation.amount});
+          float amount = ${variation.amount.toWebGl()};
           float ang = atan2(_ty, _tx);
           float val1 = 0.2 * (M_PI - ang) * cos(3.0 * ang + (_ty - _tx));
           _vz += amount * val1;
@@ -111,7 +111,7 @@ class InflateZ_4Func extends VariationShaderFunc3D {
     /* inflateZ_4 by Larry Berlin, http://aporev.deviantart.com/art/New-3D-Plugins-136484533?q=gallery%3Aaporev%2F8229210&qo=22 */
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         return `{
-          float amount = float(${variation.amount});
+          float amount = ${variation.amount.toWebGl()};
           float ang1 = atan2(_ty, _tx);
           float rndm = rand8(tex, rngState);
           float val1 = ((M_PI*0.5) - ang1);
@@ -135,7 +135,7 @@ class InflateZ_5Func extends VariationShaderFunc3D {
     /* inflateZ_5 by Larry Berlin, http://aporev.deviantart.com/art/New-3D-Plugins-136484533?q=gallery%3Aaporev%2F8229210&qo=22 */
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         return `{
-            float amount = float(${variation.amount});
+            float amount = ${variation.amount.toWebGl()};
             float ang1 = atan2(_ty, _tx);
             float val1 = cos((M_PI*0.5) - ang1) / 2.0;
             _vz += amount * val1;
@@ -155,7 +155,7 @@ class InflateZ_6Func extends VariationShaderFunc3D {
     /* inflateZ_6 by Larry Berlin, http://aporev.deviantart.com/art/New-3D-Plugins-136484533?q=gallery%3Aaporev%2F8229210&qo=22 */
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         return `{
-          float amount = float(${variation.amount});
+          float amount = ${variation.amount.toWebGl()};
           float ang = atan2(_ty, _tx);
           float adf = _ty - _tx;
           float kik = ang * sin(adf);
@@ -175,7 +175,7 @@ class InflateZ_6Func extends VariationShaderFunc3D {
 class ZBlurFunc extends VariationShaderFunc3D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         return `{
-           float amount = float(${variation.amount});
+           float amount = ${variation.amount.toWebGl()};
            _vz += amount * (rand8(tex, rngState) + rand8(tex, rngState) + rand8(tex, rngState) + rand8(tex, rngState) - 2.0);
         }`;
     }
@@ -193,7 +193,7 @@ class ZBlurFunc extends VariationShaderFunc3D {
 class ZConeFunc extends VariationShaderFunc3D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         return `{
-           float amount = float(${variation.amount});
+           float amount = ${variation.amount.toWebGl()};
            _vz += amount * sqrt(_tx * _tx + _ty * _ty);
         }`;
     }
@@ -210,7 +210,7 @@ class ZConeFunc extends VariationShaderFunc3D {
 class ZScaleFunc extends VariationShaderFunc3D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         return `{
-           float amount = float(${variation.amount});
+           float amount = ${variation.amount.toWebGl()};
            _vz += amount * _tz;
         }`;
     }
@@ -227,7 +227,7 @@ class ZScaleFunc extends VariationShaderFunc3D {
 class ZTranslateFunc extends VariationShaderFunc3D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         return `{
-           float amount = float(${variation.amount});
+           float amount = ${variation.amount.toWebGl()};
           _vz += amount;
         }`;
     }

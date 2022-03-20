@@ -179,7 +179,7 @@ class SynthFunc extends VariationShaderFunc2D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         /* synth by slobo777, http://slobo777.deviantart.com/art/Synth-V2-128594088 */
         return `{
-          float amount = float(${variation.amount});
+          float amount = ${variation.amount.toWebGl()};
           SynthParams params;
           params.a = float(${variation.params.get(this.PARAM_A)});
           params.mode = int(${variation.params.get(this.PARAM_MODE)});

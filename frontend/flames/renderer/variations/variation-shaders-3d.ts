@@ -61,7 +61,7 @@ class Affine3DFunc extends VariationShaderFunc3D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         // based on 'affine3D' of Flamelet
         return `{
-          float amount = float(${variation.amount});
+          float amount = ${variation.amount.toWebGl()};
           float translateX = float(${variation.params.get(this.PARAM_TRANSLATE_X)});
           float translateY = float(${variation.params.get(this.PARAM_TRANSLATE_Y)});
           float translateZ = float(${variation.params.get(this.PARAM_TRANSLATE_Z)});
@@ -113,7 +113,7 @@ class Blade3DFunc extends VariationShaderFunc3D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         /* Z+ variation Jan 07 */
         return `{
-          float amount = float(${variation.amount});
+          float amount = ${variation.amount.toWebGl()};
           float r = rand8(tex, rngState) * amount * sqrt(_tx * _tx + _ty * _ty);
           float sinr = sin(r);
           float cosr = cos(r);
@@ -145,7 +145,7 @@ class Blob3DFunc extends VariationShaderFunc3D {
 
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         return `{
-          float amount = float(${variation.amount});
+          float amount = ${variation.amount.toWebGl()};
           float low = float(${variation.params.get(this.PARAM_LOW)});
           float high = float(${variation.params.get(this.PARAM_HIGH)});
           int waves = int(${variation.params.get(this.PARAM_WAVES)});
@@ -173,7 +173,7 @@ class Blob3DFunc extends VariationShaderFunc3D {
 class Blur3DFunc extends VariationShaderFunc3D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         return `{
-          float amount = float(${variation.amount});
+          float amount = ${variation.amount.toWebGl()};
           float angle = rand8(tex, rngState) * 2.0 * M_PI;
           float sina = sin(angle);
           float cosa = cos(angle);
@@ -202,7 +202,7 @@ class Blur3DFunc extends VariationShaderFunc3D {
 class BubbleFunc extends VariationShaderFunc3D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         return `{
-          float amount = float(${variation.amount});
+          float amount = ${variation.amount.toWebGl()};
           float r = ((_tx * _tx + _ty * _ty) / 4.0 + 1.0);
           float t = amount / r;
           _vx += t * _tx;
@@ -234,7 +234,7 @@ class Bubble2Func extends VariationShaderFunc3D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         /* bubble2 from FracFx, http://fracfx.deviantart.com/art/FracFx-Plugin-Pack-171806681 */
         return `{
-          float amount = float(${variation.amount});
+          float amount = ${variation.amount.toWebGl()};
           float x = float(${variation.params.get(this.PARAM_X)});
           float y = float(${variation.params.get(this.PARAM_Y)});
           float z = float(${variation.params.get(this.PARAM_Z)});
@@ -262,7 +262,7 @@ class Bubble2Func extends VariationShaderFunc3D {
 class BubbleWFFunc extends VariationShaderFunc3D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         return `{
-          float amount = float(${variation.amount});
+          float amount = ${variation.amount.toWebGl()};
           float r = ((_tx * _tx + _ty * _ty) / 4.0 + 1.0);
           float t = amount / r;
           _vx += t * _tx;
@@ -297,7 +297,7 @@ class Curl3DFunc extends VariationShaderFunc3D {
 
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         return `{
-          float amount = float(${variation.amount});
+          float amount = ${variation.amount.toWebGl()};
           float cx = float(${variation.params.get(this.PARAM_CX)});
           float cy = float(${variation.params.get(this.PARAM_CY)});
           float cz = float(${variation.params.get(this.PARAM_CZ)});
@@ -331,7 +331,7 @@ class Curl3DFunc extends VariationShaderFunc3D {
 class Butterfly3DFunc extends VariationShaderFunc3D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         return `{
-          float amount = float(${variation.amount});
+          float amount = ${variation.amount.toWebGl()};
           float wx = amount * 1.3029400317411197908970256609023;
           float y2 = _ty * 2.0;
           float r = wx * sqrt(abs(_ty * _tx) / (EPSILON + _tx * _tx + y2 * y2));
@@ -369,7 +369,7 @@ class ColorscaleWFFunc extends VariationShaderFunc3D {
 
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         return `{
-          float amount = float(${variation.amount});
+          float amount = ${variation.amount.toWebGl()};
           float scale_x = float(${variation.params.get(this.PARAM_CX)});
           float scale_y = float(${variation.params.get(this.PARAM_CY)});
           float scale_z = float(${variation.params.get(this.PARAM_CZ)});
@@ -426,7 +426,7 @@ class ConeFunc extends VariationShaderFunc3D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         //A mix of julia and hemisphere that creates a cone shape by Brad Stefanov
         return `{
-          float amount = float(${variation.amount});
+          float amount = ${variation.amount.toWebGl()};
           float radius1 = float(${variation.params.get(this.PARAM_RADIUS1)});
           float radius2 = float(${variation.params.get(this.PARAM_RADIUS2)});
           float size1 = float(${variation.params.get(this.PARAM_SIZE1)});
@@ -458,7 +458,7 @@ class ConeFunc extends VariationShaderFunc3D {
 class CylinderApoFunc extends VariationShaderFunc3D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         return `{
-          float amount = float(${variation.amount});
+          float amount = ${variation.amount.toWebGl()};
           _vx += amount * sin(_tx);
           _vy += amount * _ty;
           _vz += amount * cos(_tx);
@@ -478,7 +478,7 @@ class Foci3DFunc extends VariationShaderFunc3D {
     /* foci_3D by Larry Berlin, http://aporev.deviantart.com/art/New-3D-Plugins-136484533?q=gallery%3Aaporev%2F8229210&qo=22 */
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         return `{
-          float amount = float(${variation.amount});
+          float amount = ${variation.amount.toWebGl()};
           float expx = exp(_tx) * 0.5;
           float expnx = 0.25 / expx;
           float kikr, boot;
@@ -510,7 +510,7 @@ class Foci3DFunc extends VariationShaderFunc3D {
 class HemisphereFunc extends VariationShaderFunc3D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         return `{
-          float amount = float(${variation.amount});
+          float amount = ${variation.amount.toWebGl()};
           float r = amount / sqrt(_tx * _tx + _ty * _ty + 1.0);
           _vx += _tx * r;
           _vy += _ty * r;
@@ -548,7 +548,7 @@ class HOFunc extends VariationShaderFunc3D {
         //    g[u_, v_] = (Sin[u] * Cos[v])^3
         //    h[u_, v_] = Sin[v]^3
         return `{
-            float amount = float(${variation.amount});
+            float amount = ${variation.amount.toWebGl()};
             float xpow = float(${variation.params.get(this.PARAM_XPOW)});
             float ypow = float(${variation.params.get(this.PARAM_YPOW)});
             float zpow = float(${variation.params.get(this.PARAM_ZPOW)});
@@ -599,7 +599,7 @@ class Hypertile3DFunc extends VariationShaderFunc3D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         /* hypertile3D by Zueuk, http://zueuk.deviantart.com/art/3D-Hyperbolic-tiling-plugins-169047926 */
         return `{
-          float amount = float(${variation.amount});
+          float amount = ${variation.amount.toWebGl()};
           int p = int(${variation.params.get(this.PARAM_P)});
           int q = int(${variation.params.get(this.PARAM_Q)});
           int n = int(${variation.params.get(this.PARAM_N)});        
@@ -649,7 +649,7 @@ class Hypertile3D1Func extends VariationShaderFunc3D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         /* hypertile3D1 by Zueuk, http://zueuk.deviantart.com/art/3D-Hyperbolic-tiling-plugins-169047926 */
         return `{
-          float amount = float(${variation.amount});
+          float amount = ${variation.amount.toWebGl()};
           int p = int(${variation.params.get(this.PARAM_P)});
           int q = int(${variation.params.get(this.PARAM_Q)});
           float pa, qa, r, c2, s2z; 
@@ -699,7 +699,7 @@ class Hypertile3D2Func extends VariationShaderFunc3D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         /* hypertile3D2 by Zueuk, http://zueuk.deviantart.com/art/3D-Hyperbolic-tiling-plugins-169047926 */
         return `{
-          float amount = float(${variation.amount});
+          float amount = ${variation.amount.toWebGl()};
           int p = int(${variation.params.get(this.PARAM_P)});
           int q = int(${variation.params.get(this.PARAM_Q)});
           float pa, qa, cx, c2, c2x, s2x, s2y, s2z; 
@@ -748,7 +748,7 @@ class Julia3DFunc extends VariationShaderFunc3D {
 
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         return `{
-          float amount = float(${variation.amount});
+          float amount = ${variation.amount.toWebGl()};
           int power = int(${variation.params.get(this.PARAM_POWER)});
          
           float absPower = abs(float(power));
@@ -785,7 +785,7 @@ class Julia3DZFunc extends VariationShaderFunc3D {
 
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         return `{
-          float amount = float(${variation.amount});
+          float amount = ${variation.amount.toWebGl()};
           int power = int(${variation.params.get(this.PARAM_POWER)});
          
           float absPower = abs(float(power));
@@ -815,7 +815,7 @@ class Julia3DZFunc extends VariationShaderFunc3D {
 class Linear3DFunc extends VariationShaderFunc3D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         return `{
-          float amount = float(${variation.amount});
+          float amount = ${variation.amount.toWebGl()};
           _vx += amount * _tx; 
           _vy += amount * _ty;
           _vz += amount * _tz;
@@ -845,7 +845,7 @@ class LinearT3DFunc extends VariationShaderFunc3D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         // linearT3D by FractalDesire, http://fractaldesire.deviantart.com/journal/linearT-plugin-219864320
         return `{
-          float amount = float(${variation.amount});
+          float amount = ${variation.amount.toWebGl()};
           float powX = float(${variation.params.get(this.PARAM_POW_X)});
           float powY = float(${variation.params.get(this.PARAM_POW_Y)});
           float powZ = float(${variation.params.get(this.PARAM_POW_Z)});
@@ -872,7 +872,7 @@ class Loonie_3DFunc extends VariationShaderFunc3D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         /* loonie_3D by Larry Berlin, http://aporev.deviantart.com/art/New-3D-Plugins-136484533?q=gallery%3Aaporev%2F8229210&qo=22 */
         return `{
-          float amount = float(${variation.amount});
+          float amount = ${variation.amount.toWebGl()};
           float sqrvvar = amount * amount;
           float efTez = _tz;
           float kikr;
@@ -929,7 +929,7 @@ class PDJ3DFunc extends VariationShaderFunc3D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         // 3D variables added by Brad Stefanov.
         return `{
-          float amount = float(${variation.amount});
+          float amount = ${variation.amount.toWebGl()};
           float a = float(${variation.params.get(this.PARAM_A)});
           float b = float(${variation.params.get(this.PARAM_B)});
           float c = float(${variation.params.get(this.PARAM_C)});
@@ -968,7 +968,7 @@ class Poincare3DFunc extends VariationShaderFunc3D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         /* poincare3D by Zueuk, http://zueuk.deviantart.com/art/3D-Hyperbolic-tiling-plugins-169047926 */
         return `{
-            float amount = float(${variation.amount});
+            float amount = ${variation.amount.toWebGl()};
             float r = float(${variation.params.get(this.PARAM_R)});
             float a = float(${variation.params.get(this.PARAM_A)});
             float b = float(${variation.params.get(this.PARAM_B)});
@@ -1023,7 +1023,7 @@ class Popcorn2_3DFunc extends VariationShaderFunc3D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         /* popcorn2_3D by Larry Berlin, http://aporev.deviantart.com/art/3D-Plugins-Collection-One-138514007?q=gallery%3Aaporev%2F8229210&qo=15 */
         return `{
-            float amount = float(${variation.amount});
+            float amount = ${variation.amount.toWebGl()};
             float x = float(${variation.params.get(this.PARAM_X)});
             float y = float(${variation.params.get(this.PARAM_Y)});
             float z = float(${variation.params.get(this.PARAM_Z)});
@@ -1075,7 +1075,7 @@ class Pie3DFunc extends VariationShaderFunc3D {
 
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         return `{
-          float amount = float(${variation.amount});
+          float amount = ${variation.amount.toWebGl()};
           float slices = float(${variation.params.get(this.PARAM_SLICES)});
           float rotation = float(${variation.params.get(this.PARAM_ROTATION)});
           float thickness = float(${variation.params.get(this.PARAM_THICKNESS)});
@@ -1103,7 +1103,7 @@ class Scry3DFunc extends VariationShaderFunc3D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         /* scry_3D by Larry Berlin, http://aporev.deviantart.com/art/New-3D-Plugins-136484533?q=gallery%3Aaporev%2F8229210&qo=22 */
         return `{
-          float amount = float(${variation.amount});
+          float amount = ${variation.amount.toWebGl()};
           float inv = 1.0 / (amount + EPSILON);
           float t = sqr(_tx) + sqr(_ty) + sqr(_tz);
           float r = 1.0 / (sqrt(t) * (t + inv));
@@ -1135,7 +1135,7 @@ class Sinusoidal3DFunc extends VariationShaderFunc3D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         // sinusoidal3d by gossamer_light
         return `{
-          float amount = float(${variation.amount});
+          float amount = ${variation.amount.toWebGl()};
           _vx += amount * sin(_tx);
           _vy += amount * sin(_ty);
           _vz += amount * (atan2(_tx * _tx, _ty * _ty) * cos(_tz));
@@ -1154,7 +1154,7 @@ class Sinusoidal3DFunc extends VariationShaderFunc3D {
 class Spherical3DFunc extends VariationShaderFunc3D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         return `{
-          float amount = float(${variation.amount});
+          float amount = ${variation.amount.toWebGl()};
           float lr = amount / (_tx * _tx + _ty * _ty + _tz * _tz + EPSILON);
           _vx += _tx * lr;
           _vy += _ty * lr;
@@ -1182,7 +1182,7 @@ class Spherical3DWFFunc extends VariationShaderFunc3D {
 
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         return `{
-          float amount = float(${variation.amount});
+          float amount = ${variation.amount.toWebGl()};
           int invert = int(${variation.params.get(this.PARAM_INVERT)});
           float exponent = float(${variation.params.get(this.PARAM_EXPONENT)});
           
@@ -1229,7 +1229,7 @@ class Splits3DFunc extends VariationShaderFunc3D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         /* splits3D by TyrantWave, http://tyrantwave.deviantart.com/art/Splits3D-Plugin-107262795 */
         return `{
-            float amount = float(${variation.amount});
+            float amount = ${variation.amount.toWebGl()};
             float x = float(${variation.params.get(this.PARAM_XPOW)});
             float y = float(${variation.params.get(this.PARAM_YPOW)});
             float z = float(${variation.params.get(this.PARAM_ZPOW)});
@@ -1265,7 +1265,7 @@ class Splits3DFunc extends VariationShaderFunc3D {
 class Square3DFunc extends VariationShaderFunc3D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         return `{
-          float amount = float(${variation.amount});
+          float amount = ${variation.amount.toWebGl()};
           _vx += amount * (rand8(tex, rngState) - 0.5);
           _vy += amount * (rand8(tex, rngState) - 0.5);    
           _vz += amount * (rand8(tex, rngState) - 0.5);    
@@ -1291,7 +1291,7 @@ class SVFFunc extends VariationShaderFunc3D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         /* svn (single value function) by gossamer light */
         return `{
-            float amount = float(${variation.amount});
+            float amount = ${variation.amount.toWebGl()};
             float n = float(${variation.params.get(this.PARAM_N)});
             float cn = cos(n * _ty);
             float sx = sin(_tx);
@@ -1316,7 +1316,7 @@ class SVFFunc extends VariationShaderFunc3D {
 class Tangent3DFunc extends VariationShaderFunc3D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         return `{
-          float amount = float(${variation.amount});
+          float amount = ${variation.amount.toWebGl()};
           _vx += amount * sin(_tx) / cos(_ty);
           _vy += amount * tan(_ty);
           _vz += amount * tan(_tx);
@@ -1349,7 +1349,7 @@ class TaurusFunc extends VariationShaderFunc3D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         /* taurus by gossamer light */
         return `{
-          float amount = float(${variation.amount});
+          float amount = ${variation.amount.toWebGl()};
           float r = float(${variation.params.get(this.PARAM_R)});
           float n = float(${variation.params.get(this.PARAM_N)});
           float inv = float(${variation.params.get(this.PARAM_INV)});
@@ -1385,7 +1385,7 @@ class Tile_LogFunc extends VariationShaderFunc3D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         // tile_log by Zy0rg implemented into JWildfire by Brad Stefanov
         return `{
-          float amount = float(${variation.amount});
+          float amount = ${variation.amount.toWebGl()};
           float spread = float(${variation.params.get(this.PARAM_SPREAD)});
            float x = -spread;
            if (rand8(tex, rngState) < 0.5)

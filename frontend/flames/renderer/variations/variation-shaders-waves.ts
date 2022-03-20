@@ -64,7 +64,7 @@ class PreWave3DWFFunc extends VariationShaderFunc3D {
 
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         return `{
-          float amount = float(${variation.amount});
+          float amount = ${variation.amount.toWebGl()};
           int axis = int(${variation.params.get(this.PARAM_AXIS)});
           float wavelen = float(${variation.params.get(this.PARAM_WAVELEN)});
           float phase = float(${variation.params.get(this.PARAM_PHASE)});
@@ -141,7 +141,7 @@ class PulseFunc extends VariationShaderFunc2D {
 
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         return `{
-          float amount = float(${variation.amount});
+          float amount = ${variation.amount.toWebGl()};
           float scalex = float(${variation.params.get(this.PARAM_SCALEX)});
           float scaley = float(${variation.params.get(this.PARAM_SCALEY)});
           float freqx = float(${variation.params.get(this.PARAM_FREQX)});
@@ -224,7 +224,7 @@ class Vibration2Func extends VariationShaderFunc2D {
         * https://www.deviantart.com/fardareismai/art/Apo-Plugins-Vibration-1-and-2-252001851 converted by Brad Stefanov
         */
         return `{
-          float amount = float(${variation.amount});
+          float amount = ${variation.amount.toWebGl()};
           float dir = float(${variation.params.get(this.PARAM_DIR)});
           float angle = float(${variation.params.get(this.PARAM_ANGLE)});
           float freq = float(${variation.params.get(this.PARAM_FREQ)});
@@ -333,7 +333,7 @@ class RippleFunc extends VariationShaderFunc2D {
         // Ripple by Xyrus02, http://xyrus02.deviantart.com/art/Ripple-Plugin-for-Apophysis-154713493
         // align input x, y to given center and multiply with scale
         return `{
-          float amount = float(${variation.amount});
+          float amount = ${variation.amount.toWebGl()};
           float frequency = float(${variation.params.get(this.PARAM_FREQUENCY)});
           float velocity = float(${variation.params.get(this.PARAM_VELOCITY)});
           float amplitude = float(${variation.params.get(this.PARAM_AMPLITUDE)});
@@ -377,7 +377,7 @@ class RippledFunc extends VariationShaderFunc2D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         // rippled by Raykoid666, http://raykoid666.deviantart.com/art/plugin-pack-3-100510461?q=gallery%3ARaykoid666%2F11060240&qo=16
         return `{
-          float amount = float(${variation.amount});
+          float amount = ${variation.amount.toWebGl()};
           float d = sqr(_tx) + sqr(_ty);
           _vx += amount / 2.0 * (tanh(d + EPSILON) * (2.0 * _tx));
           _vy += amount / 2.0 * (cos(d + EPSILON) * (2.0 * _ty));
@@ -413,7 +413,7 @@ class SinusGridFunc extends VariationShaderFunc2D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         /* SinusGrid, originally written by Georg K. (http://xyrus02.deviantart.com) */
         return `{
-          float amount = float(${variation.amount});
+          float amount = ${variation.amount.toWebGl()};
           float ampx = float(${variation.params.get(this.PARAM_AMPX)});
           float ampy = float(${variation.params.get(this.PARAM_AMPY)});
           float freqx = float(${variation.params.get(this.PARAM_FREQX)});
@@ -444,7 +444,7 @@ class SinusGridFunc extends VariationShaderFunc2D {
 class WavesFunc extends VariationShaderFunc2D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         return `{
-          float amount = float(${variation.amount});
+          float amount = ${variation.amount.toWebGl()};
           _vx += amount * (_tx + ${xform.c10.toWebGl()} * sin(_ty / (${xform.c20.toWebGl()} * ${xform.c20.toWebGl()} + EPSILON)));
           _vy += amount * (_ty + ${xform.c11.toWebGl()} * sin(_tx / (${xform.c21.toWebGl()} * ${xform.c21.toWebGl()} + EPSILON)));
         }`;
@@ -475,7 +475,7 @@ class Waves2Func extends VariationShaderFunc2D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         /* waves2 from Joel F */
         return `{
-          float amount = float(${variation.amount});
+          float amount = ${variation.amount.toWebGl()};
           float scalex = float(${variation.params.get(this.PARAM_SCALEX)});
           float scaley = float(${variation.params.get(this.PARAM_SCALEY)});
           float freqx = float(${variation.params.get(this.PARAM_FREQX)});
@@ -518,7 +518,7 @@ class Waves22Func extends VariationShaderFunc2D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         /* weird waves22 from Tatyana Zabanova converted by Brad Stefanov https://www.deviantart.com/tatasz/art/Weird-Waves-Plugin-Pack-1-783560564*/
         return `{
-          float amount = float(${variation.amount});
+          float amount = ${variation.amount.toWebGl()};
           float scalex = float(${variation.params.get(this.PARAM_SCALEX)});
           float scaley = float(${variation.params.get(this.PARAM_SCALEY)});
           float freqx = float(${variation.params.get(this.PARAM_FREQX)});
@@ -575,7 +575,7 @@ class Waves23Func extends VariationShaderFunc2D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         /* waves23 from Tatyana Zabanova converted by Brad Stefanov https://www.deviantart.com/tatasz/art/Weird-Waves-Plugin-Pack-1-783560564*/
         return `{
-          float amount = float(${variation.amount});
+          float amount = ${variation.amount.toWebGl()};
           float scalex = float(${variation.params.get(this.PARAM_SCALEX)});
           float scaley = float(${variation.params.get(this.PARAM_SCALEY)});
           float freqx = float(${variation.params.get(this.PARAM_FREQX)});
@@ -630,7 +630,7 @@ class Waves2BFunc extends VariationShaderFunc2D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         // Waves2B by dark-beam, http://dark-beam.deviantart.com/art/Waves2b-UPDATE-FIX-456744888
         return `{
-          float amount = float(${variation.amount});
+          float amount = ${variation.amount.toWebGl()};
           float freqx = float(${variation.params.get(this.PARAM_FREQX)});
           float freqy = float(${variation.params.get(this.PARAM_FREQY)});
           float pwx = float(${variation.params.get(this.PARAM_PWX)});
@@ -702,7 +702,7 @@ class Waves2RadialFunc extends VariationShaderFunc2D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         // waves2_radial variation created by Tatyana Zabanova implemented into JWildfire by Brad Stefanov
         return `{
-          float amount = float(${variation.amount});
+          float amount = ${variation.amount.toWebGl()};
           float w2r_scalex = float(${variation.params.get(this.PARAM_W2R_SCALEX)});
           float w2r_scaley = float(${variation.params.get(this.PARAM_W2R_SCALEY)});
           float w2r_freqx = float(${variation.params.get(this.PARAM_W2R_FREQX)});
@@ -752,7 +752,7 @@ class Waves2WFFunc extends VariationShaderFunc2D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         /* Modified version of waves2 from Joel F */
         return `{
-          float amount = float(${variation.amount});
+          float amount = ${variation.amount.toWebGl()};
           float scalex = float(${variation.params.get(this.PARAM_SCALEX)});
           float scaley = float(${variation.params.get(this.PARAM_SCALEY)});
           float freqx = float(${variation.params.get(this.PARAM_FREQX)});
@@ -798,7 +798,7 @@ class Waves2_3DFunc extends VariationShaderFunc3D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         /* waves2_3D by Larry Berlin, http://aporev.deviantart.com/art/New-3D-Plugins-136484533?q=gallery%3Aaporev%2F8229210&qo=22 */
         return `{
-          float amount = float(${variation.amount});
+          float amount = ${variation.amount.toWebGl()};
           float freq = float(${variation.params.get(this.PARAM_FREQ)});
           float scale = float(${variation.params.get(this.PARAM_SCALE)});
           float avgxy = (_tx + _ty) / 2.0;
@@ -837,7 +837,7 @@ class Waves3Func extends VariationShaderFunc2D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         /* waves3 from Tatyana Zabanova converted by Brad Stefanov https://www.deviantart.com/tatasz/art/Weird-Waves-Plugin-Pack-1-783560564*/
         return `{
-          float amount = float(${variation.amount});
+          float amount = ${variation.amount.toWebGl()};
           float scalex = float(${variation.params.get(this.PARAM_SCALEX)});
           float scaley = float(${variation.params.get(this.PARAM_SCALEY)});
           float freqx = float(${variation.params.get(this.PARAM_FREQX)});
@@ -886,7 +886,7 @@ class Waves3WFFunc extends VariationShaderFunc2D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         /* Modified version of waves2 from Joel F */
         return `{
-          float amount = float(${variation.amount});
+          float amount = ${variation.amount.toWebGl()};
           float scalex = float(${variation.params.get(this.PARAM_SCALEX)});
           float scaley = float(${variation.params.get(this.PARAM_SCALEY)});
           float freqx = float(${variation.params.get(this.PARAM_FREQX)});
@@ -939,7 +939,7 @@ class Waves4Func extends VariationShaderFunc2D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         /* waves4 from Tatyana Zabanova converted by Brad Stefanov https://www.deviantart.com/tatasz/art/Weird-Waves-Plugin-Pack-1-783560564*/
         return `{
-          float amount = float(${variation.amount});
+          float amount = ${variation.amount.toWebGl()};
           float scalex = float(${variation.params.get(this.PARAM_SCALEX)});
           float scaley = float(${variation.params.get(this.PARAM_SCALEY)});
           float freqx = float(${variation.params.get(this.PARAM_FREQX)});
@@ -990,7 +990,7 @@ class Waves42Func extends VariationShaderFunc2D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         /* waves42 from Tatyana Zabanova converted by Brad Stefanov https://www.deviantart.com/tatasz/art/Weird-Waves-Plugin-Pack-1-783560564*/
         return `{
-          float amount = float(${variation.amount});
+          float amount = ${variation.amount.toWebGl()};
           float scalex = float(${variation.params.get(this.PARAM_SCALEX)});
           float scaley = float(${variation.params.get(this.PARAM_SCALEY)});
           float freqx = float(${variation.params.get(this.PARAM_FREQX)});
@@ -1044,7 +1044,7 @@ class Waves4WFFunc extends VariationShaderFunc2D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         /* Modified version of waves2 from Joel F */
         return `{
-          float amount = float(${variation.amount});
+          float amount = ${variation.amount.toWebGl()};
           float scalex = float(${variation.params.get(this.PARAM_SCALEX)});
           float scaley = float(${variation.params.get(this.PARAM_SCALEY)});
           float freqx = float(${variation.params.get(this.PARAM_FREQX)});

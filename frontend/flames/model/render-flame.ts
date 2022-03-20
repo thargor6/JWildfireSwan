@@ -24,7 +24,7 @@ export class RenderColor {
 
 export class RenderVariation {
     public name = ''
-    public amount = 0.0
+    public amount = RenderParameters.floatParam(1.0)
     private _params = new Map<string, number | boolean>()
     public get params() {
         return this._params

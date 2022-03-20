@@ -15,7 +15,7 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 */
 
-import {html} from 'lit';
+import {html, render} from 'lit';
 import {customElement, property, state} from 'lit/decorators.js';
 
 import '@vaadin/vaadin-button'
@@ -34,6 +34,7 @@ import {playgroundStore} from "Frontend/stores/playground-store";
 
 import {MobxLitElement} from "@adobe/lit-mobx";
 import {HasValue} from "@hilla/form";
+import {ComboBoxRenderer} from "@vaadin/combo-box";
 
 @customElement('playground-flame-panel')
 export class PlaygroundFlamePanel extends MobxLitElement {
@@ -66,7 +67,7 @@ export class PlaygroundFlamePanel extends MobxLitElement {
       <div style="${this.visible ? `display:block;`: `display:none;`}">
         <div style="display:flex; flex-direction: column;">
           <vaadin-combo-box label="Example flame" .items="${playgroundStore.exampleFlamenames}" value="${this.flameName}"
-                            @change="${(event: Event) => this.flameNameChanged(event)}"></vaadin-combo-box>
+              .renderer="${this.exampleFlameRenderer}" @change="${(event: Event) => this.flameNameChanged(event)}"></vaadin-combo-box>
           <vaadin-text-area style="max-width:100em; max-height: 32em; font-size: xx-small;" label="Flame xml" value="${this.flameXml}" @change="${(event: Event)=>this.flameXmlChanged(event)}"></vaadin-text-area>
           <vaadin-vertical-layout theme="padding">
           
@@ -104,4 +105,13 @@ export class PlaygroundFlamePanel extends MobxLitElement {
   transferFlameToClipbord() {
     navigator.clipboard.writeText(this.flameXml);
   }
+
+  private exampleFlameRenderer: ComboBoxRenderer<string> = (root, _, { item: example }) => {
+    render(
+      html`
+      <div>${example}!!</div>
+    `,
+      root
+    );
+  };
 }

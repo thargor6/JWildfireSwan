@@ -31,7 +31,7 @@ import {
 class ArchFunc extends VariationShaderFunc2D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         return `{
-              float amount = float(${variation.amount});
+              float amount = ${variation.amount.toWebGl()};
               float ang = rand8(tex, rngState) * amount * M_PI;
               float sinr = sin(ang);
               float cosr = cos(ang);
@@ -61,7 +61,7 @@ class AsteriaFunc extends VariationShaderFunc2D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         // asteria by dark-beam, http://jwildfire.org/forum/viewtopic.php?f=23&t=1464
         return `{
-          float amount = float(${variation.amount});
+          float amount = ${variation.amount.toWebGl()};
           float alpha = float(${variation.params.get(this.PARAM_ALPHA)});
           float sina = sin(M_PI * alpha);
           float cosa = cos(M_PI * alpha); 
@@ -120,7 +120,7 @@ class AugerFunc extends VariationShaderFunc2D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         // Auger, by Xyrus02
         return `{
-          float amount = float(${variation.amount});
+          float amount = ${variation.amount.toWebGl()};
           float freq = float(${variation.params.get(this.PARAM_FREQ)});
           float weight = float(${variation.params.get(this.PARAM_WEIGHT)});
           float sym = float(${variation.params.get(this.PARAM_SYM)});
@@ -146,7 +146,7 @@ class AugerFunc extends VariationShaderFunc2D {
 class BentFunc extends VariationShaderFunc2D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         return `{
-          float amount = float(${variation.amount});
+          float amount = ${variation.amount.toWebGl()};
           float nx = _tx;
           float ny = _ty;
           if (nx < 0.0)
@@ -179,7 +179,7 @@ class Bent2Func extends VariationShaderFunc2D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         /* Bent2 in the Apophysis Plugin Pack */
         return `{
-          float amount = float(${variation.amount});
+          float amount = ${variation.amount.toWebGl()};
           float x = float(${variation.params.get(this.PARAM_X)});
           float y = float(${variation.params.get(this.PARAM_Y)});
           float nx = _tx;
@@ -205,7 +205,7 @@ class Bent2Func extends VariationShaderFunc2D {
 class BiLinearFunc extends VariationShaderFunc2D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         return `{
-          float amount = float(${variation.amount});
+          float amount = ${variation.amount.toWebGl()};
           _vx += amount * _ty;
           _vy += amount * _tx;
         }`;
@@ -230,7 +230,7 @@ class BipolarFunc extends VariationShaderFunc2D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         /* Bipolar in the Apophysis Plugin Pack */
         return `{
-          float amount = float(${variation.amount});
+          float amount = ${variation.amount.toWebGl()};
           float x2y2 = (_tx * _tx + _ty * _ty);
           float t = x2y2 + 1.0;
           float x2 = 2.0 * _tx;
@@ -268,7 +268,7 @@ class BladeFunc extends VariationShaderFunc2D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         /* Z+ variation Jan 07 */
         return `{
-          float amount = float(${variation.amount});
+          float amount = ${variation.amount.toWebGl()};
           float r = rand8(tex, rngState) * amount * sqrt(_tx * _tx + _ty * _ty);
           float sinr = sin(r);
           float cosr = cos(r);
@@ -299,7 +299,7 @@ class BlobFunc extends VariationShaderFunc2D {
 
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         return `{
-          float amount = float(${variation.amount});
+          float amount = ${variation.amount.toWebGl()};
           float low = float(${variation.params.get(this.PARAM_LOW)});
           float high = float(${variation.params.get(this.PARAM_HIGH)});
           int waves = int(${variation.params.get(this.PARAM_WAVES)});
@@ -326,7 +326,7 @@ class BoardersFunc extends VariationShaderFunc2D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         /* Boarders in the Apophysis Plugin Pack */
         return `{
-          float amount = float(${variation.amount});
+          float amount = ${variation.amount.toWebGl()};
           float roundX = float(int(_tx+0.5));
           float roundY = float(int(_ty+0.5));
           float offsetX = _tx - roundX;
@@ -379,7 +379,7 @@ class Boarders2Func extends VariationShaderFunc2D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         // boarders2 by Xyrus02, http://xyrus02.deviantart.com/art/Boarders2-plugin-for-Apophysis-173427128
         return `{
-          float amount = float(${variation.amount});
+          float amount = ${variation.amount.toWebGl()};
           float c = float(${variation.params.get(this.PARAM_C)});
           float left = float(${variation.params.get(this.PARAM_LEFT)});
           float right = float(${variation.params.get(this.PARAM_RIGHT)});
@@ -435,7 +435,7 @@ class ButterflyFunc extends VariationShaderFunc2D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         /* wx is weight*4/sqrt(3*pi) */
         return `{
-          float amount = float(${variation.amount});
+          float amount = ${variation.amount.toWebGl()};
           float wx = amount * 1.3029400317411197908970256609023;
           float y2 = _ty * 2.0;
           float r = wx * sqrt(abs(_ty * _tx) / (EPSILON + _tx * _tx + y2 * y2));
@@ -473,7 +473,7 @@ class BWraps7Func extends VariationShaderFunc2D {
         // Bubble Wrap - WIP Plugin by slobo777
         // http://slobo777.deviantart.com/art/Bubble-Wrap-WIP-Plugin-112370125
         return `{
-          float amount = float(${variation.amount});
+          float amount = ${variation.amount.toWebGl()};
           float cellsize = float(${variation.params.get(this.PARAM_CELLSIZE)});
           float space = float(${variation.params.get(this.PARAM_SPACE)});
           float gain = float(${variation.params.get(this.PARAM_GAIN)});
@@ -542,7 +542,7 @@ class CannabisCurveWFFunc extends VariationShaderFunc2D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         // cannabis curve (http://mathworld.wolfram.com/CannabisCurve.html)
         return `{
-          float amount = float(${variation.amount});
+          float amount = ${variation.amount.toWebGl()};
           float a = _phi;
           
           float r = (1.0 + 9.0 / 10.0 * cos(8.0 * a)) * (1.0 + 1.0 / 10.0 * cos(24.0 * a)) * (9.0 / 10.0 + 1.0 / 10.0 * cos(200.0 * a)) * (1.0 + sin(a));
@@ -586,7 +586,7 @@ class ChecksFunc extends VariationShaderFunc2D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         // Fixed checks plugin by Keeps and Xyrus02, http://xyrus02.deviantart.com/art/Checks-The-fixed-version-138967784?q=favby%3Aapophysis-plugins%2F39181234&qo=3
         return `{
-          float amount = float(${variation.amount});
+          float amount = ${variation.amount.toWebGl()};
           float x = float(${variation.params.get(this.PARAM_LEFT)});
           float y = float(${variation.params.get(this.PARAM_TOP)});
           float size = float(${variation.params.get(this.PARAM_RIGHT)});
@@ -633,7 +633,7 @@ class CellFunc extends VariationShaderFunc2D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         /* Cell in the Apophysis Plugin Pack */
         return `{
-          float amount = float(${variation.amount});
+          float amount = ${variation.amount.toWebGl()};
           float size = float(${variation.params.get(this.PARAM_SIZE)});
           float inv_cell_size = 1.0 / size;
 
@@ -687,7 +687,7 @@ class CirclizeFunc extends VariationShaderFunc2D {
 
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         return `{
-          float amount = float(${variation.amount});
+          float amount = ${variation.amount.toWebGl()};
           float hole = float(${variation.params.get(this.PARAM_HOLE)});
           float var4_PI = amount / (0.25*M_PI);
           float absx = abs(_tx);
@@ -736,7 +736,7 @@ class CircusFunc extends VariationShaderFunc2D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         /* circus from Michael Faber, http://michaelfaber.deviantart.com/art/The-Lost-Variations-258913970 */
         return `{
-          float amount = float(${variation.amount});
+          float amount = ${variation.amount.toWebGl()};
           float scale = float(${variation.params.get(this.PARAM_SCALE)});
           float scale_1 = 1.0 / scale;
           float r = sqrt(_tx * _tx + _ty * _ty);
@@ -770,7 +770,7 @@ class CloverLeafWFFunc extends VariationShaderFunc2D {
 
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         return `{
-          float amount = float(${variation.amount});
+          float amount = ${variation.amount.toWebGl()};
           float a = _phi;
 
           float r = (sin(2.0 * a) + 0.25 * sin(6.0 * a));
@@ -810,7 +810,7 @@ class CollideoscopeFunc extends VariationShaderFunc2D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         /* collideoscope by Michael Faber, http://michaelfaber.deviantart.com/art/Collideoscope-251624597 */
         return `{
-          float amount = float(${variation.amount});
+          float amount = ${variation.amount.toWebGl()};
           float a = float(${variation.params.get(this.PARAM_A)});
           int num = int(${variation.params.get(this.PARAM_NUM)});
           float kn_pi = float(num) * (1.0 / M_PI);
@@ -867,7 +867,7 @@ class ConicFunc extends VariationShaderFunc2D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         /* cyberxaos, 4/2007 */
         return `{
-          float amount = float(${variation.amount});
+          float amount = ${variation.amount.toWebGl()};
           float eccentricity = float(${variation.params.get(this.PARAM_ECCENTRICITY)});
           float holes = float(${variation.params.get(this.PARAM_HOLES)});
           float ct = _tx / _r;
@@ -900,7 +900,7 @@ class CPowFunc extends VariationShaderFunc2D {
     /* Cpow in the Apophysis Plugin Pack */
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         return `{
-                  float amount = float(${variation.amount});
+                  float amount = ${variation.amount.toWebGl()};
                   float r = float(${variation.params.get(this.PARAM_R)});
                   float i = float(${variation.params.get(this.PARAM_I)});
                   float power = float(${variation.params.get(this.PARAM_POWER)});
@@ -951,7 +951,7 @@ class CropFunc extends VariationShaderFunc2D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         // crop by Xyrus02, http://xyrus02.deviantart.com/art/Crop-Plugin-Updated-169958881
         return `{
-          float amount = float(${variation.amount});
+          float amount = ${variation.amount.toWebGl()};
           float left = float(${variation.params.get(this.PARAM_LEFT)});
           float top = float(${variation.params.get(this.PARAM_TOP)});
           float right = float(${variation.params.get(this.PARAM_RIGHT)});
@@ -995,7 +995,7 @@ class CropFunc extends VariationShaderFunc2D {
 class CrossFunc extends VariationShaderFunc2D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         return `{
-                  float amount = float(${variation.amount});
+                  float amount = ${variation.amount.toWebGl()};
                   float s = _tx * _tx - _ty * _ty;
                   float r = amount * sqrt(1.0 / (s * s + EPSILON));
                   _vx += _tx * r;
@@ -1018,7 +1018,7 @@ class CscFunc extends VariationShaderFunc2D {
         /* exp log sin cos tan sec csc cot sinh cosh tanh sech csch coth */
         //Cosecant CSC
         return `{
-                  float amount = float(${variation.amount});
+                  float amount = ${variation.amount.toWebGl()};
                   float cscsin = sin(_tx);
                   float csccos = cos(_tx);
                   float cscsinh = sinh(_ty);
@@ -1051,7 +1051,7 @@ class CschFunc extends VariationShaderFunc2D {
         /* exp log sin cos tan sec csc cot sinh cosh tanh sech csch coth */
         //Hyperbolic Cosecant CSCH
         return `{
-                  float amount = float(${variation.amount});
+                  float amount = ${variation.amount.toWebGl()};
                   float cschsin = sin(_ty);
                   float cschcos = cos(_ty);
                   float cschsinh = sinh(_tx);
@@ -1084,7 +1084,7 @@ class CosFunc extends VariationShaderFunc2D {
         /* exp log sin cos tan sec csc cot sinh cosh tanh sech csch coth */
         //Cosine COS
         return `{
-                  float amount = float(${variation.amount});
+                  float amount = ${variation.amount.toWebGl()};
                   float cossin = sin(_tx);
                   float coscos = cos(_tx);
                   float cossinh = sinh(_ty);
@@ -1113,7 +1113,7 @@ class CoshFunc extends VariationShaderFunc2D {
         /* exp log sin cos tan sec csc cot sinh cosh tanh sech csch coth */
         //Hyperbolic Cosine COSH
         return `{
-                  float amount = float(${variation.amount});
+                  float amount = ${variation.amount.toWebGl()};
                   float coshsin = sin(_ty);
                   float coshcos = cos(_ty);
                   float coshsinh = sinh(_tx);
@@ -1139,7 +1139,7 @@ class CoshFunc extends VariationShaderFunc2D {
 class CosineFunc extends VariationShaderFunc2D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         return `{
-                  float amount = float(${variation.amount});
+                  float amount = ${variation.amount.toWebGl()};
                   float r = _tx * M_PI;
                   float sinr = sin(r);
                   float cosr = cos(r);
@@ -1167,7 +1167,7 @@ class CotFunc extends VariationShaderFunc2D {
         /* exp log sin cos tan sec csc cot sinh cosh tanh sech csch coth */
         //Cotangent COT
         return `{
-                  float amount = float(${variation.amount});
+                  float amount = ${variation.amount.toWebGl()};
                   float cotsin = sin(2.0 * _tx);
                   float cotcos = cos(2.0 * _tx);
                   float cotsinh = sinh(2.0 * _ty);
@@ -1197,7 +1197,7 @@ class CothFunc extends VariationShaderFunc2D {
         /* exp log sin cos tan sec csc cot sinh cosh tanh sech csch coth */
         //Hyperbolic Cotangent COTH
         return `{
-                  float amount = float(${variation.amount});
+                  float amount = ${variation.amount.toWebGl()};
                   float cothsin = sin(2.0 * _ty);
                   float cothcos = cos(2.0 * _ty);
                   float cothsinh = sinh(2.0 * _tx);
@@ -1235,7 +1235,7 @@ class CurlFunc extends VariationShaderFunc2D {
 
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         return `{
-          float amount = float(${variation.amount});
+          float amount = ${variation.amount.toWebGl()};
           float c1 = float(${variation.params.get(this.PARAM_C1)});
           float c2 = float(${variation.params.get(this.PARAM_C2)});
           float re = 1.0 + c1 * _tx + c2 * (sqr(_tx) - sqr(_ty));
@@ -1272,7 +1272,7 @@ class CurveFunc extends VariationShaderFunc2D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         /* Curve in the Apophysis Plugin Pack */
         return `{
-          float amount = float(${variation.amount});
+          float amount = ${variation.amount.toWebGl()};
           float xamp = float(${variation.params.get(this.PARAM_XAMP)});
           float yamp = float(${variation.params.get(this.PARAM_YAMP)});
           float xlength = float(${variation.params.get(this.PARAM_XLENGTH)});
@@ -1300,7 +1300,7 @@ class CurveFunc extends VariationShaderFunc2D {
 class CylinderFunc extends VariationShaderFunc2D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         return `{
-                  float amount = float(${variation.amount});
+                  float amount = ${variation.amount.toWebGl()};
                    _vx += amount * sin(_tx);
                    _vy += amount * _ty;
                 }`;
@@ -1330,7 +1330,7 @@ class DCLinearFunc extends VariationShaderFunc2D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         /* dc_linear by Xyrus02, http://apophysis-7x.org/extensions */
         return `{
-          float amount = float(${variation.amount});
+          float amount = ${variation.amount.toWebGl()};
           float offset = float(${variation.params.get(this.PARAM_OFFSET)});
           float angle = float(${variation.params.get(this.PARAM_ANGLE)});
           float scale = float(${variation.params.get(this.PARAM_SCALE)});
@@ -1373,7 +1373,7 @@ class DevilWarpFunc extends VariationShaderFunc2D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         /* devil_warp by dark-beam */
         return `{
-            float amount = float(${variation.amount});
+            float amount = ${variation.amount.toWebGl()};
             float a = float(${variation.params.get(this.PARAM_A)});
             float b = float(${variation.params.get(this.PARAM_B)});
             float effect = float(${variation.params.get(this.PARAM_EFFECT)});
@@ -1406,7 +1406,7 @@ class DevilWarpFunc extends VariationShaderFunc2D {
 class DiamondFunc extends VariationShaderFunc2D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         return `{
-                  float amount = float(${variation.amount});
+                  float amount = ${variation.amount.toWebGl()};
                   float sinA = _tx / _r;
                   float cosA = _ty / _r;
                   float sinr = sin(_r);
@@ -1428,7 +1428,7 @@ class DiamondFunc extends VariationShaderFunc2D {
 class DiscFunc extends VariationShaderFunc2D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         return `{
-                  float amount = float(${variation.amount});
+                  float amount = ${variation.amount.toWebGl()};
                   float rPI = M_PI * sqrt(_tx * _tx + _ty * _ty);
                   float sinr = sin(rPI);
                   float cosr = cos(rPI);
@@ -1460,7 +1460,7 @@ class Disc2Func extends VariationShaderFunc2D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         /* Z+ variation Jan 07 */
         return `{
-          float amount = float(${variation.amount});
+          float amount = ${variation.amount.toWebGl()};
           float rot = float(${variation.params.get(this.PARAM_ROT)});
           float twist = float(${variation.params.get(this.PARAM_TWIST)});
          
@@ -1503,7 +1503,7 @@ class EDiscFunc extends VariationShaderFunc2D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         /* Edisc in the Apophysis Plugin Pack */
         return `{
-          float amount = float(${variation.amount});
+          float amount = ${variation.amount.toWebGl()};
           float tmp = _r2 + 1.0;
           float tmp2 = 2.0 * _tx;
           float r1 = sqrt(tmp + tmp2);
@@ -1557,7 +1557,7 @@ class EllipticFunc extends VariationShaderFunc2D {
 
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         return `{
-          float amount = float(${variation.amount});
+          float amount = ${variation.amount.toWebGl()};
           int mode = int(${variation.params.get(this.PARAM_MODE)});
           float _v = amount * 2.0 / M_PI;
           
@@ -1612,7 +1612,7 @@ class EpispiralFunc extends VariationShaderFunc2D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         // epispiral by cyberxaos, http://cyberxaos.deviantart.com/journal/Epispiral-Plugin-240086108
         return `{
-          float amount = float(${variation.amount});
+          float amount = ${variation.amount.toWebGl()};
           float n = float(${variation.params.get(this.PARAM_N)});
           float thickness = float(${variation.params.get(this.PARAM_THICKNESS)});
           float holes = float(${variation.params.get(this.PARAM_HOLES)});
@@ -1653,7 +1653,7 @@ class EpispiralWFFunc extends VariationShaderFunc2D {
 
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         return `{
-          float amount = float(${variation.amount});
+          float amount = ${variation.amount.toWebGl()};
           float waves = float(${variation.params.get(this.PARAM_WAVES)});
           float a = atan2(_tx, _ty);
           float r = sqrt(_tx * _tx + _ty * _ty);
@@ -1688,7 +1688,7 @@ class EscherFunc extends VariationShaderFunc2D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         /* Escher in the Apophysis Plugin Pack */
         return `{
-          float amount = float(${variation.amount});
+          float amount = ${variation.amount.toWebGl()};
           float beta = float(${variation.params.get(this.PARAM_BETA)});
           float _theta = atan2(_ty, _tx);
           float a = _theta;
@@ -1723,7 +1723,7 @@ class EscherFunc extends VariationShaderFunc2D {
 class Ex extends VariationShaderFunc2D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         return `{
-            float amount = float(${variation.amount});
+            float amount = ${variation.amount.toWebGl()};
             float r = sqrt(_tx * _tx + _ty * _ty);
             float n0 = sin(_phi + r);
             float n1 = cos(_phi - r);
@@ -1750,7 +1750,7 @@ class ExpFunc extends VariationShaderFunc2D {
         /* exp log sin cos tan sec csc cot sinh cosh tanh sech csch coth */
         //Exponential EXP
         return `{
-            float amount = float(${variation.amount});
+            float amount = ${variation.amount.toWebGl()};
             float expe = exp(_tx);
             float expsin = sin(_ty);
             float expcos = cos(_ty);
@@ -1771,7 +1771,7 @@ class ExpFunc extends VariationShaderFunc2D {
 class ExponentialFunc extends VariationShaderFunc2D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         return `{
-            float amount = float(${variation.amount});
+            float amount = ${variation.amount.toWebGl()};
             float r = M_PI * _ty;
             float sinr = sin(r);
             float cosr = cos(r);
@@ -1793,7 +1793,7 @@ class ExponentialFunc extends VariationShaderFunc2D {
 class EyefishFunc extends VariationShaderFunc2D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         return `{
-            float amount = float(${variation.amount});
+            float amount = ${variation.amount.toWebGl()};
             float r = 2.0 * amount / (sqrt(_tx * _tx + _ty * _ty) + 1.0);
             _vx += r * _tx;
             _vy += r * _ty;
@@ -1812,7 +1812,7 @@ class EyefishFunc extends VariationShaderFunc2D {
 class FanFunc extends VariationShaderFunc2D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         return `{
-            float amount = float(${variation.amount});
+            float amount = ${variation.amount.toWebGl()};
             float dx = M_PI * ${xform.c20.toWebGl()} * ${xform.c20.toWebGl()} + EPSILON;
             float dx2 = dx / 2.0;
             float a;
@@ -1848,7 +1848,7 @@ class Fan2Func extends VariationShaderFunc2D {
 
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         return `{
-            float amount = float(${variation.amount});
+            float amount = ${variation.amount.toWebGl()};
             float x = float(${variation.params.get(this.PARAM_X)});
             float y = float(${variation.params.get(this.PARAM_Y)});
             float r = sqrt(_tx * _tx + _ty * _ty);
@@ -1914,7 +1914,7 @@ class FDiscFunc extends VariationShaderFunc2D {
          * and enhanced with user-adjustable parameters
          */
         return `{
-          float amount = float(${variation.amount});
+          float amount = ${variation.amount.toWebGl()};
           float ashift = float(${variation.params.get(this.PARAM_ASHIFT)});
           float rshift = float(${variation.params.get(this.PARAM_RSHIFT)});
           float xshift = float(${variation.params.get(this.PARAM_XSHIFT)});
@@ -1947,7 +1947,7 @@ class FDiscFunc extends VariationShaderFunc2D {
 class FisheyeFunc extends VariationShaderFunc2D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         return `{
-            float amount = float(${variation.amount});
+            float amount = ${variation.amount.toWebGl()};
             float r = sqrt(_tx * _tx + _ty * _ty);
             r = 2.0 * r / (r + 1.0);
             _vx += amount * r * _ty / _r;
@@ -1968,7 +1968,7 @@ class FlipCircleFunc extends VariationShaderFunc2D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         // flipcircle by MichaelFaber, http://michaelfaber.deviantart.com/art/Flip-216005432
         return `{
-            float amount = float(${variation.amount});
+            float amount = ${variation.amount.toWebGl()};
             if (sqr(_tx) + sqr(_ty) > sqr(amount))
               _vy += amount * _ty;
             else
@@ -1990,7 +1990,7 @@ class FlipYFunc extends VariationShaderFunc2D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         // flipy by MichaelFaber, http://michaelfaber.deviantart.com/art/Flip-216005432
         return `{
-            float amount = float(${variation.amount});
+            float amount = ${variation.amount.toWebGl()};
             if (_tx > 0.0)
               _vy -= amount * _ty;
             else
@@ -2020,7 +2020,7 @@ class FlowerFunc extends VariationShaderFunc2D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         /* cyberxaos, 4/2007 */
         return `{
-            float amount = float(${variation.amount});
+            float amount = ${variation.amount.toWebGl()};
             float holes = float(${variation.params.get(this.PARAM_HOLES)});
             float petals = float(${variation.params.get(this.PARAM_PETALS)});
             float _theta = atan2(_ty, _tx);
@@ -2053,7 +2053,7 @@ class FluxFunc extends VariationShaderFunc2D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         // Flux, by meckie
         return `{
-            float amount = float(${variation.amount});
+            float amount = ${variation.amount.toWebGl()};
             float spread = float(${variation.params.get(this.PARAM_SPREAD)});
          
             float xpw = _tx + amount;
@@ -2079,7 +2079,7 @@ class FociFunc extends VariationShaderFunc2D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         /* Foci in the Apophysis Plugin Pack */
         return `{
-            float amount = float(${variation.amount});
+            float amount = ${variation.amount.toWebGl()};
             float expx = exp(_tx) * 0.5;
             float expnx = 0.25 / expx;
             if (expx > EPSILON && expnx > EPSILON) {
@@ -2108,7 +2108,7 @@ class GlynniaFunc extends VariationShaderFunc2D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         // glynnia my Michael Faber, http://michaelfaber.deviantart.com/art/The-Lost-Variations-258913970
         return `{
-            float amount = float(${variation.amount});
+            float amount = ${variation.amount.toWebGl()};
             float _vvar2 = amount * sqrt(2.0) / 2.0; 
             float r = sqrt(sqr(_tx) + sqr(_ty));
             float d;
@@ -2160,7 +2160,7 @@ class GlynniaFunc extends VariationShaderFunc2D {
 class HeartFunc extends VariationShaderFunc2D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         return `{
-            float amount = float(${variation.amount});
+            float amount = ${variation.amount.toWebGl()};
             float r = sqrt(_tx * _tx + _ty * _ty);
             float angle = _phi;
             float sinr = sin(r * angle);
@@ -2183,7 +2183,7 @@ class HeartFunc extends VariationShaderFunc2D {
 class GaussianBlurFunc extends VariationShaderFunc2D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         return `{
-          float amount = float(${variation.amount});
+          float amount = ${variation.amount.toWebGl()};
           float r = rand8(tex, rngState) * 2.0 * M_PI;
           float sina = sin(r);
           float cosa = cos(r);
@@ -2220,7 +2220,7 @@ class HeartWFFunc extends VariationShaderFunc2D {
 
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         return `{
-            float amount = float(${variation.amount});
+            float amount = ${variation.amount.toWebGl()};
             float scale_x = float(${variation.params.get(this.PARAM_SCALE_X)});
             float scale_t = float(${variation.params.get(this.PARAM_SCALE_T)});
             float shift_t = float(${variation.params.get(this.PARAM_SHIFT_T)});
@@ -2264,7 +2264,7 @@ class HeartWFFunc extends VariationShaderFunc2D {
 class HorseshoeFunc extends VariationShaderFunc2D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         return `{
-           float amount = float(${variation.amount});
+           float amount = ${variation.amount.toWebGl()};
            float sinA = _tx / _r;
            float cosA = _ty / _r;
            _vx += amount * (sinA * _tx - cosA * _ty);
@@ -2284,14 +2284,14 @@ class HorseshoeFunc extends VariationShaderFunc2D {
 class HyperbolicFunc extends VariationShaderFunc2D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         return `{
-           float amount = float(${variation.amount});
+           float amount = ${variation.amount.toWebGl()};
            _vx += amount * _tx / _r2;
            _vy += amount * _ty;
         }`;
     }
 
     get name(): string {
-        return 'hyperbolic';
+        return 'float amount = ${variation.amount.toWebGl()};';
     }
 
     get variationTypes(): VariationTypes[] {
@@ -2314,7 +2314,7 @@ class HypertileFunc extends VariationShaderFunc2D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         /* hypertile by Zueuk, http://zueuk.deviantart.com/art/Hyperbolic-tiling-plugins-165829025?q=sort%3Atime+gallery%3AZueuk&qo=0 */
         return `{
-            float amount = float(${variation.amount});
+            float amount = ${variation.amount.toWebGl()};
             int p = int(${variation.params.get(this.PARAM_P)});
             int q = int(${variation.params.get(this.PARAM_Q)});
             int n = int(${variation.params.get(this.PARAM_N)});
@@ -2360,7 +2360,7 @@ class Hypertile1Func extends VariationShaderFunc2D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         /* hypertile1 by Zueuk, http://zueuk.deviantart.com/art/Hyperbolic-tiling-plugins-165829025?q=sort%3Atime+gallery%3AZueuk&qo=0 */
         return `{
-            float amount = float(${variation.amount});
+            float amount = ${variation.amount.toWebGl()};
             int p = int(${variation.params.get(this.PARAM_P)});
             int q = int(${variation.params.get(this.PARAM_Q)});
             float pa = 2.0 * M_PI / float(p);
@@ -2406,7 +2406,7 @@ class Hypertile2Func extends VariationShaderFunc2D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         /* hypertile2 by Zueuk, http://zueuk.deviantart.com/art/Hyperbolic-tiling-plugins-165829025?q=sort%3Atime+gallery%3AZueuk&qo=0 */
         return `{
-            float amount = float(${variation.amount});
+            float amount = ${variation.amount.toWebGl()};
             int p = int(${variation.params.get(this.PARAM_P)});
             int q = int(${variation.params.get(this.PARAM_Q)});
             float pa = 2.0 * M_PI / float(p);
@@ -2450,7 +2450,7 @@ class JapaneseMapleLeafFunc extends VariationShaderFunc2D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         // japanese maple leaf formula by Hamid Naderi Yeganeh: https://blogs.scientificamerican.com/guest-blog/how-to-draw-with-math/
         return `{
-          float amount = float(${variation.amount});
+          float amount = ${variation.amount.toWebGl()};
           float filled = float(${variation.params.get(this.PARAM_FILLED)});
           float t = _phi*0.5+(M_PI*0.5);
           float scale = 0.667;
@@ -2481,7 +2481,7 @@ class IDiscFunc extends VariationShaderFunc2D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         // idisc my Michael Faber, http://michaelfaber.deviantart.com/art/The-Lost-Variations-258913970 */
         return `{
-            float amount = float(${variation.amount});
+            float amount = ${variation.amount.toWebGl()};
             float _v = amount * (1.0 / M_PI); 
             float a = M_PI / (sqrt(sqr(_tx) + sqr(_ty)) + 1.0);
             float r = atan2(_ty, _tx) * _v;
@@ -2504,7 +2504,7 @@ class IDiscFunc extends VariationShaderFunc2D {
 class JuliaFunc extends VariationShaderFunc2D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         return `{
-           float amount = float(${variation.amount});
+           float amount = ${variation.amount.toWebGl()};
            float a = atan2(_tx, _ty) * 0.5 + M_PI * floor(2.0 * rand8(tex, rngState)*rand8(tex, rngState));
            float sina = sin(a);
            float cosa = cos(a);
@@ -2537,7 +2537,7 @@ class JuliaCFunc extends VariationShaderFunc2D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         // juliac by David Young, http://sc0t0ma.deviantart.com/
         return `{
-          float amount = float(${variation.amount});
+          float amount = ${variation.amount.toWebGl()};
           float _re = float(${variation.params.get(this.PARAM_RE)});
           float _im = float(${variation.params.get(this.PARAM_IM)});
           float dist = float(${variation.params.get(this.PARAM_DIST)});
@@ -2574,7 +2574,7 @@ class JuliaNFunc extends VariationShaderFunc2D {
 
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         return `{
-          float amount = float(${variation.amount});
+          float amount = ${variation.amount.toWebGl()};
           int power = int(${variation.params.get(this.PARAM_POWER)});
           float dist = float(${variation.params.get(this.PARAM_DIST)});
               
@@ -2611,7 +2611,7 @@ class JuliaQFunc extends VariationShaderFunc2D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         // juliaq by Zueuk, http://zueuk.deviantart.com/art/juliaq-Apophysis-plugins-340813357
         return `{
-          float amount = float(${variation.amount});
+          float amount = ${variation.amount.toWebGl()};
           int power = int(${variation.params.get(this.PARAM_POWER)});
           int divisor = int(${variation.params.get(this.PARAM_DIVISOR)});
           float half_inv_power = 0.5 * float(divisor) / float(power);
@@ -2646,7 +2646,7 @@ class JuliascopeFunc extends VariationShaderFunc2D {
 
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         return `{
-          float amount = float(${variation.amount});
+          float amount = ${variation.amount.toWebGl()};
           int power = int(${variation.params.get(this.PARAM_POWER)});
           float dist = float(${variation.params.get(this.PARAM_DIST)});
               

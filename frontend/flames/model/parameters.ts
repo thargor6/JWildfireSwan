@@ -18,12 +18,23 @@
 import {EPSILON} from "Frontend/flames/renderer/mathlib";
 
 export interface FlameParameter {
-    type: "number" | "dynamic";
+    type: 'number' | 'dynamic';
+    datatype: 'float' | 'int';
     value: number;
 }
 
-class NumberParameter implements FlameParameter {
-    type: "number" | "dynamic";
+class FloatParameter implements FlameParameter {
+    type: 'number' | 'dynamic' = 'number'
+    datatype: 'float' | 'int' = 'float'
+
+    constructor(public value: number) {
+        this.type = "number";
+    }
+}
+
+class IntParameter implements FlameParameter {
+    type: 'number' | 'dynamic' = 'number'
+    datatype: 'float' | 'int' = 'int'
 
     constructor(public value: number) {
         this.type = "number";
@@ -31,11 +42,11 @@ class NumberParameter implements FlameParameter {
 }
 
 export class Parameters {
-    public static dNumber(value: number) {
-        return new NumberParameter(value);
+    public static floatParam(value: number) {
+        return new FloatParameter(value);
     }
-    public static iNumber(value: number) {
-        return new NumberParameter(value);
+    public static intParam(value: number) {
+        return new IntParameter(value);
     }
 }
 
