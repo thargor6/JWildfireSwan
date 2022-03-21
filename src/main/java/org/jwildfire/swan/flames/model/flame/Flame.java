@@ -77,25 +77,25 @@ public class Flame {
   private int height;
 
   @Nonnull
-  private double camZoom;
+  private FlameParam camZoom;
 
   @Nonnull
-  private double centreX;
+  private FlameParam centreX;
 
   @Nonnull
-  private double centreY;
+  private FlameParam centreY;
 
   @Nonnull
-  private double camYaw;
+  private FlameParam camYaw;
 
   @Nonnull
-  private double camPitch;
+  private FlameParam camPitch;
 
   @Nonnull
-  private double camRoll;
+  private FlameParam camRoll;
 
   @Nonnull
-  private double camBank;
+  private FlameParam camBank;
 
   @Nonnull
   private double camDOF;

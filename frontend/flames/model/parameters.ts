@@ -16,37 +16,74 @@
 */
 
 import {EPSILON} from "Frontend/flames/renderer/mathlib";
+import FlameParamCurveInterpolation
+    from "Frontend/generated/org/jwildfire/swan/flames/model/flame/FlameParamCurveInterpolation";
+
+export type FlameParameterType = 'scalar' | 'curve'
+export type FlameParameterDataType = 'float' | 'int'
 
 export interface FlameParameter {
-    type: 'number' | 'dynamic';
-    datatype: 'float' | 'int';
-    value: number;
+    type: FlameParameterType
+    datatype: FlameParameterDataType
+    value: number
 }
 
-class FloatParameter implements FlameParameter {
-    type: 'number' | 'dynamic' = 'number'
-    datatype: 'float' | 'int' = 'float'
+class FloatScalarParameter implements FlameParameter {
+    type: FlameParameterType = 'scalar'
+    datatype: FlameParameterDataType = 'float'
 
     constructor(public value: number) {
-        this.type = "number";
+        // EMPTY
     }
 }
 
-class IntParameter implements FlameParameter {
-    type: 'number' | 'dynamic' = 'number'
-    datatype: 'float' | 'int' = 'int'
+export enum MotionCurveInterpolation {
+    SPLINE = 'SPLINE',
+    BEZIER = 'BEZIER',
+    LINEAR = 'LINEAR',
+}
+
+export class FloatMotionCurveParameter implements FlameParameter {
+    type: FlameParameterType = 'curve'
+    datatype: FlameParameterDataType = 'float'
+
+    constructor(public value: number, public viewXMin: number, public viewXMax: number, public viewYMin: number,
+      public viewYMax: number, public interpolation: MotionCurveInterpolation, public selectedIdx: number,
+      private _x: Array<number>, private _y: Array<number>, public locked: boolean) {
+        // EMPTY
+    }
+
+    public get x() {
+        return this._x
+    }
+
+    public get y() {
+        return this._y
+    }
+}
+
+class IntScalarParameter implements FlameParameter {
+    type: FlameParameterType = 'scalar'
+    datatype: FlameParameterDataType = 'int'
 
     constructor(public value: number) {
-        this.type = "number";
+        // EMPTY
     }
 }
 
 export class Parameters {
     public static floatParam(value: number) {
-        return new FloatParameter(value);
+        return new FloatScalarParameter(value);
     }
     public static intParam(value: number) {
-        return new IntParameter(value);
+        return new IntScalarParameter(value);
+    }
+
+    public static motionCurveParam(value: number, viewXMin: number, viewXMax: number, viewYMin: number,
+                             viewYMax: number, interpolation: MotionCurveInterpolation, selectedIdx: number,
+                             x: Array<number>, y: Array<number>, locked: boolean) {
+        return new FloatMotionCurveParameter(value, viewXMin, viewXMax, viewYMin, viewYMax, interpolation,
+          selectedIdx, x, y, locked)
     }
 }
 

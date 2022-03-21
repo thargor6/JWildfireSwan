@@ -15,18 +15,28 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 */
 
-import {default as SourceColor} from '../../../generated/org/jwildfire/swan/flames/model/flame/Color'
+import {default as SourceFlameParam} from '../../../generated/org/jwildfire/swan/flames/model/flame/FlameParam'
+import {default as SourceFlameParamCurveInterpolation} from '../../../generated/org/jwildfire/swan/flames/model/flame/FlameParamCurveInterpolation'
 import {default as SourceXForm} from '../../../generated/org/jwildfire/swan/flames/model/flame/XForm'
 import {default as SourceLayer} from '../../../generated/org/jwildfire/swan/flames/model/flame/Layer'
 import {default as SourceFlame} from '../../../generated/org/jwildfire/swan/flames/model/flame/Flame'
 import {default as SourceVariation} from '../../../generated/org/jwildfire/swan/flames/model/flame/Variation'
-import {Flame, Layer, XForm, Variation, Color} from "../flame";
-import {FlameParameter, Parameters, RenderParameter, RenderParameters} from "Frontend/flames/model/parameters";
-import {RenderColor, RenderLayer, RenderFlame, RenderVariation, RenderXForm} from "Frontend/flames/model/render-flame";
+import {Color, Flame, Layer, Variation, XForm} from "../flame";
+import {
+    FlameParameter, FloatMotionCurveParameter,
+    MotionCurveInterpolation,
+    Parameters,
+    RenderParameter,
+    RenderParameters
+} from "Frontend/flames/model/parameters";
+import {RenderColor, RenderFlame, RenderLayer, RenderVariation, RenderXForm} from "Frontend/flames/model/render-flame";
 import IParam from "Frontend/generated/org/jwildfire/swan/flames/model/flame/IParam";
 import DParam from "Frontend/generated/org/jwildfire/swan/flames/model/flame/DParam";
+import FlameParamType from "Frontend/generated/org/jwildfire/swan/flames/model/flame/FlameParamType";
+import FlameParamDataType from "Frontend/generated/org/jwildfire/swan/flames/model/flame/FlameParamDataType";
 
 class ParamMapper {
+    // TODO: curves
     static mapForRendering(source: FlameParameter): RenderParameter {
         if(source.datatype==='int') {
             return RenderParameters.intParam(source.value)
@@ -34,6 +44,97 @@ class ParamMapper {
         else {
             return RenderParameters.floatParam(source.value)
         }
+    }
+
+    private static mapInterpolationFromBackend(source: SourceFlameParamCurveInterpolation): MotionCurveInterpolation {
+        if(source===SourceFlameParamCurveInterpolation.LINEAR) {
+            return MotionCurveInterpolation.LINEAR
+        }
+        else if(source===SourceFlameParamCurveInterpolation.BEZIER) {
+            return MotionCurveInterpolation.BEZIER
+        }
+        else {
+            return MotionCurveInterpolation.SPLINE
+        }
+    }
+
+    public static mapFromBackend(source: SourceFlameParam): FlameParameter {
+      if(source.paramType === FlameParamType.CURVE && source.curve) {
+        return Parameters.motionCurveParam(source.floatScalar ? source.floatScalar! : 0.0,
+            source.curve.viewXMin, source.curve.viewXMax, source.curve.viewYMin, source.curve.viewYMax,
+            ParamMapper.mapInterpolationFromBackend(source.curve.interpolation),
+            source.curve.selectedIdx, source.curve.x ? source.curve.x : [],
+            source.curve.y ? source.curve.y: [], source.curve.locked)
+      }
+      else { // FlameParamType.SCALAR
+         if(source.dataType === FlameParamDataType.INT) {
+           return Parameters.intParam(source.intScalar ? source.intScalar : 0)
+         }
+         else { // FlameParamDataType.FLOAT
+           return Parameters.floatParam(source.floatScalar? source.floatScalar : 0.0)
+         }
+      }
+    }
+
+    private static mapInterpolationToBackend(source: MotionCurveInterpolation): SourceFlameParamCurveInterpolation {
+        if(source===MotionCurveInterpolation.LINEAR) {
+            return SourceFlameParamCurveInterpolation.LINEAR
+        }
+        else if(source===MotionCurveInterpolation.BEZIER) {
+            return SourceFlameParamCurveInterpolation.BEZIER
+        }
+        else {
+            return SourceFlameParamCurveInterpolation.SPLINE
+        }
+    }
+
+    public static mapToBackend(source: FlameParameter): SourceFlameParam {
+      if(source.type === 'curve') {
+          const sourceCurve = source as FloatMotionCurveParameter
+          const curve = {
+              viewXMin: sourceCurve.viewXMin,
+              viewXMax: sourceCurve.viewXMax,
+              viewYMin: sourceCurve.viewYMin,
+              viewYMax: sourceCurve.viewYMax,
+              interpolation: ParamMapper.mapInterpolationToBackend(sourceCurve.interpolation),
+              selectedIdx: sourceCurve.selectedIdx,
+              x: sourceCurve.x,
+              y: sourceCurve.y,
+              locked: sourceCurve.locked
+          }
+          if(source.datatype === 'int') {
+              return {
+                  paramType: FlameParamType.CURVE,
+                  dataType: FlameParamDataType.INT,
+                  intScalar: source.value,
+                  curve: curve
+              }
+          }
+          else { // 'float'
+              return {
+                  paramType: FlameParamType.CURVE,
+                  dataType: FlameParamDataType.FLOAT,
+                  floatScalar: source.value,
+                  curve: curve
+              }
+          }
+      }
+      else { // 'scalar'
+          if(source.datatype === 'int') {
+              return {
+                  paramType: FlameParamType.SCALAR,
+                  dataType: FlameParamDataType.INT,
+                  intScalar: source.value
+              }
+          }
+          else { // 'float'
+              return {
+                  paramType: FlameParamType.SCALAR,
+                  dataType: FlameParamDataType.FLOAT,
+                  floatScalar: source.value
+              }
+          }
+      }
     }
 }
 
@@ -59,10 +160,18 @@ class VariationMapper {
             dParams: new Array<DParam>()
         }
         source.params.forEach((value, key) => {
-              res.dParams.push({
-                  name: key,
-                  value: value.value
-              })
+            if(value.datatype==='int') {
+                res.iParams.push({
+                    name: key,
+                    value: value.value
+                })
+            }
+            else {
+                res.dParams.push({
+                    name: key,
+                    value: value.value
+                })
+            }
         })
         return res;
     }
@@ -195,15 +304,17 @@ class ColorMapper {
     }
 }
 
+const WHITE_LEVEL = 265.0
+
 export class LayerMapper {
     public static mapFromBackend(source: SourceLayer): Layer {
         const res = new Layer()
         res.weight = Parameters.floatParam(source.weight)
         res.density = Parameters.floatParam(source.density)
         res.gradient = []
-        const whitelevel = 265.0
+
         source.gradient.forEach(color => res.gradient.push(
-          new Color(color.r / whitelevel, color.g / whitelevel, color.b / whitelevel)))
+          new Color(color.r / WHITE_LEVEL, color.g / WHITE_LEVEL, color.b / WHITE_LEVEL)))
 
         source.xforms.map(sxf => {
             res.xforms.push(XFormMapper.mapFromBackend(sxf))
@@ -225,10 +336,9 @@ export class LayerMapper {
 
         res.gradient = []
         source.gradient.forEach(color => res.gradient.push(
-          // TODO whitelevel
-          { r: color.r * 200.0,
-              g: color.g * 200.0,
-              b: color.b * 200.0}))
+          { r: color.r * WHITE_LEVEL,
+              g: color.g * WHITE_LEVEL,
+              b: color.b * WHITE_LEVEL}))
 
         source.xforms.map(sxf => {
             res.xforms.push(XFormMapper.mapToBackend(sxf))
@@ -276,13 +386,13 @@ export class FlameMapper {
         res.pixelsPerUnit = Parameters.floatParam(source.pixelsPerUnit)
         res.width = Parameters.floatParam(source.width)
         res.height = Parameters.floatParam(source.height)
-        res.camZoom = Parameters.floatParam(source.camZoom)
-        res.centreX = Parameters.floatParam(source.centreX)
-        res.centreY = Parameters.floatParam(source.centreY)
-        res.camYaw = Parameters.floatParam(source.camYaw)
-        res.camPitch = Parameters.floatParam(source.camPitch)
-        res.camRoll = Parameters.floatParam(source.camRoll)
-        res.camBank = Parameters.floatParam(source.camBank)
+        res.camZoom = ParamMapper.mapFromBackend(source.camZoom)
+        res.centreX = ParamMapper.mapFromBackend(source.centreX)
+        res.centreY = ParamMapper.mapFromBackend(source.centreY)
+        res.camYaw = ParamMapper.mapFromBackend(source.camYaw)
+        res.camPitch = ParamMapper.mapFromBackend(source.camPitch)
+        res.camRoll = ParamMapper.mapFromBackend(source.camRoll)
+        res.camBank = ParamMapper.mapFromBackend(source.camBank)
         res.camDOF = Parameters.floatParam(source.camDOF)
         res.camDOFArea = Parameters.floatParam(source.camDOFArea)
         res.camPerspective = Parameters.floatParam(source.camPerspective)
@@ -323,13 +433,13 @@ export class FlameMapper {
           pixelsPerUnit: source.pixelsPerUnit.value,
           width: source.width.value,
           height: source.height.value,
-          camZoom: source.camZoom.value,
-          centreX: source.centreX.value,
-          centreY: source.centreY.value,
-          camYaw: source.camYaw.value,
-          camPitch: source.camPitch.value,
-          camRoll:source.camRoll.value,
-          camBank: source.camBank.value,
+          camZoom: ParamMapper.mapToBackend(source.camZoom),
+          centreX: ParamMapper.mapToBackend(source.centreX),
+          centreY: ParamMapper.mapToBackend(source.centreY),
+          camYaw: ParamMapper.mapToBackend(source.camYaw),
+          camPitch: ParamMapper.mapToBackend(source.camPitch),
+          camRoll: ParamMapper.mapToBackend(source.camRoll),
+          camBank: ParamMapper.mapToBackend(source.camBank),
           camDOF: source.camDOF.value,
           camDOFArea: source.camDOFArea.value,
           camPerspective: source.camPerspective.value,
