@@ -64,35 +64,34 @@ void main(void) {
   float _whiteLevel = <%= WHITE_LEVEL %>;
   
   // log scale
-  float _r, _g, _b, _logScale;
+  float _r, _g, _b, _intensity;
   { 
     float _k1 = <%= K1 %>;
     float _k2 = <%= K2 %>;
     float _bgGlow = <%= BG_GLOW %>;
-    _logScale = (_k1 * log10(1.0 + x * _k2) + _bgGlow / (x + 1.0)) / (_whiteLevel * x);
-  
+    float _logScale = (_k1 * log10(1.0 + x * _k2) + _bgGlow / (x + 1.0)) / (_whiteLevel * x);
     _r = _logScale * colorTexel.r * <%= BALANCE_RED %>;
     _g = _logScale * colorTexel.g * <%= BALANCE_GREEN %>;
     _b = _logScale * colorTexel.b * <%= BALANCE_BLUE %>;
+    _intensity = _logScale * x * _whiteLevel;
   }
-  float r, g, b;
+  
+  float r, g, b, alpha;
   // gamma correction
   {
     float _gammaParam = <%= GAMMA %>;
     float _gammaThreshold = <%= GAMMA_THRESHOLD %>;
+    float _alphaAdjust = <%= ALPHA_ADJUST %>;
     
-    float _intensity = _logScale * x * _whiteLevel;
-  
     float _gamma = (_gammaParam == 0.0) ? 0.0 : 1.0 / _gammaParam;
     float _vibrancy = <%= VIBRANCY %>;
-    float _inverseVib = 1.0 - _vibrancy;
+    float _inverseVib = (1.0 - _vibrancy);
   
     float _sclGamma = 0.0;
     if (_gammaThreshold != 0.0) {
       _sclGamma = pow(_gammaThreshold, _gamma - 1.0);
     }
   
-    float alpha;
     if (_intensity <= _gammaThreshold) {
       float frac = _intensity / _gammaThreshold;
       alpha = (1.0 - frac) * _intensity * _sclGamma + frac * pow(_intensity, _gamma);
@@ -100,7 +99,7 @@ void main(void) {
     else {
       alpha = pow(_intensity, _gamma);
     }
-    float _alphaScl = 256.0 * _vibrancy * alpha / _intensity;
+    float _alphaScl = _vibrancy * alpha / _intensity * _alphaAdjust;  
   
     if (_inverseVib > 0.0) {
       r = _alphaScl * _r + _inverseVib * pow(_r, _gamma);
@@ -112,9 +111,12 @@ void main(void) {
       g = _alphaScl * _g;
       b = _alphaScl * _b;
     }
+    alpha = _alphaScl;
   }
+  
+  bool _withAlpha = <%= WITH_ALPHA %>;
 
   vec3 col = vec3(r, g, b);  
-  gl_FragColor = vec4(col, 1.0);  
+  gl_FragColor = vec4(col, _withAlpha ? alpha : 1.0) * 256.0;  
 }
 `;
