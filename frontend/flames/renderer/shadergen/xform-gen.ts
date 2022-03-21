@@ -94,30 +94,96 @@ export class XFormPartShaderGenerator {
   }
 
   addAffineTx(xForm: RenderXForm) {
-    if (!xForm.xyC00.equals(1.0) || !xForm.xyC01.equals(0.0) || !xForm.xyC11.equals(1.0) || !xForm.xyC10.equals(0.0) || !xForm.xyC20.equals(0.0) || !xForm.xyC21.equals(0.0)) {
-      return `
-              _tx = ${xForm.xyC00.toWebGl()} * point.x + ${xForm.xyC10.toWebGl()} * point.y + ${xForm.xyC20.toWebGl()};
-              _ty = ${xForm.xyC01.toWebGl()} * point.x + ${xForm.xyC11.toWebGl()} * point.y + ${xForm.xyC21.toWebGl()};
+    let xyTx = ''
+    if (!xForm.xyC00.equals(1.0) || !xForm.xyC01.equals(0.0) || !xForm.xyC11.equals(1.0) || !xForm.xyC10.equals(0.0)) {
+      xyTx =  `
+              _tx = ${xForm.xyC00.toWebGl()} * point.x + ${xForm.xyC10.toWebGl()} * point.y;
+              _ty = ${xForm.xyC01.toWebGl()} * point.x + ${xForm.xyC11.toWebGl()} * point.y;
         `
     } else {
-      return `
+      xyTx = `
              _tx = point.x;
              _ty = point.y;
          `
     }
+
+    let yzTx = ''
+    if (!xForm.yzC00.equals(1.0) || !xForm.yzC01.equals(0.0) || !xForm.yzC11.equals(1.0) || !xForm.yzC10.equals(0.0)) {
+      yzTx = `
+        {
+          float _ny = ${xForm.yzC00.toWebGl()} * _ty + ${xForm.yzC10.toWebGl()} * _tz;
+          float _nz = ${xForm.yzC01.toWebGl()} * _ty + ${xForm.yzC11.toWebGl()} * _tz;
+          _ty = _ny;
+          _tz = _nz;
+        }
+        `
+    }
+
+    let zxTx = ''
+    if (!xForm.zxC00.equals(1.0) || !xForm.zxC01.equals(0.0) || !xForm.zxC11.equals(1.0) || !xForm.zxC10.equals(0.0)) {
+      zxTx = `
+        {
+          float _nx = ${xForm.yzC00.toWebGl()} * _tx + ${xForm.yzC10.toWebGl()} * _tz;
+          float _nz = ${xForm.yzC01.toWebGl()} * _tx + ${xForm.yzC11.toWebGl()} * _tz;
+          _tx = _nx;
+          _tz = _nz;
+        }
+        `
+    }
+    return `
+      ${xyTx} 
+      ${yzTx}
+      ${zxTx}
+      _tx += ${xForm.xyC20.toWebGl()} + ${xForm.zxC20.toWebGl()};
+      _ty += ${xForm.xyC21.toWebGl()} + ${xForm.yzC20.toWebGl()};
+      _tz += ${xForm.yzC21.toWebGl()} + ${xForm.zxC21.toWebGl()};    
+    `
   }
 
   addPostAffineTx(xForm: RenderXForm) {
-    if (!xForm.xyP00.equals(1.0) || !xForm.xyP01.equals(0.0) || !xForm.xyP11.equals(1.0) || !xForm.xyP10.equals(0.0) || !xForm.xyP20.equals(0.0) || !xForm.xyP21.equals(0.0)) {
-      return `
-               float _px = ${xForm.xyP00.toWebGl()} * _vx + ${xForm.xyP10.toWebGl()} * _vy + ${xForm.xyP20.toWebGl()};
-               float _py = ${xForm.xyP01.toWebGl()} * _vx + ${xForm.xyP11.toWebGl()} * _vy + ${xForm.xyP21.toWebGl()};
-               _vx = _px;
-               _vy = _py;
+    let xyTx = ''
+    if (!xForm.xyP00.equals(1.0) || !xForm.xyP01.equals(0.0) || !xForm.xyP11.equals(1.0) || !xForm.xyP10.equals(0.0)) {
+      xyTx =  `
+        {
+           float _px = ${xForm.xyP00.toWebGl()} * _vx + ${xForm.xyP10.toWebGl()} * _vy;
+           float _py = ${xForm.xyP01.toWebGl()} * _vx + ${xForm.xyP11.toWebGl()} * _vy;
+           _vx = _px;
+           _vy = _py;
+        }      
         `
-    } else {
-      return ``
     }
+
+    let yzTx = ''
+    if (!xForm.yzP00.equals(1.0) || !xForm.yzP01.equals(0.0) || !xForm.yzP11.equals(1.0) || !xForm.yzP10.equals(0.0)) {
+      yzTx = `
+        {
+          float _py = ${xForm.yzP00.toWebGl()} * _vy + ${xForm.yzP10.toWebGl()} * _vz;
+          float _pz = ${xForm.yzP01.toWebGl()} * _vy + ${xForm.yzP11.toWebGl()} * _vz;
+          _ty = _py;
+          _tz = _pz;
+        }
+        `
+    }
+
+    let zxTx = ''
+    if (!xForm.zxP00.equals(1.0) || !xForm.zxP01.equals(0.0) || !xForm.zxP11.equals(1.0) || !xForm.zxP10.equals(0.0)) {
+      zxTx = `
+        {
+          float _px = ${xForm.yzP00.toWebGl()} * _vx + ${xForm.yzP10.toWebGl()} * _vz;
+          float _pz = ${xForm.yzP01.toWebGl()} * _vx + ${xForm.yzP11.toWebGl()} * _vz;
+          _tx = _px;
+          _tz = _pz;
+        }
+        `
+    }
+    return `
+      ${xyTx} 
+      ${yzTx}
+      ${zxTx}
+      _vx += ${xForm.xyP20.toWebGl()} + ${xForm.zxP20.toWebGl()};
+      _vy += ${xForm.xyP21.toWebGl()} + ${xForm.yzP20.toWebGl()};
+      _vz += ${xForm.yzP21.toWebGl()} + ${xForm.zxP21.toWebGl()};    
+    `
   }
 
 }
