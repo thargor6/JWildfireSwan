@@ -108,6 +108,13 @@ export class WebglShaders implements CloseableBuffers{
         this.prog_comp_col.seed3 = gl.getUniformLocation(this.prog_comp_col, "seed3")!;
 
         {
+
+            const k1 =  this.flame.contrast * 2.0 *  this.flame.brightness
+            const pixelsPerUnit =  this.flame.pixelsPerUnit *  this.flame.camZoom
+            const area = (this.flame.width *  this.flame.height) / (pixelsPerUnit * pixelsPerUnit);
+            const k2 = 1.0 / ( this.flame.contrast * area *  this.flame.sampleDensity )
+            const bgGlow = this.flame.lowDensityBrightness * k2 * area
+
             const params = {
                 BRIGHTNESS: this.flame.brightness * this.flame.camZoom,
                 CONTRAST: this.flame.contrast,
@@ -117,6 +124,11 @@ export class WebglShaders implements CloseableBuffers{
                 BALANCE_RED: this.flame.balanceRed,
                 BALANCE_GREEN: this.flame.balanceGreen,
                 BALANCE_BLUE: this.flame.balanceBlue,
+                K1: k1,
+                K2: k2,
+                BG_GLOW: bgGlow,
+                VIBRANCY: this.flame.vibrancy,
+                WHITE_LEVEL: this.flame.whiteLevel,
                 RESOLUTION: canvas.width}
 
             this.prog_show = compileShaderDirect(gl, shader_direct_vs, shader_show_fs, params) as ShowHistogramProgram;

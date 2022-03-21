@@ -389,7 +389,7 @@ class ColorMapper {
     }
 }
 
-const WHITE_LEVEL = 265.0
+const WHITE_LEVEL = 235.0
 
 export class LayerMapper {
     public static mapFromBackend(source: SourceLayer): Layer {
