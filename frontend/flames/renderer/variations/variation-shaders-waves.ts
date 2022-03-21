@@ -445,8 +445,8 @@ class WavesFunc extends VariationShaderFunc2D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         return `{
           float amount = ${variation.amount.toWebGl()};
-          _vx += amount * (_tx + ${xform.c10.toWebGl()} * sin(_ty / (${xform.c20.toWebGl()} * ${xform.c20.toWebGl()} + EPSILON)));
-          _vy += amount * (_ty + ${xform.c11.toWebGl()} * sin(_tx / (${xform.c21.toWebGl()} * ${xform.c21.toWebGl()} + EPSILON)));
+          _vx += amount * (_tx + ${xform.xyC10.toWebGl()} * sin(_ty / (${xform.xyC20.toWebGl()} * ${xform.xyC20.toWebGl()} + EPSILON)));
+          _vy += amount * (_ty + ${xform.xyC11.toWebGl()} * sin(_tx / (${xform.xyC21.toWebGl()} * ${xform.xyC21.toWebGl()} + EPSILON)));
         }`;
     }
 

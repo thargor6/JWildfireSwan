@@ -204,19 +204,47 @@ class XFormMapper {
         res.color = Parameters.floatParam(source.color)
         res.colorSymmetry = Parameters.floatParam(source.colorSymmetry)
 
-        res.c00 = Parameters.floatParam(source.c00)
-        res.c01 = Parameters.floatParam(source.c01)
-        res.c10 = Parameters.floatParam(source.c10)
-        res.c11 = Parameters.floatParam(source.c11)
-        res.c20 = Parameters.floatParam(source.c20)
-        res.c21 = Parameters.floatParam(source.c21)
+        res.xyC00 = ParamMapper.mapFromBackend(source.xyC00)
+        res.xyC01 = ParamMapper.mapFromBackend(source.xyC01)
+        res.xyC10 = ParamMapper.mapFromBackend(source.xyC10)
+        res.xyC11 = ParamMapper.mapFromBackend(source.xyC11)
+        res.xyC20 = ParamMapper.mapFromBackend(source.xyC20)
+        res.xyC21 = ParamMapper.mapFromBackend(source.xyC21)
 
-        res.p00 = Parameters.floatParam(source.p00)
-        res.p01 = Parameters.floatParam(source.p01)
-        res.p10 = Parameters.floatParam(source.p10)
-        res.p11 = Parameters.floatParam(source.p11)
-        res.p20 = Parameters.floatParam(source.p20)
-        res.p21 = Parameters.floatParam(source.p21)
+        res.yzC00 = ParamMapper.mapFromBackend(source.yzC00)
+        res.yzC01 = ParamMapper.mapFromBackend(source.yzC01)
+        res.yzC10 = ParamMapper.mapFromBackend(source.yzC10)
+        res.yzC11 = ParamMapper.mapFromBackend(source.yzC11)
+        res.yzC20 = ParamMapper.mapFromBackend(source.yzC20)
+        res.yzC21 = ParamMapper.mapFromBackend(source.yzC21)
+
+        res.zxC00 = ParamMapper.mapFromBackend(source.zxC00)
+        res.zxC01 = ParamMapper.mapFromBackend(source.zxC01)
+        res.zxC10 = ParamMapper.mapFromBackend(source.zxC10)
+        res.zxC11 = ParamMapper.mapFromBackend(source.zxC11)
+        res.zxC20 = ParamMapper.mapFromBackend(source.zxC20)
+        res.zxC21 = ParamMapper.mapFromBackend(source.zxC21)
+
+        res.xyP00 = ParamMapper.mapFromBackend(source.xyP00)
+        res.xyP01 = ParamMapper.mapFromBackend(source.xyP01)
+        res.xyP10 = ParamMapper.mapFromBackend(source.xyP10)
+        res.xyP11 = ParamMapper.mapFromBackend(source.xyP11)
+        res.xyP20 = ParamMapper.mapFromBackend(source.xyP20)
+        res.xyP21 = ParamMapper.mapFromBackend(source.xyP21)
+
+        res.yzP00 = ParamMapper.mapFromBackend(source.yzP00)
+        res.yzP01 = ParamMapper.mapFromBackend(source.yzP01)
+        res.yzP10 = ParamMapper.mapFromBackend(source.yzP10)
+        res.yzP11 = ParamMapper.mapFromBackend(source.yzP11)
+        res.yzP20 = ParamMapper.mapFromBackend(source.yzP20)
+        res.yzP21 = ParamMapper.mapFromBackend(source.yzP21)
+
+        res.zxP00 = ParamMapper.mapFromBackend(source.zxP00)
+        res.zxP01 = ParamMapper.mapFromBackend(source.zxP01)
+        res.zxP10 = ParamMapper.mapFromBackend(source.zxP10)
+        res.zxP11 = ParamMapper.mapFromBackend(source.zxP11)
+        res.zxP20 = ParamMapper.mapFromBackend(source.zxP20)
+        res.zxP21 = ParamMapper.mapFromBackend(source.zxP21)
 
         source.variations.map(svar => {
             res.variations.push(VariationMapper.mapFromBackend(svar))
@@ -230,19 +258,48 @@ class XFormMapper {
             color: source.color.value,
             colorSymmetry: source.colorSymmetry.value,
 
-            c00: source.c00.value,
-            c01: source.c01.value,
-            c10: source.c10.value,
-            c11: source.c11.value,
-            c20: source.c20.value,
-            c21: source.c21.value,
+            xyC00:ParamMapper.mapToBackend(source.xyC00),
+            xyC01:ParamMapper.mapToBackend(source.xyC01),
+            xyC10:ParamMapper.mapToBackend(source.xyC10),
+            xyC11:ParamMapper.mapToBackend(source.xyC11),
+            xyC20:ParamMapper.mapToBackend(source.xyC20),
+            xyC21:ParamMapper.mapToBackend(source.xyC21),
 
-            p00: source.p00.value,
-            p01: source.p01.value,
-            p10: source.p10.value,
-            p11: source.p11.value,
-            p20: source.p20.value,
-            p21: source.p21.value,
+            yzC00:ParamMapper.mapToBackend(source.yzC00),
+            yzC01:ParamMapper.mapToBackend(source.yzC01),
+            yzC10:ParamMapper.mapToBackend(source.yzC10),
+            yzC11:ParamMapper.mapToBackend(source.yzC11),
+            yzC20:ParamMapper.mapToBackend(source.yzC20),
+            yzC21:ParamMapper.mapToBackend(source.yzC21),
+
+            zxC00:ParamMapper.mapToBackend(source.zxC00),
+            zxC01:ParamMapper.mapToBackend(source.zxC01),
+            zxC10:ParamMapper.mapToBackend(source.zxC10),
+            zxC11:ParamMapper.mapToBackend(source.zxC11),
+            zxC20:ParamMapper.mapToBackend(source.zxC20),
+            zxC21:ParamMapper.mapToBackend(source.zxC21),
+
+            xyP00:ParamMapper.mapToBackend(source.xyP00),
+            xyP01:ParamMapper.mapToBackend(source.xyP01),
+            xyP10:ParamMapper.mapToBackend(source.xyP10),
+            xyP11:ParamMapper.mapToBackend(source.xyP11),
+            xyP20:ParamMapper.mapToBackend(source.xyP20),
+            xyP21:ParamMapper.mapToBackend(source.xyP21),
+
+            yzP00:ParamMapper.mapToBackend(source.yzP00),
+            yzP01:ParamMapper.mapToBackend(source.yzP01),
+            yzP10:ParamMapper.mapToBackend(source.yzP10),
+            yzP11:ParamMapper.mapToBackend(source.yzP11),
+            yzP20:ParamMapper.mapToBackend(source.yzP20),
+            yzP21:ParamMapper.mapToBackend(source.yzP21),
+
+            zxP00:ParamMapper.mapToBackend(source.zxP00),
+            zxP01:ParamMapper.mapToBackend(source.zxP01),
+            zxP10:ParamMapper.mapToBackend(source.zxP10),
+            zxP11:ParamMapper.mapToBackend(source.zxP11),
+            zxP20:ParamMapper.mapToBackend(source.zxP20),
+            zxP21:ParamMapper.mapToBackend(source.zxP21),
+
             modifiedWeights: new Array<number>(),
             variations: new Array<SourceVariation>()
         }
@@ -277,19 +334,47 @@ class XFormMapper {
         res.color = source.color.value
         res.colorSymmetry = source.colorSymmetry.value
 
-        res.c00 = ParamMapper.mapForRendering(source.c00)
-        res.c01 = ParamMapper.mapForRendering(source.c01)
-        res.c10 = ParamMapper.mapForRendering(source.c10)
-        res.c11 = ParamMapper.mapForRendering(source.c11)
-        res.c20 = ParamMapper.mapForRendering(source.c20)
-        res.c21 = ParamMapper.mapForRendering(source.c21)
+        res.xyC00 = ParamMapper.mapForRendering(source.xyC00)
+        res.xyC01 = ParamMapper.mapForRendering(source.xyC01)
+        res.xyC10 = ParamMapper.mapForRendering(source.xyC10)
+        res.xyC11 = ParamMapper.mapForRendering(source.xyC11)
+        res.xyC20 = ParamMapper.mapForRendering(source.xyC20)
+        res.xyC21 = ParamMapper.mapForRendering(source.xyC21)
 
-        res.p00 = ParamMapper.mapForRendering(source.p00)
-        res.p01 = ParamMapper.mapForRendering(source.p01)
-        res.p10 = ParamMapper.mapForRendering(source.p10)
-        res.p11 = ParamMapper.mapForRendering(source.p11)
-        res.p20 = ParamMapper.mapForRendering(source.p20)
-        res.p21 = ParamMapper.mapForRendering(source.p21)
+        res.yzC00 = ParamMapper.mapForRendering(source.yzC00)
+        res.yzC01 = ParamMapper.mapForRendering(source.yzC01)
+        res.yzC10 = ParamMapper.mapForRendering(source.yzC10)
+        res.yzC11 = ParamMapper.mapForRendering(source.yzC11)
+        res.yzC20 = ParamMapper.mapForRendering(source.yzC20)
+        res.yzC21 = ParamMapper.mapForRendering(source.yzC21)
+
+        res.zxC00 = ParamMapper.mapForRendering(source.zxC00)
+        res.zxC01 = ParamMapper.mapForRendering(source.zxC01)
+        res.zxC10 = ParamMapper.mapForRendering(source.zxC10)
+        res.zxC11 = ParamMapper.mapForRendering(source.zxC11)
+        res.zxC20 = ParamMapper.mapForRendering(source.zxC20)
+        res.zxC21 = ParamMapper.mapForRendering(source.zxC21)
+
+        res.xyP00 = ParamMapper.mapForRendering(source.xyP00)
+        res.xyP01 = ParamMapper.mapForRendering(source.xyP01)
+        res.xyP10 = ParamMapper.mapForRendering(source.xyP10)
+        res.xyP11 = ParamMapper.mapForRendering(source.xyP11)
+        res.xyP20 = ParamMapper.mapForRendering(source.xyP20)
+        res.xyP21 = ParamMapper.mapForRendering(source.xyP21)
+
+        res.yzP00 = ParamMapper.mapForRendering(source.yzP00)
+        res.yzP01 = ParamMapper.mapForRendering(source.yzP01)
+        res.yzP10 = ParamMapper.mapForRendering(source.yzP10)
+        res.yzP11 = ParamMapper.mapForRendering(source.yzP11)
+        res.yzP20 = ParamMapper.mapForRendering(source.yzP20)
+        res.yzP21 = ParamMapper.mapForRendering(source.yzP21)
+
+        res.zxP00 = ParamMapper.mapForRendering(source.zxP00)
+        res.zxP01 = ParamMapper.mapForRendering(source.zxP01)
+        res.zxP10 = ParamMapper.mapForRendering(source.zxP10)
+        res.zxP11 = ParamMapper.mapForRendering(source.zxP11)
+        res.zxP20 = ParamMapper.mapForRendering(source.zxP20)
+        res.zxP21 = ParamMapper.mapForRendering(source.zxP21)
 
         source.variations.map(svar => {
             res.variations.push(VariationMapper.mapForRendering(svar))

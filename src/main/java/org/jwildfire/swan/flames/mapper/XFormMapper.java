@@ -40,19 +40,47 @@ public class XFormMapper {
     res.setColor(source.getColor());
     res.setColorSymmetry(source.getColorSymmetry());
 
-    res.setC00(source.getCoeff00());
-    res.setC01(source.getCoeff01());
-    res.setC10(source.getCoeff10());
-    res.setC11(source.getCoeff11());
-    res.setC20(source.getCoeff20());
-    res.setC21(source.getCoeff21());
+    res.setXyC00(FlameParamMapper.mapFloatParamFromJwildfire(source.getXYCoeff00(), source.getXYCoeff00Curve()));
+    res.setXyC01(FlameParamMapper.mapFloatParamFromJwildfire(source.getXYCoeff01(), source.getXYCoeff01Curve()));
+    res.setXyC10(FlameParamMapper.mapFloatParamFromJwildfire(source.getXYCoeff10(), source.getXYCoeff10Curve()));
+    res.setXyC11(FlameParamMapper.mapFloatParamFromJwildfire(source.getXYCoeff11(), source.getXYCoeff11Curve()));
+    res.setXyC20(FlameParamMapper.mapFloatParamFromJwildfire(source.getXYCoeff20(), source.getXYCoeff20Curve()));
+    res.setXyC21(FlameParamMapper.mapFloatParamFromJwildfire(source.getXYCoeff21(), source.getXYCoeff21Curve()));
 
-    res.setP00(source.getPostCoeff00());
-    res.setP01(source.getPostCoeff01());
-    res.setP10(source.getPostCoeff10());
-    res.setP11(source.getPostCoeff11());
-    res.setP20(source.getPostCoeff20());
-    res.setP21(source.getPostCoeff21());
+    res.setYzC00(FlameParamMapper.mapFloatParamFromJwildfire(source.getYZCoeff00(), source.getYZCoeff00Curve()));
+    res.setYzC01(FlameParamMapper.mapFloatParamFromJwildfire(source.getYZCoeff01(), source.getYZCoeff01Curve()));
+    res.setYzC10(FlameParamMapper.mapFloatParamFromJwildfire(source.getYZCoeff10(), source.getYZCoeff10Curve()));
+    res.setYzC11(FlameParamMapper.mapFloatParamFromJwildfire(source.getYZCoeff11(), source.getYZCoeff11Curve()));
+    res.setYzC20(FlameParamMapper.mapFloatParamFromJwildfire(source.getYZCoeff20(), source.getYZCoeff20Curve()));
+    res.setYzC21(FlameParamMapper.mapFloatParamFromJwildfire(source.getYZCoeff21(), source.getYZCoeff21Curve()));
+
+    res.setZxC00(FlameParamMapper.mapFloatParamFromJwildfire(source.getZXCoeff00(), source.getZXCoeff00Curve()));
+    res.setZxC01(FlameParamMapper.mapFloatParamFromJwildfire(source.getZXCoeff01(), source.getZXCoeff01Curve()));
+    res.setZxC10(FlameParamMapper.mapFloatParamFromJwildfire(source.getZXCoeff10(), source.getZXCoeff10Curve()));
+    res.setZxC11(FlameParamMapper.mapFloatParamFromJwildfire(source.getZXCoeff11(), source.getZXCoeff11Curve()));
+    res.setZxC20(FlameParamMapper.mapFloatParamFromJwildfire(source.getZXCoeff20(), source.getZXCoeff20Curve()));
+    res.setZxC21(FlameParamMapper.mapFloatParamFromJwildfire(source.getZXCoeff21(), source.getZXCoeff21Curve()));
+
+    res.setXyP00(FlameParamMapper.mapFloatParamFromJwildfire(source.getXYPostCoeff00(), source.getXYPostCoeff00Curve()));
+    res.setXyP01(FlameParamMapper.mapFloatParamFromJwildfire(source.getXYPostCoeff01(), source.getXYPostCoeff01Curve()));
+    res.setXyP10(FlameParamMapper.mapFloatParamFromJwildfire(source.getXYPostCoeff10(), source.getXYPostCoeff10Curve()));
+    res.setXyP11(FlameParamMapper.mapFloatParamFromJwildfire(source.getXYPostCoeff11(), source.getXYPostCoeff11Curve()));
+    res.setXyP20(FlameParamMapper.mapFloatParamFromJwildfire(source.getXYPostCoeff20(), source.getXYPostCoeff20Curve()));
+    res.setXyP21(FlameParamMapper.mapFloatParamFromJwildfire(source.getXYPostCoeff21(), source.getXYPostCoeff21Curve()));
+
+    res.setYzP00(FlameParamMapper.mapFloatParamFromJwildfire(source.getYZPostCoeff00(), source.getYZPostCoeff00Curve()));
+    res.setYzP01(FlameParamMapper.mapFloatParamFromJwildfire(source.getYZPostCoeff01(), source.getYZPostCoeff01Curve()));
+    res.setYzP10(FlameParamMapper.mapFloatParamFromJwildfire(source.getYZPostCoeff10(), source.getYZPostCoeff10Curve()));
+    res.setYzP11(FlameParamMapper.mapFloatParamFromJwildfire(source.getYZPostCoeff11(), source.getYZPostCoeff11Curve()));
+    res.setYzP20(FlameParamMapper.mapFloatParamFromJwildfire(source.getYZPostCoeff20(), source.getYZPostCoeff20Curve()));
+    res.setYzP21(FlameParamMapper.mapFloatParamFromJwildfire(source.getYZPostCoeff21(), source.getYZPostCoeff21Curve()));
+
+    res.setZxP00(FlameParamMapper.mapFloatParamFromJwildfire(source.getZXPostCoeff00(), source.getZXPostCoeff00Curve()));
+    res.setZxP01(FlameParamMapper.mapFloatParamFromJwildfire(source.getZXPostCoeff01(), source.getZXPostCoeff01Curve()));
+    res.setZxP10(FlameParamMapper.mapFloatParamFromJwildfire(source.getZXPostCoeff10(), source.getZXPostCoeff10Curve()));
+    res.setZxP11(FlameParamMapper.mapFloatParamFromJwildfire(source.getZXPostCoeff11(), source.getZXPostCoeff11Curve()));
+    res.setZxP20(FlameParamMapper.mapFloatParamFromJwildfire(source.getZXPostCoeff20(), source.getZXPostCoeff20Curve()));
+    res.setZxP21(FlameParamMapper.mapFloatParamFromJwildfire(source.getZXPostCoeff21(), source.getZXPostCoeff21Curve()));
 
     for(int i=0;i<source.getVariationCount();i++) {
       org.jwildfire.create.tina.variation.Variation srcVar = source.getVariation(i);
@@ -89,19 +117,47 @@ public class XFormMapper {
     res.setColor(source.getColor());
     res.setColorSymmetry(source.getColorSymmetry());
 
-    res.setCoeff00(source.getC00());
-    res.setCoeff01(source.getC01());
-    res.setCoeff10(source.getC10());
-    res.setCoeff11(source.getC11());
-    res.setCoeff20(source.getC20());
-    res.setCoeff21(source.getC21());
+    res.setXYCoeff00(FlameParamMapper.mapFloatParamToJwildfire(source.getXyC00(), res.getXYCoeff00Curve()));
+    res.setXYCoeff01(FlameParamMapper.mapFloatParamToJwildfire(source.getXyC01(), res.getXYCoeff01Curve()));
+    res.setXYCoeff10(FlameParamMapper.mapFloatParamToJwildfire(source.getXyC10(), res.getXYCoeff10Curve()));
+    res.setXYCoeff11(FlameParamMapper.mapFloatParamToJwildfire(source.getXyC11(), res.getXYCoeff11Curve()));
+    res.setXYCoeff20(FlameParamMapper.mapFloatParamToJwildfire(source.getXyC20(), res.getXYCoeff20Curve()));
+    res.setXYCoeff21(FlameParamMapper.mapFloatParamToJwildfire(source.getXyC21(), res.getXYCoeff21Curve()));
 
-    res.setPostCoeff00(source.getP00());
-    res.setPostCoeff01(source.getP01());
-    res.setPostCoeff10(source.getP10());
-    res.setPostCoeff11(source.getP11());
-    res.setPostCoeff20(source.getP20());
-    res.setPostCoeff21(source.getP21());
+    res.setYZCoeff00(FlameParamMapper.mapFloatParamToJwildfire(source.getYzC00(), res.getYZCoeff00Curve()));
+    res.setYZCoeff01(FlameParamMapper.mapFloatParamToJwildfire(source.getYzC01(), res.getYZCoeff01Curve()));
+    res.setYZCoeff10(FlameParamMapper.mapFloatParamToJwildfire(source.getYzC10(), res.getYZCoeff10Curve()));
+    res.setYZCoeff11(FlameParamMapper.mapFloatParamToJwildfire(source.getYzC11(), res.getYZCoeff11Curve()));
+    res.setYZCoeff20(FlameParamMapper.mapFloatParamToJwildfire(source.getYzC20(), res.getYZCoeff20Curve()));
+    res.setYZCoeff21(FlameParamMapper.mapFloatParamToJwildfire(source.getYzC21(), res.getYZCoeff21Curve()));
+
+    res.setZXCoeff00(FlameParamMapper.mapFloatParamToJwildfire(source.getZxC00(), res.getZXCoeff00Curve()));
+    res.setZXCoeff01(FlameParamMapper.mapFloatParamToJwildfire(source.getZxC01(), res.getZXCoeff01Curve()));
+    res.setZXCoeff10(FlameParamMapper.mapFloatParamToJwildfire(source.getZxC10(), res.getZXCoeff10Curve()));
+    res.setZXCoeff11(FlameParamMapper.mapFloatParamToJwildfire(source.getZxC11(), res.getZXCoeff11Curve()));
+    res.setZXCoeff20(FlameParamMapper.mapFloatParamToJwildfire(source.getZxC20(), res.getZXCoeff20Curve()));
+    res.setZXCoeff21(FlameParamMapper.mapFloatParamToJwildfire(source.getZxC21(), res.getZXCoeff21Curve()));
+
+    res.setXYPostCoeff00(FlameParamMapper.mapFloatParamToJwildfire(source.getXyP00(), res.getXYPostCoeff00Curve()));
+    res.setXYPostCoeff01(FlameParamMapper.mapFloatParamToJwildfire(source.getXyP01(), res.getXYPostCoeff01Curve()));
+    res.setXYPostCoeff10(FlameParamMapper.mapFloatParamToJwildfire(source.getXyP10(), res.getXYPostCoeff10Curve()));
+    res.setXYPostCoeff11(FlameParamMapper.mapFloatParamToJwildfire(source.getXyP11(), res.getXYPostCoeff11Curve()));
+    res.setXYPostCoeff20(FlameParamMapper.mapFloatParamToJwildfire(source.getXyP20(), res.getXYPostCoeff20Curve()));
+    res.setXYPostCoeff21(FlameParamMapper.mapFloatParamToJwildfire(source.getXyP21(), res.getXYPostCoeff21Curve()));
+
+    res.setYZPostCoeff00(FlameParamMapper.mapFloatParamToJwildfire(source.getYzP00(), res.getYZPostCoeff00Curve()));
+    res.setYZPostCoeff01(FlameParamMapper.mapFloatParamToJwildfire(source.getYzP01(), res.getYZPostCoeff01Curve()));
+    res.setYZPostCoeff10(FlameParamMapper.mapFloatParamToJwildfire(source.getYzP10(), res.getYZPostCoeff10Curve()));
+    res.setYZPostCoeff11(FlameParamMapper.mapFloatParamToJwildfire(source.getYzP11(), res.getYZPostCoeff11Curve()));
+    res.setYZPostCoeff20(FlameParamMapper.mapFloatParamToJwildfire(source.getYzP20(), res.getYZPostCoeff20Curve()));
+    res.setYZPostCoeff21(FlameParamMapper.mapFloatParamToJwildfire(source.getYzP21(), res.getYZPostCoeff21Curve()));
+
+    res.setZXPostCoeff00(FlameParamMapper.mapFloatParamToJwildfire(source.getZxP00(), res.getZXPostCoeff00Curve()));
+    res.setZXPostCoeff01(FlameParamMapper.mapFloatParamToJwildfire(source.getZxP01(), res.getZXPostCoeff01Curve()));
+    res.setZXPostCoeff10(FlameParamMapper.mapFloatParamToJwildfire(source.getZxP10(), res.getZXPostCoeff10Curve()));
+    res.setZXPostCoeff11(FlameParamMapper.mapFloatParamToJwildfire(source.getZxP11(), res.getZXPostCoeff11Curve()));
+    res.setZXPostCoeff20(FlameParamMapper.mapFloatParamToJwildfire(source.getZxP20(), res.getZXPostCoeff20Curve()));
+    res.setZXPostCoeff21(FlameParamMapper.mapFloatParamToJwildfire(source.getZxP21(), res.getZXPostCoeff21Curve()));
 
     for(int i=0;i<source.getVariations().size();i++) {
       Variation srcVar = source.getVariations().get(i);

@@ -35,19 +35,47 @@ export class Variation {
 }
 
 export class XForm {
-    public c00: FlameParameter = Parameters.floatParam(1.0);
-    public c01: FlameParameter = Parameters.floatParam(0.0);
-    public c10: FlameParameter = Parameters.floatParam(0.0);
-    public c11: FlameParameter = Parameters.floatParam(1.0);
-    public c20: FlameParameter = Parameters.floatParam(0.0);
-    public c21: FlameParameter = Parameters.floatParam(0.0);
+    public xyC00: FlameParameter = Parameters.floatParam(1.0);
+    public xyC01: FlameParameter = Parameters.floatParam(0.0);
+    public xyC10: FlameParameter = Parameters.floatParam(0.0);
+    public xyC11: FlameParameter = Parameters.floatParam(1.0);
+    public xyC20: FlameParameter = Parameters.floatParam(0.0);
+    public xyC21: FlameParameter = Parameters.floatParam(0.0);
 
-    public p00: FlameParameter = Parameters.floatParam(1.0);
-    public p01: FlameParameter = Parameters.floatParam(0.0);
-    public p10: FlameParameter = Parameters.floatParam(0.0);
-    public p11: FlameParameter = Parameters.floatParam(1.0);
-    public p20: FlameParameter = Parameters.floatParam(0.0);
-    public p21: FlameParameter = Parameters.floatParam(0.0);
+    public yzC00: FlameParameter = Parameters.floatParam(1.0);
+    public yzC01: FlameParameter = Parameters.floatParam(0.0);
+    public yzC10: FlameParameter = Parameters.floatParam(0.0);
+    public yzC11: FlameParameter = Parameters.floatParam(1.0);
+    public yzC20: FlameParameter = Parameters.floatParam(0.0);
+    public yzC21: FlameParameter = Parameters.floatParam(0.0);
+
+    public zxC00: FlameParameter = Parameters.floatParam(1.0);
+    public zxC01: FlameParameter = Parameters.floatParam(0.0);
+    public zxC10: FlameParameter = Parameters.floatParam(0.0);
+    public zxC11: FlameParameter = Parameters.floatParam(1.0);
+    public zxC20: FlameParameter = Parameters.floatParam(0.0);
+    public zxC21: FlameParameter = Parameters.floatParam(0.0);
+
+    public xyP00: FlameParameter = Parameters.floatParam(1.0);
+    public xyP01: FlameParameter = Parameters.floatParam(0.0);
+    public xyP10: FlameParameter = Parameters.floatParam(0.0);
+    public xyP11: FlameParameter = Parameters.floatParam(1.0);
+    public xyP20: FlameParameter = Parameters.floatParam(0.0);
+    public xyP21: FlameParameter = Parameters.floatParam(0.0);
+
+    public yzP00: FlameParameter = Parameters.floatParam(1.0);
+    public yzP01: FlameParameter = Parameters.floatParam(0.0);
+    public yzP10: FlameParameter = Parameters.floatParam(0.0);
+    public yzP11: FlameParameter = Parameters.floatParam(1.0);
+    public yzP20: FlameParameter = Parameters.floatParam(0.0);
+    public yzP21: FlameParameter = Parameters.floatParam(0.0);
+
+    public zxP00: FlameParameter = Parameters.floatParam(1.0);
+    public zxP01: FlameParameter = Parameters.floatParam(0.0);
+    public zxP10: FlameParameter = Parameters.floatParam(0.0);
+    public zxP11: FlameParameter = Parameters.floatParam(1.0);
+    public zxP20: FlameParameter = Parameters.floatParam(0.0);
+    public zxP21: FlameParameter = Parameters.floatParam(0.0);
 
     public color: FlameParameter = Parameters.floatParam(0.5);
     public colorSymmetry: FlameParameter = Parameters.floatParam(0.0);

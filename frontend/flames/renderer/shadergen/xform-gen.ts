@@ -94,10 +94,10 @@ export class XFormPartShaderGenerator {
   }
 
   addAffineTx(xForm: RenderXForm) {
-    if (!xForm.c00.equals(1.0) || !xForm.c01.equals(0.0) || !xForm.c11.equals(1.0) || !xForm.c10.equals(0.0) || !xForm.c20.equals(0.0) || !xForm.c21.equals(0.0)) {
+    if (!xForm.xyC00.equals(1.0) || !xForm.xyC01.equals(0.0) || !xForm.xyC11.equals(1.0) || !xForm.xyC10.equals(0.0) || !xForm.xyC20.equals(0.0) || !xForm.xyC21.equals(0.0)) {
       return `
-              _tx = ${xForm.c00.toWebGl()} * point.x + ${xForm.c10.toWebGl()} * point.y + ${xForm.c20.toWebGl()};
-              _ty = ${xForm.c01.toWebGl()} * point.x + ${xForm.c11.toWebGl()} * point.y + ${xForm.c21.toWebGl()};
+              _tx = ${xForm.xyC00.toWebGl()} * point.x + ${xForm.xyC10.toWebGl()} * point.y + ${xForm.xyC20.toWebGl()};
+              _ty = ${xForm.xyC01.toWebGl()} * point.x + ${xForm.xyC11.toWebGl()} * point.y + ${xForm.xyC21.toWebGl()};
         `
     } else {
       return `
@@ -108,10 +108,10 @@ export class XFormPartShaderGenerator {
   }
 
   addPostAffineTx(xForm: RenderXForm) {
-    if (!xForm.p00.equals(1.0) || !xForm.p01.equals(0.0) || !xForm.p11.equals(1.0) || !xForm.p10.equals(0.0) || !xForm.p20.equals(0.0) || !xForm.p21.equals(0.0)) {
+    if (!xForm.xyP00.equals(1.0) || !xForm.xyP01.equals(0.0) || !xForm.xyP11.equals(1.0) || !xForm.xyP10.equals(0.0) || !xForm.xyP20.equals(0.0) || !xForm.xyP21.equals(0.0)) {
       return `
-               float _px = ${xForm.p00.toWebGl()} * _vx + ${xForm.p10.toWebGl()} * _vy + ${xForm.p20.toWebGl()};
-               float _py = ${xForm.p01.toWebGl()} * _vx + ${xForm.p11.toWebGl()} * _vy + ${xForm.p21.toWebGl()};
+               float _px = ${xForm.xyP00.toWebGl()} * _vx + ${xForm.xyP10.toWebGl()} * _vy + ${xForm.xyP20.toWebGl()};
+               float _py = ${xForm.xyP01.toWebGl()} * _vx + ${xForm.xyP11.toWebGl()} * _vy + ${xForm.xyP21.toWebGl()};
                _vx = _px;
                _vy = _py;
         `
