@@ -122,6 +122,9 @@ public class Flame {
   private boolean newCamDOF = false;
 
   @Nonnull
+  private boolean bgTransparency = true;
+
+  @Nonnull
   private double dimZDistance;
 
   @Nonnull

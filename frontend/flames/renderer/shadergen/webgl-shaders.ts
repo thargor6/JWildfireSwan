@@ -127,7 +127,7 @@ export class WebglShaders implements CloseableBuffers{
                 K2: k2,
                 BG_GLOW: bgGlow,
                 ALPHA_ADJUST: alphaAdjust,
-                WITH_ALPHA: true,
+                WITH_ALPHA: this.flame.bgTransparency,
                 VIBRANCY: this.flame.vibrancy,
                 WHITE_LEVEL: this.flame.whiteLevel,
                 RESOLUTION: canvas.width}

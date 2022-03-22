@@ -142,6 +142,7 @@ export class Flame {
     public camPosY = Parameters.floatParam(0.0)
     public camPosZ = Parameters.floatParam(0.0)
     public newCamDOF = false
+    public bgTransparency = true
     public dimZDistance = Parameters.floatParam(0.0)
     public camZ = Parameters.floatParam(0.0)
     public focusX = Parameters.floatParam(0.0)

@@ -155,6 +155,7 @@ export class RenderFlame {
     public camPosY = 0.0
     public camPosZ = 0.0
     public newCamDOF = false
+    public bgTransparency = true
     public dimZDistance = 0.0
     public camZ = 0.0
     public focusX = 0.0

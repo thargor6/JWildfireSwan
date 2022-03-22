@@ -60,6 +60,7 @@ public class FlameMapper {
     res.setCamPosY(source.getCamPosY());
     res.setCamPosZ(source.getCamPosZ());
     res.setNewCamDOF(source.isNewCamDOF());
+    res.setBgTransparency(source.isBGTransparency());
     res.setDimZDistance(source.getDimZDistance());
     res.setCamZ(source.getCamZ());
     res.setFocusX(source.getFocusX());
@@ -105,6 +106,7 @@ public class FlameMapper {
     res.setCamPosY(source.getCamPosY());
     res.setCamPosZ(source.getCamPosZ());
     res.setNewCamDOF(source.isNewCamDOF());
+    res.setBGTransparency(source.isBgTransparency());
     res.setDimZDistance(source.getDimZDistance());
     res.setCamZ(source.getCamZ());
     res.setFocusX(source.getFocusX());
