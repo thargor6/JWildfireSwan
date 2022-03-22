@@ -56,9 +56,9 @@ export class RendererView extends View  {
     cropSizes = RenderResolutions.getRenderResolutions(this.renderSize)
 
     @state()
-    qualityScale = 1.5
+    qualityScale = RenderResolutions.defaultQualityScale
 
-    qualityScaleValues = [0.5, 1.0, 1.5, 2.0, 4.0, 8.0, 16.0]
+    qualityScaleValues = RenderResolutions.qualityScales
 
     @state()
     autoSave = true

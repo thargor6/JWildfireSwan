@@ -65,6 +65,12 @@ export class PlaygroundRenderPanel extends MobxLitElement {
 
   cropSizes = RenderResolutions.getRenderResolutions(this.renderSize)
 
+
+  @state()
+  qualityScale = RenderResolutions.defaultQualityScale
+
+  qualityScaleValues = RenderResolutions.qualityScales
+
   displayModes: DisplayModeItem[] = [
       { displayMode: DisplayMode.FLAME, caption: "Flame"},
       { displayMode: DisplayMode.POSITION_ITER, caption: "Position iteration"},
@@ -79,7 +85,7 @@ export class PlaygroundRenderPanel extends MobxLitElement {
   render() {
     return html`
       <vertical-layout theme="spacing" style="${this.visible ? `display:block;`: `display:none;`}">
-        <vaadin-horizontal-layout theme="spacing">
+        <div class="gap-m grid list-none m-0 p-0" style="grid-template-columns: repeat(auto-fill, minmax(20em, 1fr));">
           <vaadin-combo-box style="max-width: 10em;" label="Render size" .items="${this.renderSizes}" value="${this.renderSize}"
                             @change="${(event: Event) => this.renderSizeChanged(event)}"></vaadin-combo-box>
           <vaadin-combo-box style="max-width: 10em;" label="Crop size" 
@@ -87,11 +93,14 @@ export class PlaygroundRenderPanel extends MobxLitElement {
                               @change="${(event: Event) => this.cropSizeChanged(event)}"></vaadin-combo-box>
           <vaadin-combo-box style="max-width: 10em;" label="Swarm size" .items="${this.swarmSizes}" value="${this.swarmSize}"
                           @change="${(event: Event) => this.pointsSizeChanged(event)}"></vaadin-combo-box>
-          <vaadin-combo-box style="max-width: 10em;" label="Display mode"
+            <vaadin-combo-box style="max-width: 10em;" label="Quality scale"
+                              .items="${this.qualityScaleValues}" value="${this.qualityScale}"
+                              @change="${(event: Event) => this.qualityScaleChanged(event)}"></vaadin-combo-box>
+            <vaadin-combo-box style="max-width: 10em;" label="Display mode"
                               .items="${this.displayModes}" .value=${this.displayMode}
                               item-value-path="displayMode" item-label-path="caption"
                               @change="${(event: Event) => this.displayModeChanged(event)}"></vaadin-combo-box>
-        </vaadin-horizontal-layout>
+         </div>
           
  
         <div style="display: flex; margin-top: 2em;">
@@ -127,6 +136,14 @@ export class PlaygroundRenderPanel extends MobxLitElement {
   private pointsSizeChanged(event: Event) {
     if ((event.target as HasValue<string>).value) {
       this.swarmSize = parseInt((event.target as HasValue<string>).value!)
+      this.onImageSizeChanged()
+    }
+  }
+
+
+  private qualityScaleChanged(event: Event) {
+    if ((event.target as HasValue<string>).value) {
+      this.qualityScale = parseFloat((event.target as HasValue<string>).value!)
       this.onImageSizeChanged()
     }
   }

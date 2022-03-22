@@ -109,4 +109,13 @@ export class RenderResolutions {
   static findRenderResolutionByName(renderSize: RenderSizes, displayName: string) {
     return RenderResolutions.resolutions.get(renderSize)!.find(resolution => resolution.displayName === displayName)!
   }
+
+  public static get defaultQualityScale() {
+    return 1.5
+  }
+
+  public static get qualityScales() {
+    return [0.5, 1.0, 1.5, 2.0, 4.0, 8.0, 16.0, 32.0, 64.0, 128.0]
+  }
+
 }

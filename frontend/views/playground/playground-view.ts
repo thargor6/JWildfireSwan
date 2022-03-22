@@ -81,7 +81,8 @@ export class PlaygroundView extends View implements BeforeEnterObserver {
            this.getRenderSettingsPanel().displayMode, this.getRenderPanel().canvas,
           this.getRenderSettingsPanel().capturedImageContainer, true,
           RenderResolutions.getCropRegion(this.getRenderSettingsPanel().renderSize,
-            this.getRenderSettingsPanel().cropSize), 1.0, playgroundStore.flame)
+            this.getRenderSettingsPanel().cropSize), this.getRenderSettingsPanel().qualityScale,
+          playgroundStore.flame)
     }
 
     selectedChanged(e: CustomEvent) {

@@ -102,9 +102,9 @@ void main(void) {
     float _alphaScl = _vibrancy * alpha / _intensity * _alphaAdjust;  
   
     if (_inverseVib > 0.0) {
-      r = _alphaScl * _r + _inverseVib * pow(_r, _gamma);
-      g = _alphaScl * _g + _inverseVib * pow(_g, _gamma);
-      b = _alphaScl * _b + _inverseVib * pow(_b, _gamma);
+      r = _alphaScl * _r + _inverseVib * pow(_r, _gamma) / 256.0;
+      g = _alphaScl * _g + _inverseVib * pow(_g, _gamma) / 256.0;
+      b = _alphaScl * _b + _inverseVib * pow(_b, _gamma) / 256.0;
     }
     else {
       r = _alphaScl * _r;
