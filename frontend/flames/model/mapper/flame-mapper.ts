@@ -389,7 +389,7 @@ class ColorMapper {
     }
 }
 
-const WHITE_LEVEL = 235.0
+const COLOR_SCL = 255.0
 
 export class LayerMapper {
     public static mapFromBackend(source: SourceLayer): Layer {
@@ -399,7 +399,7 @@ export class LayerMapper {
         res.gradient = []
 
         source.gradient.forEach(color => res.gradient.push(
-          new Color(color.r / WHITE_LEVEL, color.g / WHITE_LEVEL, color.b / WHITE_LEVEL)))
+          new Color(color.r / COLOR_SCL, color.g / COLOR_SCL, color.b / COLOR_SCL)))
 
         source.xforms.map(sxf => {
             res.xforms.push(XFormMapper.mapFromBackend(sxf))
@@ -421,9 +421,9 @@ export class LayerMapper {
 
         res.gradient = []
         source.gradient.forEach(color => res.gradient.push(
-          { r: color.r * WHITE_LEVEL,
-              g: color.g * WHITE_LEVEL,
-              b: color.b * WHITE_LEVEL}))
+          { r: color.r * COLOR_SCL,
+              g: color.g * COLOR_SCL,
+              b: color.b * COLOR_SCL}))
 
         source.xforms.map(sxf => {
             res.xforms.push(XFormMapper.mapToBackend(sxf))

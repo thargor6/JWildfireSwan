@@ -62,23 +62,33 @@ export class PlaygroundFlamePanel extends MobxLitElement {
   @property()
   onFlameNameChanged: ()=>void = ()=> {}
 
+  @property()
+  onExportParamsToClipboard = ()=>{}
+
+  @property()
+  onImportParamsFromClipboard = ()=>{}
+
   render() {
     return html`
       <div style="${this.visible ? `display:block;`: `display:none;`}">
         <div style="display:flex; flex-direction: column;">
           <vaadin-combo-box label="Example flame" .items="${playgroundStore.exampleFlamenames}" value="${this.flameName}"
               .renderer="${this.exampleFlameRenderer}" @change="${(event: Event) => this.flameNameChanged(event)}"></vaadin-combo-box>
-          <vaadin-text-area style="max-width:100em; max-height: 32em; font-size: xx-small;" label="Flame xml" value="${this.flameXml}" @change="${(event: Event)=>this.flameXmlChanged(event)}"></vaadin-text-area>
+          <vaadin-text-area style="max-width:100em; max-height: 12em; font-size: xx-small;" label="Flame xml" value="${this.flameXml}" @change="${(event: Event)=>this.flameXmlChanged(event)}"></vaadin-text-area>
+          <vaadin-button ?disabled=${playgroundStore.calculating} @click="${this.onImport}">Import flame from xml</vaadin-button>
+
           <vaadin-vertical-layout theme="padding">
           
-          <div style="display: grid;">
-            <vaadin-button ?disabled=${playgroundStore.calculating} theme="primary" @click="${this.onImport}">Import flame from xml</vaadin-button>
-            <vaadin-horizontal-layout theme="spacing">
-            <vaadin-button ?disabled=${playgroundStore.calculating} theme="primary" @click="${this.onRandomFlame}">Generate random flame</vaadin-button>
-            <vaadin-button ?disabled=${playgroundStore.calculating} theme="secondary" @click="${this.onRandomGradient}">Generate random gradient</vaadin-button>
-            </vaadin-horizontal-layout>
-          </div>
-          <swan-loading-indicator .loading=${playgroundStore.calculating} caption="Calculating..."></swan-loading-indicator>
+              <div class="gap-m grid list-none m-0 p-0" style="grid-template-columns: repeat(auto-fill, minmax(21em, 1fr));">
+
+                <vaadin-button style="width: 14em;" theme="primary" ?disabled=${playgroundStore.calculating} @click="${this.onExportParamsToClipboard}">Export to Clipboard</vaadin-button>
+                <vaadin-button style="width: 14em;" theme="primary" ?disabled=${playgroundStore.calculating} @click="${this.onImportParamsFromClipboard}">Import from Clipboard</vaadin-button>
+                  
+                <vaadin-button style="width: 14em;" ?disabled=${playgroundStore.calculating} theme="primary" @click="${this.onRandomFlame}">Generate random flame</vaadin-button>
+                <vaadin-button style="width: 14em;" ?disabled=${playgroundStore.calculating} theme="secondary" @click="${this.onRandomGradient}">Generate random gradient</vaadin-button>
+
+            </div>
+            <swan-loading-indicator .loading=${playgroundStore.calculating} caption="Calculating..."></swan-loading-indicator>
           </vaadin-vertical-layout>
         </div>
       </div>

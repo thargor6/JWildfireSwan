@@ -108,14 +108,14 @@ export class WebglShaders implements CloseableBuffers{
         this.prog_comp_col.seed3 = gl.getUniformLocation(this.prog_comp_col, "seed3")!;
 
         {
-            const k1 =  this.flame.contrast * 2.0 *  this.flame.brightness
+            const k1 =  this.flame.contrast * this.flame.brightness * 1.5
             const pixelsPerUnit =  this.flame.pixelsPerUnit *  this.flame.camZoom
             const area = (this.flame.width *  this.flame.height) / (pixelsPerUnit * pixelsPerUnit);
-            const k2 = 1.0 / ( this.flame.contrast * area *  this.flame.sampleDensity )
-            const bgGlow = this.flame.lowDensityBrightness * k2 * area
+            const k2 = 1.0 / ( this.flame.contrast * area *  this.flame.sampleDensity ) * 0.75
+            const bgGlow = this.flame.lowDensityBrightness * k2 * area * 0.75
             const alphaAdjust = 1.0 - Math.atan(3.0 * (this.flame.foregroundOpacity - 1.0)) / 1.25;
             const params = {
-                BRIGHTNESS: this.flame.brightness * this.flame.camZoom,
+                BRIGHTNESS: this.flame.brightness,
                 CONTRAST: this.flame.contrast,
                 GAMMA: this.flame.gamma,
                 GAMMA_THRESHOLD: this.flame.gammaThreshold,

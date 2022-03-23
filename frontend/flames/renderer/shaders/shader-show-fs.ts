@@ -60,7 +60,9 @@ float log10(float val) {
 void main(void) {
   vec3 colorTexel = texture2D(uTexSamp, gl_FragCoord.xy / <%= RESOLUTION %>).rgb;
   float x = texture2D(uTexSamp, gl_FragCoord.xy / <%= RESOLUTION %>).a;
- 
+  float swarmSizeScl = float(256 * 256) / (<%= SWARM_SIZE %> * <%= SWARM_SIZE %>);
+  float resolutionScl = float(512 * 512) / (<%= RESOLUTION %> * <%= RESOLUTION %>);
+  
   float _whiteLevel = <%= WHITE_LEVEL %>;
   
   // log scale
@@ -69,7 +71,7 @@ void main(void) {
     float _k1 = <%= K1 %>;
     float _k2 = <%= K2 %>;
     float _bgGlow = <%= BG_GLOW %>;
-    float _logScale = (_k1 * log10(1.0 + x * _k2) + _bgGlow / (x + 1.0)) / (_whiteLevel * x);
+    float _logScale = swarmSizeScl * (_k1 * log10(1.0 + x * _k2) + _bgGlow / (x + 1.0)) / (_whiteLevel * x) / resolutionScl;
     _r = _logScale * colorTexel.r * <%= BALANCE_RED %>;
     _g = _logScale * colorTexel.g * <%= BALANCE_GREEN %>;
     _b = _logScale * colorTexel.b * <%= BALANCE_BLUE %>;

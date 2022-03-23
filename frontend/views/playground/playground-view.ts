@@ -61,6 +61,9 @@ export class PlaygroundView extends View implements BeforeEnterObserver {
     @state()
     renderInfo = ''
 
+    @state()
+    notificationMessage = ''
+
     loadExampleAtStartup: string | undefined = undefined
 
     render() {
@@ -175,12 +178,25 @@ export class PlaygroundView extends View implements BeforeEnterObserver {
         FlamesEndpoint.convertFlameToXml(FlameMapper.mapToBackend(playgroundStore.flame)).then(flameXml => {
             this.getFlamePanel().flameXml = flameXml
             this.getFlamePanel().transferFlameToClipbord()
+            this.notificationMessage = 'Parameters are now available at the Flame-tab and were copied to the Clipboard'
             this.openNotification(1)
         })
           .catch(err=> {
               playgroundStore.lastError = err
           })
+    }
 
+    exportParamsToClipboard = (): void => {
+      this.getFlamePanel().transferFlameToClipbord()
+      this.notificationMessage = 'Flame parameters were copied to the Clipboard'
+      this.openNotification(1)
+    }
+
+    importParamsFromClipboard = (): void => {
+       navigator.clipboard.readText().then(text => this.getFlamePanel().flameXml = text)
+       this.importFlameFromXml()
+       // this.notificationMessage = 'Flame parameters were imported from the Clipboard'
+       // this.openNotification(1)
     }
 
     importExampleFlame = (): void => {
@@ -251,6 +267,8 @@ export class PlaygroundView extends View implements BeforeEnterObserver {
                       .visible=${this.selectedTab === 0}
                       .onImport="${this.importFlameFromXml}" .onRandomFlame="${this.createRandomFlame}"
                       .onRandomGradient="${this.createRandomGradient}"
+                      .onExportParamsToClipboard="${this.exportParamsToClipboard}"
+                      .onImportParamsFromClipboard="${this.importParamsFromClipboard}"                      
                     .onFlameNameChanged="${this.importExampleFlame}"></playground-flame-panel>
                     <playground-render-panel id='viewOptsPnl' .onRefresh="${()=>this.getRenderPanel().rerenderFlame()}"
                                              .onCancelRender="${()=>this.getRenderPanel().cancelRender()}"
@@ -278,7 +296,7 @@ export class PlaygroundView extends View implements BeforeEnterObserver {
             <div
               style="font-size: var(--lumo-font-size-s); color: var(--lumo-secondary-text-color)"
             >
-              <b>Parameters</b> are now available at the Flame-tab and were copied to the Clipboard
+              ${this.notificationMessage}
             </div>
           </div>
           <vaadin-button
@@ -293,7 +311,7 @@ export class PlaygroundView extends View implements BeforeEnterObserver {
                 root
               );
           })}"
-          position="middle"
+          position="middle" duration="600"
         ></vaadin-notification>`
     }
 
