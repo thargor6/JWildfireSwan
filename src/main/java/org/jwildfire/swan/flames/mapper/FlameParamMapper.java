@@ -90,7 +90,7 @@ public class FlameParamMapper {
         destCurve.setEnabled(true);
       }
     }
-    return param.getIntScalar() != null ? param.getIntScalar().intValue() : 0;
+    return param.getIntScalar() != null ? param.getIntScalar() : 0;
   }
 
   private static void applyMotionCurveToJWildfire(FlameParamCurve source, MotionCurve dest) {

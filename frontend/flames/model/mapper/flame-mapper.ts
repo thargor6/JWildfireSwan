@@ -30,10 +30,9 @@ import {
     RenderParameters
 } from "Frontend/flames/model/parameters";
 import {RenderColor, RenderFlame, RenderLayer, RenderVariation, RenderXForm} from "Frontend/flames/model/render-flame";
-import IParam from "Frontend/generated/org/jwildfire/swan/flames/model/flame/IParam";
-import DParam from "Frontend/generated/org/jwildfire/swan/flames/model/flame/DParam";
 import FlameParamType from "Frontend/generated/org/jwildfire/swan/flames/model/flame/FlameParamType";
 import FlameParamDataType from "Frontend/generated/org/jwildfire/swan/flames/model/flame/FlameParamDataType";
+import VariationParam from "Frontend/generated/org/jwildfire/swan/flames/model/flame/VariationParam";
 
 class ParamMapper {
     // TODO: curves
@@ -142,12 +141,9 @@ class VariationMapper {
     static mapFromBackend(source: SourceVariation): Variation {
         const res = new Variation()
         res.name = source.name
-        res.amount = Parameters.floatParam(source.amount)
-        source.dParams.map(sd => {
-          res.params.set(sd.name, Parameters.floatParam(sd.value))
-        })
-        source.iParams.map(id => {
-            res.params.set(id.name, Parameters.intParam(id.value))
+        res.amount = ParamMapper.mapFromBackend(source.amount)
+        source.params.map(sd => {
+          res.params.set(sd.name, ParamMapper.mapFromBackend(sd.value))
         })
         return res;
     }
@@ -155,23 +151,14 @@ class VariationMapper {
     static mapToBackend(source: Variation): SourceVariation {
         const res: SourceVariation = {
             name: source.name,
-            amount: source.amount.value,
-            iParams: new Array<IParam>(),
-            dParams: new Array<DParam>()
+            amount: ParamMapper.mapToBackend(source.amount),
+            params: new Array<VariationParam>()
         }
         source.params.forEach((value, key) => {
-            if(value.datatype==='int') {
-                res.iParams.push({
-                    name: key,
-                    value: value.value
-                })
-            }
-            else {
-                res.dParams.push({
-                    name: key,
-                    value: value.value
-                })
-            }
+            res.params.push({
+                name: key,
+                value: ParamMapper.mapToBackend(value)
+            })
         })
         return res;
     }

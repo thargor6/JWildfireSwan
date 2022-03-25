@@ -18,12 +18,14 @@ package org.jwildfire.swan.flames.model.flame;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.jwildfire.create.tina.base.motion.MotionCurve;
 import org.jwildfire.envelope.Envelope;
 import dev.hilla.Nonnull;
 
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 // inherits all the properties from a MotionCurve from JWildfire, in order to be able to map between both
 public class FlameParamCurve {
   int viewXMin;

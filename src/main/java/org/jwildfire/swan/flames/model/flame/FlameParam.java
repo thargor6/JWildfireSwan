@@ -20,9 +20,11 @@ package org.jwildfire.swan.flames.model.flame;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import dev.hilla.Nonnull;
+import lombok.NoArgsConstructor;
 
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 // Don't use inheritance or generics, which would not work well with automatic generated end-points
 public class FlameParam {
   @Nonnull FlameParamType paramType;

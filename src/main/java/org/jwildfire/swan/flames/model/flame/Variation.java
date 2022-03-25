@@ -18,15 +18,18 @@
 package org.jwildfire.swan.flames.model.flame;
 
 import dev.hilla.Nonnull;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class Variation {
-  @Nonnull private double amount;
   @Nonnull private String name;
-  @Nonnull private final List<@Nonnull IParam> iParams = new ArrayList<>();
-  @Nonnull private final List<@Nonnull DParam> dParams = new ArrayList<>();
+  @Nonnull private FlameParam amount;
+  @Nonnull private final List<@Nonnull VariationParam> params = new ArrayList<>();
 }

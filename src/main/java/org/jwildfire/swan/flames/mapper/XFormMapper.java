@@ -19,10 +19,10 @@ package org.jwildfire.swan.flames.mapper;
 
 import org.jwildfire.create.tina.variation.VariationFunc;
 import org.jwildfire.create.tina.variation.VariationFuncList;
-import org.jwildfire.swan.flames.model.flame.DParam;
-import org.jwildfire.swan.flames.model.flame.IParam;
+import org.jwildfire.swan.flames.model.flame.FlameParamDataType;
 import org.jwildfire.swan.flames.model.flame.Layer;
 import org.jwildfire.swan.flames.model.flame.Variation;
+import org.jwildfire.swan.flames.model.flame.VariationParam;
 import org.jwildfire.swan.flames.model.flame.XForm;
 import org.springframework.stereotype.Service;
 
@@ -85,20 +85,21 @@ public class XFormMapper {
     for(int i=0;i<source.getVariationCount();i++) {
       org.jwildfire.create.tina.variation.Variation srcVar = source.getVariation(i);
       Variation dstVar = new Variation();
-      dstVar.setAmount(srcVar.getAmount());
+      dstVar.setAmount(FlameParamMapper.mapFloatParamFromJwildfire(srcVar.getAmount(), srcVar.getAmountCurve()));
       dstVar.setName(srcVar.getFunc().getName());
       for (int j = 0; j < srcVar.getFunc().getParameterNames().length; j++) {
         String pName = srcVar.getFunc().getParameterNames()[j];
         Object pValue = srcVar.getFunc().getParameterValues()[j];
         if(pValue!=null) {
           if(pValue instanceof Integer) {
-            dstVar.getIParams().add(new IParam(pName, (Integer)pValue));
+            dstVar.getParams().add(new VariationParam(pName, FlameParamMapper.mapIntParamFromJwildfire((Integer)pValue, srcVar.getMotionCurve(pName))));
           }
           else if(pValue instanceof Double) {
-            dstVar.getDParams().add(new DParam(pName, (Double)pValue));
+            dstVar.getParams().add(new VariationParam(pName, FlameParamMapper.mapFloatParamFromJwildfire((Double)pValue, srcVar.getMotionCurve(pName))));
           }
         }
       };
+      // TODO manage also resource parameters
       res.getVariations().add(dstVar);
     }
     return res;
@@ -162,17 +163,25 @@ public class XFormMapper {
     for(int i=0;i<source.getVariations().size();i++) {
       Variation srcVar = source.getVariations().get(i);
       org.jwildfire.create.tina.variation.Variation dstVar = new org.jwildfire.create.tina.variation.Variation();
-      dstVar.setAmount(srcVar.getAmount());
+      dstVar.setAmount(FlameParamMapper.mapFloatParamToJwildfire(srcVar.getAmount(), dstVar.getAmountCurve()));
       VariationFunc varFunc = VariationFuncList.getVariationFuncInstance(srcVar.getName(), true);
       dstVar.setFunc(varFunc);
-      for (int j = 0; j < srcVar.getIParams().size(); j++) {
-        IParam param = srcVar.getIParams().get(j);
-        varFunc.setParameter(param.getName(), param.getValue());
+      for (int j = 0; j < srcVar.getParams().size(); j++) {
+        VariationParam param = srcVar.getParams().get(j);
+        if (param.getValue().getDataType() == FlameParamDataType.INT) {
+          varFunc.setParameter(
+              param.getName(),
+              FlameParamMapper.mapIntParamToJwildfire(
+                  param.getValue(), dstVar.getMotionCurve(param.getName())));
+        }
+        else { // FlameParamDataType.FLOAT
+          varFunc.setParameter(
+                  param.getName(),
+                  FlameParamMapper.mapFloatParamToJwildfire(
+                          param.getValue(), dstVar.getMotionCurve(param.getName())));
+        }
       };
-      for (int j = 0; j < srcVar.getDParams().size(); j++) {
-        DParam param = srcVar.getDParams().get(j);
-        varFunc.setParameter(param.getName(), param.getValue());
-      };
+      // TODO manage also resource parameters
       res.getVariations().add(dstVar);
     }
     return res;

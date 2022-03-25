@@ -17,13 +17,17 @@
 
 package org.jwildfire.swan.flames.model.flame;
 import dev.hilla.Nonnull;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class Flame {
   @Nonnull
   private UUID uid;

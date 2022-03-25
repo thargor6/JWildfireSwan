@@ -20,10 +20,15 @@ package org.jwildfire.swan.flames.model.flame;
 import dev.hilla.Nonnull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
-public class IParam {
+@NoArgsConstructor
+public class VariationParam {
   @Nonnull private String name;
-  @Nonnull private int value;
+  @Nonnull private FlameParam value;
 }
