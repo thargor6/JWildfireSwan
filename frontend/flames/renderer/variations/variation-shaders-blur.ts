@@ -60,9 +60,9 @@ class BlurZoomFunc extends VariationShaderFunc2D {
         /* blur_zoom from Apo7X15C */
         return `{
           float amount = ${variation.amount.toWebGl()};
-          float length = float(${variation.params.get(this.PARAM_LENGTH)});
-          float x = float(${variation.params.get(this.PARAM_X)});
-          float y = float(${variation.params.get(this.PARAM_Y)});
+          float length = ${variation.params.get(this.PARAM_LENGTH)!.toWebGl()};
+          float x = ${variation.params.get(this.PARAM_X)!.toWebGl()};
+          float y = ${variation.params.get(this.PARAM_Y)!.toWebGl()};
           float z = 1.0 + length * rand8(tex, rngState);
           _vx += amount * ((_tx - x) * z + x);
           _vy += amount * ((_ty + y) * z - y);
@@ -98,11 +98,11 @@ class ExBlurFunc extends VariationShaderFunc2D {
         /* Zephyrtronium ExBlur Apophysis Plugin (11-07-2010), Java translation by DarkBeam, 2014 */
         return `{
           float amount = ${variation.amount.toWebGl()};
-          float dist = float(${variation.params.get(this.PARAM_DIST)});
-          float r = float(${variation.params.get(this.PARAM_R)});
-          float x_origin = float(${variation.params.get(this.PARAM_X_ORIGIN)});
-          float y_origin = float(${variation.params.get(this.PARAM_Y_ORIGIN)});
-          float z_origin = float(${variation.params.get(this.PARAM_Z_ORIGIN)});
+          float dist = ${variation.params.get(this.PARAM_DIST)!.toWebGl()};
+          float r = ${variation.params.get(this.PARAM_R)!.toWebGl()};
+          float x_origin = ${variation.params.get(this.PARAM_X_ORIGIN)!.toWebGl()};
+          float y_origin = ${variation.params.get(this.PARAM_Y_ORIGIN)!.toWebGl()};
+          float z_origin = ${variation.params.get(this.PARAM_Z_ORIGIN)!.toWebGl()};
           float rr, theta, phi, su, cu, sv, cv, sru, cru, srv, crv, n, rsrv;
           float ox, oy, oz;
           ox = _tx - x_origin;
@@ -161,12 +161,12 @@ class FarBlurFunc extends VariationShaderFunc2D {
         /* farblur by zephyrtronium, http://zephyrtronium.deviantart.com/art/Farblur-Apophysis-Plugin-170718419?q=gallery%3Afractal-resources%2F24660058&qo=10 */
         return `{
           float amount = ${variation.amount.toWebGl()};
-          float x = float(${variation.params.get(this.PARAM_X)});
-          float y = float(${variation.params.get(this.PARAM_Y)});
-          float z = float(${variation.params.get(this.PARAM_Z)});
-          float x_origin = float(${variation.params.get(this.PARAM_X_ORIGIN)});
-          float y_origin = float(${variation.params.get(this.PARAM_Y_ORIGIN)});
-          float z_origin = float(${variation.params.get(this.PARAM_Z_ORIGIN)});
+          float x = ${variation.params.get(this.PARAM_X)!.toWebGl()};
+          float y = ${variation.params.get(this.PARAM_Y)!.toWebGl()};
+          float z = ${variation.params.get(this.PARAM_Z)!.toWebGl()};
+          float x_origin = ${variation.params.get(this.PARAM_X_ORIGIN)!.toWebGl()};
+          float y_origin = ${variation.params.get(this.PARAM_Y_ORIGIN)!.toWebGl()};
+          float z_origin = ${variation.params.get(this.PARAM_Z_ORIGIN)!.toWebGl()};
           float r = amount * (sqr(_vx - x_origin) +
                     sqr(_vy - y_origin) +
                     sqr(_vz - z_origin)) *
@@ -252,7 +252,7 @@ class RadialBlurFunc extends VariationShaderFunc2D {
         return `{
           float amount = ${variation.amount.toWebGl()};    
           float rndG = rand8(tex, rngState)+rand8(tex, rngState)+rand8(tex, rngState)+rand8(tex, rngState)-2.0;
-          float angle = float(${variation.params.get(this.PARAM_ANGLE)});
+          float angle = ${variation.params.get(this.PARAM_ANGLE)!.toWebGl()};
           float a = angle * M_PI * 0.5;
           float sina = sin(a);
           float cosa = cos(a);

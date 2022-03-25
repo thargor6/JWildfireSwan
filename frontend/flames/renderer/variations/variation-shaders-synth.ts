@@ -181,46 +181,46 @@ class SynthFunc extends VariationShaderFunc2D {
         return `{
           float amount = ${variation.amount.toWebGl()};
           SynthParams params;
-          params.a = float(${variation.params.get(this.PARAM_A)});
-          params.mode = int(${variation.params.get(this.PARAM_MODE)});
-          params.power = float(${variation.params.get(this.PARAM_POWER)});
-          params.mix = float(${variation.params.get(this.PARAM_MIX)});
-          params.smooth = int(${variation.params.get(this.PARAM_SMOOTH)});
+          params.a = ${variation.params.get(this.PARAM_A)!.toWebGl()};
+          params.mode = ${variation.params.get(this.PARAM_MODE)!.toWebGl()};
+          params.power = ${variation.params.get(this.PARAM_POWER)!.toWebGl()};
+          params.mix = ${variation.params.get(this.PARAM_MIX)!.toWebGl()};
+          params.smooth = ${variation.params.get(this.PARAM_SMOOTH)!.toWebGl()};
          
-          params.b = float(${variation.params.get(this.PARAM_B)});
-          params.b_type = int(${variation.params.get(this.PARAM_B_TYPE)});
-          params.b_skew = float(${variation.params.get(this.PARAM_B_SKEW)});
-          params.b_frq = float(${variation.params.get(this.PARAM_B_FRQ)});
-          params.b_phs = float(${variation.params.get(this.PARAM_B_PHS)});
-          params.b_layer = int(${variation.params.get(this.PARAM_B_LAYER)});
+          params.b = ${variation.params.get(this.PARAM_B)!.toWebGl()};
+          params.b_type = ${variation.params.get(this.PARAM_B_TYPE)!.toWebGl()};
+          params.b_skew = ${variation.params.get(this.PARAM_B_SKEW)!.toWebGl()};
+          params.b_frq = ${variation.params.get(this.PARAM_B_FRQ)!.toWebGl()};
+          params.b_phs = ${variation.params.get(this.PARAM_B_PHS)!.toWebGl()};
+          params.b_layer = ${variation.params.get(this.PARAM_B_LAYER)!.toWebGl()};
          
-          params.c = float(${variation.params.get(this.PARAM_C)});
-          params.c_type = int(${variation.params.get(this.PARAM_C_TYPE)});
-          params.c_skew = float(${variation.params.get(this.PARAM_C_SKEW)});
-          params.c_frq = float(${variation.params.get(this.PARAM_C_FRQ)});
-          params.c_phs = float(${variation.params.get(this.PARAM_C_PHS)});
-          params.c_layer = int(${variation.params.get(this.PARAM_C_LAYER)});
+          params.c = ${variation.params.get(this.PARAM_C)!.toWebGl()};
+          params.c_type = ${variation.params.get(this.PARAM_C_TYPE)!.toWebGl()};
+          params.c_skew = ${variation.params.get(this.PARAM_C_SKEW)!.toWebGl()};
+          params.c_frq = ${variation.params.get(this.PARAM_C_FRQ)!.toWebGl()};
+          params.c_phs = ${variation.params.get(this.PARAM_C_PHS)!.toWebGl()};
+          params.c_layer = ${variation.params.get(this.PARAM_C_LAYER)!.toWebGl()};
           
-          params.d = float(${variation.params.get(this.PARAM_D)});
-          params.d_type = int(${variation.params.get(this.PARAM_D_TYPE)});
-          params.d_skew = float(${variation.params.get(this.PARAM_D_SKEW)});
-          params.d_frq = float(${variation.params.get(this.PARAM_D_FRQ)});
-          params.d_phs = float(${variation.params.get(this.PARAM_D_PHS)});
-          params.d_layer = int(${variation.params.get(this.PARAM_D_LAYER)});
+          params.d = ${variation.params.get(this.PARAM_D)!.toWebGl()};
+          params.d_type = ${variation.params.get(this.PARAM_D_TYPE)!.toWebGl()};
+          params.d_skew = ${variation.params.get(this.PARAM_D_SKEW)!.toWebGl()};
+          params.d_frq = ${variation.params.get(this.PARAM_D_FRQ)!.toWebGl()};
+          params.d_phs = ${variation.params.get(this.PARAM_D_PHS)!.toWebGl()};
+          params.d_layer = ${variation.params.get(this.PARAM_D_LAYER)!.toWebGl()};
           
-          params.e = float(${variation.params.get(this.PARAM_E)});
-          params.e_type = int(${variation.params.get(this.PARAM_E_TYPE)});
-          params.e_skew = float(${variation.params.get(this.PARAM_E_SKEW)});
-          params.e_frq = float(${variation.params.get(this.PARAM_E_FRQ)});
-          params.e_phs = float(${variation.params.get(this.PARAM_E_PHS)});
-          params.e_layer = int(${variation.params.get(this.PARAM_E_LAYER)});
+          params.e = ${variation.params.get(this.PARAM_E)!.toWebGl()};
+          params.e_type = ${variation.params.get(this.PARAM_E_TYPE)!.toWebGl()};
+          params.e_skew = ${variation.params.get(this.PARAM_E_SKEW)!.toWebGl()};
+          params.e_frq = ${variation.params.get(this.PARAM_E_FRQ)!.toWebGl()};
+          params.e_phs = ${variation.params.get(this.PARAM_E_PHS)!.toWebGl()};
+          params.e_layer = ${variation.params.get(this.PARAM_E_LAYER)!.toWebGl()};
           
-          params.f = float(${variation.params.get(this.PARAM_F)});
-          params.f_type = int(${variation.params.get(this.PARAM_F_TYPE)});
-          params.f_skew = float(${variation.params.get(this.PARAM_F_SKEW)});
-          params.f_frq = float(${variation.params.get(this.PARAM_F_FRQ)});
-          params.f_phs = float(${variation.params.get(this.PARAM_F_PHS)});
-          params.f_layer = int(${variation.params.get(this.PARAM_F_LAYER)});
+          params.f = ${variation.params.get(this.PARAM_F)!.toWebGl()};
+          params.f_type = ${variation.params.get(this.PARAM_F_TYPE)!.toWebGl()};
+          params.f_skew = ${variation.params.get(this.PARAM_F_SKEW)!.toWebGl()};
+          params.f_frq = ${variation.params.get(this.PARAM_F_FRQ)!.toWebGl()};
+          params.f_phs = ${variation.params.get(this.PARAM_F_PHS)!.toWebGl()};
+          params.f_layer = ${variation.params.get(this.PARAM_F_LAYER)!.toWebGl()};
           
           float Vx, Vy, radius, theta; 
           float theta_factor; 

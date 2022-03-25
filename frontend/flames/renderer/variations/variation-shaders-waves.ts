@@ -65,13 +65,13 @@ class PreWave3DWFFunc extends VariationShaderFunc3D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         return `{
           float amount = ${variation.amount.toWebGl()};
-          int axis = int(${variation.params.get(this.PARAM_AXIS)});
-          float wavelen = float(${variation.params.get(this.PARAM_WAVELEN)});
-          float phase = float(${variation.params.get(this.PARAM_PHASE)});
-          float damping = float(${variation.params.get(this.PARAM_DAMPING)});
-          float centre_x = float(${variation.params.get(this.PARAM_CENTRE_X)});
-          float centre_y = float(${variation.params.get(this.PARAM_CENTRE_Y)});
-          float centre_z = float(${variation.params.get(this.PARAM_CENTRE_Z)});     
+          int axis = ${variation.params.get(this.PARAM_AXIS)!.toWebGl()};
+          float wavelen = ${variation.params.get(this.PARAM_WAVELEN)!.toWebGl()};
+          float phase = ${variation.params.get(this.PARAM_PHASE)!.toWebGl()};
+          float damping = ${variation.params.get(this.PARAM_DAMPING)!.toWebGl()};
+          float centre_x = ${variation.params.get(this.PARAM_CENTRE_X)!.toWebGl()};
+          float centre_y = ${variation.params.get(this.PARAM_CENTRE_Y)!.toWebGl()};
+          float centre_z = ${variation.params.get(this.PARAM_CENTRE_Z)!.toWebGl()};     
           float r;
           if(axis==${this.AXIS_RADIAL}) {
             r = sqrt(sqr(_tx - centre_x) + sqr(_ty - centre_y) + sqr(_tz - centre_z));
@@ -142,10 +142,10 @@ class PulseFunc extends VariationShaderFunc2D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         return `{
           float amount = ${variation.amount.toWebGl()};
-          float scalex = float(${variation.params.get(this.PARAM_SCALEX)});
-          float scaley = float(${variation.params.get(this.PARAM_SCALEY)});
-          float freqx = float(${variation.params.get(this.PARAM_FREQX)});
-          float freqy = float(${variation.params.get(this.PARAM_FREQY)});
+          float scalex = ${variation.params.get(this.PARAM_SCALEX)!.toWebGl()};
+          float scaley = ${variation.params.get(this.PARAM_SCALEY)!.toWebGl()};
+          float freqx = ${variation.params.get(this.PARAM_FREQX)!.toWebGl()};
+          float freqy = ${variation.params.get(this.PARAM_FREQY)!.toWebGl()};
           _vx += amount * (_tx + scalex * sin(_tx * freqx));
           _vy += amount * (_ty + scaley * sin(_ty * freqy));
         }`;
@@ -225,32 +225,32 @@ class Vibration2Func extends VariationShaderFunc2D {
         */
         return `{
           float amount = ${variation.amount.toWebGl()};
-          float dir = float(${variation.params.get(this.PARAM_DIR)});
-          float angle = float(${variation.params.get(this.PARAM_ANGLE)});
-          float freq = float(${variation.params.get(this.PARAM_FREQ)});
-          float amp = float(${variation.params.get(this.PARAM_AMP)});
-          float phase = float(${variation.params.get(this.PARAM_PHASE)});
-          float dir2 = float(${variation.params.get(this.PARAM_DIR2)});
-          float angle2 = float(${variation.params.get(this.PARAM_ANGLE2)});
-          float freq2 = float(${variation.params.get(this.PARAM_FREQ2)});
-          float amp2 = float(${variation.params.get(this.PARAM_AMP2)});
-          float phase2 = float(${variation.params.get(this.PARAM_PHASE2)});
-          float dm = float(${variation.params.get(this.PARAM_DM)}); 
-          float dmfreq = float(${variation.params.get(this.PARAM_DMFREQ)});
-          float tm = float(${variation.params.get(this.PARAM_TM)});
-          float tmfreq = float(${variation.params.get(this.PARAM_TMFREQ)});
-          float fm = float(${variation.params.get(this.PARAM_FM)});
-          float fmfreq = float(${variation.params.get(this.PARAM_FMFREQ)});
-          float am = float(${variation.params.get(this.PARAM_AM)});       
-          float amfreq = float(${variation.params.get(this.PARAM_AMFREQ)});
-          float d2m = float(${variation.params.get(this.PARAM_D2M)});
-          float d2mfreq = float(${variation.params.get(this.PARAM_D2MFREQ)});
-          float t2m = float(${variation.params.get(this.PARAM_T2M)});
-          float t2mfreq = float(${variation.params.get(this.PARAM_T2MFREQ)});
-          float f2m = float(${variation.params.get(this.PARAM_F2M)});     
-          float f2mfreq = float(${variation.params.get(this.PARAM_F2MFREQ)});
-          float a2m = float(${variation.params.get(this.PARAM_A2M)});
-          float a2mfreq = float(${variation.params.get(this.PARAM_A2MFREQ)});
+          float dir = ${variation.params.get(this.PARAM_DIR)!.toWebGl()};
+          float angle = ${variation.params.get(this.PARAM_ANGLE)!.toWebGl()};
+          float freq = ${variation.params.get(this.PARAM_FREQ)!.toWebGl()};
+          float amp = ${variation.params.get(this.PARAM_AMP)!.toWebGl()};
+          float phase = ${variation.params.get(this.PARAM_PHASE)!.toWebGl()};
+          float dir2 = ${variation.params.get(this.PARAM_DIR2)!.toWebGl()};
+          float angle2 = ${variation.params.get(this.PARAM_ANGLE2)!.toWebGl()};
+          float freq2 = ${variation.params.get(this.PARAM_FREQ2)!.toWebGl()};
+          float amp2 = ${variation.params.get(this.PARAM_AMP2)!.toWebGl()};
+          float phase2 = ${variation.params.get(this.PARAM_PHASE2)!.toWebGl()};
+          float dm = ${variation.params.get(this.PARAM_DM)!.toWebGl()}; 
+          float dmfreq = ${variation.params.get(this.PARAM_DMFREQ)!.toWebGl()};
+          float tm = ${variation.params.get(this.PARAM_TM)!.toWebGl()};
+          float tmfreq = ${variation.params.get(this.PARAM_TMFREQ)!.toWebGl()};
+          float fm = ${variation.params.get(this.PARAM_FM)!.toWebGl()};
+          float fmfreq = ${variation.params.get(this.PARAM_FMFREQ)!.toWebGl()};
+          float am = ${variation.params.get(this.PARAM_AM)!.toWebGl()};       
+          float amfreq = ${variation.params.get(this.PARAM_AMFREQ)!.toWebGl()};
+          float d2m = ${variation.params.get(this.PARAM_D2M)!.toWebGl()};
+          float d2mfreq = ${variation.params.get(this.PARAM_D2MFREQ)!.toWebGl()};
+          float t2m = ${variation.params.get(this.PARAM_T2M)!.toWebGl()};
+          float t2mfreq = ${variation.params.get(this.PARAM_T2MFREQ)!.toWebGl()};
+          float f2m = ${variation.params.get(this.PARAM_F2M)!.toWebGl()};     
+          float f2mfreq = ${variation.params.get(this.PARAM_F2MFREQ)!.toWebGl()};
+          float a2m = ${variation.params.get(this.PARAM_A2M)!.toWebGl()};
+          float a2mfreq = ${variation.params.get(this.PARAM_A2MFREQ)!.toWebGl()};
         
           float d_along_dir = _tx * cos(dir) + _ty * sin(dir);
           float dirL = dir + vib2_modulate(dm, dmfreq, d_along_dir);
@@ -334,14 +334,14 @@ class RippleFunc extends VariationShaderFunc2D {
         // align input x, y to given center and multiply with scale
         return `{
           float amount = ${variation.amount.toWebGl()};
-          float frequency = float(${variation.params.get(this.PARAM_FREQUENCY)});
-          float velocity = float(${variation.params.get(this.PARAM_VELOCITY)});
-          float amplitude = float(${variation.params.get(this.PARAM_AMPLITUDE)});
-          float centerx = float(${variation.params.get(this.PARAM_CENTERX)});
-          float centery = float(${variation.params.get(this.PARAM_CENTERY)});
-          float phase = float(${variation.params.get(this.PARAM_PHASE)});
-          float scale = float(${variation.params.get(this.PARAM_SCALE)});
-          int fixed_dist_calc = int(${variation.params.get(this.PARAM_FIXED_DIST_CALC)});
+          float frequency = ${variation.params.get(this.PARAM_FREQUENCY)!.toWebGl()};
+          float velocity = ${variation.params.get(this.PARAM_VELOCITY)!.toWebGl()};
+          float amplitude = ${variation.params.get(this.PARAM_AMPLITUDE)!.toWebGl()};
+          float centerx = ${variation.params.get(this.PARAM_CENTERX)!.toWebGl()};
+          float centery = ${variation.params.get(this.PARAM_CENTERY)!.toWebGl()};
+          float phase = ${variation.params.get(this.PARAM_PHASE)!.toWebGl()};
+          float scale = ${variation.params.get(this.PARAM_SCALE)!.toWebGl()};
+          int fixed_dist_calc = ${variation.params.get(this.PARAM_FIXED_DIST_CALC)!.toWebGl()};
           float _f = frequency * 5.0;
           float a = amplitude * 0.01;
           float _p = phase * 2.0 * M_PI - M_PI;         
@@ -414,10 +414,10 @@ class SinusGridFunc extends VariationShaderFunc2D {
         /* SinusGrid, originally written by Georg K. (http://xyrus02.deviantart.com) */
         return `{
           float amount = ${variation.amount.toWebGl()};
-          float ampx = float(${variation.params.get(this.PARAM_AMPX)});
-          float ampy = float(${variation.params.get(this.PARAM_AMPY)});
-          float freqx = float(${variation.params.get(this.PARAM_FREQX)});
-          float freqy = float(${variation.params.get(this.PARAM_FREQY)});
+          float ampx = ${variation.params.get(this.PARAM_AMPX)!.toWebGl()};
+          float ampy = ${variation.params.get(this.PARAM_AMPY)!.toWebGl()};
+          float freqx = ${variation.params.get(this.PARAM_FREQX)!.toWebGl()};
+          float freqy = ${variation.params.get(this.PARAM_FREQY)!.toWebGl()};
           float _fx = freqx * 2.0 *M_PI;
           float _fy = freqy * 2.0 * M_PI;
           if (_fx == 0.0) _fx = EPSILON;
@@ -476,10 +476,10 @@ class Waves2Func extends VariationShaderFunc2D {
         /* waves2 from Joel F */
         return `{
           float amount = ${variation.amount.toWebGl()};
-          float scalex = float(${variation.params.get(this.PARAM_SCALEX)});
-          float scaley = float(${variation.params.get(this.PARAM_SCALEY)});
-          float freqx = float(${variation.params.get(this.PARAM_FREQX)});
-          float freqy = float(${variation.params.get(this.PARAM_FREQY)});
+          float scalex = ${variation.params.get(this.PARAM_SCALEX)!.toWebGl()};
+          float scaley = ${variation.params.get(this.PARAM_SCALEY)!.toWebGl()};
+          float freqx = ${variation.params.get(this.PARAM_FREQX)!.toWebGl()};
+          float freqy = ${variation.params.get(this.PARAM_FREQY)!.toWebGl()};
           _vx += amount * (_tx + scalex * sin(_ty * freqx));
           _vy += amount * (_ty + scaley * sin(_tx * freqy));
         }`;
@@ -519,14 +519,14 @@ class Waves22Func extends VariationShaderFunc2D {
         /* weird waves22 from Tatyana Zabanova converted by Brad Stefanov https://www.deviantart.com/tatasz/art/Weird-Waves-Plugin-Pack-1-783560564*/
         return `{
           float amount = ${variation.amount.toWebGl()};
-          float scalex = float(${variation.params.get(this.PARAM_SCALEX)});
-          float scaley = float(${variation.params.get(this.PARAM_SCALEY)});
-          float freqx = float(${variation.params.get(this.PARAM_FREQX)});
-          float freqy = float(${variation.params.get(this.PARAM_FREQY)});
-          int modex = int(${variation.params.get(this.PARAM_MODEX)});
-          int modey = int(${variation.params.get(this.PARAM_MODEY)});
-          float powerx = float(${variation.params.get(this.PARAM_POWERX)});
-          float powery = float(${variation.params.get(this.PARAM_POWERY)});
+          float scalex = ${variation.params.get(this.PARAM_SCALEX)!.toWebGl()};
+          float scaley = ${variation.params.get(this.PARAM_SCALEY)!.toWebGl()};
+          float freqx = ${variation.params.get(this.PARAM_FREQX)!.toWebGl()};
+          float freqy = ${variation.params.get(this.PARAM_FREQY)!.toWebGl()};
+          int modex = ${variation.params.get(this.PARAM_MODEX)!.toWebGl()};
+          int modey = ${variation.params.get(this.PARAM_MODEY)!.toWebGl()};
+          float powerx = ${variation.params.get(this.PARAM_POWERX)!.toWebGl()};
+          float powery = ${variation.params.get(this.PARAM_POWERY)!.toWebGl()};
           float x0 = _tx;
           float y0 = _ty;
           float sinx;
@@ -576,10 +576,10 @@ class Waves23Func extends VariationShaderFunc2D {
         /* waves23 from Tatyana Zabanova converted by Brad Stefanov https://www.deviantart.com/tatasz/art/Weird-Waves-Plugin-Pack-1-783560564*/
         return `{
           float amount = ${variation.amount.toWebGl()};
-          float scalex = float(${variation.params.get(this.PARAM_SCALEX)});
-          float scaley = float(${variation.params.get(this.PARAM_SCALEY)});
-          float freqx = float(${variation.params.get(this.PARAM_FREQX)});
-          float freqy = float(${variation.params.get(this.PARAM_FREQY)});
+          float scalex = ${variation.params.get(this.PARAM_SCALEX)!.toWebGl()};
+          float scaley = ${variation.params.get(this.PARAM_SCALEY)!.toWebGl()};
+          float freqx = ${variation.params.get(this.PARAM_FREQX)!.toWebGl()};
+          float freqy = ${variation.params.get(this.PARAM_FREQY)!.toWebGl()};
           float x0 = _tx;
           float y0 = _ty;
           float mx = y0 * freqx * (1.0 / (M_PI + M_PI));
@@ -631,16 +631,16 @@ class Waves2BFunc extends VariationShaderFunc2D {
         // Waves2B by dark-beam, http://dark-beam.deviantart.com/art/Waves2b-UPDATE-FIX-456744888
         return `{
           float amount = ${variation.amount.toWebGl()};
-          float freqx = float(${variation.params.get(this.PARAM_FREQX)});
-          float freqy = float(${variation.params.get(this.PARAM_FREQY)});
-          float pwx = float(${variation.params.get(this.PARAM_PWX)});
-          float pwy = float(${variation.params.get(this.PARAM_PWY)});
-          float scalex = float(${variation.params.get(this.PARAM_SCALEX)});
-          float scaleinfx = float(${variation.params.get(this.PARAM_SCALEINFX)});
-          float scaley = float(${variation.params.get(this.PARAM_SCALEY)});
-          float scaleinfy = float(${variation.params.get(this.PARAM_SCALEINFY)});
-          float unity = float(${variation.params.get(this.PARAM_UNITY)});
-          float jacok = float(${variation.params.get(this.PARAM_JACOK)});
+          float freqx = ${variation.params.get(this.PARAM_FREQX)!.toWebGl()};
+          float freqy = ${variation.params.get(this.PARAM_FREQY)!.toWebGl()};
+          float pwx = ${variation.params.get(this.PARAM_PWX)!.toWebGl()};
+          float pwy = ${variation.params.get(this.PARAM_PWY)!.toWebGl()};
+          float scalex = ${variation.params.get(this.PARAM_SCALEX)!.toWebGl()};
+          float scaleinfx = ${variation.params.get(this.PARAM_SCALEINFX)!.toWebGl()};
+          float scaley = ${variation.params.get(this.PARAM_SCALEY)!.toWebGl()};
+          float scaleinfy = ${variation.params.get(this.PARAM_SCALEINFY)!.toWebGl()};
+          float unity = ${variation.params.get(this.PARAM_UNITY)!.toWebGl()};
+          float jacok = ${variation.params.get(this.PARAM_JACOK)!.toWebGl()};
           float _six = scalex - scaleinfx;
           float _siy = scaley - scaleinfy;
           float CsX = 1.0;
@@ -703,12 +703,12 @@ class Waves2RadialFunc extends VariationShaderFunc2D {
         // waves2_radial variation created by Tatyana Zabanova implemented into JWildfire by Brad Stefanov
         return `{
           float amount = ${variation.amount.toWebGl()};
-          float w2r_scalex = float(${variation.params.get(this.PARAM_W2R_SCALEX)});
-          float w2r_scaley = float(${variation.params.get(this.PARAM_W2R_SCALEY)});
-          float w2r_freqx = float(${variation.params.get(this.PARAM_W2R_FREQX)});
-          float w2r_freqy = float(${variation.params.get(this.PARAM_W2R_FREQY)});
-          float w2r_null = float(${variation.params.get(this.PARAM_W2R_NULL)});
-          float w2r_distance = float(${variation.params.get(this.PARAM_W2R_DISTANCE)});
+          float w2r_scalex = ${variation.params.get(this.PARAM_W2R_SCALEX)!.toWebGl()};
+          float w2r_scaley = ${variation.params.get(this.PARAM_W2R_SCALEY)!.toWebGl()};
+          float w2r_freqx = ${variation.params.get(this.PARAM_W2R_FREQX)!.toWebGl()};
+          float w2r_freqy = ${variation.params.get(this.PARAM_W2R_FREQY)!.toWebGl()};
+          float w2r_null = ${variation.params.get(this.PARAM_W2R_NULL)!.toWebGl()};
+          float w2r_distance = ${variation.params.get(this.PARAM_W2R_DISTANCE)!.toWebGl()};
           float x0 = _tx;
           float y0 = _ty;
           float dist = sqrt(sqr(x0) + sqr(y0));
@@ -753,14 +753,14 @@ class Waves2WFFunc extends VariationShaderFunc2D {
         /* Modified version of waves2 from Joel F */
         return `{
           float amount = ${variation.amount.toWebGl()};
-          float scalex = float(${variation.params.get(this.PARAM_SCALEX)});
-          float scaley = float(${variation.params.get(this.PARAM_SCALEY)});
-          float freqx = float(${variation.params.get(this.PARAM_FREQX)});
-          float freqy = float(${variation.params.get(this.PARAM_FREQY)});
-          int use_cos_x = int(${variation.params.get(this.PARAM_USE_COS_X)});
-          int use_cos_y = int(${variation.params.get(this.PARAM_USE_COS_Y)});
-          float dampx = float(${variation.params.get(this.PARAM_DAMPX)});
-          float dampy = float(${variation.params.get(this.PARAM_DAMPY)});
+          float scalex = ${variation.params.get(this.PARAM_SCALEX)!.toWebGl()};
+          float scaley = ${variation.params.get(this.PARAM_SCALEY)!.toWebGl()};
+          float freqx = ${variation.params.get(this.PARAM_FREQX)!.toWebGl()};
+          float freqy = ${variation.params.get(this.PARAM_FREQY)!.toWebGl()};
+          int use_cos_x = ${variation.params.get(this.PARAM_USE_COS_X)!.toWebGl()};
+          int use_cos_y = ${variation.params.get(this.PARAM_USE_COS_Y)!.toWebGl()};
+          float dampx = ${variation.params.get(this.PARAM_DAMPX)!.toWebGl()};
+          float dampy = ${variation.params.get(this.PARAM_DAMPY)!.toWebGl()};
           float _dampingX = abs(dampx) < EPSILON ? 1.0 : exp(dampx);
           float _dampingY = abs(dampy) < EPSILON ? 1.0 : exp(dampy);
           if (use_cos_x == 1) {
@@ -799,8 +799,8 @@ class Waves2_3DFunc extends VariationShaderFunc3D {
         /* waves2_3D by Larry Berlin, http://aporev.deviantart.com/art/New-3D-Plugins-136484533?q=gallery%3Aaporev%2F8229210&qo=22 */
         return `{
           float amount = ${variation.amount.toWebGl()};
-          float freq = float(${variation.params.get(this.PARAM_FREQ)});
-          float scale = float(${variation.params.get(this.PARAM_SCALE)});
+          float freq = ${variation.params.get(this.PARAM_FREQ)!.toWebGl()};
+          float scale = ${variation.params.get(this.PARAM_SCALE)!.toWebGl()};
           float avgxy = (_tx + _ty) / 2.0;
           _vx += amount * (_tx + scale * sin(_ty * freq));
           _vy += amount * (_ty + scale * sin(_tx * freq));
@@ -838,12 +838,12 @@ class Waves3Func extends VariationShaderFunc2D {
         /* waves3 from Tatyana Zabanova converted by Brad Stefanov https://www.deviantart.com/tatasz/art/Weird-Waves-Plugin-Pack-1-783560564*/
         return `{
           float amount = ${variation.amount.toWebGl()};
-          float scalex = float(${variation.params.get(this.PARAM_SCALEX)});
-          float scaley = float(${variation.params.get(this.PARAM_SCALEY)});
-          float freqx = float(${variation.params.get(this.PARAM_FREQX)});
-          float freqy = float(${variation.params.get(this.PARAM_FREQY)});
-          float sx_freq = float(${variation.params.get(this.PARAM_SX_FREQ)});
-          float sy_freq = float(${variation.params.get(this.PARAM_SY_FREQ)});
+          float scalex = ${variation.params.get(this.PARAM_SCALEX)!.toWebGl()};
+          float scaley = ${variation.params.get(this.PARAM_SCALEY)!.toWebGl()};
+          float freqx = ${variation.params.get(this.PARAM_FREQX)!.toWebGl()};
+          float freqy = ${variation.params.get(this.PARAM_FREQY)!.toWebGl()};
+          float sx_freq = ${variation.params.get(this.PARAM_SX_FREQ)!.toWebGl()};
+          float sy_freq = ${variation.params.get(this.PARAM_SY_FREQ)!.toWebGl()};
           float x0 = _tx;
           float y0 = _ty;
           float scalexx = 0.5 * scalex * (1.0 + sin(y0 * sx_freq));
@@ -887,14 +887,14 @@ class Waves3WFFunc extends VariationShaderFunc2D {
         /* Modified version of waves2 from Joel F */
         return `{
           float amount = ${variation.amount.toWebGl()};
-          float scalex = float(${variation.params.get(this.PARAM_SCALEX)});
-          float scaley = float(${variation.params.get(this.PARAM_SCALEY)});
-          float freqx = float(${variation.params.get(this.PARAM_FREQX)});
-          float freqy = float(${variation.params.get(this.PARAM_FREQY)});
-          int use_cos_x = int(${variation.params.get(this.PARAM_USE_COS_X)});
-          int use_cos_y = int(${variation.params.get(this.PARAM_USE_COS_Y)});
-          float dampx = float(${variation.params.get(this.PARAM_DAMPX)});
-          float dampy = float(${variation.params.get(this.PARAM_DAMPY)});
+          float scalex = ${variation.params.get(this.PARAM_SCALEX)!.toWebGl()};
+          float scaley = ${variation.params.get(this.PARAM_SCALEY)!.toWebGl()};
+          float freqx = ${variation.params.get(this.PARAM_FREQX)!.toWebGl()};
+          float freqy = ${variation.params.get(this.PARAM_FREQY)!.toWebGl()};
+          int use_cos_x = ${variation.params.get(this.PARAM_USE_COS_X)!.toWebGl()};
+          int use_cos_y = ${variation.params.get(this.PARAM_USE_COS_Y)!.toWebGl()};
+          float dampx = ${variation.params.get(this.PARAM_DAMPX)!.toWebGl()};
+          float dampy = ${variation.params.get(this.PARAM_DAMPY)!.toWebGl()};
           float _dampingX = abs(dampx) < EPSILON ? 1.0 : exp(dampx);
           float _dampingY = abs(dampy) < EPSILON ? 1.0 : exp(dampy);
           if (use_cos_x == 1) {
@@ -940,12 +940,12 @@ class Waves4Func extends VariationShaderFunc2D {
         /* waves4 from Tatyana Zabanova converted by Brad Stefanov https://www.deviantart.com/tatasz/art/Weird-Waves-Plugin-Pack-1-783560564*/
         return `{
           float amount = ${variation.amount.toWebGl()};
-          float scalex = float(${variation.params.get(this.PARAM_SCALEX)});
-          float scaley = float(${variation.params.get(this.PARAM_SCALEY)});
-          float freqx = float(${variation.params.get(this.PARAM_FREQX)});
-          float freqy = float(${variation.params.get(this.PARAM_FREQY)});
-          int cont = int(${variation.params.get(this.PARAM_CONT)});
-          float yfact = float(${variation.params.get(this.PARAM_YFACT)});
+          float scalex = ${variation.params.get(this.PARAM_SCALEX)!.toWebGl()};
+          float scaley = ${variation.params.get(this.PARAM_SCALEY)!.toWebGl()};
+          float freqx = ${variation.params.get(this.PARAM_FREQX)!.toWebGl()};
+          float freqy = ${variation.params.get(this.PARAM_FREQY)!.toWebGl()};
+          int cont = ${variation.params.get(this.PARAM_CONT)!.toWebGl()};
+          float yfact = ${variation.params.get(this.PARAM_YFACT)!.toWebGl()};
           float x0 = _tx;
           float y0 = _ty;
           float ax = floor(y0 * freqx / (2.0*M_PI));
@@ -991,13 +991,13 @@ class Waves42Func extends VariationShaderFunc2D {
         /* waves42 from Tatyana Zabanova converted by Brad Stefanov https://www.deviantart.com/tatasz/art/Weird-Waves-Plugin-Pack-1-783560564*/
         return `{
           float amount = ${variation.amount.toWebGl()};
-          float scalex = float(${variation.params.get(this.PARAM_SCALEX)});
-          float scaley = float(${variation.params.get(this.PARAM_SCALEY)});
-          float freqx = float(${variation.params.get(this.PARAM_FREQX)});
-          float freqy = float(${variation.params.get(this.PARAM_FREQY)});
-          int cont = int(${variation.params.get(this.PARAM_CONT)});
-          float yfact = float(${variation.params.get(this.PARAM_YFACT)});
-          float freqx2 = float(${variation.params.get(this.PARAM_FREQX2)});
+          float scalex = ${variation.params.get(this.PARAM_SCALEX)!.toWebGl()};
+          float scaley = ${variation.params.get(this.PARAM_SCALEY)!.toWebGl()};
+          float freqx = ${variation.params.get(this.PARAM_FREQX)!.toWebGl()};
+          float freqy = ${variation.params.get(this.PARAM_FREQY)!.toWebGl()};
+          int cont = ${variation.params.get(this.PARAM_CONT)!.toWebGl()};
+          float yfact = ${variation.params.get(this.PARAM_YFACT)!.toWebGl()};
+          float freqx2 = ${variation.params.get(this.PARAM_FREQX2)!.toWebGl()};
           float x0 = _tx;
           float y0 = _ty;
           float ax = floor(y0 * freqx2);   
@@ -1045,14 +1045,14 @@ class Waves4WFFunc extends VariationShaderFunc2D {
         /* Modified version of waves2 from Joel F */
         return `{
           float amount = ${variation.amount.toWebGl()};
-          float scalex = float(${variation.params.get(this.PARAM_SCALEX)});
-          float scaley = float(${variation.params.get(this.PARAM_SCALEY)});
-          float freqx = float(${variation.params.get(this.PARAM_FREQX)});
-          float freqy = float(${variation.params.get(this.PARAM_FREQY)});
-          int use_cos_x = int(${variation.params.get(this.PARAM_USE_COS_X)});
-          int use_cos_y = int(${variation.params.get(this.PARAM_USE_COS_Y)});
-          float dampx = float(${variation.params.get(this.PARAM_DAMPX)});
-          float dampy = float(${variation.params.get(this.PARAM_DAMPY)});
+          float scalex = ${variation.params.get(this.PARAM_SCALEX)!.toWebGl()};
+          float scaley = ${variation.params.get(this.PARAM_SCALEY)!.toWebGl()};
+          float freqx = ${variation.params.get(this.PARAM_FREQX)!.toWebGl()};
+          float freqy = ${variation.params.get(this.PARAM_FREQY)!.toWebGl()};
+          int use_cos_x = ${variation.params.get(this.PARAM_USE_COS_X)!.toWebGl()};
+          int use_cos_y = ${variation.params.get(this.PARAM_USE_COS_Y)!.toWebGl()};
+          float dampx = ${variation.params.get(this.PARAM_DAMPX)!.toWebGl()};
+          float dampy = ${variation.params.get(this.PARAM_DAMPY)!.toWebGl()};
           float _dampingX = abs(dampx) < EPSILON ? 1.0 : exp(dampx);
           float _dampingY = abs(dampy) < EPSILON ? 1.0 : exp(dampy);
           if (use_cos_x == 1) {

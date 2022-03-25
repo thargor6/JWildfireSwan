@@ -168,7 +168,7 @@ class VariationMapper {
         res.name = source.name
         res.amount = ParamMapper.mapForRendering(source.amount)
         source.params.forEach((value, key) => {
-            res.params.set(key, value.value)
+            res.params.set(key, ParamMapper.mapForRendering(value))
         })
         return res;
     }

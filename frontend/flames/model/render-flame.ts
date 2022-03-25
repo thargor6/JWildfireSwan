@@ -15,7 +15,7 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 */
 
-import {RenderParameters} from "Frontend/flames/model/parameters";
+import {RenderParameter, RenderParameters} from "Frontend/flames/model/parameters";
 
 export class RenderColor {
   constructor(public r: number, public g: number, public b: number) {
@@ -25,7 +25,7 @@ export class RenderColor {
 export class RenderVariation {
     public name = ''
     public amount = RenderParameters.floatParam(1.0)
-    private _params = new Map<string, number | boolean>()
+    private _params = new Map<string, RenderParameter>()
     public get params() {
         return this._params
     }

@@ -45,11 +45,11 @@ class KaleidoscopeFunc extends VariationShaderFunc2D {
         /* Kaleidoscope by Will Evans, http://eevans1.deviantart.com/art/kaleidoscope-plugin-122185469  */
         return `{
           float amount = ${variation.amount.toWebGl()};
-          float pull = float(${variation.params.get(this.PARAM_PULL)});
-          float rotate = float(${variation.params.get(this.PARAM_ROTATE)});
-          float line_up = float(${variation.params.get(this.PARAM_LINE_UP)});
-          float x = float(${variation.params.get(this.PARAM_X)});
-          float y = float(${variation.params.get(this.PARAM_Y)});
+          float pull = ${variation.params.get(this.PARAM_PULL)!.toWebGl()};
+          float rotate = ${variation.params.get(this.PARAM_ROTATE)!.toWebGl()};
+          float line_up = ${variation.params.get(this.PARAM_LINE_UP)!.toWebGl()};
+          float x = ${variation.params.get(this.PARAM_X)!.toWebGl()};
+          float y = ${variation.params.get(this.PARAM_Y)!.toWebGl()};
           float _q = pull; 
           float _w = rotate; 
           float _e = line_up;
@@ -132,7 +132,7 @@ class LayeredSpiralFunc extends VariationShaderFunc2D {
         /* layered_spiral by Will Evans, http://eevans1.deviantart.com/art/kaleidoscope-plugin-122185469  */
         return `{
           float amount = ${variation.amount.toWebGl()};
-          float radius = float(${variation.params.get(this.PARAM_RADIUS)});
+          float radius = ${variation.params.get(this.PARAM_RADIUS)!.toWebGl()};
           float a = _tx * radius; 
           float t = sqr(_tx) + sqr(_ty) + EPSILON;
           _vx += amount * a * cos(t);
@@ -169,11 +169,11 @@ class LazySusanFunc extends VariationShaderFunc2D {
         /* Lazysusan in the Apophysis Plugin Pack */
         return `{
           float amount = ${variation.amount.toWebGl()};
-          float space = float(${variation.params.get(this.PARAM_SPACE)});
-          float twist = float(${variation.params.get(this.PARAM_TWIST)});
-          float spin = float(${variation.params.get(this.PARAM_SPIN)});
-          float x = float(${variation.params.get(this.PARAM_X)});
-          float y = float(${variation.params.get(this.PARAM_Y)}); 
+          float space = ${variation.params.get(this.PARAM_SPACE)!.toWebGl()};
+          float twist = ${variation.params.get(this.PARAM_TWIST)!.toWebGl()};
+          float spin = ${variation.params.get(this.PARAM_SPIN)!.toWebGl()};
+          float x = ${variation.params.get(this.PARAM_X)!.toWebGl()};
+          float y = ${variation.params.get(this.PARAM_Y)!.toWebGl()}; 
           float xx = _tx - x;
           float yy = _ty + y;
           float rr = sqrt(xx * xx + yy * yy);
@@ -232,8 +232,8 @@ class LinearTFunc extends VariationShaderFunc2D {
         // linearT by FractalDesire, http://fractaldesire.deviantart.com/journal/linearT-plugin-219864320
         return `{
           float amount = ${variation.amount.toWebGl()};
-          float powX = float(${variation.params.get(this.PARAM_POW_X)});
-          float powY = float(${variation.params.get(this.PARAM_POW_Y)});
+          float powX = ${variation.params.get(this.PARAM_POW_X)!.toWebGl()};
+          float powY = ${variation.params.get(this.PARAM_POW_Y)!.toWebGl()};
           _vx += sgn(_tx) * pow(abs(_tx), powX) * amount;
           _vy += sgn(_ty) * pow(abs(_ty), powY) * amount;
         }`;
@@ -275,13 +275,13 @@ class LissajousFunc extends VariationShaderFunc2D {
         // Lissajous plugin by Jed Kelsey, http://lu-kout.deviantart.com/art/Apophysis-Plugin-Pack-1-v0-4-59907275
         return `{
           float amount = ${variation.amount.toWebGl()};
-          float tmin = float(${variation.params.get(this.PARAM_TMIN)});
-          float tmax = float(${variation.params.get(this.PARAM_TMAX)});
-          float a = float(${variation.params.get(this.PARAM_A)});
-          float b = float(${variation.params.get(this.PARAM_B)});
-          float c = float(${variation.params.get(this.PARAM_C)});
-          float d = float(${variation.params.get(this.PARAM_D)});
-          float e = float(${variation.params.get(this.PARAM_E)});
+          float tmin = ${variation.params.get(this.PARAM_TMIN)!.toWebGl()};
+          float tmax = ${variation.params.get(this.PARAM_TMAX)!.toWebGl()};
+          float a = ${variation.params.get(this.PARAM_A)!.toWebGl()};
+          float b = ${variation.params.get(this.PARAM_B)!.toWebGl()};
+          float c = ${variation.params.get(this.PARAM_C)!.toWebGl()};
+          float d = ${variation.params.get(this.PARAM_D)!.toWebGl()};
+          float e = ${variation.params.get(this.PARAM_E)!.toWebGl()};
           float t = (tmax - tmin) * rand8(tex, rngState) + tmin;
           float y = rand8(tex, rngState) - 0.5;
           float x1 = sin(a * t + d);
@@ -366,9 +366,9 @@ class Loonie2Func extends VariationShaderFunc2D {
         /* loonie2 by dark-beam, http://dark-beam.deviantart.com/art/Loonie2-update-2-Loonie3-457414891 */
         return `{
           float amount = ${variation.amount.toWebGl()};
-          int sides = int(${variation.params.get(this.PARAM_RE_A)});
-          float star = float(${variation.params.get(this.PARAM_RE_B)});
-          float circle = float(${variation.params.get(this.PARAM_RE_C)});
+          int sides = ${variation.params.get(this.PARAM_RE_A)!.toWebGl()};
+          float star = ${variation.params.get(this.PARAM_RE_B)!.toWebGl()};
+          float circle = ${variation.params.get(this.PARAM_RE_C)!.toWebGl()};
           float _sqrvvar = amount * amount;
           float a = (2.0*M_PI) / float(sides);
           float _sina = sin(a);
@@ -487,10 +487,10 @@ class MCarpetFunc extends VariationShaderFunc2D {
         /* mcarpet from FracFx, http://fracfx.deviantart.com/art/FracFx-Plugin-Pack-171806681 */
         return `{
           float amount = ${variation.amount.toWebGl()};
-          float x = float(${variation.params.get(this.PARAM_X)});
-          float y = float(${variation.params.get(this.PARAM_Y)});   
-          float twist = float(${variation.params.get(this.PARAM_TWIST)});
-          float tilt = float(${variation.params.get(this.PARAM_TILT)});
+          float x = ${variation.params.get(this.PARAM_X)!.toWebGl()};
+          float y = ${variation.params.get(this.PARAM_Y)!.toWebGl()};   
+          float twist = ${variation.params.get(this.PARAM_TWIST)!.toWebGl()};
+          float tilt = ${variation.params.get(this.PARAM_TILT)!.toWebGl()};
           float T = ((sqr(_tx) + sqr(_ty)) / 4.0 + 1.0);
           float r = amount / T;
           _vx += _tx * r * x;
@@ -534,14 +534,14 @@ class MobiusFunc extends VariationShaderFunc2D {
         // Mobius, by eralex
         return `{
           float amount = ${variation.amount.toWebGl()};
-          float re_a = float(${variation.params.get(this.PARAM_RE_A)});
-          float re_b = float(${variation.params.get(this.PARAM_RE_B)});
-          float re_c = float(${variation.params.get(this.PARAM_RE_C)});
-          float re_d = float(${variation.params.get(this.PARAM_RE_D)});
-          float im_a = float(${variation.params.get(this.PARAM_IM_A)});
-          float im_b = float(${variation.params.get(this.PARAM_IM_B)});
-          float im_c = float(${variation.params.get(this.PARAM_IM_C)});
-          float im_d = float(${variation.params.get(this.PARAM_IM_D)});
+          float re_a = ${variation.params.get(this.PARAM_RE_A)!.toWebGl()};
+          float re_b = ${variation.params.get(this.PARAM_RE_B)!.toWebGl()};
+          float re_c = ${variation.params.get(this.PARAM_RE_C)!.toWebGl()};
+          float re_d = ${variation.params.get(this.PARAM_RE_D)!.toWebGl()};
+          float im_a = ${variation.params.get(this.PARAM_IM_A)!.toWebGl()};
+          float im_b = ${variation.params.get(this.PARAM_IM_B)!.toWebGl()};
+          float im_c = ${variation.params.get(this.PARAM_IM_C)!.toWebGl()};
+          float im_d = ${variation.params.get(this.PARAM_IM_D)!.toWebGl()};
           float re_u = re_a * _tx - im_a * _ty + re_b;
           float im_u = re_a * _ty + im_a * _tx + im_b;
           float re_v = re_c * _tx - im_c * _ty + re_d;
@@ -578,8 +578,8 @@ class ModulusFunc extends VariationShaderFunc2D {
         /* Modulus in the Apophysis Plugin Pack */
         return `{
           float amount = ${variation.amount.toWebGl()};
-          float x = float(${variation.params.get(this.PARAM_X)});
-          float y = float(${variation.params.get(this.PARAM_Y)});
+          float x = ${variation.params.get(this.PARAM_X)!.toWebGl()};
+          float y = ${variation.params.get(this.PARAM_Y)!.toWebGl()};
           float _xr = 2.0 * x;
           float _yr = 2.0 * y;
           if (_tx > x) {
@@ -625,10 +625,10 @@ class NGonFunc extends VariationShaderFunc2D {
         /* ngon by Joel Faber (09/06) */
         return `{
           float amount = ${variation.amount.toWebGl()};
-          float circle = float(${variation.params.get(this.PARAM_CIRCLE)});
-          float corners = float(${variation.params.get(this.PARAM_CORNERS)});
-          float power = float(${variation.params.get(this.PARAM_POWER)});
-          float sides = float(${variation.params.get(this.PARAM_SIDES)});
+          float circle = ${variation.params.get(this.PARAM_CIRCLE)!.toWebGl()};
+          float corners = ${variation.params.get(this.PARAM_CORNERS)!.toWebGl()};
+          float power = ${variation.params.get(this.PARAM_POWER)!.toWebGl()};
+          float sides = ${variation.params.get(this.PARAM_SIDES)!.toWebGl()};
 
           float r_factor = pow(_r2, power / 2.0);
           float theta = atan2(_ty, _tx);
@@ -666,8 +666,8 @@ class NPolarFunc extends VariationShaderFunc2D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         return `{
           float amount = ${variation.amount.toWebGl()};
-          int parity = int(${variation.params.get(this.PARAM_PARITY)});
-          int n = int(${variation.params.get(this.PARAM_N)});
+          int parity = ${variation.params.get(this.PARAM_PARITY)!.toWebGl()};
+          int n = ${variation.params.get(this.PARAM_N)!.toWebGl()};
 
           int _nnz = (n == 0) ? 1 : n;
           float _vvar = amount / M_PI;
@@ -721,10 +721,10 @@ class OscilloscopeFunc extends VariationShaderFunc2D {
         /* oscilloscope from the apophysis plugin pack */
         return `{
           float amount = ${variation.amount.toWebGl()};
-          float separation = float(${variation.params.get(this.PARAM_SEPARATION)});
-          float frequency = float(${variation.params.get(this.PARAM_FREQUENCY)});
-          float amplitude = float(${variation.params.get(this.PARAM_AMPLITUDE)});
-          float damping = float(${variation.params.get(this.PARAM_DAMPING)});
+          float separation = ${variation.params.get(this.PARAM_SEPARATION)!.toWebGl()};
+          float frequency = ${variation.params.get(this.PARAM_FREQUENCY)!.toWebGl()};
+          float amplitude = ${variation.params.get(this.PARAM_AMPLITUDE)!.toWebGl()};
+          float damping = ${variation.params.get(this.PARAM_DAMPING)!.toWebGl()};
           float _tpf = 2.0 * M_PI * frequency;
           bool _noDamping = abs(damping) <= EPSILON;
           float t;
@@ -773,12 +773,12 @@ class Oscilloscope2Func extends VariationShaderFunc2D {
         /* oscilloscope from the apophysis plugin pack tweak darkbeam */
         return `{
           float amount = ${variation.amount.toWebGl()};
-          float separation = float(${variation.params.get(this.PARAM_SEPARATION)});
-          float frequencyx = float(${variation.params.get(this.PARAM_FREQUENCYX)});
-          float frequencyy = float(${variation.params.get(this.PARAM_FREQUENCYY)});
-          float amplitude = float(${variation.params.get(this.PARAM_AMPLITUDE)});
-          float perturbation = float(${variation.params.get(this.PARAM_PERTUBATION)});
-          float damping = float(${variation.params.get(this.PARAM_DAMPING)});
+          float separation = ${variation.params.get(this.PARAM_SEPARATION)!.toWebGl()};
+          float frequencyx = ${variation.params.get(this.PARAM_FREQUENCYX)!.toWebGl()};
+          float frequencyy = ${variation.params.get(this.PARAM_FREQUENCYY)!.toWebGl()};
+          float amplitude = ${variation.params.get(this.PARAM_AMPLITUDE)!.toWebGl()};
+          float perturbation = ${variation.params.get(this.PARAM_PERTUBATION)!.toWebGl()};
+          float damping = ${variation.params.get(this.PARAM_DAMPING)!.toWebGl()};
           float _tpf = 2.0 * M_PI * frequencyx;
           float _tpf2 = 2.0 * M_PI * frequencyy;
           bool _noDamping = abs(damping) <= EPSILON;
@@ -867,8 +867,8 @@ class ParabolaFunc extends VariationShaderFunc2D {
         /* cyberxaos, 4/2007 */
          return `{
           float amount = ${variation.amount.toWebGl()};
-          float width = float(${variation.params.get(this.PARAM_WIDTH)});
-          float height = float(${variation.params.get(this.PARAM_HEIGHT)});
+          float width = ${variation.params.get(this.PARAM_WIDTH)!.toWebGl()};
+          float height = ${variation.params.get(this.PARAM_HEIGHT)!.toWebGl()};
           float r = _r;
           float sr = sin(r);
           float cr = cos(r);
@@ -991,10 +991,10 @@ class PDJFunc extends VariationShaderFunc2D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         return `{
           float amount = ${variation.amount.toWebGl()};
-          float a = float(${variation.params.get(this.PARAM_A)});
-          float b = float(${variation.params.get(this.PARAM_B)});
-          float c = float(${variation.params.get(this.PARAM_C)});
-          float d = float(${variation.params.get(this.PARAM_D)});
+          float a = ${variation.params.get(this.PARAM_A)!.toWebGl()};
+          float b = ${variation.params.get(this.PARAM_B)!.toWebGl()};
+          float c = ${variation.params.get(this.PARAM_C)!.toWebGl()};
+          float d = ${variation.params.get(this.PARAM_D)!.toWebGl()};
           _vx += amount * (sin(a * _ty) - cos(b * _tx));
           _vy += amount * (sin(c * _tx) - cos(d * _ty));
         }`;
@@ -1021,8 +1021,8 @@ class PerspectiveFunc extends VariationShaderFunc2D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         return `{
           float amount = ${variation.amount.toWebGl()};
-          float angle = float(${variation.params.get(this.PARAM_ANGLE)});
-          float dist = float(${variation.params.get(this.PARAM_DIST)});
+          float angle = ${variation.params.get(this.PARAM_ANGLE)!.toWebGl()};
+          float dist = ${variation.params.get(this.PARAM_DIST)!.toWebGl()};
           float ang = angle * M_PI / 2.0;
           float vsin = sin(ang);
           float vfcos = dist * cos(ang);
@@ -1080,9 +1080,9 @@ class PieFunc extends VariationShaderFunc2D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
           return `{
           float amount = ${variation.amount.toWebGl()};
-          float slices = float(${variation.params.get(this.PARAM_SLICES)});
-          float rotation = float(${variation.params.get(this.PARAM_ROTATION)});
-          float thickness = float(${variation.params.get(this.PARAM_THICKNESS)});
+          float slices = ${variation.params.get(this.PARAM_SLICES)!.toWebGl()};
+          float rotation = ${variation.params.get(this.PARAM_ROTATION)!.toWebGl()};
+          float thickness = ${variation.params.get(this.PARAM_THICKNESS)!.toWebGl()};
           int sl = int(rand8(tex, rngState) * slices + 0.5);
           float a = rotation + 2.0 * M_PI * (float(sl) + rand8(tex, rngState) * thickness) / slices;
           float r = amount * rand8(tex, rngState);
@@ -1185,9 +1185,9 @@ class Popcorn2Func extends VariationShaderFunc2D {
         /* popcorn2 from the apophysis plugin pack */
         return `{
           float amount = ${variation.amount.toWebGl()};
-          float x = float(${variation.params.get(this.PARAM_X)});
-          float y = float(${variation.params.get(this.PARAM_Y)});
-          float c = float(${variation.params.get(this.PARAM_C)});
+          float x = ${variation.params.get(this.PARAM_X)!.toWebGl()};
+          float y = ${variation.params.get(this.PARAM_Y)!.toWebGl()};
+          float c = ${variation.params.get(this.PARAM_C)!.toWebGl()};
           _vx += amount * (_tx + x * sin(tan(_ty * c)));
           _vy += amount * (_ty + y * sin(tan(_tx * c)));
         }`;
@@ -1250,9 +1250,9 @@ class ProjectiveFunc extends VariationShaderFunc2D {
         // https://www.deviantart.com/eralex61/art/Projective-transform-295252418
         return `{
           float amount = ${variation.amount.toWebGl()};
-          float A = float(${variation.params.get(this.PARAM_A)});
-          float B = float(${variation.params.get(this.PARAM_B)});
-          float C = float(${variation.params.get(this.PARAM_C)});
+          float A = ${variation.params.get(this.PARAM_A)!.toWebGl()};
+          float B = ${variation.params.get(this.PARAM_B)!.toWebGl()};
+          float C = ${variation.params.get(this.PARAM_C)!.toWebGl()};
           float A1 = float(${variation.params.get(this.PARAM_A1)});
           float B1 = float(${variation.params.get(this.PARAM_B1)});
           float C1 = float(${variation.params.get(this.PARAM_C1)});
@@ -1292,11 +1292,11 @@ class PTransformFunc extends VariationShaderFunc2D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         return `{
           float amount = ${variation.amount.toWebGl()};
-          float rotate = float(${variation.params.get(this.PARAM_ROTATE)});
-          int power = int(${variation.params.get(this.PARAM_POWER)});
-          float move = float(${variation.params.get(this.PARAM_MOVE)});
-          float split = float(${variation.params.get(this.PARAM_SPLIT)});
-          int use_log = int(${variation.params.get(this.PARAM_USE_LOG)});
+          float rotate = ${variation.params.get(this.PARAM_ROTATE)!.toWebGl()};
+          int power = ${variation.params.get(this.PARAM_POWER)!.toWebGl()};
+          float move = ${variation.params.get(this.PARAM_MOVE)!.toWebGl()};
+          float split = ${variation.params.get(this.PARAM_SPLIT)!.toWebGl()};
+          int use_log = ${variation.params.get(this.PARAM_USE_LOG)!.toWebGl()};
           float rho = (use_log != 0) ? log(_r) / float(power) + move : _r / float(power) + move;
           float _theta = atan2(_ty, _tx);
           float theta = _theta + rotate;
@@ -1384,14 +1384,14 @@ class Rational3Func extends VariationShaderFunc2D {
          */
         return `{
           float amount = ${variation.amount.toWebGl()};
-          float a = float(${variation.params.get(this.PARAM_A)});
-          float b = float(${variation.params.get(this.PARAM_B)});
-          float c = float(${variation.params.get(this.PARAM_C)});
-          float d = float(${variation.params.get(this.PARAM_D)});
-          float e = float(${variation.params.get(this.PARAM_E)});
-          float f = float(${variation.params.get(this.PARAM_F)});
-          float g = float(${variation.params.get(this.PARAM_G)});
-          float h = float(${variation.params.get(this.PARAM_H)});
+          float a = ${variation.params.get(this.PARAM_A)!.toWebGl()};
+          float b = ${variation.params.get(this.PARAM_B)!.toWebGl()};
+          float c = ${variation.params.get(this.PARAM_C)!.toWebGl()};
+          float d = ${variation.params.get(this.PARAM_D)!.toWebGl()};
+          float e = ${variation.params.get(this.PARAM_E)!.toWebGl()};
+          float f = ${variation.params.get(this.PARAM_F)!.toWebGl()};
+          float g = ${variation.params.get(this.PARAM_G)!.toWebGl()};
+          float h = ${variation.params.get(this.PARAM_H)!.toWebGl()};
           float xsqr = _tx * _tx;
           float ysqr = _ty * _ty;
           float xcb = xsqr * _tx;
@@ -1516,8 +1516,8 @@ class RectanglesFunc extends VariationShaderFunc2D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         return `{
           float amount = ${variation.amount.toWebGl()};
-          float x =float(${variation.params.get(this.PARAM_X)});
-          float y = float(${variation.params.get(this.PARAM_Y)});
+          float x =${variation.params.get(this.PARAM_X)!.toWebGl()};
+          float y = ${variation.params.get(this.PARAM_Y)!.toWebGl()};
           if (abs(x) < EPSILON) {
             _vx += amount * _tx;
           } else {
@@ -1571,7 +1571,7 @@ class Rings2Func extends VariationShaderFunc2D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         return `{
           float amount = ${variation.amount.toWebGl()};
-          float val =float(${variation.params.get(this.PARAM_VAL)});
+          float val =${variation.params.get(this.PARAM_VAL)!.toWebGl()};
           float _dx = val * val + EPSILON;
           float l = _r;
           if (_dx != 0.0 && l != 0.0) {
@@ -1606,9 +1606,9 @@ class RoseWFFunc extends VariationShaderFunc2D {
          return `{
           float amount = ${variation.amount.toWebGl()};
           float a = _phi;
-          int waves = int(${variation.params.get(this.PARAM_WAVES)});
-          float filled = float(${variation.params.get(this.PARAM_FILLED)});
-          float amp = float(${variation.params.get(this.PARAM_AMP)});
+          int waves = ${variation.params.get(this.PARAM_WAVES)!.toWebGl()};
+          float filled = ${variation.params.get(this.PARAM_FILLED)!.toWebGl()};
+          float amp = ${variation.params.get(this.PARAM_AMP)!.toWebGl()};
           float r = amp * cos(float(waves) * a);
         
           if (filled > 0.0 && filled > rand8(tex, rngState)) {

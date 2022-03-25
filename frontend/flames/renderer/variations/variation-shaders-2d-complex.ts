@@ -272,19 +272,19 @@ class CombimirrorFunc extends VariationShaderFunc3D {
         */
         return `{
           float amount = ${variation.amount.toWebGl()};
-          float vmirror = float(${variation.params.get(this.PARAM_VMIRROR)});
-          float vmove = float(${variation.params.get(this.PARAM_VMOVE)});
-          float hmirror = float(${variation.params.get(this.PARAM_HMIRROR)});
-          float hmove = float(${variation.params.get(this.PARAM_HMOVE)});
-          float zmirror = float(${variation.params.get(this.PARAM_ZMIRROR)});
-          float zmove = float(${variation.params.get(this.PARAM_ZMOVE)});
-          float pmirror = float(${variation.params.get(this.PARAM_PMIRROR)});
-          float pmovex = float(${variation.params.get(this.PARAM_PMOVEX)});
-          float pmovey = float(${variation.params.get(this.PARAM_PMOVEY)});
-          float vcolorshift = float(${variation.params.get(this.PARAM_VCOLORSHIFT)});
-          float hcolorshift = float(${variation.params.get(this.PARAM_HCOLORSHIFT)});
-          float zcolorshift = float(${variation.params.get(this.PARAM_ZCOLORSHIFT)});
-          float pcolorshift = float(${variation.params.get(this.PARAM_PCOLORSHIFT)});
+          float vmirror = ${variation.params.get(this.PARAM_VMIRROR)!.toWebGl()};
+          float vmove = ${variation.params.get(this.PARAM_VMOVE)!.toWebGl()};
+          float hmirror = ${variation.params.get(this.PARAM_HMIRROR)!.toWebGl()};
+          float hmove = ${variation.params.get(this.PARAM_HMOVE)!.toWebGl()};
+          float zmirror = ${variation.params.get(this.PARAM_ZMIRROR)!.toWebGl()};
+          float zmove = ${variation.params.get(this.PARAM_ZMOVE)!.toWebGl()};
+          float pmirror = ${variation.params.get(this.PARAM_PMIRROR)!.toWebGl()};
+          float pmovex = ${variation.params.get(this.PARAM_PMOVEX)!.toWebGl()};
+          float pmovey = ${variation.params.get(this.PARAM_PMOVEY)!.toWebGl()};
+          float vcolorshift = ${variation.params.get(this.PARAM_VCOLORSHIFT)!.toWebGl()};
+          float hcolorshift = ${variation.params.get(this.PARAM_HCOLORSHIFT)!.toWebGl()};
+          float zcolorshift = ${variation.params.get(this.PARAM_ZCOLORSHIFT)!.toWebGl()};
+          float pcolorshift = ${variation.params.get(this.PARAM_PCOLORSHIFT)!.toWebGl()};
           
           Complex z;
           Complex_Init(z, _tx, _ty);
@@ -339,7 +339,7 @@ class CSinFunc extends VariationShaderFunc2D {
         // csin by 2010 Branden Brown, a.k.a. zephyrtronium
         return `{
               float amount = ${variation.amount.toWebGl()};
-              float stretch = float(${variation.params.get(this.PARAM_STRETCH)});
+              float stretch = ${variation.params.get(this.PARAM_STRETCH)!.toWebGl()};
               Complex c;     
               Complex_Init(c,_tx * stretch ,_ty * stretch );
               Complex_Sin(c);
@@ -376,9 +376,9 @@ class JuliaOutsideFunc extends VariationShaderFunc2D {
         //julia_outside by Whittaker Courtney
         return `{
           float amount = ${variation.amount.toWebGl()};
-          float re_div = float(${variation.params.get(this.PARAM_RE_DIV)});
-          float im_div = float(${variation.params.get(this.PARAM_IM_DIV)});
-          int mode = int(${variation.params.get(this.PARAM_MODE)});
+          float re_div = ${variation.params.get(this.PARAM_RE_DIV)!.toWebGl()};
+          float im_div = ${variation.params.get(this.PARAM_IM_DIV)!.toWebGl()};
+          int mode = ${variation.params.get(this.PARAM_MODE)!.toWebGl()};
           Complex z, z2, z3;
           Complex_Init(z ,_tx, _ty); 
           Complex_Init(z2, _tx, _ty); 
@@ -444,8 +444,8 @@ class PlusRecipFunc extends VariationShaderFunc2D {
         // author DarkBeam. Implemented by DarkBeam 2019
         return `{
           float amount = ${variation.amount.toWebGl()};
-          float ar = float(${variation.params.get(this.PARAM_AR)});
-          float ai = float(${variation.params.get(this.PARAM_AI)});
+          float ar = ${variation.params.get(this.PARAM_AR)!.toWebGl()};
+          float ai = ${variation.params.get(this.PARAM_AI)!.toWebGl()};
           Complex z;
           Complex_Init(z, _tx, _ty);
           Complex k;
