@@ -124,6 +124,10 @@ export class RenderLayer {
 }
 
 export class RenderFlame {
+    motionBlurLength = 12
+    motionBlurTimeStep = 0.05
+    motionBlurDecay = 0.03
+
     brightness = 1.0
     whiteLevel = 220
     contrast = 1.0

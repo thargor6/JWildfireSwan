@@ -32,7 +32,6 @@ export class FlameIterator {
         gl.viewport(0, 0, this.settings.swarm_size, this.settings.swarm_size);
 
         gl.disable(gl.BLEND);
-        gl.activeTexture(gl.TEXTURE0);
 
         var seed = Math.random();
         var seed2 = Math.random();
@@ -47,7 +46,12 @@ export class FlameIterator {
         gl.uniform1f(this.ctx.shaders.prog_comp!.seed3, seed3);
         gl.uniform1f(this.ctx.shaders.prog_comp!.time, this.settings.time );
         gl.uniform1i(this.ctx.shaders.prog_comp!.uTexSamp, 0);
+        gl.uniform1i(this.ctx.shaders.prog_comp!.motionBlurTimeSamp, 1);
 
+        gl.activeTexture(gl.TEXTURE1);
+        gl.bindTexture(gl.TEXTURE_2D, this.ctx.textures.motionBlurTime);
+
+        gl.activeTexture(gl.TEXTURE0);
         if(this.flag) {
             gl.bindFramebuffer(gl.FRAMEBUFFER, this.ctx.framebuffers.FBO1);
             gl.bindTexture(gl.TEXTURE_2D, this.ctx.textures.texture0);
@@ -61,6 +65,8 @@ export class FlameIterator {
 
         gl.drawArrays(gl.TRIANGLE_STRIP, 0, this.ctx.buffers.quadVertexPositionBuffer!.numItems);
 
+
+
         // C += Ci
         gl.useProgram(this.ctx.shaders.prog_comp_col);
 
@@ -71,6 +77,7 @@ export class FlameIterator {
         gl.uniform1i(this.ctx.shaders.prog_comp_col!.uTexSamp, 0);
         gl.uniform1i(this.ctx.shaders.prog_comp_col!.pTexSamp, 1);
         gl.uniform1i(this.ctx.shaders.prog_comp_col!.gradTexSamp, 2);
+        gl.uniform1i(this.ctx.shaders.prog_comp_col!.motionBlurTimeSamp, 3);
 
         if(this.flag) {
             gl.bindFramebuffer(gl.FRAMEBUFFER, this.ctx.framebuffers._FBO1);
@@ -87,13 +94,13 @@ export class FlameIterator {
         }
         gl.activeTexture(gl.TEXTURE2);
         gl.bindTexture(gl.TEXTURE_2D, this.ctx.textures.gradient);
+        gl.activeTexture(gl.TEXTURE3);
+        gl.bindTexture(gl.TEXTURE_2D, this.ctx.textures.motionBlurTime);
 
         gl.bindBuffer(gl.ARRAY_BUFFER, this.ctx.buffers.quadVertexPositionBuffer);
         gl.vertexAttribPointer(this.ctx.shaders.prog_comp_col!.vertexPositionAttribute, this.ctx.buffers.quadVertexPositionBuffer!.itemSize, gl.FLOAT, false, 0, 0);
 
         gl.drawArrays(gl.TRIANGLE_STRIP, 0, this.ctx.buffers.quadVertexPositionBuffer!.numItems);
-
-
 
         this.flag = !this.flag
     }
@@ -109,8 +116,15 @@ export class FlameIterator {
 
         gl.uniform1i(this.ctx.shaders.prog_points!.uTexSamp_Points, 0);
         gl.uniform1i(this.ctx.shaders.prog_points!.uTexSamp_Colors, 1);
+        gl.uniform1i(this.ctx.shaders.prog_points!.motionBlurTimeSamp, 2);
         gl.uniform1f(this.ctx.shaders.prog_points!.time, this.settings.time );
         gl.uniform1f(this.ctx.shaders.prog_points!.seed, Math.random());
+
+        gl.activeTexture(gl.TEXTURE2);
+        gl.bindTexture(gl.TEXTURE_2D, this.ctx.textures.gradient);
+
+        gl.activeTexture(gl.TEXTURE3);
+        gl.bindTexture(gl.TEXTURE_2D, this.ctx.textures.motionBlurTime);
 
         if(this.flag) {
             gl.activeTexture(gl.TEXTURE0);

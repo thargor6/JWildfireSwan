@@ -125,7 +125,7 @@ export class LerpValueRenderParameter implements RenderParameter {
     }
 
     toWebGl(): string {
-        return `lerp(float(${this._a}), float(${this._b}), time * 0.1)`
+        return `lerp(float(${this._a}), float(${this._b}), lTime)`
     }
 
     equals(refValue: number): boolean {

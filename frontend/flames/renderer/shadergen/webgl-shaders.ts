@@ -30,6 +30,7 @@ interface ComputePointsProgram extends WebGLProgram {
     color: WebGLUniformLocation;
     uTexSamp_Points: WebGLUniformLocation;
     uTexSamp_Colors: WebGLUniformLocation;
+    motionBlurTimeSamp: WebGLUniformLocation;
     time: WebGLUniformLocation;
     seed: WebGLUniformLocation;
 }
@@ -37,6 +38,7 @@ interface ComputePointsProgram extends WebGLProgram {
 interface IteratePointsProgram extends WebGLProgram {
     vertexPositionAttribute: GLint;
     uTexSamp: WebGLUniformLocation;
+    motionBlurTimeSamp: WebGLUniformLocation;
     seed: WebGLUniformLocation;
     seed2: WebGLUniformLocation;
     seed3: WebGLUniformLocation;
@@ -48,6 +50,7 @@ interface ComputeColorsProgram extends WebGLProgram {
     uTexSamp: WebGLUniformLocation;
     pTexSamp: WebGLUniformLocation;
     gradTexSamp: WebGLUniformLocation;
+    motionBlurTimeSamp: WebGLUniformLocation;
     seed: WebGLUniformLocation;
     seed2: WebGLUniformLocation;
     seed3: WebGLUniformLocation;
@@ -63,6 +66,7 @@ interface ShowRawBufferProgram extends WebGLProgram {
     uTexSamp: WebGLUniformLocation;
     pTexSamp: WebGLUniformLocation;
     gradTexSamp: WebGLUniformLocation;
+    motionBlurTimeSamp: WebGLUniformLocation;
     displayMode: WebGLUniformLocation;
 }
 
@@ -83,6 +87,7 @@ export class WebglShaders implements CloseableBuffers{
         this.prog_points.color = gl.getUniformLocation(this.prog_points, "color")!;
         this.prog_points.uTexSamp_Points = gl.getUniformLocation(this.prog_points, "uTexSamp_Points")!;
         this.prog_points.uTexSamp_Colors = gl.getUniformLocation(this.prog_points, "uTexSamp_Colors")!;
+        this.prog_points.motionBlurTimeSamp = gl.getUniformLocation(this.prog_points, "motionBlurTimeSamp")!;
         this.prog_points.time = gl.getUniformLocation(this.prog_points, "time")!;
         this.prog_points.seed = gl.getUniformLocation(this.prog_points, "seed")!;
 
@@ -92,6 +97,7 @@ export class WebglShaders implements CloseableBuffers{
         this.prog_comp.vertexPositionAttribute = gl.getAttribLocation(this.prog_comp, "aVertexPosition");
         gl.enableVertexAttribArray(this.prog_comp.vertexPositionAttribute);
         this.prog_comp.uTexSamp = gl.getUniformLocation(this.prog_comp, "uTexSamp")!;
+        this.prog_comp.motionBlurTimeSamp = gl.getUniformLocation(this.prog_comp, "motionBlurTimeSamp")!;
         this.prog_comp.seed = gl.getUniformLocation(this.prog_comp, "seed")!;
         this.prog_comp.seed2 = gl.getUniformLocation(this.prog_comp, "seed2")!;
         this.prog_comp.seed3 = gl.getUniformLocation(this.prog_comp, "seed3")!;
@@ -103,6 +109,7 @@ export class WebglShaders implements CloseableBuffers{
         this.prog_comp_col.uTexSamp = gl.getUniformLocation(this.prog_comp_col, "uTexSamp")!;
         this.prog_comp_col.pTexSamp = gl.getUniformLocation(this.prog_comp_col, "pTexSamp")!;
         this.prog_comp_col.gradTexSamp = gl.getUniformLocation(this.prog_comp_col, "gradTexSamp")!;
+        this.prog_comp_col.motionBlurTimeSamp = gl.getUniformLocation(this.prog_comp_col, "motionBlurTimeSamp")!;
         this.prog_comp_col.seed = gl.getUniformLocation(this.prog_comp_col, "seed")!;
         this.prog_comp_col.seed2 = gl.getUniformLocation(this.prog_comp_col, "seed2")!;
         this.prog_comp_col.seed3 = gl.getUniformLocation(this.prog_comp_col, "seed3")!;
@@ -141,6 +148,7 @@ export class WebglShaders implements CloseableBuffers{
         this.prog_show_raw.uTexSamp = gl.getUniformLocation(this.prog_show_raw, "uTexSamp")!;
         this.prog_show_raw.pTexSamp = gl.getUniformLocation(this.prog_show_raw, "pTexSamp")!;
         this.prog_show_raw.gradTexSamp = gl.getUniformLocation(this.prog_show_raw, "gradTexSamp")!;
+        this.prog_show_raw.motionBlurTimeSamp = gl.getUniformLocation(this.prog_show_raw, "motionBlurTimeSamp")!;
         this.prog_show_raw.displayMode = gl.getUniformLocation(this.prog_show_raw, "displayMode")!;
     }
 

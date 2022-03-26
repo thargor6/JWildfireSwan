@@ -89,6 +89,7 @@ export class CompPointsFragmentShaderGenerator {
 			#endif
 
 			uniform sampler2D uTexSamp;
+			uniform sampler2D motionBlurTimeSamp;
 			uniform float seed;
 			uniform float seed2;
 			uniform float seed3;
@@ -101,6 +102,7 @@ export class CompPointsFragmentShaderGenerator {
 			void main(void) {
 				vec2 tex = gl_FragCoord.xy / <%= RESOLUTION %>;
 				vec3 point = texture2D(uTexSamp, tex).xyz;
+			  float lTime = texture2D(motionBlurTimeSamp, tex).x;
 
 				float xFormIdxAndColor = texture2D(uTexSamp, tex).w;
 				int xFormIdx = int(floor(texture2D(uTexSamp, tex).w));

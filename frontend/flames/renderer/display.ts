@@ -56,6 +56,7 @@ export class FlameRendererDisplay {
         gl.uniform1i(this.ctx.shaders.prog_show_raw!.uTexSamp, 0);
         gl.uniform1i(this.ctx.shaders.prog_show_raw!.pTexSamp, 1);
         gl.uniform1i(this.ctx.shaders.prog_show_raw!.gradTexSamp,2);
+        gl.uniform1i(this.ctx.shaders.prog_show_raw!.motionBlurTimeSamp,3);
         gl.uniform1i(this.ctx.shaders.prog_show_raw!.displayMode, 0);
         gl.bindFramebuffer(gl.FRAMEBUFFER, null);
         gl.bindBuffer(gl.ARRAY_BUFFER, this.ctx.buffers.quadVertexPositionBuffer);
@@ -74,6 +75,7 @@ export class FlameRendererDisplay {
         gl.uniform1i(this.ctx.shaders.prog_show_raw!.uTexSamp, 0);
         gl.uniform1i(this.ctx.shaders.prog_show_raw!.pTexSamp, 1);
         gl.uniform1i(this.ctx.shaders.prog_show_raw!.gradTexSamp, 2);
+        gl.uniform1i(this.ctx.shaders.prog_show_raw!.motionBlurTimeSamp, 3);
         gl.uniform1i(this.ctx.shaders.prog_show_raw!.displayMode, 0);
         gl.bindFramebuffer(gl.FRAMEBUFFER, null);
         gl.bindBuffer(gl.ARRAY_BUFFER, this.ctx.buffers.quadVertexPositionBuffer);
@@ -92,6 +94,7 @@ export class FlameRendererDisplay {
         gl.uniform1i(this.ctx.shaders.prog_show_raw!.uTexSamp, 0);
         gl.uniform1i(this.ctx.shaders.prog_show_raw!.pTexSamp, 1);
         gl.uniform1i(this.ctx.shaders.prog_show_raw!.gradTexSamp, 2);
+        gl.uniform1i(this.ctx.shaders.prog_show_raw!.motionBlurTimeSamp, 3);
         gl.uniform1i(this.ctx.shaders.prog_show_raw!.displayMode, 1);
         gl.bindFramebuffer(gl.FRAMEBUFFER, null);
         gl.bindBuffer(gl.ARRAY_BUFFER, this.ctx.buffers.quadVertexPositionBuffer);

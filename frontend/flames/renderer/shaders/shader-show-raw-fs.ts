@@ -27,6 +27,7 @@ precision highp float;
 uniform sampler2D uTexSamp;
 uniform sampler2D pTexSamp;
 uniform sampler2D gradTexSamp;
+uniform sampler2D motionBlurTimeSamp;
 uniform int displayMode;
 
 void main(void) {
@@ -37,8 +38,10 @@ void main(void) {
   }
   // gradient
   else if(displayMode==1) {
-    vec2 tex = vec2(gl_FragCoord.x / <%= RESOLUTION %>, 0.5);
-    vec3 clr = texture2D(gradTexSamp, tex).rgb;
+   // vec2 tex = vec2(gl_FragCoord.x / <%= RESOLUTION %>, 0.5);
+   // vec3 clr = texture2D(gradTexSamp, tex).rgb;
+   vec2 tex = vec2(gl_FragCoord.xy / <%= RESOLUTION %>);
+   vec3 clr = texture2D(motionBlurTimeSamp, tex).ggg;
     gl_FragColor = vec4(clr, 1.0);
   }
    // float a = texture2D(uTexSamp, gl_FragCoord.xy / <%= RESOLUTION %>).a;

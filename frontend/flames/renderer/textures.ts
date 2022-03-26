@@ -25,26 +25,53 @@ export class Textures implements CloseableBuffers {
     _texture1: WebGLTexture | null
     texture2: WebGLTexture | null
     gradient: WebGLTexture | null
+    motionBlurTime: WebGLTexture | null
 
     constructor(public flame: RenderFlame,  public gl: WebGLRenderingContext, public swarm_size: number, public canvas_size: number) {
-        //
-        this.gradient = gl.createTexture()!;
-        gl.bindTexture(gl.TEXTURE_2D, this.gradient);
-        let grad = [], gradSize = 256
-        for(var i = 0; i < gradSize; i++) {
-            for(var j = 0; j < gradSize; j++) {
-                grad.push(
-                    flame.layers[0].gradient[j].r,
-                    flame.layers[0].gradient[j].g,
-                    flame.layers[0].gradient[j].b,
-                    0
-                );
+        {
+          this.gradient = gl.createTexture()!;
+          gl.bindTexture(gl.TEXTURE_2D, this.gradient);
+          let grad = [], gradSize = 256
+          for (var i = 0; i < gradSize; i++) {
+            for (var j = 0; j < gradSize; j++) {
+              grad.push(
+                flame.layers[0].gradient[j].r,
+                flame.layers[0].gradient[j].g,
+                flame.layers[0].gradient[j].b,
+                0
+              );
             }
+          }
+          gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gradSize, gradSize, 0, gl.RGBA, gl.FLOAT, new Float32Array(grad));
+          gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+          gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
         }
-        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gradSize, gradSize, 0, gl.RGBA, gl.FLOAT, new Float32Array(grad));
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
-        //
+        {
+          this.motionBlurTime = gl.createTexture()!;
+          gl.bindTexture(gl.TEXTURE_2D, this.motionBlurTime);
+          var pixels = [], tSize = swarm_size;
+          const maxBlurAmount = flame.motionBlurLength * flame.motionBlurTimeStep
+          for(var i = 0; i < tSize; i++) {
+            for(var j = 0; j < tSize; j++) {
+              const rnd = (0.5 - (Math.random()+Math.random()+Math.random()+Math.random())*0.25)
+              const blurLength = rnd * maxBlurAmount
+              let blurFade = (1.0 - blurLength * blurLength * flame.motionBlurDecay * flame.motionBlurLength *0.07  / maxBlurAmount);
+              if (blurFade < 0.5) {
+                blurFade = 0.5;
+              }
+              pixels.push(
+                flame.motionBlurLength > 0 ? blurLength : 0.0,
+                flame.motionBlurLength > 0 ? blurFade : 1.0,
+                0,
+                0
+              );
+            }
+          }
+
+          gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, tSize, tSize, 0, gl.RGBA, gl.FLOAT, new Float32Array(pixels));
+          gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+          gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+        }
 
         this.texture0 = gl.createTexture()!;
         gl.bindTexture(gl.TEXTURE_2D, this.texture0);
@@ -106,6 +133,10 @@ export class Textures implements CloseableBuffers {
     }
 
     closeBuffers = ()=> {
+      if(this.motionBlurTime) {
+        this.gl.deleteTexture(this.motionBlurTime)
+        this.motionBlurTime = null
+      }
       if(this.texture0) {
           this.gl.deleteTexture(this.texture0)
           this.texture0 = null
