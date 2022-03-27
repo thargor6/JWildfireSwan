@@ -55,9 +55,9 @@ export class Textures implements CloseableBuffers {
             for(var j = 0; j < tSize; j++) {
               const rnd = (0.5 - (Math.random()+Math.random()+Math.random()+Math.random())*0.25)
               const blurLength = rnd * maxBlurAmount
-              let blurFade = (1.0 - blurLength * blurLength * flame.motionBlurDecay * flame.motionBlurLength *0.07  / maxBlurAmount);
-              if (blurFade < 0.5) {
-                blurFade = 0.5;
+              let blurFade = (1.0 - blurLength * blurLength * flame.motionBlurDecay * flame.motionBlurLength * 0.07  / maxBlurAmount);
+              if (blurFade < 0.01) {
+                blurFade = 0.01;
               }
               pixels.push(
                 flame.motionBlurLength > 0 ? blurLength : 0.0,

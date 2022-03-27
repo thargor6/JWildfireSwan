@@ -2090,6 +2090,51 @@ class VogelFunc extends VariationShaderFunc2D {
     }
 }
 
+class WedgeSphFunc extends VariationShaderFunc2D {
+    PARAM_ANGLE = 'angle'
+    PARAM_HOLE = 'hole'
+    PARAM_COUNT = 'count'
+    PARAM_SWIRL = 'swirl'
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_ANGLE, type: VariationParamType.VP_NUMBER, initialValue: 0.20 },
+            { name: this.PARAM_HOLE, type: VariationParamType.VP_NUMBER, initialValue: 0.20 },
+            { name: this.PARAM_COUNT, type: VariationParamType.VP_NUMBER, initialValue: 2.00 },
+            { name: this.PARAM_SWIRL, type: VariationParamType.VP_NUMBER, initialValue: 0.30 }]
+    }
+
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        /* Wedge_sph from apo plugins pack */
+        return `{
+          float amount = ${variation.amount.toWebGl()};
+          float angle = ${variation.params.get(this.PARAM_ANGLE)!.toWebGl()};
+          float hole = ${variation.params.get(this.PARAM_HOLE)!.toWebGl()};
+          float count = ${variation.params.get(this.PARAM_COUNT)!.toWebGl()};
+          float swirl = ${variation.params.get(this.PARAM_SWIRL)!.toWebGl()};
+          float r = 1.0 / (_r + EPSILON);
+          float _theta = atan2(_ty, _tx);
+          float a = _theta + swirl * r;
+          float c = floor((count * a + M_PI) * (1.0 / M_PI) * 0.5);
+          float comp_fac = 1.0 - angle * count * (1.0 / M_PI) * 0.5; 
+          a = a * comp_fac + c * angle;
+          float sa = sin(a);
+          float ca = cos(a);
+          r = amount * (r + hole);   
+          _vx += r * ca;
+          _vy += r * sa;
+        }`;
+    }
+
+    get name(): string {
+        return 'wedge_sph';
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
 class WhorlFunc extends VariationShaderFunc2D {
     PARAM_INSIDE = 'inside'
     PARAM_OUTSIDE = 'outside'
@@ -2256,6 +2301,7 @@ export function registerVars_2D_PartS() {
     VariationShaders.registerVar(new VogelFunc())
     VariationShaders.registerVar(new WaffleFunc())
     VariationShaders.registerVar(new WedgeFunc())
+    VariationShaders.registerVar(new WedgeSphFunc())
     VariationShaders.registerVar(new WhorlFunc())
     VariationShaders.registerVar(new YinYangFunc())
 }

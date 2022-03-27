@@ -78,6 +78,29 @@ class BlurZoomFunc extends VariationShaderFunc2D {
     }
 }
 
+class CircleBlurFunc extends VariationShaderFunc2D {
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        // circleblur by Zyorg, http://zy0rg.deviantart.com/art/Blur-Package-347648919
+        return `{
+          float amount = ${variation.amount.toWebGl()};
+          float rad = sqrt(rand8(tex, rngState));
+          float a = rand8(tex, rngState) * (2.0*M_PI);
+          float s = sin(a);
+          float c = cos(a);
+          _vx += amount * c * rad;
+          _vy += amount * s * rad;
+        }`;
+    }
+
+    get name(): string {
+        return 'circleblur';
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D, VariationTypes.VARTYPE_BLUR];
+    }
+}
+
 class ExBlurFunc extends VariationShaderFunc2D {
     PARAM_DIST = 'dist'
     PARAM_R = 'r'
@@ -279,6 +302,7 @@ class RadialBlurFunc extends VariationShaderFunc2D {
 export function registerVars_Blur() {
     VariationShaders.registerVar(new BlurFunc())
     VariationShaders.registerVar(new BlurZoomFunc())
+    VariationShaders.registerVar(new CircleBlurFunc())
     VariationShaders.registerVar(new ExBlurFunc())
     VariationShaders.registerVar(new FarBlurFunc())
     VariationShaders.registerVar(new NoiseFunc())

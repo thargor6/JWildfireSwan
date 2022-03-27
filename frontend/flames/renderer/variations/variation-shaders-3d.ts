@@ -15,7 +15,13 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 */
 
-import {VariationParam, VariationParamType, VariationShaderFunc3D, VariationTypes} from './variation-shader-func';
+import {
+    VariationParam,
+    VariationParamType,
+    VariationShaderFunc2D,
+    VariationShaderFunc3D,
+    VariationTypes
+} from './variation-shader-func';
 import {VariationShaders} from 'Frontend/flames/renderer/variations/variation-shaders';
 import {RenderVariation, RenderXForm} from 'Frontend/flames/model/render-flame';
 import {FUNC_ROUND, FUNC_SGN} from 'Frontend/flames/renderer/variations/variation-math-functions';
@@ -905,6 +911,134 @@ class Loonie_3DFunc extends VariationShaderFunc3D {
     }
 }
 
+class OctagonFunc extends VariationShaderFunc3D {
+    PARAM_X = 'x'
+    PARAM_Y = 'y'
+    PARAM_Z = 'z'
+    PARAM_MODE = 'mode'
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_X, type: VariationParamType.VP_NUMBER, initialValue: 0.0 },
+            { name: this.PARAM_Y, type: VariationParamType.VP_NUMBER, initialValue: 0.0 },
+            { name: this.PARAM_Z, type: VariationParamType.VP_NUMBER, initialValue: 0.0 },
+            { name: this.PARAM_MODE, type: VariationParamType.VP_NUMBER, initialValue: 1 }]
+    }
+
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        /* octagon from FracFx, http://fracfx.deviantart.com/art/FracFx-Plugin-Pack-171806681 */
+        return `{
+          float amount = ${variation.amount.toWebGl()};
+          float x = ${variation.params.get(this.PARAM_X)!.toWebGl()};
+          float y = ${variation.params.get(this.PARAM_Y)!.toWebGl()};
+          float z = ${variation.params.get(this.PARAM_Z)!.toWebGl()};
+          int mode = ${variation.params.get(this.PARAM_MODE)!.toWebGl()};
+          float r = sqr(sqr(_tx)) + sqr(sqr(_ty)) + 2.0 * sqr(_tz);
+          if (r == 0.0) r = EPSILON;
+          float t = abs(_tx) + abs(_ty) + 2.0 * sqrt((mode > 1) ? abs(_tz) :  _tz);
+          if (t == 0.0) t = EPSILON;
+            
+          float m = 1.0;
+          bool splits = false;
+          if(mode==0) {  
+              if (r <= amount / 2.0) {
+                m = 1.0 + 1.0 / t;
+                splits = true;
+              } else {
+                m = 1.0 / r;
+                splits = false;
+              }
+           }
+           else if(mode==1) {
+              if (r <= amount / 2.0) {
+                m = 1.0 + 1.0 / t;
+                splits = true;
+              } else if (amount >= 0.0) {
+                m = 1.0 / r + 1.0 / t;
+                splits = true;
+              } else {
+                m = 1.0 + 1.0 / r;
+                splits = true;
+              }
+           }
+           else if(mode==2) {
+              if (r <= amount / 2.0) {
+                m = 1.0 + 1.0 / t;
+                splits = true;
+              } else {
+                m = 1.0 + 1.0 / r;
+                splits = false;
+              }
+           }
+           else if(mode==3) {
+              if (r <= amount / 2.0) {
+                m = 1.0 / t;
+                splits = true;
+              } else {
+                m = 1.0 / r;
+                splits = false;
+              }
+           }
+           else if(mode==4) {
+              if (r <= amount / 2.0) {
+                m = 1.0 / r;
+                splits = true;
+              } else {
+                m = 1.0 / r;
+                splits = false;
+              }
+           }
+           else if(mode==5) {
+              if (t <= amount / 2.0) {
+                m = 1.0 / t;
+                splits = true;
+              } else {
+                m = 1.0 / r;
+                splits = false;
+              }
+           }
+           else { // 6:
+              if (t <= amount / 2.0) {
+                m = 1.0 + 1.0 / t;
+                splits = true;
+              } else {
+                m = 1.0 + 1.0 / r;
+                splits = false;
+              }
+           }
+            
+           _vx += amount * m * _tx;
+           _vy += amount * m * _ty;
+           _vz += amount * m * _tz;
+        
+           if (splits) {
+              if (_tx >= 0.0)
+                _vx += amount * (_tx + x);
+              else
+                _vx += amount * (_tx - x);
+          
+              if (_ty >= 0.0)
+                _vy += amount * (_ty + y);
+              else
+                _vy += amount * (_ty - y);
+          
+              if (_tz >= 0.0)
+                _vz += amount * (_tz + z);
+              else
+                _vz += amount * (_tz - z);
+            }
+        }`;
+    }
+
+    get name(): string {
+        return 'octagon';
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_3D];
+    }
+}
+
 class PDJ3DFunc extends VariationShaderFunc3D {
     PARAM_A = 'a'
     PARAM_B = 'b'
@@ -1434,6 +1568,7 @@ export function registerVars_3D() {
     VariationShaders.registerVar(new Linear3DFunc())
     VariationShaders.registerVar(new LinearT3DFunc())
     VariationShaders.registerVar(new Loonie_3DFunc())
+    VariationShaders.registerVar(new OctagonFunc())
     VariationShaders.registerVar(new PDJ3DFunc())
     VariationShaders.registerVar(new Poincare3DFunc())
     VariationShaders.registerVar(new Popcorn2_3DFunc())
