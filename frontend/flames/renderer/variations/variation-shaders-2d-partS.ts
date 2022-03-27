@@ -93,6 +93,37 @@ class SecFunc extends VariationShaderFunc2D {
     }
 }
 
+class SecqFunc extends VariationShaderFunc2D {
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        /* Secq by zephyrtronium http://zephyrtronium.deviantart.com/art/Quaternion-Apo-Plugin-Pack-165451482 */
+        return `{
+           float amount = ${variation.amount.toWebGl()};
+           float abs_v = hypot(_ty, _tz);
+           float s = sin(-_tx);
+           float c = cos(-_tx);
+           float sh = sinh(abs_v);
+           float ch = cosh(abs_v);
+           float ni = amount / (sqr(_tx) + sqr(_ty) + sqr(_tz));
+           float C = ni * s * sh / abs_v;
+           _vx += c * ch * ni;
+           _vy -= C * _ty;
+           _vz -= C * _tz;
+        }`;
+    }
+
+    get name(): string {
+        return 'secq';
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+
+    get funcDependencies(): string[] {
+        return [FUNC_SINH, FUNC_COSH, FUNC_HYPOT];
+    }
+}
+
 class Secant2Func extends VariationShaderFunc2D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         /* Intended as a 'fixed' version of secant */
@@ -2173,6 +2204,51 @@ class WhorlFunc extends VariationShaderFunc2D {
     }
 }
 
+class XHeartFunc extends VariationShaderFunc2D {
+    PARAM_ANGLE = 'angle'
+    PARAM_RATIO = 'ratio'
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_ANGLE, type: VariationParamType.VP_NUMBER, initialValue: 0.00 },
+            { name: this.PARAM_RATIO, type: VariationParamType.VP_NUMBER, initialValue: 0.00 }
+        ]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        // xheart by xyrus02, http://xyrus02.deviantart.com/art/XHeart-Plugin-139866412
+        return `{
+          float amount = ${variation.amount.toWebGl()};
+          float angle = ${variation.params.get(this.PARAM_ANGLE)!.toWebGl()};
+          float ratio = ${variation.params.get(this.PARAM_RATIO)!.toWebGl()};
+          float ang = (0.25*M_PI) + (0.5 * (0.25*M_PI) * angle);
+          float sina = sin(ang);
+          float cosa = cos(ang);
+          float rat = 6.0 + 2.0 * ratio; 
+          float r2_4 = _tx * _tx + _ty * _ty + 4.0;
+          if (r2_4 == 0.0)
+            r2_4 = 1.0;
+          float bx = 4.0 / r2_4, by = rat / r2_4;
+          float x = cosa * (bx * _tx) - sina * (by * _ty);
+          float y = sina * (bx * _tx) + cosa * (by * _ty);
+          if (x > 0.0) {
+            _vx += amount * x;
+            _vy += amount * y;
+          } else {
+            _vx += amount * x;
+            _vy += -amount * y;
+          }
+        }`;
+    }
+
+    get name(): string {
+        return 'xheart';
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
 class YinYangFunc extends VariationShaderFunc2D {
     PARAM_RADIUS = 'radius'
     PARAM_ANG1 = 'ang1'
@@ -2254,6 +2330,7 @@ class YinYangFunc extends VariationShaderFunc2D {
 export function registerVars_2D_PartS() {
     VariationShaders.registerVar(new ScryFunc())
     VariationShaders.registerVar(new SecFunc())
+    VariationShaders.registerVar(new SecqFunc())
     VariationShaders.registerVar(new Secant2Func())
     VariationShaders.registerVar(new SechFunc())
     VariationShaders.registerVar(new SeparationFunc())
@@ -2303,5 +2380,6 @@ export function registerVars_2D_PartS() {
     VariationShaders.registerVar(new WedgeFunc())
     VariationShaders.registerVar(new WedgeSphFunc())
     VariationShaders.registerVar(new WhorlFunc())
+    VariationShaders.registerVar(new XHeartFunc())
     VariationShaders.registerVar(new YinYangFunc())
 }

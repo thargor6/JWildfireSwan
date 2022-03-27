@@ -199,6 +199,113 @@ class LazySusanFunc extends VariationShaderFunc2D {
     }
 }
 
+class LazyTravisFunc extends VariationShaderFunc2D {
+    PARAM_SPIN_IN = 'spin_in'
+    PARAM_SPIN_OUT = 'spin_out'
+    PARAM_SPACE = 'space'
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_SPIN_IN, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
+            { name: this.PARAM_SPIN_OUT, type: VariationParamType.VP_NUMBER, initialValue: 0.5 },
+            { name: this.PARAM_SPACE, type: VariationParamType.VP_NUMBER, initialValue: M_PI / 2.0 }]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        /* lazyTravis by Michael Faber, http://michaelfaber.deviantart.com/art/LazyTravis-270731558 */
+        return `{
+          float amount = ${variation.amount.toWebGl()};
+          float spin_in = ${variation.params.get(this.PARAM_SPIN_IN)!.toWebGl()};
+          float spin_out = ${variation.params.get(this.PARAM_SPIN_OUT)!.toWebGl()};
+          float space = ${variation.params.get(this.PARAM_SPACE)!.toWebGl()};
+          float _spin_in = 4.0 * spin_in;
+          float _spin_out = 4.0 * spin_out;
+          float x = abs(_tx);
+          float y = abs(_ty);
+          float s;
+          float p;
+          float x2, y2;
+          if (x > amount || y > amount) {
+            if (x > y) {
+              s = x;
+              if (_tx > 0.0) {
+                p = s + _ty + s * _spin_out;
+              } else {
+                p = 5.0 * s - _ty + s * _spin_out;
+              }
+            } else {
+              s = y;
+              if (_ty > 0.0) {
+                p = 3.0 * s - _tx + s * _spin_out;
+              } else {
+                p = 7.0 * s + _tx + s * _spin_out;
+              }
+            }
+            p = mod(p, s * 8.0);
+        
+            if (p <= 2.0 * s) {
+              x2 = s + space;
+              y2 = -(1.0 * s - p);
+              y2 = y2 + y2 / s * space;
+            } 
+            else if (p <= 4.0 * s) {
+              y2 = s + space;
+              x2 = (3.0 * s - p);
+              x2 = x2 + x2 / s * space;
+            } 
+            else if (p <= 6.0 * s) {
+              x2 = -(s + space);
+              y2 = (5.0 * s - p);
+              y2 = y2 + y2 / s * space;
+            } else {
+              y2 = -(s + space);
+              x2 = -(7.0 * s - p);
+              x2 = x2 + x2 / s * space;
+            }
+            _vx += amount * x2;
+            _vy += amount * y2;
+          } else {
+            if (x > y) {
+              s = x;
+              if (_tx > 0.0) {
+                p = s + _ty + s * _spin_in;
+              } else {
+                p = 5.0 * s - _ty + s * _spin_in;
+              }
+            } else {
+              s = y;
+              if (_ty > 0.0) {
+                p = 3.0 * s - _tx + s * _spin_in;
+              } else {
+                p = 7.0 * s + _tx + s * _spin_in;
+              }
+            }
+            p = mod(p, s * 8.0);
+            if (p <= 2.0 * s) {
+              _vx += amount * s;
+              _vy -= amount * (s - p);
+            } else if (p <= 4.0 * s) {
+              _vx += amount * (3.0 * s - p);
+              _vy += amount * s;
+            } else if (p <= 6.0 * s) {
+              _vx -= amount * s;
+              _vy += amount * (5.0 * s - p);
+            } else {
+              _vx -= amount * (7.0 * s - p);
+              _vy -= amount * s;
+            }
+          }
+        }`;
+    }
+
+    get name(): string {
+        return 'lazyTravis';
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
 class LinearFunc extends VariationShaderFunc2D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         return `{
@@ -1635,6 +1742,7 @@ export function registerVars_2D_PartK() {
     VariationShaders.registerVar(new LaceJSFunc())
     VariationShaders.registerVar(new LayeredSpiralFunc())
     VariationShaders.registerVar(new LazySusanFunc())
+    VariationShaders.registerVar(new LazyTravisFunc())
     VariationShaders.registerVar(new LinearFunc())
     VariationShaders.registerVar(new LinearTFunc())
     VariationShaders.registerVar(new LissajousFunc())
