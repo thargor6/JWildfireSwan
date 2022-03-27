@@ -18,9 +18,7 @@
 import {VariationParam, VariationParamType, VariationShaderFunc2D, VariationTypes} from './variation-shader-func';
 import {VariationShaders} from 'Frontend/flames/renderer/variations/variation-shaders';
 import {RenderVariation, RenderXForm} from 'Frontend/flames/model/render-flame';
-import {
-    FUNC_MODULO, FUNC_ROUND, FUNC_SGN
-} from 'Frontend/flames/renderer/variations/variation-math-functions';
+import {FUNC_MODULO, FUNC_ROUND, FUNC_SGN} from 'Frontend/flames/renderer/variations/variation-math-functions';
 import {M_PI} from 'Frontend/flames/renderer/mathlib';
 
 /*

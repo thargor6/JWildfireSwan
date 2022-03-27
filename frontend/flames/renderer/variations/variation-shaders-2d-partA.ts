@@ -24,6 +24,7 @@ import {
     FUNC_SINH,
     FUNC_SQRT1PM1
 } from 'Frontend/flames/renderer/variations/variation-math-functions';
+import {M_PI} from "Frontend/flames/renderer/mathlib";
 
 /*
   be sure to import this class somewhere and call registerVars_2D_PartA()
@@ -1499,6 +1500,50 @@ class Disc2Func extends VariationShaderFunc2D {
     }
 }
 
+class EclipseFunc extends VariationShaderFunc2D {
+    PARAM_SHIFT = 'shift'
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_SHIFT, type: VariationParamType.VP_NUMBER, initialValue: 0.10}]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        /*
+         * eclipse by Michael Faber,
+         * http://michaelfaber.deviantart.com/art/Eclipse-268362046
+         */
+        return `{
+          float amount = ${variation.amount.toWebGl()};
+          float shift = ${variation.params.get(this.PARAM_SHIFT)!.toWebGl()};
+          if (abs(_ty) <= amount) {
+            float c_2 = sqrt(sqr(amount) - sqr(_ty));
+            if (abs(_tx) <= c_2) {
+              float x = _tx + shift * amount;
+              if (abs(x) >= c_2) {
+                _vx -= amount * _tx;
+              } else {
+                _vx += amount * x;
+              }
+            } else {
+              _vx += amount * _tx;
+            }
+            _vy += amount * _ty;
+          } else {
+            _vx += amount * _tx;
+            _vy += amount * _ty;
+          }
+        }`;
+    }
+
+    get name(): string {
+        return 'eclipse';
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
 class EDiscFunc extends VariationShaderFunc2D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         /* Edisc in the Apophysis Plugin Pack */
@@ -2180,6 +2225,86 @@ class HeartFunc extends VariationShaderFunc2D {
     }
 }
 
+class FourthFunc extends VariationShaderFunc2D {
+    PARAM_SPIN = 'spin'
+    PARAM_SPACE = 'space'
+    PARAM_TWIST = 'twist'
+    PARAM_X = 'x'
+    PARAM_Y = 'y'
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_SPIN, type: VariationParamType.VP_NUMBER, initialValue: M_PI },
+            { name: this.PARAM_SPACE, type: VariationParamType.VP_NUMBER, initialValue: 0.10 },
+            { name: this.PARAM_TWIST, type: VariationParamType.VP_NUMBER, initialValue: 0.20 },
+            { name: this.PARAM_X, type: VariationParamType.VP_NUMBER, initialValue: 0.30 },
+            { name: this.PARAM_Y, type: VariationParamType.VP_NUMBER, initialValue: 0.12 }]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        /* fourth from guagapunyaimel, http://amorinaashton.deviantart.com/art/Fourth-Plugin-175043938?q=favby%3Aamorinaashton%2F1243451&qo=14 */
+        return `{
+          float amount = ${variation.amount.toWebGl()};
+          float spin = ${variation.params.get(this.PARAM_SPIN)!.toWebGl()};
+          float space = ${variation.params.get(this.PARAM_SPACE)!.toWebGl()};
+          float twist = ${variation.params.get(this.PARAM_TWIST)!.toWebGl()};
+          float x = ${variation.params.get(this.PARAM_X)!.toWebGl()};
+          float y = ${variation.params.get(this.PARAM_Y)!.toWebGl()};
+        
+          float sqrvvar = amount * amount;
+          if (_tx > 0.0 && _ty > 0.0) {
+            float a = atan2(_ty, _tx);
+            float r = 1.0 / sqrt(sqr(_tx) + sqr(_ty));
+            float s = sin(a);
+            float c = cos(a);
+            _vx += amount * r * c;
+            _vy += amount * r * s;
+          } 
+          else if (_tx > 0.0 && _ty < 0.0) {
+            float r2 = sqr(_tx) + sqr(_ty);
+            if (r2 < sqrvvar) {
+              float r = amount * sqrt(sqrvvar / r2 - 1.0);
+              _vx += r * _tx;
+              _vy += r * _ty;
+            } else {
+              _vx += amount * _tx;
+              _vy += amount * _ty;
+            }
+          } 
+          else if (_tx < 0.0 && _ty > 0.0) {
+            float r;
+            float sina, cosa;
+            float x = _tx - x;
+            float y = _ty + y;
+            r = sqrt(x * x + y * y); 
+            if (r < amount) {
+              float a = atan2(y, x) + spin + twist * (amount - r);
+              sina = sin(a);
+              cosa = cos(a);
+              r = amount * r;
+              _vx += r * cosa + x;
+              _vy += r * sina - y;
+            } else {
+              r = amount * (1.0 + space / r);
+              _vx += r * x + x;
+              _vy += r * y - y;
+            }
+          } 
+          else {
+            _vx += amount * _tx;
+            _vy += amount * _ty;
+          }
+        }`;
+    }
+
+    get name(): string {
+        return 'fourth';
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
 class GaussianBlurFunc extends VariationShaderFunc2D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         return `{
@@ -2721,6 +2846,7 @@ export function registerVars_2D_PartA() {
     VariationShaders.registerVar(new DiamondFunc())
     VariationShaders.registerVar(new DiscFunc())
     VariationShaders.registerVar(new Disc2Func())
+    VariationShaders.registerVar(new EclipseFunc())
     VariationShaders.registerVar(new EDiscFunc())
     VariationShaders.registerVar(new EllipticFunc())
     VariationShaders.registerVar(new EpispiralFunc())
@@ -2739,6 +2865,7 @@ export function registerVars_2D_PartA() {
     VariationShaders.registerVar(new FlowerFunc())
     VariationShaders.registerVar(new FluxFunc())
     VariationShaders.registerVar(new FociFunc())
+    VariationShaders.registerVar(new FourthFunc())
     VariationShaders.registerVar(new GaussianBlurFunc())
     VariationShaders.registerVar(new GlynniaFunc())
     VariationShaders.registerVar(new HeartFunc())

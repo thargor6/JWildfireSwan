@@ -818,6 +818,48 @@ class Julia3DZFunc extends VariationShaderFunc3D {
     }
 }
 
+class LineFunc extends VariationShaderFunc3D {
+    PARAM_DELTA = 'delta'
+    PARAM_PHI = 'phi'
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_DELTA, type: VariationParamType.VP_NUMBER, initialValue: 0.0},
+            { name: this.PARAM_PHI, type: VariationParamType.VP_NUMBER, initialValue: 0.0}
+        ]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        /**
+         * @author Nic Anderson, chronologicaldot
+         * @date March 2, 2013
+         */
+        return `{
+          float amount = ${variation.amount.toWebGl()};
+          float delta = ${variation.params.get(this.PARAM_DELTA)!.toWebGl()};
+          float phi = ${variation.params.get(this.PARAM_PHI)!.toWebGl()};
+          float ux = cos(delta * M_PI) * cos(phi * M_PI);
+          float uy = sin(delta * M_PI) * cos(phi * M_PI);
+          float uz = sin(phi * M_PI);
+          float r = sqrt(ux * ux + uy * uy + uz * uz);
+          ux /= r;
+          uy /= r;
+          uz /= r;
+          float rand = rand8(tex, rngState) * amount;
+          _vx += ux * rand;
+          _vy += uy * rand;
+          _vz += uz * rand;
+        }`;
+    }
+
+    get name(): string {
+        return 'line';
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_3D, VariationTypes.VARTYPE_BASE_SHAPE];
+    }
+}
+
 class Linear3DFunc extends VariationShaderFunc3D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         return `{
@@ -1565,6 +1607,7 @@ export function registerVars_3D() {
     VariationShaders.registerVar(new Hypertile3D2Func())
     VariationShaders.registerVar(new Julia3DFunc())
     VariationShaders.registerVar(new Julia3DZFunc())
+    VariationShaders.registerVar(new LineFunc())
     VariationShaders.registerVar(new Linear3DFunc())
     VariationShaders.registerVar(new LinearT3DFunc())
     VariationShaders.registerVar(new Loonie_3DFunc())
