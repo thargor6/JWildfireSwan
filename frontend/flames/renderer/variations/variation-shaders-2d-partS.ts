@@ -24,7 +24,8 @@ import {
     FUNC_LOG10,
     FUNC_ROUND,
     FUNC_SINH,
-    FUNC_TANH, FUNC_TRUNC
+    FUNC_TANH,
+    FUNC_TRUNC
 } from 'Frontend/flames/renderer/variations/variation-math-functions';
 import {M_PI} from 'Frontend/flames/renderer/mathlib';
 
@@ -93,36 +94,7 @@ class SecFunc extends VariationShaderFunc2D {
     }
 }
 
-class SecqFunc extends VariationShaderFunc2D {
-    getCode(xform: RenderXForm, variation: RenderVariation): string {
-        /* Secq by zephyrtronium http://zephyrtronium.deviantart.com/art/Quaternion-Apo-Plugin-Pack-165451482 */
-        return `{
-           float amount = ${variation.amount.toWebGl()};
-           float abs_v = hypot(_ty, _tz);
-           float s = sin(-_tx);
-           float c = cos(-_tx);
-           float sh = sinh(abs_v);
-           float ch = cosh(abs_v);
-           float ni = amount / (sqr(_tx) + sqr(_ty) + sqr(_tz));
-           float C = ni * s * sh / abs_v;
-           _vx += c * ch * ni;
-           _vy -= C * _ty;
-           _vz -= C * _tz;
-        }`;
-    }
 
-    get name(): string {
-        return 'secq';
-    }
-
-    get variationTypes(): VariationTypes[] {
-        return [VariationTypes.VARTYPE_2D];
-    }
-
-    get funcDependencies(): string[] {
-        return [FUNC_SINH, FUNC_COSH, FUNC_HYPOT];
-    }
-}
 
 class Secant2Func extends VariationShaderFunc2D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
@@ -1166,6 +1138,60 @@ class StripesFunc extends VariationShaderFunc2D {
 
     get variationTypes(): VariationTypes[] {
         return [VariationTypes.VARTYPE_2D];
+    }
+}
+
+class SuperShapeFunc extends VariationShaderFunc2D {
+    PARAM_RND = 'rnd'
+    PARAM_M = 'm'
+    PARAM_N1 = 'n1'
+    PARAM_N2 = 'n2'
+    PARAM_N3 = 'n3'
+    PARAM_HOLES = 'holes'
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_RND, type: VariationParamType.VP_NUMBER, initialValue: 3.0 },
+            { name: this.PARAM_M, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
+            { name: this.PARAM_N1, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
+            { name: this.PARAM_N2, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
+            { name: this.PARAM_N3, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
+            { name: this.PARAM_HOLES, type: VariationParamType.VP_NUMBER, initialValue: 0.0 }
+        ]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        return `{
+          float amount = ${variation.amount.toWebGl()};
+          float rnd = ${variation.params.get(this.PARAM_RND)!.toWebGl()};
+          float m = ${variation.params.get(this.PARAM_M)!.toWebGl()};
+          float n1 = ${variation.params.get(this.PARAM_N1)!.toWebGl()};
+          float n2 = ${variation.params.get(this.PARAM_N2)!.toWebGl()};
+          float n3 = ${variation.params.get(this.PARAM_N3)!.toWebGl()};
+          float holes = ${variation.params.get(this.PARAM_HOLES)!.toWebGl()};
+          float pm_4 = m / 4.0;
+          float pneg1_n1 = -1.0 / n1;   
+          float _theta = atan2(_ty, _tx);
+          float theta = pm_4 * _theta + (0.25*M_PI);
+          float st = sin(theta);
+          float ct = cos(theta);
+          float t1 = abs(ct);
+          t1 = pow(t1, n2);
+          float t2 = abs(st);
+          t2 = pow(t2, n3);    
+          float myrnd = rnd;
+          float r = amount * ((myrnd * rand8(tex, rngState) + (1.0 - myrnd) * _r) - holes)
+                    * pow(t1 + t2, pneg1_n1) / _r;
+          _vx += r * _tx;
+          _vy += r * _ty;
+        }`;
+    }
+
+    get name(): string {
+        return 'super_shape';
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D, VariationTypes.VARTYPE_BASE_SHAPE];
     }
 }
 
@@ -2330,7 +2356,6 @@ class YinYangFunc extends VariationShaderFunc2D {
 export function registerVars_2D_PartS() {
     VariationShaders.registerVar(new ScryFunc())
     VariationShaders.registerVar(new SecFunc())
-    VariationShaders.registerVar(new SecqFunc())
     VariationShaders.registerVar(new Secant2Func())
     VariationShaders.registerVar(new SechFunc())
     VariationShaders.registerVar(new SeparationFunc())
@@ -2360,6 +2385,7 @@ export function registerVars_2D_PartS() {
     VariationShaders.registerVar(new SquishFunc())
     VariationShaders.registerVar(new StarBlurFunc())
     VariationShaders.registerVar(new StripesFunc())
+    VariationShaders.registerVar(new SuperShapeFunc())
     VariationShaders.registerVar(new SwirlFunc())
     VariationShaders.registerVar(new Swirl3Func())
     VariationShaders.registerVar(new TanFunc())

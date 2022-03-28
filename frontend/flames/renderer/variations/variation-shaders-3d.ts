@@ -24,7 +24,13 @@ import {
 } from './variation-shader-func';
 import {VariationShaders} from 'Frontend/flames/renderer/variations/variation-shaders';
 import {RenderVariation, RenderXForm} from 'Frontend/flames/model/render-flame';
-import {FUNC_ROUND, FUNC_SGN} from 'Frontend/flames/renderer/variations/variation-math-functions';
+import {
+    FUNC_COSH,
+    FUNC_HYPOT,
+    FUNC_ROUND,
+    FUNC_SGN,
+    FUNC_SINH
+} from 'Frontend/flames/renderer/variations/variation-math-functions';
 
 /*
   be sure to import this class somewhere and call registerVars_3D()
@@ -154,13 +160,13 @@ class Blob3DFunc extends VariationShaderFunc3D {
           float amount = ${variation.amount.toWebGl()};
           float low = ${variation.params.get(this.PARAM_LOW)!.toWebGl()};
           float high = ${variation.params.get(this.PARAM_HIGH)!.toWebGl()};
-          int waves = ${variation.params.get(this.PARAM_WAVES)!.toWebGl()};
+          float waves = ${variation.params.get(this.PARAM_WAVES)!.toWebGl()};
           float a = atan2(_tx, _ty);
           float r = sqrt(_tx * _tx + _ty * _ty);
-          r = r * (low + (high - low) * (0.5 + 0.5 * sin(float(waves) * a)));
+          r = r * (low + (high - low) * (0.5 + 0.5 * sin(waves * a)));
           float nx = sin(a) * r;
           float ny = cos(a) * r;
-          float nz = sin(float(waves) * a) * r;
+          float nz = sin(waves * a) * r;
           _vx += amount * nx;
           _vy += amount * ny;
           _vz += amount * nz;
@@ -1275,6 +1281,68 @@ class Pie3DFunc extends VariationShaderFunc3D {
     }
 }
 
+class SecqFunc extends VariationShaderFunc3D {
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        /* Secq by zephyrtronium http://zephyrtronium.deviantart.com/art/Quaternion-Apo-Plugin-Pack-165451482 */
+        return `{
+           float amount = ${variation.amount.toWebGl()};
+           float abs_v = hypot(_ty, _tz);
+           float s = sin(-_tx);
+           float c = cos(-_tx);
+           float sh = sinh(abs_v);
+           float ch = cosh(abs_v);
+           float ni = amount / (sqr(_tx) + sqr(_ty) + sqr(_tz));
+           float C = ni * s * sh / abs_v;
+           _vx += c * ch * ni;
+           _vy -= C * _ty;
+           _vz -= C * _tz;
+        }`;
+    }
+
+    get name(): string {
+        return 'secq';
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_3D];
+    }
+
+    get funcDependencies(): string[] {
+        return [FUNC_SINH, FUNC_COSH, FUNC_HYPOT];
+    }
+}
+
+class SechqFunc extends VariationShaderFunc3D {
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        /* Sechq by zephyrtronium http://zephyrtronium.deviantart.com/art/Quaternion-Apo-Plugin-Pack-165451482 */
+        return `{
+           float amount = ${variation.amount.toWebGl()};
+           float abs_v = hypot(_ty, _tz);
+           float s = sin(abs_v);
+           float c = cos(abs_v);
+           float sh = sinh(_tx);
+           float ch = cosh(_tx);
+           float ni = amount / (sqr(_tx) + sqr(_ty) + sqr(_tz));
+           float C = ni * sh * s / abs_v;
+           _vx += ch * c * ni;
+           _vy -= C * _ty;
+           _vz -= C * _tz;
+        }`;
+    }
+
+    get name(): string {
+        return 'sechq';
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_3D];
+    }
+
+    get funcDependencies(): string[] {
+        return [FUNC_SINH, FUNC_COSH, FUNC_HYPOT];
+    }
+}
+
 class Scry3DFunc extends VariationShaderFunc3D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         /* scry_3D by Larry Berlin, http://aporev.deviantart.com/art/New-3D-Plugins-136484533?q=gallery%3Aaporev%2F8229210&qo=22 */
@@ -1616,6 +1684,8 @@ export function registerVars_3D() {
     VariationShaders.registerVar(new Poincare3DFunc())
     VariationShaders.registerVar(new Popcorn2_3DFunc())
     VariationShaders.registerVar(new Pie3DFunc())
+    VariationShaders.registerVar(new SecqFunc())
+    VariationShaders.registerVar(new SechqFunc())
     VariationShaders.registerVar(new Scry3DFunc())
     VariationShaders.registerVar(new Sinusoidal3DFunc())
     VariationShaders.registerVar(new Spherical3DFunc())

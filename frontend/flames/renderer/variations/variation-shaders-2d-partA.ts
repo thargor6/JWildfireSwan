@@ -2724,6 +2724,69 @@ class JuliaNFunc extends VariationShaderFunc2D {
     }
 }
 
+class JuliaN2Func extends VariationShaderFunc2D {
+    PARAM_POWER = 'power'
+    PARAM_DIST = 'dist'
+    PARAM_A = 'a'
+    PARAM_B = 'b'
+    PARAM_C = 'c'
+    PARAM_D = 'd'
+    PARAM_E = 'e'
+    PARAM_F = 'f'
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_POWER, type: VariationParamType.VP_NUMBER, initialValue: 3 },
+            { name: this.PARAM_DIST, type: VariationParamType.VP_NUMBER, initialValue: 1.0},
+            { name: this.PARAM_A, type: VariationParamType.VP_NUMBER, initialValue: 1.0},
+            { name: this.PARAM_B, type: VariationParamType.VP_NUMBER, initialValue: 0.0},
+            { name: this.PARAM_C, type: VariationParamType.VP_NUMBER, initialValue: 0.0},
+            { name: this.PARAM_D, type: VariationParamType.VP_NUMBER, initialValue: 1.0},
+            { name: this.PARAM_E, type: VariationParamType.VP_NUMBER, initialValue: 0.0},
+            { name: this.PARAM_F, type: VariationParamType.VP_NUMBER, initialValue: 0.0}
+        ]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        // julian2 by Xyrus02, http://xyrus02.deviantart.com/art/JuliaN2-Plugin-for-Apophysis-136717838
+        return `{
+          float amount = ${variation.amount.toWebGl()};
+          int power = ${variation.params.get(this.PARAM_POWER)!.toWebGl()};
+          float dist = ${variation.params.get(this.PARAM_DIST)!.toWebGl()};
+          float a = ${variation.params.get(this.PARAM_A)!.toWebGl()};
+          float b = ${variation.params.get(this.PARAM_B)!.toWebGl()};
+          float c = ${variation.params.get(this.PARAM_C)!.toWebGl()};
+          float d = ${variation.params.get(this.PARAM_D)!.toWebGl()};
+          float e = ${variation.params.get(this.PARAM_E)!.toWebGl()};
+          float f = ${variation.params.get(this.PARAM_F)!.toWebGl()};
+          if (power != 0) {
+            int _absN = power < 0 ? -power : power;
+            float _cN = dist / float(power) * 0.5;   
+            float x = a * _tx + b * _ty + e;
+            float y = c * _tx + d * _ty + f;
+            int k = modulo(iRand8(tex, 37678, rngState), _absN);
+            float angle = (atan2(y, x) + (2.0*M_PI) * float(k)) / float(power);
+            float r = amount * pow(sqr(x) + sqr(y), _cN);
+            float sina = sin(angle);
+            float cosa = cos(angle);
+            _vx += r * cosa;
+            _vy += r * sina;
+          }  
+        }`;
+    }
+
+    get name(): string {
+        return 'julian2';
+    }
+
+    get funcDependencies(): string[] {
+        return [FUNC_MODULO];
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
 class JuliaQFunc extends VariationShaderFunc2D {
     PARAM_POWER = 'power'
     PARAM_DIVISOR = 'divisor'
@@ -2880,6 +2943,7 @@ export function registerVars_2D_PartA() {
     VariationShaders.registerVar(new JuliaFunc())
     VariationShaders.registerVar(new JuliaCFunc())
     VariationShaders.registerVar(new JuliaNFunc())
+    VariationShaders.registerVar(new JuliaN2Func())
     VariationShaders.registerVar(new JuliaQFunc())
     VariationShaders.registerVar(new JuliascopeFunc())
 }
