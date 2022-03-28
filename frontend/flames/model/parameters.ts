@@ -20,7 +20,7 @@ import FlameParamCurveInterpolation
     from "Frontend/generated/org/jwildfire/swan/flames/model/flame/FlameParamCurveInterpolation";
 
 export type FlameParameterType = 'scalar' | 'curve'
-export type FlameParameterDataType = 'float' | 'int'
+export type FlameParameterDataType = 'float' | 'int' | 'boolean'
 
 export interface FlameParameter {
     type: FlameParameterType
@@ -71,12 +71,29 @@ class IntScalarParameter implements FlameParameter {
     }
 }
 
+class BooleanScalarParameter implements FlameParameter {
+    type: FlameParameterType = 'scalar'
+    datatype: FlameParameterDataType = 'boolean'
+
+    constructor(public value: number) {
+        // EMPTY
+    }
+
+    public isTrue() {
+        return Math.abs(this.value - 1.0) < EPSILON
+    }
+}
+
 export class Parameters {
     public static floatParam(value: number) {
         return new FloatScalarParameter(value);
     }
     public static intParam(value: number) {
         return new IntScalarParameter(value);
+    }
+
+    public static booleanParam(value: boolean) {
+        return new BooleanScalarParameter(value ? 1 : 0);
     }
 
     public static motionCurveParam(value: number, viewXMin: number, viewXMax: number, viewYMin: number,

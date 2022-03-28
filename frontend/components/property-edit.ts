@@ -18,12 +18,15 @@
 import {html, nothing} from "lit";
 import {playgroundStore} from "Frontend/stores/playground-store";
 import {FlameParameter, Parameters} from "Frontend/flames/model/parameters";
+import '../components/swan-slider'
+import '@vaadin/vaadin-checkbox'
 
 export interface PropertyDescriptor {
+    controlType: 'slider' | 'checkbox';
     propName: string;
     label: string;
-    minValue: number;
-    maxValue: number;
+    minValue?: number;
+    maxValue?: number;
 }
 
 export type OnPropertyChange = (propertyPath: string, changing: boolean, value: number) => void;
@@ -31,7 +34,17 @@ export type OnPropertyChange = (propertyPath: string, changing: boolean, value: 
 export function renderControl(ctrl: PropertyDescriptor, onPropertyChange: OnPropertyChange) {
     const param = getFlameParam(ctrl.propName)
     if(param) {
-        return html`<swan-slider .propName=${ctrl.propName} .label=${ctrl.label} .value=${param.value} .minValue=${ctrl.minValue} .maxValue=${ctrl.maxValue} .onPropertyChange=${onPropertyChange}></swan-slider>`
+        if(ctrl.controlType==='checkbox') {
+            return html `
+                <vaadin-checkbox checked=${true} @change=${(e: Event)=>onPropertyChange(ctrl.propName, false, (e.target as any).checked ? 1: 0)} label="Backend transparency"></vaadin-checkbox>
+            `
+        }
+        else {
+            return html`
+                <swan-slider .propName=${ctrl.propName} .label=${ctrl.label} .value=${param.value}
+                             .minValue=${ctrl.minValue} .maxValue=${ctrl.maxValue}
+                             .onPropertyChange=${onPropertyChange}></swan-slider>`
+        }
     }
     else {
         return nothing

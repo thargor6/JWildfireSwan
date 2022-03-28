@@ -43,54 +43,61 @@ export class PlaygroundEditCameraPanel extends MobxLitElement {
   @state()
   cameraControls: PropertyDescriptor[] = [
     {
+      controlType: 'slider',
       propName: 'camRoll',
       label: 'Roll',
       minValue: -360.0,
       maxValue: 360.0,
     },
     {
+      controlType: 'slider',
       propName: 'camPitch',
       label: 'Pitch',
       minValue: -360.0,
       maxValue: 360.0,
     },
     {
+      controlType: 'slider',
       propName: 'camYaw',
       label: 'Yaw',
       minValue: -360.0,
       maxValue: 360.0,
     },
     {
+      controlType: 'slider',
       propName: 'camBank',
       label: 'Bank',
       minValue: -360.0,
       maxValue: 360.0,
     },
     {
+      controlType: 'slider',
       propName: 'camPerspective',
       label: 'Perspective',
       minValue: -1.0,
       maxValue: 1.0,
     },
     {
+      controlType: 'slider',
       propName: 'centreX',
       label: 'CentreX',
       minValue: -5.0,
       maxValue: 5.0,
     },
     {
+      controlType: 'slider',
       propName: 'centreY',
       label: 'CentreY',
       minValue: -5.0,
       maxValue: 5.0,
     },
     {
+      controlType: 'slider',
       propName: 'camZoom',
       label: 'Zoom',
       minValue: 0.30,
       maxValue: 7.0,
     }
-
   ]
 
   render() {

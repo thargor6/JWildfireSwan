@@ -81,9 +81,9 @@ export class PlaygroundFlamePanel extends MobxLitElement {
           
               <div class="gap-m grid list-none m-0 p-0" style="grid-template-columns: repeat(auto-fill, minmax(21em, 1fr));">
 
-                <vaadin-button style="width: 14em;" theme="primary" ?disabled=${playgroundStore.calculating} @click="${this.onExportParamsToClipboard}">Export to Clipboard</vaadin-button>
-                <vaadin-button style="width: 14em;" theme="primary" ?disabled=${playgroundStore.calculating} @click="${this.onImportParamsFromClipboard}">Import from Clipboard</vaadin-button>
-                  
+                  <vaadin-button style="width: 14em;" theme="primary" ?disabled=${playgroundStore.calculating} @click="${this.onImportParamsFromClipboard}">Import from Clipboard</vaadin-button>
+                  <vaadin-button style="width: 14em;" theme="primary" ?disabled=${playgroundStore.calculating} @click="${this.onExportParamsToClipboard}">Export to Clipboard</vaadin-button>
+                   
                 <vaadin-button style="width: 14em;" ?disabled=${playgroundStore.calculating} theme="primary" @click="${this.onRandomFlame}">Generate random flame</vaadin-button>
                 <vaadin-button style="width: 14em;" ?disabled=${playgroundStore.calculating} theme="secondary" @click="${this.onRandomGradient}">Generate random gradient</vaadin-button>
 

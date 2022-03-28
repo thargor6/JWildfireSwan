@@ -193,10 +193,27 @@ export class PlaygroundView extends View implements BeforeEnterObserver {
     }
 
     importParamsFromClipboard = (): void => {
-       navigator.clipboard.readText().then(text => this.getFlamePanel().flameXml = text)
-       this.importFlameFromXml()
-       // this.notificationMessage = 'Flame parameters were imported from the Clipboard'
-       // this.openNotification(1)
+       navigator.clipboard.readText().then(text => {
+           this.getFlamePanel().flameXml = text
+           playgroundStore.calculating = true
+           playgroundStore.lastError = ''
+           FlamesEndpoint.parseFlame(text).then(flame => {
+               playgroundStore.refreshing = true
+               try {
+                   playgroundStore.flame = FlameMapper.mapFromBackend(flame)
+                   this.getRenderPanel().rerenderFlame()
+                   playgroundStore.calculating = false
+               }
+               finally {
+                   playgroundStore.refreshing = false
+               }
+           }).catch(err=> {
+               playgroundStore.calculating = false
+               playgroundStore.lastError = err
+           })
+
+         }
+       )
     }
 
     importExampleFlame = (): void => {

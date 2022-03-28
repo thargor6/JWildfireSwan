@@ -23,6 +23,7 @@ import '@vaadin/vaadin-combo-box';
 import {MobxLitElement} from "@adobe/lit-mobx";
 import '@vaadin/vaadin-ordered-layout/vaadin-vertical-layout'
 import '@vaadin/vaadin-ordered-layout/vaadin-horizontal-layout'
+import '@vaadin/vaadin-checkbox'
 import '../../components/swan-slider'
 import '@vaadin/tabs';
 import {OnPropertyChange, PropertyDescriptor, renderControl} from "Frontend/components/property-edit";
@@ -40,30 +41,35 @@ export class PlaygroundEditColoringPanel extends MobxLitElement {
   @state()
   cameraControls: PropertyDescriptor[] = [
     {
+      controlType: 'slider',
       propName: 'brightness',
       label: 'Brightness',
       minValue: 0.0,
       maxValue: 12.0,
     },
     {
+      controlType: 'slider',
       propName: 'lowDensityBrightness',
       label: 'Low brightness',
       minValue: -10.0,
       maxValue: 10.0,
     },
     {
+      controlType: 'slider',
       propName: 'gamma',
       label: 'Gamma',
       minValue: 1.0,
       maxValue: 10.0,
     },
     {
+      controlType: 'slider',
       propName: 'gammaThreshold',
       label: 'Gamma threshold',
       minValue: 0.0002,
       maxValue: 0.2,
     },
     {
+      controlType: 'slider',
       propName: 'contrast',
       label: 'Contrast',
       minValue: 0.0,
@@ -71,40 +77,51 @@ export class PlaygroundEditColoringPanel extends MobxLitElement {
     },
 
     {
+      controlType: 'slider',
       propName: 'balanceRed',
       label: 'Red balance',
       minValue: 0.0,
       maxValue: 3.0,
     },
     {
+      controlType: 'slider',
       propName: 'balanceGreen',
       label: 'Green balance',
       minValue: 0.0,
       maxValue: 3.0,
     },
     {
+      controlType: 'slider',
       propName: 'balanceBlue',
       label: 'Blue balance',
       minValue: 0.0,
       maxValue: 3.0,
     },
     {
+      controlType: 'slider',
       propName: 'whiteLevel',
       label: 'Fade to white',
       minValue: 20.0,
       maxValue: 500.0,
     },
     {
+      controlType: 'slider',
       propName: 'vibrancy',
       label: 'Vibrancy',
       minValue: 0.0,
       maxValue: 1.0,
     },
     {
+      controlType: 'slider',
       propName: 'foregroundOpacity',
       label: 'Fg opacity',
       minValue: 0.0,
       maxValue: 2.0,
+    },
+    {
+      controlType: 'checkbox',
+      propName: 'bgTransparency',
+      label: 'Backend transparency',
     }
   ]
 

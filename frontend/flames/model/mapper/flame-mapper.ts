@@ -482,7 +482,7 @@ export class FlameMapper {
         res.camPosY = Parameters.floatParam(source.camPosY)
         res.camPosZ = Parameters.floatParam(source.camPosZ)
         res.newCamDOF = source.newCamDOF
-        res.bgTransparency = source.bgTransparency
+        res.bgTransparency = Parameters.booleanParam(source.bgTransparency)
         res.dimZDistance = Parameters.floatParam(source.dimZDistance)
         res.camZ = Parameters.floatParam(source.camZ)
         res.focusX = Parameters.floatParam(source.focusX)
@@ -530,7 +530,7 @@ export class FlameMapper {
           camPosY: source.camPosY.value,
           camPosZ: source.camPosZ.value,
           newCamDOF: source.newCamDOF,
-          bgTransparency: source.bgTransparency,
+          bgTransparency: source.bgTransparency.isTrue(),
           dimZDistance: source.dimZDistance.value,
           camZ: source.camZ.value,
           focusX: source.focusX.value,
@@ -579,7 +579,7 @@ export class FlameMapper {
         res.camPosY = source.camPosY.value
         res.camPosZ = source.camPosZ.value
         res.newCamDOF = source.newCamDOF
-        res.bgTransparency = source.bgTransparency
+        res.bgTransparency = source.bgTransparency.isTrue()
         res.dimZDistance = source.dimZDistance.value
         res.camZ = source.camZ.value
         res.focusX = source.focusX.value
