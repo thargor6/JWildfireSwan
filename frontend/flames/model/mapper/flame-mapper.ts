@@ -489,7 +489,12 @@ export class FlameMapper {
         res.focusY = Parameters.floatParam(source.focusY)
         res.focusZ = Parameters.floatParam(source.focusZ)
         res.camDOFExponent = Parameters.floatParam(source.camDOFExponent)
-
+        res.frame = Parameters.intParam(source.frame)
+        res.frameCount = Parameters.intParam(source.frameCount)
+        res.fps = Parameters.intParam(source.fps)
+        res.motionBlurLength = Parameters.intParam(source.motionBlurLength)
+        res.motionBlurTimeStep = Parameters.floatParam(source.motionBlurTimeStep)
+        res.motionBlurDecay = Parameters.floatParam(source.motionBlurDecay)
         source.layers.map(layer => {
             res.layers.push(LayerMapper.mapFromBackend(layer))
         })
@@ -537,6 +542,12 @@ export class FlameMapper {
           focusY: source.focusY.value,
           focusZ: source.focusZ.value,
           camDOFExponent: source.camDOFExponent.value,
+          frame: source.frame.value,
+          frameCount: source.frameCount.value,
+          fps: source.fps.value,
+          motionBlurLength: source.motionBlurLength.value,
+          motionBlurTimeStep: source.motionBlurTimeStep.value,
+          motionBlurDecay: source.motionBlurDecay.value,
           layers: new Array<SourceLayer>()
         }
 
@@ -586,6 +597,12 @@ export class FlameMapper {
         res.focusY = source.focusY.value
         res.focusZ = source.focusZ.value
         res.camDOFExponent = source.camDOFExponent.value
+        res.frame = source.frame.value
+        res.frameCount = source.frameCount.value
+        res.fps = source.fps.value
+        res.motionBlurLength = source.motionBlurLength.value
+        res.motionBlurTimeStep = source.motionBlurTimeStep.value
+        res.motionBlurDecay = source.motionBlurDecay.value
         source.layers.map(layer => {
             res.layers.push(LayerMapper.mapForRendering(layer))
         })

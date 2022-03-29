@@ -147,6 +147,24 @@ public class Flame {
   private double camDOFExponent;
 
   @Nonnull
+  private int motionBlurLength;
+
+  @Nonnull
+  private double motionBlurTimeStep;
+
+  @Nonnull
+  private double motionBlurDecay;
+
+  @Nonnull
+  private int frame;
+
+  @Nonnull
+  private int frameCount;
+
+  @Nonnull
+  private int fps;
+
+  @Nonnull
   private final List<@Nonnull Layer> layers = new ArrayList<>();
 
 }

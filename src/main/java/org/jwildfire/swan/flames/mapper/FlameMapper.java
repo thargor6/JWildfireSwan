@@ -67,6 +67,12 @@ public class FlameMapper {
     res.setFocusY(source.getFocusY());
     res.setFocusZ(source.getFocusZ());
     res.setCamDOFExponent(source.getCamDOFExponent());
+    res.setMotionBlurLength(source.getMotionBlurLength());
+    res.setMotionBlurTimeStep(source.getMotionBlurTimeStep());
+    res.setMotionBlurDecay(source.getMotionBlurDecay());
+    res.setFrame(source.getFrame());
+    res.setFrameCount(source.getFrameCount());
+    res.setFps(source.getFps());
     res.getLayers().clear();
     source.getLayers().stream()
         .forEach(layer -> res.getLayers().add(layerMapper.mapFromJwildfire(source, layer)));
@@ -113,6 +119,12 @@ public class FlameMapper {
     res.setFocusY(source.getFocusY());
     res.setFocusZ(source.getFocusZ());
     res.setCamDOFExponent(source.getCamDOFExponent());
+    res.setMotionBlurLength(source.getMotionBlurLength());
+    res.setMotionBlurTimeStep(source.getMotionBlurTimeStep());
+    res.setMotionBlurDecay(source.getMotionBlurDecay());
+    res.setFrame(source.getFrame());
+    res.setFrameCount(source.getFrameCount());
+    res.setFps(source.getFps());
     res.getLayers().clear();
     source.getLayers().stream()
             .forEach(layer -> res.getLayers().add(layerMapper.mapToJwildfire(layer)));

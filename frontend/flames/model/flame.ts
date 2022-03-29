@@ -149,6 +149,12 @@ export class Flame {
     public focusY = Parameters.floatParam(0.0)
     public focusZ = Parameters.floatParam(0.0)
     public camDOFExponent = Parameters.floatParam(0.0)
+    public motionBlurLength = Parameters.intParam(0)
+    public motionBlurTimeStep = Parameters.floatParam(0.05)
+    public motionBlurDecay = Parameters.floatParam(0.03)
+    public frame = Parameters.intParam(1);
+    public frameCount = Parameters.intParam(100);
+    public fps = Parameters.intParam(25);
 
     private _layers = new Array<Layer>();
 

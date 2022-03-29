@@ -124,23 +124,25 @@ export class RenderLayer {
 }
 
 export class RenderFlame {
-    motionBlurLength = 12
-    motionBlurTimeStep = 0.05
-    motionBlurDecay = 0.03
-
-    brightness = 1.0
-    whiteLevel = 220
-    contrast = 1.0
-    sampleDensity = 100.0
-    lowDensityBrightness = 0.25
-    balanceRed = 0.0
-    balanceGreen = 0.0
-    balanceBlue = 0.0
-    gamma = 3.0
-    gammaThreshold = 0.025
-    foregroundOpacity = 0.0
-    vibrancy = 1.0
-    saturation = 1.0
+    public motionBlurLength = 12
+    public motionBlurTimeStep = 0.05
+    public motionBlurDecay = 0.03
+    public frame = 1
+    public frameCount = 100
+    public fps = 25
+    public brightness = 1.0
+    public whiteLevel = 220
+    public contrast = 1.0
+    public sampleDensity = 100.0
+    public lowDensityBrightness = 0.25
+    public balanceRed = 0.0
+    public balanceGreen = 0.0
+    public balanceBlue = 0.0
+    public gamma = 3.0
+    public gammaThreshold = 0.025
+    public foregroundOpacity = 0.0
+    public vibrancy = 1.0
+    public saturation = 1.0
     public width = 512
     public height = 512
     public pixelsPerUnit = 100

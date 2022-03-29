@@ -45,9 +45,6 @@ export class PlaygroundFlamePanel extends MobxLitElement {
   flameXml = ''
 
   @property()
-  onImport: ()=>void = ()=> {}
-
-  @property()
   onRandomFlame: ()=>void = ()=> {}
 
   @property()
@@ -74,8 +71,6 @@ export class PlaygroundFlamePanel extends MobxLitElement {
         <div style="display:flex; flex-direction: column;">
           <vaadin-combo-box label="Example flame" .items="${playgroundStore.exampleFlamenames}" value="${this.flameName}"
               .renderer="${this.exampleFlameRenderer}" @change="${(event: Event) => this.flameNameChanged(event)}"></vaadin-combo-box>
-          <vaadin-text-area style="max-width:100em; max-height: 12em; font-size: xx-small;" label="Flame xml" value="${this.flameXml}" @change="${(event: Event)=>this.flameXmlChanged(event)}"></vaadin-text-area>
-          <vaadin-button ?disabled=${playgroundStore.calculating} @click="${this.onImport}">Import flame from xml</vaadin-button>
 
           <vaadin-vertical-layout theme="padding">
           
