@@ -913,6 +913,37 @@ class Oscilloscope2Func extends VariationShaderFunc2D {
     }
 }
 
+class OvoidFunc extends VariationShaderFunc2D {
+    PARAM_X = 'x'
+    PARAM_Y = 'y'
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_X, type: VariationParamType.VP_NUMBER, initialValue: 0.94 },
+            { name: this.PARAM_Y, type: VariationParamType.VP_NUMBER, initialValue: 0.94 }
+        ]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        return `{
+          float amount = ${variation.amount.toWebGl()};
+          float x = ${variation.params.get(this.PARAM_X)!.toWebGl()};
+          float y = ${variation.params.get(this.PARAM_Y)!.toWebGl()};
+          float t = _tx * _tx + _ty * _ty + EPSILON;
+          float r = amount / t;
+          _vx += _tx * r * x;
+          _vy += _ty * r * y;
+        }`;
+    }
+
+    get name(): string {
+        return 'ovoid';
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
 class Panorama1Func extends VariationShaderFunc2D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         // author Tatyana Zabanova 2017. Implemented by DarkBeam 2017
@@ -1756,6 +1787,7 @@ export function registerVars_2D_PartK() {
     VariationShaders.registerVar(new NPolarFunc())
     VariationShaders.registerVar(new OscilloscopeFunc())
     VariationShaders.registerVar(new Oscilloscope2Func())
+    VariationShaders.registerVar(new OvoidFunc())
     VariationShaders.registerVar(new Panorama1Func())
     VariationShaders.registerVar(new Panorama2Func())
     VariationShaders.registerVar(new ParabolaFunc())

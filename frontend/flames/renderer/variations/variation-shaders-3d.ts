@@ -15,13 +15,7 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 */
 
-import {
-    VariationParam,
-    VariationParamType,
-    VariationShaderFunc2D,
-    VariationShaderFunc3D,
-    VariationTypes
-} from './variation-shader-func';
+import {VariationParam, VariationParamType, VariationShaderFunc3D, VariationTypes} from './variation-shader-func';
 import {VariationShaders} from 'Frontend/flames/renderer/variations/variation-shaders';
 import {RenderVariation, RenderXForm} from 'Frontend/flames/model/render-flame';
 import {
@@ -1087,6 +1081,42 @@ class OctagonFunc extends VariationShaderFunc3D {
     }
 }
 
+class Ovoid3DFunc extends VariationShaderFunc3D {
+    PARAM_XPOW = 'x'
+    PARAM_YPOW = 'y'
+    PARAM_ZPOW = 'z'
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_XPOW, type: VariationParamType.VP_NUMBER, initialValue: 0.92 },
+            { name: this.PARAM_YPOW, type: VariationParamType.VP_NUMBER, initialValue: 0.92},
+            { name: this.PARAM_ZPOW, type: VariationParamType.VP_NUMBER, initialValue: 0.92}
+        ]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        // ovoid3d by Larry Berlin, http://aporev.deviantart.com/gallery/#/d2blmhg
+        return `{
+            float amount = ${variation.amount.toWebGl()};
+            float x = ${variation.params.get(this.PARAM_XPOW)!.toWebGl()};
+            float y = ${variation.params.get(this.PARAM_YPOW)!.toWebGl()};
+            float z = ${variation.params.get(this.PARAM_ZPOW)!.toWebGl()};
+            float t = _tx * _tx + _ty * _ty + _tz * _tz + EPSILON;
+            float r = amount / t;
+            _vx += _tx * r * x;
+            _vy += _ty * r * y;
+            _vz += _tz * r * z;
+        }`;
+    }
+
+    get name(): string {
+        return 'ovoid3d';
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_3D];
+    }
+}
+
 class PDJ3DFunc extends VariationShaderFunc3D {
     PARAM_A = 'a'
     PARAM_B = 'b'
@@ -1458,6 +1488,88 @@ class Spherical3DWFFunc extends VariationShaderFunc3D {
     }
 }
 
+class Spirograph3DFunc extends VariationShaderFunc3D {
+    PARAM_A = 'a'
+    PARAM_B = 'b'
+    PARAM_C = 'c'
+    PARAM_TMIN = 'tmin'
+    PARAM_TMAX = 'tmax'
+    PARAM_WIDTH = 'width'
+    PARAM_MODE = 'mode'
+    PARAM_DIRECT_COLOR = 'direct_color'
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_A, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
+            { name: this.PARAM_B, type: VariationParamType.VP_NUMBER, initialValue: -0.3 },
+            { name: this.PARAM_C, type: VariationParamType.VP_NUMBER, initialValue: 0.4 },
+            { name: this.PARAM_TMIN, type: VariationParamType.VP_NUMBER, initialValue: 0.0 },
+            { name: this.PARAM_TMAX, type: VariationParamType.VP_NUMBER, initialValue: 1000.0 },
+            { name: this.PARAM_WIDTH, type: VariationParamType.VP_NUMBER, initialValue: 0.0 },
+            { name: this.PARAM_MODE, type: VariationParamType.VP_NUMBER, initialValue: 0 },
+            { name: this.PARAM_DIRECT_COLOR, type: VariationParamType.VP_NUMBER, initialValue: 0 }]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        // based on 'affine3D' of Flamelet
+        return `{
+          float amount = ${variation.amount.toWebGl()};
+          float a = ${variation.params.get(this.PARAM_A)!.toWebGl()};
+          float b = ${variation.params.get(this.PARAM_B)!.toWebGl()};
+          float c = ${variation.params.get(this.PARAM_C)!.toWebGl()};
+          float tmin = ${variation.params.get(this.PARAM_TMIN)!.toWebGl()};
+          float tmax = ${variation.params.get(this.PARAM_TMAX)!.toWebGl()};
+          float width = ${variation.params.get(this.PARAM_WIDTH)!.toWebGl()};
+          int mode = ${variation.params.get(this.PARAM_MODE)!.toWebGl()};
+          int direct_color = ${variation.params.get(this.PARAM_DIRECT_COLOR)!.toWebGl()};
+          float t = (tmax - tmin) * rand8(tex, rngState) + tmin;
+          float w1, w2, w3;
+          if(mode==0) {
+            w1 = w2 = w3 = width * rand8(tex, rngState) - width / 2.0;
+          }
+          else if(mode==1) {
+            w1 = width * rand8(tex, rngState) - width / 2.0;
+            w2 = w1 * sin(36.0 * t + (2.0 * M_PI) / 3.0);
+            w3 = w1 * sin(36.0 * t + 2.0 * (2.0 * M_PI) / 3.0);
+            w1 = w1 * sin(36.0 * t);
+          }
+          else if(mode==2) {
+            w1 = width * rand8(tex, rngState) - width / 2.0;
+            w2 = width * rand8(tex, rngState) - width / 2.0;
+            w3 = width * rand8(tex, rngState) - width / 2.0;
+          }
+          else if(mode==3) {
+            w1 = width * (rand8(tex, rngState) + rand8(tex, rngState) + rand8(tex, rngState) + rand8(tex, rngState) - 2.0) / 2.0;
+            w2 = width * (rand8(tex, rngState) + rand8(tex, rngState) + rand8(tex, rngState) + rand8(tex, rngState) - 2.0) / 2.0;
+            w3 = width * (rand8(tex, rngState) + rand8(tex, rngState) + rand8(tex, rngState) + rand8(tex, rngState) - 2.0) / 2.0;
+          }
+          else if(mode==4) {
+            w1 = (rand8(tex, rngState) < 0.5) ? width : -width;
+            w2 = w3 = 0.0;
+          }
+          else {
+            w1 = w2 = w3 = 0.0;
+          }
+          float x1 = (a + b) * cos(t) - c * cos((a + b) / b * t);
+          float y1 = (a + b) * sin(t) - c * sin((a + b) / b * t);
+          float z1 = c * sin((a + b) / b * t);
+          _vx += amount * (x1 + w1);
+          _vy += amount * (y1 + w2);
+          _vz += amount * (z1 + w3);
+          if (direct_color != 0) {
+            _color = mod(t / (2.0*M_PI), 1.0);
+          }
+        }`;
+    }
+
+    get name(): string {
+        return 'spirograph3D';
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_3D, VariationTypes.VARTYPE_DC];
+    }
+}
+
 class Splits3DFunc extends VariationShaderFunc3D {
     PARAM_XPOW = 'x'
     PARAM_YPOW = 'y'
@@ -1680,6 +1792,7 @@ export function registerVars_3D() {
     VariationShaders.registerVar(new LinearT3DFunc())
     VariationShaders.registerVar(new Loonie_3DFunc())
     VariationShaders.registerVar(new OctagonFunc())
+    VariationShaders.registerVar(new Ovoid3DFunc())
     VariationShaders.registerVar(new PDJ3DFunc())
     VariationShaders.registerVar(new Poincare3DFunc())
     VariationShaders.registerVar(new Popcorn2_3DFunc())
@@ -1690,6 +1803,7 @@ export function registerVars_3D() {
     VariationShaders.registerVar(new Sinusoidal3DFunc())
     VariationShaders.registerVar(new Spherical3DFunc())
     VariationShaders.registerVar(new Spherical3DWFFunc())
+    VariationShaders.registerVar(new Spirograph3DFunc())
     VariationShaders.registerVar(new Splits3DFunc())
     VariationShaders.registerVar(new Square3DFunc())
     VariationShaders.registerVar(new SVFFunc())
