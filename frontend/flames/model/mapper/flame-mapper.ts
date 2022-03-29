@@ -332,11 +332,11 @@ class XFormMapper {
         res.xyC11 = ParamMapper.mapForRendering(source.xyC11)
         res.xyC20 = ParamMapper.mapForRendering(source.xyC20)
         res.xyC21 = ParamMapper.mapForRendering(source.xyC21)
-
-        //res.xyC00 = RenderParameters.lerpParam(source.xyC00.value, source.xyC00.value + 0.5)
-        //res.xyC11 = RenderParameters.lerpParam(source.xyC11.value, source.xyC11.value + 0.5)
-        //res.xyC21 = RenderParameters.lerpParam(source.xyC21.value, source.xyC21.value + 0.5)
-
+/*
+        res.xyC00 = RenderParameters.lerpParam(source.xyC00.value, source.xyC00.value + 0.5)
+        res.xyC11 = RenderParameters.lerpParam(source.xyC11.value, source.xyC11.value + 0.5)
+        res.xyC21 = RenderParameters.lerpParam(source.xyC21.value, source.xyC21.value + 0.5)
+*/
         res.yzC00 = ParamMapper.mapForRendering(source.yzC00)
         res.yzC01 = ParamMapper.mapForRendering(source.yzC01)
         res.yzC10 = ParamMapper.mapForRendering(source.yzC10)

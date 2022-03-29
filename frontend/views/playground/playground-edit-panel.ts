@@ -32,6 +32,7 @@ import '@vaadin/tabs';
 import {FlameParameter} from "Frontend/flames/model/parameters";
 import './playground-edit-camera-panel'
 import './playground-edit-coloring-panel'
+import './playground-edit-motion-panel'
 import {OnPropertyChange} from "Frontend/components/property-edit";
 import {EPSILON} from "Frontend/flames/renderer/mathlib";
 
@@ -61,9 +62,15 @@ export class PlaygroundEditPanel extends MobxLitElement {
             <vaadin-icon icon="vaadin:eye"></vaadin-icon>
             <span>Coloring</span>
           </vaadin-tab>
+          <vaadin-tab theme="icon-on-top">
+              <vaadin-icon icon="vaadin:eye"></vaadin-icon>
+              <span>Motion</span>
+          </vaadin-tab>
         </vaadin-tabs>
         <playground-edit-camera-panel .visible=${this.selectedTab===0} .onPropertyChange=${this.onPropertyChange} ></playground-edit-camera-panel>
         <playground-edit-coloring-panel .visible=${this.selectedTab===1} .onPropertyChange=${this.onPropertyChange} ></playground-edit-coloring-panel>
+        <playground-edit-motion-panel .visible=${this.selectedTab===2} .onPropertyChange=${this.onPropertyChange} ></playground-edit-motion-panel>
+
         <vaadin-button theme="primary" @click="${this.onExportParams}">Export flame as xml</vaadin-button>
           
       </vertical-layout>
