@@ -46,6 +46,7 @@ export class PlaygroundEditMotionPanel extends MobxLitElement {
       label: 'Frame',
       minValue: 0,
       maxValue: 100,
+      step: 1
     },
     {
       controlType: 'slider',
@@ -53,6 +54,7 @@ export class PlaygroundEditMotionPanel extends MobxLitElement {
       label: 'Frame count',
       minValue: 3,
       maxValue: 100,
+      step: 10
     },
     {
       controlType: 'slider',
@@ -60,6 +62,7 @@ export class PlaygroundEditMotionPanel extends MobxLitElement {
       label: 'FPS',
       minValue: 1,
       maxValue: 120.0,
+      step: 1
     },
     {
       controlType: 'slider',
@@ -67,6 +70,7 @@ export class PlaygroundEditMotionPanel extends MobxLitElement {
       label: 'Motion-blur length',
       minValue: 0.0,
       maxValue: 100.0,
+      step: 1
     },
     {
       controlType: 'slider',
@@ -74,6 +78,7 @@ export class PlaygroundEditMotionPanel extends MobxLitElement {
       label: 'Motion-blur time-step',
       minValue: 0.0,
       maxValue: 1.0,
+      step: 0.05
     },
     {
       controlType: 'slider',
@@ -81,6 +86,7 @@ export class PlaygroundEditMotionPanel extends MobxLitElement {
       label: 'Motion-blur decay',
       minValue: 0.0,
       maxValue: 0.5,
+      step: 0.01
     }
   ]
 

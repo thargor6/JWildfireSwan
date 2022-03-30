@@ -27,6 +27,7 @@ export interface PropertyDescriptor {
     label: string;
     minValue?: number;
     maxValue?: number;
+    step?: number;
 }
 
 export type OnPropertyChange = (propertyPath: string, changing: boolean, value: number) => void;
@@ -42,7 +43,7 @@ export function renderControl(ctrl: PropertyDescriptor, onPropertyChange: OnProp
         else {
             return html`
                 <swan-slider .propName=${ctrl.propName} .label=${ctrl.label} .value=${param.value}
-                             .minValue=${ctrl.minValue} .maxValue=${ctrl.maxValue}
+                             .minValue=${ctrl.minValue} .maxValue=${ctrl.maxValue} .step=${ctrl.step}
                              .onPropertyChange=${onPropertyChange}></swan-slider>`
         }
     }

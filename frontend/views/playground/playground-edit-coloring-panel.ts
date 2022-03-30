@@ -46,6 +46,7 @@ export class PlaygroundEditColoringPanel extends MobxLitElement {
       label: 'Brightness',
       minValue: 0.0,
       maxValue: 12.0,
+      step: 0.5
     },
     {
       controlType: 'slider',
@@ -53,6 +54,7 @@ export class PlaygroundEditColoringPanel extends MobxLitElement {
       label: 'Low brightness',
       minValue: -10.0,
       maxValue: 10.0,
+      step: 0.1
     },
     {
       controlType: 'slider',
@@ -60,6 +62,7 @@ export class PlaygroundEditColoringPanel extends MobxLitElement {
       label: 'Gamma',
       minValue: 1.0,
       maxValue: 10.0,
+      step: 0.2
     },
     {
       controlType: 'slider',
@@ -67,6 +70,7 @@ export class PlaygroundEditColoringPanel extends MobxLitElement {
       label: 'Gamma threshold',
       minValue: 0.0002,
       maxValue: 0.2,
+      step: 0.05
     },
     {
       controlType: 'slider',
@@ -74,6 +78,7 @@ export class PlaygroundEditColoringPanel extends MobxLitElement {
       label: 'Contrast',
       minValue: 0.0,
       maxValue: 1.0,
+      step: 0.05
     },
 
     {
@@ -82,6 +87,7 @@ export class PlaygroundEditColoringPanel extends MobxLitElement {
       label: 'Red balance',
       minValue: 0.0,
       maxValue: 3.0,
+      step: 0.1
     },
     {
       controlType: 'slider',
@@ -89,6 +95,7 @@ export class PlaygroundEditColoringPanel extends MobxLitElement {
       label: 'Green balance',
       minValue: 0.0,
       maxValue: 3.0,
+      step: 0.1
     },
     {
       controlType: 'slider',
@@ -96,6 +103,7 @@ export class PlaygroundEditColoringPanel extends MobxLitElement {
       label: 'Blue balance',
       minValue: 0.0,
       maxValue: 3.0,
+      step: 0.1
     },
     {
       controlType: 'slider',
@@ -103,6 +111,7 @@ export class PlaygroundEditColoringPanel extends MobxLitElement {
       label: 'Fade to white',
       minValue: 20.0,
       maxValue: 500.0,
+      step: 2.0
     },
     {
       controlType: 'slider',
@@ -110,6 +119,7 @@ export class PlaygroundEditColoringPanel extends MobxLitElement {
       label: 'Vibrancy',
       minValue: 0.0,
       maxValue: 1.0,
+      step: 0.05
     },
     {
       controlType: 'slider',
@@ -117,6 +127,7 @@ export class PlaygroundEditColoringPanel extends MobxLitElement {
       label: 'Fg opacity',
       minValue: 0.0,
       maxValue: 2.0,
+      step: 0.1
     },
     {
       controlType: 'checkbox',

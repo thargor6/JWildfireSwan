@@ -48,6 +48,7 @@ export class PlaygroundEditCameraPanel extends MobxLitElement {
       label: 'Roll',
       minValue: -360.0,
       maxValue: 360.0,
+      step: 3.0
     },
     {
       controlType: 'slider',
@@ -55,6 +56,7 @@ export class PlaygroundEditCameraPanel extends MobxLitElement {
       label: 'Pitch',
       minValue: -360.0,
       maxValue: 360.0,
+      step: 3.0
     },
     {
       controlType: 'slider',
@@ -62,6 +64,7 @@ export class PlaygroundEditCameraPanel extends MobxLitElement {
       label: 'Yaw',
       minValue: -360.0,
       maxValue: 360.0,
+      step: 3.0
     },
     {
       controlType: 'slider',
@@ -69,6 +72,7 @@ export class PlaygroundEditCameraPanel extends MobxLitElement {
       label: 'Bank',
       minValue: -360.0,
       maxValue: 360.0,
+      step: 3.0
     },
     {
       controlType: 'slider',
@@ -76,6 +80,7 @@ export class PlaygroundEditCameraPanel extends MobxLitElement {
       label: 'Perspective',
       minValue: -1.0,
       maxValue: 1.0,
+      step: 0.1
     },
     {
       controlType: 'slider',
@@ -83,6 +88,7 @@ export class PlaygroundEditCameraPanel extends MobxLitElement {
       label: 'CentreX',
       minValue: -5.0,
       maxValue: 5.0,
+      step: 0.1
     },
     {
       controlType: 'slider',
@@ -90,6 +96,7 @@ export class PlaygroundEditCameraPanel extends MobxLitElement {
       label: 'CentreY',
       minValue: -5.0,
       maxValue: 5.0,
+      step: 0.1
     },
     {
       controlType: 'slider',
@@ -97,6 +104,7 @@ export class PlaygroundEditCameraPanel extends MobxLitElement {
       label: 'Zoom',
       minValue: 0.30,
       maxValue: 7.0,
+      step: 0.1
     }
   ]
 
