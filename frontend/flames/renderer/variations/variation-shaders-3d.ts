@@ -480,6 +480,41 @@ class CylinderApoFunc extends VariationShaderFunc3D {
     }
 }
 
+class DinisSurfaceWFFunc extends VariationShaderFunc3D {
+    PARAM_A = 'a'
+    PARAM_B = 'b'
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_A, type: VariationParamType.VP_NUMBER, initialValue: 0.80 },
+            { name: this.PARAM_B, type: VariationParamType.VP_NUMBER, initialValue: 0.20 }]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        /* Dini's Surface, http://mathworld.wolfram.com/DinisSurface.html  */
+        return `{
+          float amount = ${variation.amount.toWebGl()};
+          float a = ${variation.params.get(this.PARAM_A)!.toWebGl()};
+          float b = ${variation.params.get(this.PARAM_B)!.toWebGl()};
+          float u = _tx;
+          float v = _ty;
+          float sinv = sin(v);
+          if (abs(v) > EPSILON) {
+            _vx += amount * a * cos(u) * sinv;
+            _vy += amount * a * sin(u) * sinv;
+            _vz += -amount * (a * (cos(v) + log(tan(abs(v) / 2.0))) + b * u);
+          }
+        }`;
+    }
+
+    get name(): string {
+        return 'dinis_surface_wf';
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_3D];
+    }
+}
+
 class Foci3DFunc extends VariationShaderFunc3D {
     /* foci_3D by Larry Berlin, http://aporev.deviantart.com/art/New-3D-Plugins-136484533?q=gallery%3Aaporev%2F8229210&qo=22 */
     getCode(xform: RenderXForm, variation: RenderVariation): string {
@@ -1311,6 +1346,79 @@ class Pie3DFunc extends VariationShaderFunc3D {
     }
 }
 
+class PostMirrorWFFunc extends VariationShaderFunc3D {
+    PARAM_XAXIS = 'xaxis'
+    PARAM_YAXIS = 'yaxis'
+    PARAM_ZAXIS = 'zaxis'
+    PARAM_XSHIFT = 'xshift'
+    PARAM_YSHIFT = 'yshift'
+    PARAM_ZSHIFT = 'zshift'
+    PARAM_XSCALE = 'xscale'
+    PARAM_YSCALE = 'yscale'
+    PARAM_XCOLORSHIFT = 'xcolorshift'
+    PARAM_YCOLORSHIFT = 'ycolorshift'
+    PARAM_ZCOLORSHIFT = 'zcolorshift'
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_XAXIS, type: VariationParamType.VP_NUMBER, initialValue: 1 },
+            { name: this.PARAM_YAXIS, type: VariationParamType.VP_NUMBER, initialValue: 0 },
+            { name: this.PARAM_ZAXIS, type: VariationParamType.VP_NUMBER, initialValue: 0 },
+            { name: this.PARAM_XSHIFT, type: VariationParamType.VP_NUMBER, initialValue: 0.0 },
+            { name: this.PARAM_YSHIFT, type: VariationParamType.VP_NUMBER, initialValue: 0.0 },
+            { name: this.PARAM_ZSHIFT, type: VariationParamType.VP_NUMBER, initialValue: 0.0 },
+            { name: this.PARAM_XSCALE, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
+            { name: this.PARAM_YSCALE, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
+            { name: this.PARAM_XCOLORSHIFT, type: VariationParamType.VP_NUMBER, initialValue: 0.0 },
+            { name: this.PARAM_YCOLORSHIFT, type: VariationParamType.VP_NUMBER, initialValue: 0.0 },
+            { name: this.PARAM_ZCOLORSHIFT, type: VariationParamType.VP_NUMBER, initialValue: 0.0 }]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        return `{
+          float amount = ${variation.amount.toWebGl()};
+          int xaxis = ${variation.params.get(this.PARAM_XAXIS)!.toWebGl()};
+          int yaxis = ${variation.params.get(this.PARAM_YAXIS)!.toWebGl()};
+          int zaxis = ${variation.params.get(this.PARAM_ZAXIS)!.toWebGl()};
+          float xshift = ${variation.params.get(this.PARAM_XSHIFT)!.toWebGl()};
+          float yshift = ${variation.params.get(this.PARAM_YSHIFT)!.toWebGl()};
+          float zshift = ${variation.params.get(this.PARAM_ZSHIFT)!.toWebGl()};
+          float xscale = ${variation.params.get(this.PARAM_XSCALE)!.toWebGl()};
+          float yscale = ${variation.params.get(this.PARAM_YSCALE)!.toWebGl()};
+          float xcolorshift = ${variation.params.get(this.PARAM_XCOLORSHIFT)!.toWebGl()};
+          float ycolorshift = ${variation.params.get(this.PARAM_YCOLORSHIFT)!.toWebGl()};
+          float zcolorshift = ${variation.params.get(this.PARAM_ZCOLORSHIFT)!.toWebGl()};
+          if(abs(amount)>EPSILON) {
+            if (xaxis > 0 && rand8(tex, rngState) < 0.5) {
+              _vx = xscale * (-_vx - xshift);
+              _vy = yscale * _vy;
+              _color = mod(_color + xcolorshift, 1.0);
+            }
+            if (yaxis > 0 && rand8(tex, rngState) < 0.5) {
+              _vx = xscale * _vx;
+              _vy = yscale * (-_vy - yshift);
+              _color = mod(_color + ycolorshift, 1.0);
+            }
+            if (zaxis > 0 && rand8(tex, rngState) < 0.5) {
+              _vz = -_vz - zshift;
+              _color = mod(_color + zcolorshift, 1.0);
+            }
+          }
+        }`;
+    }
+
+    get name(): string {
+        return 'post_mirror_wf';
+    }
+
+    get priority(): number {
+        return 1
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_3D, VariationTypes.VARTYPE_DC, VariationTypes.VARTYPE_POST];
+    }
+}
+
 class SecqFunc extends VariationShaderFunc3D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         /* Secq by zephyrtronium http://zephyrtronium.deviantart.com/art/Quaternion-Apo-Plugin-Pack-165451482 */
@@ -1438,6 +1546,50 @@ class Spherical3DFunc extends VariationShaderFunc3D {
 
     get name(): string {
         return 'spherical3D';
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_3D];
+    }
+}
+
+class Sph3DFunc extends VariationShaderFunc3D {
+    PARAM_X = 'x'
+    PARAM_Y = 'y'
+    PARAM_Z = 'z'
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_X, type: VariationParamType.VP_NUMBER, initialValue: 0.75 },
+            { name: this.PARAM_Y, type: VariationParamType.VP_NUMBER, initialValue: 1.0},
+            { name: this.PARAM_Z, type: VariationParamType.VP_NUMBER, initialValue: 0.5}
+        ]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        /* sph3D by xyrus02, http://xyrus-02.deviantart.com/art/sph3D-Plugin-for-Apophysis-476688377 */
+        return `{
+            float amount = ${variation.amount.toWebGl()};
+            float x = ${variation.params.get(this.PARAM_X)!.toWebGl()};
+            float y = ${variation.params.get(this.PARAM_Y)!.toWebGl()};
+            float z = ${variation.params.get(this.PARAM_Z)!.toWebGl()};
+            float tx = _tx;
+            float ty = _ty;
+            float tz = _tz;
+        
+            float xx = x * tx;
+            float yy = y * ty;
+            float zz = x * tz;
+        
+            float r = amount / (xx * xx + yy * yy + zz * zz + EPSILON);
+        
+            _vx += tx * r;
+            _vy += ty * r;
+            _vz += tz * r;
+        }`;
+    }
+
+    get name(): string {
+        return 'sph3D';
     }
 
     get variationTypes(): VariationTypes[] {
@@ -1779,6 +1931,7 @@ export function registerVars_3D() {
     VariationShaders.registerVar(new ConeFunc())
     VariationShaders.registerVar(new Curl3DFunc())
     VariationShaders.registerVar(new CylinderApoFunc())
+    VariationShaders.registerVar(new DinisSurfaceWFFunc())
     VariationShaders.registerVar(new Foci3DFunc())
     VariationShaders.registerVar(new HemisphereFunc())
     VariationShaders.registerVar(new HOFunc())
@@ -1794,14 +1947,16 @@ export function registerVars_3D() {
     VariationShaders.registerVar(new OctagonFunc())
     VariationShaders.registerVar(new Ovoid3DFunc())
     VariationShaders.registerVar(new PDJ3DFunc())
+    VariationShaders.registerVar(new Pie3DFunc())
     VariationShaders.registerVar(new Poincare3DFunc())
     VariationShaders.registerVar(new Popcorn2_3DFunc())
-    VariationShaders.registerVar(new Pie3DFunc())
+    VariationShaders.registerVar(new PostMirrorWFFunc())
     VariationShaders.registerVar(new SecqFunc())
     VariationShaders.registerVar(new SechqFunc())
     VariationShaders.registerVar(new Scry3DFunc())
     VariationShaders.registerVar(new Sinusoidal3DFunc())
     VariationShaders.registerVar(new Spherical3DFunc())
+    VariationShaders.registerVar(new Sph3DFunc())
     VariationShaders.registerVar(new Spherical3DWFFunc())
     VariationShaders.registerVar(new Spirograph3DFunc())
     VariationShaders.registerVar(new Splits3DFunc())
