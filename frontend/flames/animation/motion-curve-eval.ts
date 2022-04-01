@@ -20,7 +20,7 @@ import {InterpolatedPointsCache} from "Frontend/flames/animation/interpolation-c
 
 const cache = new InterpolatedPointsCache()
 
-export class MotionCurveInterpolation {
+export class MotionCurveEvaluator {
   private useBisection = false
 
   public evaluate(curve: FloatMotionCurveParameter, pTime: number): number {

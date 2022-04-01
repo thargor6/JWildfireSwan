@@ -29,19 +29,49 @@ import {
     RenderParameter,
     RenderParameters
 } from "Frontend/flames/model/parameters";
-import {RenderColor, RenderFlame, RenderLayer, RenderVariation, RenderXForm} from "Frontend/flames/model/render-flame";
+import {
+    RenderColor,
+    RenderMappingContext,
+    RenderFlame,
+    RenderLayer,
+    RenderVariation,
+    RenderXForm
+} from "Frontend/flames/model/render-flame";
 import FlameParamType from "Frontend/generated/org/jwildfire/swan/flames/model/flame/FlameParamType";
 import FlameParamDataType from "Frontend/generated/org/jwildfire/swan/flames/model/flame/FlameParamDataType";
 import VariationParam from "Frontend/generated/org/jwildfire/swan/flames/model/flame/VariationParam";
+import {MotionCurveEvaluator} from "Frontend/flames/animation/motion-curve-eval";
+import {EPSILON} from "Frontend/flames/renderer/mathlib";
+
+const evaluator = new MotionCurveEvaluator()
 
 class ParamMapper {
-    // TODO: curves
-    static mapForRendering(source: FlameParameter): RenderParameter {
+
+    static mapForRendering(ctx: RenderMappingContext, source: FlameParameter): RenderParameter {
         if(source.datatype==='int') {
-            return RenderParameters.intParam(source.value)
+            if(source.type==='curve') {
+              const val = Math.round( evaluator.evaluate(source as FloatMotionCurveParameter, ctx.frame) )
+              return RenderParameters.intParam(val)
+            }
+            else {
+              return RenderParameters.intParam(source.value)
+            }
         }
         else {
-            return RenderParameters.floatParam(source.value)
+            if(source.type==='curve') {
+              const val = evaluator.evaluate(source as FloatMotionCurveParameter, ctx.frame)
+              const mbLength = ctx.motionBlurTimeLength
+              if(mbLength>EPSILON) {
+                  const nextVal = evaluator.evaluate(source as FloatMotionCurveParameter, ctx.frame + mbLength)
+                  return RenderParameters.lerpParam(val, nextVal)
+              }
+              else {
+                  return RenderParameters.floatParam(val)
+              }
+            }
+            else {
+              return RenderParameters.floatParam(source.value)
+            }
         }
     }
 
@@ -163,12 +193,12 @@ class VariationMapper {
         return res;
     }
 
-    static mapForRendering(source: Variation): RenderVariation {
+    static mapForRendering(ctx: RenderMappingContext, source: Variation): RenderVariation {
         const res = new RenderVariation()
         res.name = source.name
-        res.amount = ParamMapper.mapForRendering(source.amount)
+        res.amount = ParamMapper.mapForRendering(ctx, source.amount)
         source.params.forEach((value, key) => {
-          res.params.set(key, ParamMapper.mapForRendering(value))
+          res.params.set(key, ParamMapper.mapForRendering(ctx, value))
         })
         return res;
     }
@@ -305,7 +335,7 @@ class XFormMapper {
         return res;
     }
 
-    static mapForRendering(source: XForm): RenderXForm {
+    static mapForRendering(ctx: RenderMappingContext, source: XForm): RenderXForm {
         const res = new RenderXForm()
 
         res.weight = source.weight.value
@@ -321,63 +351,63 @@ class XFormMapper {
         res.color = source.color.value
         res.colorSymmetry = source.colorSymmetry.value
 
-        res.xyC00 = ParamMapper.mapForRendering(source.xyC00)
-        res.xyC01 = ParamMapper.mapForRendering(source.xyC01)
-        res.xyC10 = ParamMapper.mapForRendering(source.xyC10)
-        res.xyC11 = ParamMapper.mapForRendering(source.xyC11)
-        res.xyC20 = ParamMapper.mapForRendering(source.xyC20)
-        res.xyC21 = ParamMapper.mapForRendering(source.xyC21)
+        res.xyC00 = ParamMapper.mapForRendering(ctx, source.xyC00)
+        res.xyC01 = ParamMapper.mapForRendering(ctx, source.xyC01)
+        res.xyC10 = ParamMapper.mapForRendering(ctx, source.xyC10)
+        res.xyC11 = ParamMapper.mapForRendering(ctx, source.xyC11)
+        res.xyC20 = ParamMapper.mapForRendering(ctx, source.xyC20)
+        res.xyC21 = ParamMapper.mapForRendering(ctx, source.xyC21)
 
        // res.xyC00 = RenderParameters.lerpParam(source.xyC00.value, source.xyC00.value + 0.5)
        // res.xyC11 = RenderParameters.lerpParam(source.xyC11.value, source.xyC11.value + 0.5)
       //  res.xyC20 = RenderParameters.lerpParam(source.xyC20.value, source.xyC20.value + 0.5)
       //  res.xyC21 = RenderParameters.lerpParam(source.xyC21.value, source.xyC21.value + 0.5)
-        res.yzC00 = ParamMapper.mapForRendering(source.yzC00)
-        res.yzC01 = ParamMapper.mapForRendering(source.yzC01)
-        res.yzC10 = ParamMapper.mapForRendering(source.yzC10)
-        res.yzC11 = ParamMapper.mapForRendering(source.yzC11)
-        res.yzC20 = ParamMapper.mapForRendering(source.yzC20)
-        res.yzC21 = ParamMapper.mapForRendering(source.yzC21)
+        res.yzC00 = ParamMapper.mapForRendering(ctx, source.yzC00)
+        res.yzC01 = ParamMapper.mapForRendering(ctx, source.yzC01)
+        res.yzC10 = ParamMapper.mapForRendering(ctx, source.yzC10)
+        res.yzC11 = ParamMapper.mapForRendering(ctx, source.yzC11)
+        res.yzC20 = ParamMapper.mapForRendering(ctx, source.yzC20)
+        res.yzC21 = ParamMapper.mapForRendering(ctx, source.yzC21)
 
-        res.zxC00 = ParamMapper.mapForRendering(source.zxC00)
-        res.zxC01 = ParamMapper.mapForRendering(source.zxC01)
-        res.zxC10 = ParamMapper.mapForRendering(source.zxC10)
-        res.zxC11 = ParamMapper.mapForRendering(source.zxC11)
-        res.zxC20 = ParamMapper.mapForRendering(source.zxC20)
-        res.zxC21 = ParamMapper.mapForRendering(source.zxC21)
+        res.zxC00 = ParamMapper.mapForRendering(ctx, source.zxC00)
+        res.zxC01 = ParamMapper.mapForRendering(ctx, source.zxC01)
+        res.zxC10 = ParamMapper.mapForRendering(ctx, source.zxC10)
+        res.zxC11 = ParamMapper.mapForRendering(ctx, source.zxC11)
+        res.zxC20 = ParamMapper.mapForRendering(ctx, source.zxC20)
+        res.zxC21 = ParamMapper.mapForRendering(ctx, source.zxC21)
 
-        res.xyP00 = ParamMapper.mapForRendering(source.xyP00)
-        res.xyP01 = ParamMapper.mapForRendering(source.xyP01)
-        res.xyP10 = ParamMapper.mapForRendering(source.xyP10)
-        res.xyP11 = ParamMapper.mapForRendering(source.xyP11)
-        res.xyP20 = ParamMapper.mapForRendering(source.xyP20)
-        res.xyP21 = ParamMapper.mapForRendering(source.xyP21)
+        res.xyP00 = ParamMapper.mapForRendering(ctx, source.xyP00)
+        res.xyP01 = ParamMapper.mapForRendering(ctx, source.xyP01)
+        res.xyP10 = ParamMapper.mapForRendering(ctx, source.xyP10)
+        res.xyP11 = ParamMapper.mapForRendering(ctx, source.xyP11)
+        res.xyP20 = ParamMapper.mapForRendering(ctx, source.xyP20)
+        res.xyP21 = ParamMapper.mapForRendering(ctx, source.xyP21)
         //  res.xyP20 = RenderParameters.lerpParam(source.xyP20.value, source.xyP20.value + 0.5)
         //  res.xyP21 = RenderParameters.lerpParam(source.xyP21.value, source.xyP21.value + 0.5)
 
-        res.yzP00 = ParamMapper.mapForRendering(source.yzP00)
-        res.yzP01 = ParamMapper.mapForRendering(source.yzP01)
-        res.yzP10 = ParamMapper.mapForRendering(source.yzP10)
-        res.yzP11 = ParamMapper.mapForRendering(source.yzP11)
-        res.yzP20 = ParamMapper.mapForRendering(source.yzP20)
-        res.yzP21 = ParamMapper.mapForRendering(source.yzP21)
+        res.yzP00 = ParamMapper.mapForRendering(ctx, source.yzP00)
+        res.yzP01 = ParamMapper.mapForRendering(ctx, source.yzP01)
+        res.yzP10 = ParamMapper.mapForRendering(ctx, source.yzP10)
+        res.yzP11 = ParamMapper.mapForRendering(ctx, source.yzP11)
+        res.yzP20 = ParamMapper.mapForRendering(ctx, source.yzP20)
+        res.yzP21 = ParamMapper.mapForRendering(ctx, source.yzP21)
 
-        res.zxP00 = ParamMapper.mapForRendering(source.zxP00)
-        res.zxP01 = ParamMapper.mapForRendering(source.zxP01)
-        res.zxP10 = ParamMapper.mapForRendering(source.zxP10)
-        res.zxP11 = ParamMapper.mapForRendering(source.zxP11)
-        res.zxP20 = ParamMapper.mapForRendering(source.zxP20)
-        res.zxP21 = ParamMapper.mapForRendering(source.zxP21)
+        res.zxP00 = ParamMapper.mapForRendering(ctx, source.zxP00)
+        res.zxP01 = ParamMapper.mapForRendering(ctx, source.zxP01)
+        res.zxP10 = ParamMapper.mapForRendering(ctx, source.zxP10)
+        res.zxP11 = ParamMapper.mapForRendering(ctx, source.zxP11)
+        res.zxP20 = ParamMapper.mapForRendering(ctx, source.zxP20)
+        res.zxP21 = ParamMapper.mapForRendering(ctx, source.zxP21)
 
         source.variations.map(svar => {
-            res.variations.push(VariationMapper.mapForRendering(svar))
+            res.variations.push(VariationMapper.mapForRendering(ctx, svar))
         })
         return res;
     }
 }
 
 class ColorMapper {
-    static mapForRendering(color: Color): RenderColor {
+    static mapForRendering(_ctx: RenderMappingContext, color: Color): RenderColor {
         return new RenderColor(color.r, color.g, color.b);
     }
 }
@@ -427,18 +457,18 @@ export class LayerMapper {
         return res
     }
 
-    public static mapForRendering(source: Layer): RenderLayer {
+    public static mapForRendering(ctx: RenderMappingContext, source: Layer): RenderLayer {
         const res = new RenderLayer();
         res.weight = source.weight.value
         res.density = source.density.value
         source.gradient.map(color => {
-            res.gradient.push(ColorMapper.mapForRendering(color))
+            res.gradient.push(ColorMapper.mapForRendering(ctx, color))
         })
         source.xforms.map(sxf => {
-            res.xforms.push(XFormMapper.mapForRendering(sxf))
+            res.xforms.push(XFormMapper.mapForRendering(ctx, sxf))
         })
         source.finalXforms.map(sxf => {
-            res.finalXforms.push(XFormMapper.mapForRendering(sxf))
+            res.finalXforms.push(XFormMapper.mapForRendering(ctx, sxf))
         })
         return res
     }
@@ -554,7 +584,7 @@ export class FlameMapper {
         return res
     }
 
-    public static mapForRendering(source: Flame): RenderFlame {
+    public static mapForRendering(ctx: RenderMappingContext, source: Flame): RenderFlame {
         const res = new RenderFlame();
         res.brightness = source.brightness.value
         res.whiteLevel = source.whiteLevel.value
@@ -601,7 +631,7 @@ export class FlameMapper {
         res.motionBlurTimeStep = source.motionBlurTimeStep.value
         res.motionBlurDecay = source.motionBlurDecay.value
         source.layers.map(layer => {
-            res.layers.push(LayerMapper.mapForRendering(layer))
+            res.layers.push(LayerMapper.mapForRendering(ctx, layer))
         })
         return res
     }

@@ -17,6 +17,22 @@
 
 import {RenderParameter, RenderParameters} from "Frontend/flames/model/parameters";
 
+export class RenderMappingContext {
+   constructor(private _frame: number, private _motionBlurLength: number,
+               private _motionBlurTimeStep: number) {
+     // EMPTY
+   }
+
+   public get frame() {
+       return this._frame
+   }
+
+   public get motionBlurTimeLength() {
+       return this._motionBlurLength * this._motionBlurTimeStep
+   }
+
+}
+
 export class RenderColor {
   constructor(public r: number, public g: number, public b: number) {
   }

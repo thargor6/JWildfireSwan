@@ -26,7 +26,7 @@ import {FlameRendererDisplay} from "./display";
 import {FlameIterator} from "./iterator";
 import {Flame, GRADIENT_SIZE} from "Frontend/flames/model/flame";
 import {FlameMapper} from "Frontend/flames/model/mapper/flame-mapper";
-import {RenderColor, RenderFlame} from "Frontend/flames/model/render-flame";
+import {RenderColor, RenderMappingContext, RenderFlame} from "Frontend/flames/model/render-flame";
 import {getTimeStamp} from "Frontend/components/utils";
 import {CropRegion} from "Frontend/flames/renderer/render-resolution";
 
@@ -72,7 +72,8 @@ export class FlameRenderer implements CloseableBuffers {
                 private qualityScale: number,
                 private flame: Flame) {
 
-        const renderFlame = FlameMapper.mapForRendering(flame)
+        const renderMappingCtx = new RenderMappingContext(flame.frame.value, flame.motionBlurLength.value, flame.motionBlurTimeStep.value)
+        const renderFlame = FlameMapper.mapForRendering(renderMappingCtx, flame)
         this.prepareFlame(renderFlame)
         const imageWidth = canvas_size
         const imageHeight = canvas_size
