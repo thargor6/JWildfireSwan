@@ -168,12 +168,7 @@ class VariationMapper {
         res.name = source.name
         res.amount = ParamMapper.mapForRendering(source.amount)
         source.params.forEach((value, key) => {
-            if(key==='alphaX') {
-                res.params.set(key, RenderParameters.lerpParam(value.value, value.value + 0.1))
-            }
-            else {
-                res.params.set(key, ParamMapper.mapForRendering(value))
-            }
+          res.params.set(key, ParamMapper.mapForRendering(value))
         })
         return res;
     }
@@ -337,8 +332,6 @@ class XFormMapper {
        // res.xyC11 = RenderParameters.lerpParam(source.xyC11.value, source.xyC11.value + 0.5)
       //  res.xyC20 = RenderParameters.lerpParam(source.xyC20.value, source.xyC20.value + 0.5)
       //  res.xyC21 = RenderParameters.lerpParam(source.xyC21.value, source.xyC21.value + 0.5)
-
-
         res.yzC00 = ParamMapper.mapForRendering(source.yzC00)
         res.yzC01 = ParamMapper.mapForRendering(source.yzC01)
         res.yzC10 = ParamMapper.mapForRendering(source.yzC10)
@@ -359,6 +352,8 @@ class XFormMapper {
         res.xyP11 = ParamMapper.mapForRendering(source.xyP11)
         res.xyP20 = ParamMapper.mapForRendering(source.xyP20)
         res.xyP21 = ParamMapper.mapForRendering(source.xyP21)
+        //  res.xyP20 = RenderParameters.lerpParam(source.xyP20.value, source.xyP20.value + 0.5)
+        //  res.xyP21 = RenderParameters.lerpParam(source.xyP21.value, source.xyP21.value + 0.5)
 
         res.yzP00 = ParamMapper.mapForRendering(source.yzP00)
         res.yzP01 = ParamMapper.mapForRendering(source.yzP01)

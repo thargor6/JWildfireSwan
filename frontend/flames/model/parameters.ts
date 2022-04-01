@@ -46,19 +46,46 @@ export enum MotionCurveInterpolation {
 export class FloatMotionCurveParameter implements FlameParameter {
     type: FlameParameterType = 'curve'
     datatype: FlameParameterDataType = 'float'
+    private _xmin
+    private _xmax
 
     constructor(public value: number, public viewXMin: number, public viewXMax: number, public viewYMin: number,
       public viewYMax: number, public interpolation: MotionCurveInterpolation, public selectedIdx: number,
       private _x: Array<number>, private _y: Array<number>, public locked: boolean) {
-        // EMPTY
+      if(_x.length>0) {
+        this._xmin = this._xmax = _x[0]
+        for(let val of _x) {
+          if(val<this._xmin) {
+            this._xmin = val
+          }
+          else if(val>this._xmax) {
+            this._xmax = val
+          }
+        }
+      }
+      else {
+        this._xmin = this._xmax = 0
+      }
     }
 
     public get x() {
         return this._x
     }
 
+    public get xmin() {
+        return this._xmin
+    }
+
+    public get xmax() {
+        return this._xmax
+    }
+
     public get y() {
         return this._y
+    }
+
+    public size() {
+        return this._x.length
     }
 }
 
