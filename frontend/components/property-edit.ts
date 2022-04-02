@@ -37,7 +37,7 @@ export function renderControl(ctrl: PropertyDescriptor, onPropertyChange: OnProp
     if(param) {
         if(ctrl.controlType==='checkbox') {
             return html `
-                <vaadin-checkbox checked=${true} @change=${(e: Event)=>onPropertyChange(ctrl.propName, false, (e.target as any).checked ? 1: 0)} label="Backend transparency"></vaadin-checkbox>
+                <vaadin-checkbox ?checked=${param.value} @change=${(e: Event)=>onPropertyChange(ctrl.propName, false, (e.target as any).checked ? 1: 0)} label=${ctrl.label}></vaadin-checkbox>
             `
         }
         else {

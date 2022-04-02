@@ -20,9 +20,11 @@ import {customElement, property, query, state} from 'lit/decorators.js';
 import {MobxLitElement} from "@adobe/lit-mobx";
 import {Upload, UploadSuccessEvent} from "@vaadin/upload";
 import "@vaadin/upload";
+import '@vaadin/vaadin-checkbox'
 import {rendererStore} from "Frontend/stores/renderer-store";
 import {FlamesEndpoint, GalleryEndpoint} from "Frontend/generated/endpoints";
 import {FlameMapper} from "Frontend/flames/model/mapper/flame-mapper";
+import {Parameters} from "Frontend/flames/model/parameters";
 
 @customElement('renderer-upload-panel')
 export class RendererUploadPanel extends MobxLitElement {
@@ -30,12 +32,16 @@ export class RendererUploadPanel extends MobxLitElement {
   visible = true
 
   @query('vaadin-upload')
-  private upload?: Upload;
+  private upload?: Upload
+
+  @state()
+  evalMotionCurves = false
 
   render() {
     return html`
       <div style="${this.visible ? `display:block;`: `display:none;`}">
-            <vaadin-upload
+          <vaadin-checkbox ?checked=${this.evalMotionCurves} @change=${(e: Event)=>this.evalMotionCurves = (e.target as any) ? true: false} label="Render frames/evaluate motion curves"></vaadin-checkbox>
+          <vaadin-upload
                     id="upload"
                     accept="application/flame,.flame"
                     max-files="200"
@@ -59,13 +65,38 @@ export class RendererUploadPanel extends MobxLitElement {
     }
   }
 
+  private addNumericPostfix(name: string, n: number) {
+    let s = `${n}`
+    while(s.length<4) {
+      s='0' + s
+    }
+    s = '_' + s
+    for(let i=name.length-1;i>0;i--) {
+      if(name.charAt(i)=='.') {
+        return name.substring(0, i) + s + name.substring(i, name.length)
+      }
+    }
+    return name+s
+  }
+
   private uploadFileSuccessHandler(event:UploadSuccessEvent) {
     try {
       const uuid = event.detail.xhr.response
       if(!rendererStore.hasFlameWithUuid(uuid)) {
         FlamesEndpoint.parseTempFlame(uuid).then(parsedFlame => {
           const flame = FlameMapper.mapFromBackend(parsedFlame)
-          rendererStore.addFlameWithUuid(uuid, event.detail.file.name, flame)
+          if(flame.frameCount.value<=1 || !this.evalMotionCurves) {
+            rendererStore.addFlameWithUuid(uuid, event.detail.file.name, flame)
+          }
+          else {
+            for(let frame=1; frame<=flame.frameCount.value; frame++) {
+              const currFlame = FlameMapper.mapFromBackend(FlameMapper.mapToBackend(flame))
+              currFlame.frame =  Parameters.intParam(frame)
+              const currName = this.addNumericPostfix(event.detail.file.name, frame)
+              console.log(currName)
+              rendererStore.addFlameWithUuid(uuid, currName, currFlame)
+            }
+          }
         }).catch(err=> {
           rendererStore.lastError = err
         })
