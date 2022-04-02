@@ -81,6 +81,9 @@ export class RendererStore {
     }
   }
 
+  clearFlames() {
+    this.flames = []
+  }
 }
 
 export const rendererStore = new RendererStore()

@@ -65,18 +65,23 @@ export class RendererUploadPanel extends MobxLitElement {
     }
   }
 
-  private addNumericPostfix(name: string, n: number) {
-    let s = `${n}`
-    while(s.length<4) {
-      s='0' + s
+  private numericPostfix(n: number) {
+    let postfix = `${n}`
+    while(postfix.length<4) {
+      postfix='0' + postfix
     }
-    s = '_' + s
+    postfix = '_' + postfix
+    return postfix
+  }
+
+  private addNumericPostfix(name: string, n: number) {
+    const postfix = this.numericPostfix(n)
     for(let i=name.length-1;i>0;i--) {
       if(name.charAt(i)=='.') {
-        return name.substring(0, i) + s + name.substring(i, name.length)
+        return name.substring(0, i) + postfix + name.substring(i, name.length)
       }
     }
-    return name+s
+    return name+postfix
   }
 
   private uploadFileSuccessHandler(event:UploadSuccessEvent) {
@@ -93,8 +98,7 @@ export class RendererUploadPanel extends MobxLitElement {
               const currFlame = FlameMapper.mapFromBackend(FlameMapper.mapToBackend(flame))
               currFlame.frame =  Parameters.intParam(frame)
               const currName = this.addNumericPostfix(event.detail.file.name, frame)
-              console.log(currName)
-              rendererStore.addFlameWithUuid(uuid, currName, currFlame)
+              rendererStore.addFlameWithUuid(uuid+this.numericPostfix(frame), currName, currFlame)
             }
           }
         }).catch(err=> {

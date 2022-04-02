@@ -175,9 +175,16 @@ export class RendererView extends View  {
 
     renderer?: FlameRenderer
 
+    MAX_IMAGES_HOLD = 4
+
     renderNextFlame = ()=> {
         const flame = rendererStore.flames.find(flame => !flame.finished)
         if(flame && !rendererStore.cancelSignalled) {
+            if(this.autoSave) {
+              while(this.allImageContainer.children.length>this.MAX_IMAGES_HOLD) {
+                  this.allImageContainer.removeChild(this.allImageContainer.children[0])
+              }
+            }
             const remaining = rendererStore.flames.filter(flame=>!flame.finished).length
             rendererStore.renderProgress = (rendererStore.renderFlameTotalCount - remaining) / rendererStore.renderFlameTotalCount
             const renderPanel = this.getRenderPanel()

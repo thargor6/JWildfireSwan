@@ -21,6 +21,7 @@ import {MobxLitElement} from "@adobe/lit-mobx";
 import {RendererFlame, rendererStore} from "Frontend/stores/renderer-store";
 import '@vaadin/vaadin-grid'
 import '@vaadin/vaadin-grid/vaadin-grid-column'
+import '@vaadin/vaadin-button'
 import {GridActiveItemChangedEvent, GridItemModel} from "@vaadin/grid";
 import { applyTheme } from 'Frontend/generated/theme';
 
@@ -36,6 +37,7 @@ export class RendererRenderPanel extends MobxLitElement {
 
   render() {
     return html`
+          <vaadin-button @click="${()=>rendererStore.clearFlames()}">Clear all</vaadin-button>
           <vaadin-grid .items=${rendererStore.flames}
                   .selectedItems="${rendererStore.selectedFlames}"
                   @active-item-changed="${(e: GridActiveItemChangedEvent<RendererFlame>) => {
