@@ -15,6 +15,7 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 */
 
+export const FUNC_ACOSH = 'acosh'
 export const FUNC_COSH = 'cosh'
 export const FUNC_SAFEDIV = 'safediv'
 export const FUNC_HYPOT = 'hypot'
@@ -337,14 +338,20 @@ export class VariationMathFunctions {
                 Complex_Flip(c);
               }            
             `);
+         this.registerFunction(FUNC_ACOSH,
+            // ACOSH Function https://runebook.dev/de/docs/javascript/global_objects/math/acosh
+            `
+                float acosh(float val) {
+                  return log(val + sqrt(val * val - 1.0));
+                }`);
          this.registerFunction(FUNC_COSH,
              // COSH Function (Hyperbolic Cosine) http://machinesdontcare.wordpress.com/2008/03/10/glsl-cosh-sinh-tanh/
              `
             float cosh(float val) {
-			  float tmp = exp(val);
-		   	  float cosH = (tmp + 1.0 / tmp) / 2.0;
-		       return cosH;
-			}`);
+              float tmp = exp(val);
+              float cosH = (tmp + 1.0 / tmp) / 2.0;
+              return cosH;
+            }`);
         this.registerFunction(FUNC_HYPOT,
             // most simple form for now:
             `

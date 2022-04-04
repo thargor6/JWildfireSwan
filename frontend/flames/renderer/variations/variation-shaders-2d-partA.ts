@@ -19,8 +19,9 @@ import {VariationParam, VariationParamType, VariationShaderFunc2D, VariationType
 import {VariationShaders} from 'Frontend/flames/renderer/variations/variation-shaders';
 import {RenderVariation, RenderXForm} from 'Frontend/flames/model/render-flame';
 import {
+    FUNC_ACOSH,
     FUNC_COSH,
-    FUNC_MODULO, FUNC_RINT,
+    FUNC_MODULO, FUNC_RINT, FUNC_SGN,
     FUNC_SINH,
     FUNC_SQRT1PM1
 } from 'Frontend/flames/renderer/variations/variation-math-functions';
@@ -137,6 +138,71 @@ class AugerFunc extends VariationShaderFunc2D {
 
     get name(): string {
         return 'auger';
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
+class BarycentroidFunc extends VariationShaderFunc2D {
+    PARAM_A = 'a'
+    PARAM_B = 'b'
+    PARAM_C = 'c'
+    PARAM_D = 'd'
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_A, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
+            { name: this.PARAM_B, type: VariationParamType.VP_NUMBER, initialValue: 0.0 },
+            { name: this.PARAM_C, type: VariationParamType.VP_NUMBER, initialValue: 0.0 },
+            { name: this.PARAM_D, type: VariationParamType.VP_NUMBER, initialValue: 1.0 }
+        ]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        /* barycentroid from Xyrus02, http://xyrusworx.deviantart.com/art/Barycentroid-Plugin-144832371?q=sort%3Atime+favby%3Amistywisp&qo=0&offset=10 */
+        // helpers
+
+        /*  The code is supposed to be fast and you all can read it so I dont
+            create those aliases for readability in actual code:
+
+            v0x = this.a
+            v0y = this.b
+            v1x = this.c
+            v1y = this.d
+            v2x = pAffineTP.x
+            v2y = pAffineTP.y
+        */
+        return `{
+          float amount = ${variation.amount.toWebGl()};
+          float a = ${variation.params.get(this.PARAM_A)!.toWebGl()};
+          float b = ${variation.params.get(this.PARAM_B)!.toWebGl()};
+          float c = ${variation.params.get(this.PARAM_C)!.toWebGl()};
+          float d = ${variation.params.get(this.PARAM_D)!.toWebGl()};
+          float dot00 = a * a + b * b; 
+          float dot01 = a * c + b * d; 
+          float dot02 = a * _tx + b * _ty; 
+          float dot11 = c * c + d * d; 
+          float dot12 = c * _tx + d * _ty;     
+          float invDenom = 1.0 / (dot00 * dot11 - dot01 * dot01);
+          /* now we can pull [u,v] as the barycentric coordinates of the point 
+             P in the triangle [A, B, C]
+          */
+          float u = (dot11 * dot02 - dot01 * dot12) * invDenom;
+          float v = (dot00 * dot12 - dot01 * dot02) * invDenom;   
+          float um = sqrt(sqr(u) + sqr(_tx)) * sgn(u);
+          float vm = sqrt(sqr(v) + sqr(_ty)) * sgn(v);
+          _vx += amount * um;
+          _vy += amount * vm;
+        }`;
+    }
+
+    get name(): string {
+        return 'barycentroid';
+    }
+
+    get funcDependencies(): string[] {
+        return [FUNC_SGN];
     }
 
     get variationTypes(): VariationTypes[] {
@@ -316,6 +382,50 @@ class BlobFunc extends VariationShaderFunc2D {
 
     get name(): string {
         return 'blob';
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
+class BlockYFunc extends VariationShaderFunc2D {
+    PARAM_X = 'x'
+    PARAM_Y = 'y'
+    PARAM_MP = 'mp'
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_X, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
+            { name: this.PARAM_Y, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
+            { name: this.PARAM_MP, type: VariationParamType.VP_NUMBER, initialValue: 4.0 }]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        /* blocky from FracFx, http://fracfx.deviantart.com/art/FracFx-Plugin-Pack-171806681 */
+        return `{
+          float amount = ${variation.amount.toWebGl()};
+          float x = ${variation.params.get(this.PARAM_X)!.toWebGl()};
+          float y = ${variation.params.get(this.PARAM_Y)!.toWebGl()};
+          float mp = ${variation.params.get(this.PARAM_MP)!.toWebGl()};
+          float v = amount / (M_PI*0.5);
+          float T = ((cos(_tx) + cos(_ty)) / mp + 1.0);
+          float r = amount / T;
+          float tmp = sqr(_ty) + sqr(_tx) + 1.0;
+          float x2 = 2.0 * _tx;
+          float y2 = 2.0 * _ty;
+          float xmax = 0.5 * (sqrt(tmp + x2) + sqrt(tmp - x2));
+          float ymax = 0.5 * (sqrt(tmp + y2) + sqrt(tmp - y2));
+          float a = _tx / xmax;
+          float b = sqrt_safe(1.0 - sqr(a));
+          _vx += v * atan2(a, b) * r * x;
+          a = _ty / ymax;
+          b = sqrt_safe(1.0 - sqr(a));
+          _vy += v * atan2(a, b) * r * y;
+        }`;
+    }
+
+    get name(): string {
+        return 'blocky';
     }
 
     get variationTypes(): VariationTypes[] {
@@ -1578,6 +1688,69 @@ class EDiscFunc extends VariationShaderFunc2D {
 
     get funcDependencies(): string[] {
         return [FUNC_SINH, FUNC_COSH];
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
+class EJuliaFunc extends VariationShaderFunc2D {
+    PARAM_POWER = 'power'
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_POWER, type: VariationParamType.VP_NUMBER, initialValue: 2 }]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        // eJulia by Michael Faber, http://michaelfaber.deviantart.com/art/eSeries-306044892
+        return `{
+          float amount = ${variation.amount.toWebGl()};
+          int power = ${variation.params.get(this.PARAM_POWER)!.toWebGl()};
+          int _sign = 1;
+          if (power < 0)
+            _sign = -1;
+          float r2 = _ty * _ty + _tx * _tx;
+          float tmp2;
+          float x;
+          if (_sign == 1)
+            x = _tx;
+          else {
+            r2 = 1.0 / r2;
+            x = _tx * r2;
+          }
+          float tmp = r2 + 1.0;
+          tmp2 = 2.0 * x;
+          float xmax = (sqrt_safe(tmp + tmp2) + sqrt_safe(tmp - tmp2)) * 0.5;
+          if (xmax < 1.0)
+            xmax = 1.0;
+          float sinhmu, coshmu, sinnu, cosnu;
+          float mu = acosh(xmax); 
+          float t = x / xmax;
+          if (t > 1.0)
+            t = 1.0;
+          else if (t < -1.0)
+            t = -1.0;
+          float nu = acos(t); 
+          if (_ty < 0.0)
+            nu *= -1.0;
+          nu = nu / float(power) + (2.0*M_PI) / float(power) * floor(rand8(tex, rngState) * float(power));
+          mu /= float(power);
+          sinhmu = sinh(mu);
+          coshmu = cosh(mu);
+          sinnu = sin(nu);
+          cosnu = cos(nu);
+          _vx += amount * coshmu * cosnu;
+          _vy += amount * sinhmu * sinnu;
+        }`;
+    }
+
+    get name(): string {
+        return 'eJulia';
+    }
+
+    get funcDependencies(): string[] {
+        return [FUNC_ACOSH, FUNC_SINH, FUNC_COSH];
     }
 
     get variationTypes(): VariationTypes[] {
@@ -2873,12 +3046,14 @@ export function registerVars_2D_PartA() {
     VariationShaders.registerVar(new ArchFunc())
     VariationShaders.registerVar(new AsteriaFunc())
     VariationShaders.registerVar(new AugerFunc())
+    VariationShaders.registerVar(new BarycentroidFunc())
     VariationShaders.registerVar(new BentFunc())
     VariationShaders.registerVar(new Bent2Func())
     VariationShaders.registerVar(new BiLinearFunc())
     VariationShaders.registerVar(new BipolarFunc())
     VariationShaders.registerVar(new BladeFunc())
     VariationShaders.registerVar(new BlobFunc())
+    VariationShaders.registerVar(new BlockYFunc())
     VariationShaders.registerVar(new BoardersFunc())
     VariationShaders.registerVar(new Boarders2Func())
     VariationShaders.registerVar(new ButterflyFunc())
@@ -2911,6 +3086,7 @@ export function registerVars_2D_PartA() {
     VariationShaders.registerVar(new Disc2Func())
     VariationShaders.registerVar(new EclipseFunc())
     VariationShaders.registerVar(new EDiscFunc())
+    VariationShaders.registerVar(new EJuliaFunc())
     VariationShaders.registerVar(new EllipticFunc())
     VariationShaders.registerVar(new EpispiralFunc())
     VariationShaders.registerVar(new EpispiralWFFunc())
