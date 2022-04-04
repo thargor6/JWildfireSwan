@@ -60,6 +60,139 @@ class ScryFunc extends VariationShaderFunc2D {
     }
 }
 
+class Scry2Func extends VariationShaderFunc2D {
+    PARAM_SIDES = 'sides'
+    PARAM_STAR = 'star'
+    PARAM_CIRCLE = 'circle'
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_SIDES, type: VariationParamType.VP_NUMBER, initialValue: 4 },
+            { name: this.PARAM_STAR, type: VariationParamType.VP_NUMBER, initialValue: 0.0 },
+            { name: this.PARAM_CIRCLE, type: VariationParamType.VP_NUMBER, initialValue: 0.0 }]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        /* scry2 by dark-beam */
+        return `{
+          float amount = ${variation.amount.toWebGl()};
+          int sides = ${variation.params.get(this.PARAM_SIDES)!.toWebGl()};
+          float star = ${variation.params.get(this.PARAM_STAR)!.toWebGl()};
+          float circle = ${variation.params.get(this.PARAM_CIRCLE)!.toWebGl()};
+          float _sina, _cosa, _sins, _coss, _sinc, _cosc;
+          float a = (2.0*M_PI) / float(sides);
+          _sina = sin(a);
+          _cosa = cos(a);
+          a = -(M_PI*0.5) * star;
+          _sins = sin(a);
+          _coss = cos(a); 
+          a = (M_PI*0.5) * circle;
+          _sinc = sin(a);
+          _cosc = cos(a);
+          float xrt = _tx, yrt = _ty, swp;        
+          float r2 = xrt * _coss + abs(yrt) * _sins; 
+          float r1 = 0.0; 
+          float _circle = sqrt(sqr(xrt) + sqr(yrt));
+          int i = 0;
+        
+          if(i++ < sides - 1) {
+            swp = xrt * _cosa - yrt * _sina;
+            yrt = xrt * _sina + yrt * _cosa;
+            xrt = swp;                    
+            r2 = max(r2, xrt * _coss + abs(yrt) * _sins); 
+          }
+          if(i++ < sides - 1) {
+            swp = xrt * _cosa - yrt * _sina;
+            yrt = xrt * _sina + yrt * _cosa;
+            xrt = swp;                    
+            r2 = max(r2, xrt * _coss + abs(yrt) * _sins); 
+          }
+          if(i++ < sides - 1) {
+            swp = xrt * _cosa - yrt * _sina;
+            yrt = xrt * _sina + yrt * _cosa;
+            xrt = swp;                    
+            r2 = max(r2, xrt * _coss + abs(yrt) * _sins); 
+          }
+          if(i++ < sides - 1) {
+            swp = xrt * _cosa - yrt * _sina;
+            yrt = xrt * _sina + yrt * _cosa;
+            xrt = swp;                    
+            r2 = max(r2, xrt * _coss + abs(yrt) * _sins); 
+          }
+          if(i++ < sides - 1) {
+            swp = xrt * _cosa - yrt * _sina;
+            yrt = xrt * _sina + yrt * _cosa;
+            xrt = swp;                    
+            r2 = max(r2, xrt * _coss + abs(yrt) * _sins); 
+          }
+          if(i++ < sides - 1) {
+            swp = xrt * _cosa - yrt * _sina;
+            yrt = xrt * _sina + yrt * _cosa;
+            xrt = swp;                    
+            r2 = max(r2, xrt * _coss + abs(yrt) * _sins); 
+          }
+          if(i++ < sides - 1) {
+            swp = xrt * _cosa - yrt * _sina;
+            yrt = xrt * _sina + yrt * _cosa;
+            xrt = swp;                    
+            r2 = max(r2, xrt * _coss + abs(yrt) * _sins); 
+          }
+          if(i++ < sides - 1) {
+            swp = xrt * _cosa - yrt * _sina;
+            yrt = xrt * _sina + yrt * _cosa;
+            xrt = swp;                    
+            r2 = max(r2, xrt * _coss + abs(yrt) * _sins); 
+          }
+          if(i++ < sides - 1) {
+            swp = xrt * _cosa - yrt * _sina;
+            yrt = xrt * _sina + yrt * _cosa;
+            xrt = swp;                    
+            r2 = max(r2, xrt * _coss + abs(yrt) * _sins); 
+          }
+          if(i++ < sides - 1) {
+            swp = xrt * _cosa - yrt * _sina;
+            yrt = xrt * _sina + yrt * _cosa;
+            xrt = swp;                    
+            r2 = max(r2, xrt * _coss + abs(yrt) * _sins); 
+          }
+          if(i++ < sides - 1) {
+            swp = xrt * _cosa - yrt * _sina;
+            yrt = xrt * _sina + yrt * _cosa;
+            xrt = swp;                    
+            r2 = max(r2, xrt * _coss + abs(yrt) * _sins); 
+          }
+          if(i++ < sides - 1) {
+            swp = xrt * _cosa - yrt * _sina;
+            yrt = xrt * _sina + yrt * _cosa;
+            xrt = swp;                    
+            r2 = max(r2, xrt * _coss + abs(yrt) * _sins); 
+          }
+          
+          r2 = r2 * _cosc + _circle * _sinc; 
+          r1 = r2;
+          if (i > 1) {
+            r2 = sqr(r2); 
+          } else {
+            r2 = abs(r2) * r2; 
+          }
+            
+          float d = (r1 * (r2 + 1.0 / amount));
+          if (d != 0.0) {
+            float r = 1.0 / d;
+            _vx += _tx * r;
+            _vy += _ty * r;            
+          }
+        }`;
+    }
+
+    get name(): string {
+        return 'scry2';
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+
+}
 
 class SecFunc extends VariationShaderFunc2D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
@@ -94,7 +227,55 @@ class SecFunc extends VariationShaderFunc2D {
     }
 }
 
+class Sec2_BSFunc extends VariationShaderFunc2D {
+    PARAM_X1 = 'x1'
+    PARAM_X2 = 'x2'
+    PARAM_Y1 = 'y1'
+    PARAM_Y2 = 'y2'
 
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_X1, type: VariationParamType.VP_NUMBER, initialValue: 1.25 },
+            { name: this.PARAM_X2, type: VariationParamType.VP_NUMBER, initialValue: 0.75 },
+            { name: this.PARAM_Y1, type: VariationParamType.VP_NUMBER, initialValue: 1.5 },
+            { name: this.PARAM_Y2, type: VariationParamType.VP_NUMBER, initialValue: 0.5 }]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        /* complex vars by cothe */
+        /* exp log sin cos tan sec csc cot sinh cosh tanh sech csch coth */
+        /* Variables added by Brad Stefanov */
+        //Secant SEC
+        return `{
+          float amount = ${variation.amount.toWebGl()};
+          float x1 = ${variation.params.get(this.PARAM_X1)!.toWebGl()};
+          float x2 = ${variation.params.get(this.PARAM_X2)!.toWebGl()};
+          float y1 = ${variation.params.get(this.PARAM_Y1)!.toWebGl()};
+          float y2 = ${variation.params.get(this.PARAM_Y2)!.toWebGl()};
+          float secsin = sin(_tx * x1);
+          float seccos = cos(_tx * x2);
+          float secsinh = sinh(_ty * y1);
+          float seccosh = cosh(_ty * y2);
+          float d = (cos(2.0 * _tx) + cosh(2.0 * _ty));
+          if (d != 0.0) {
+            float secden = 2.0 / d;
+            _vx += amount * secden * seccos * seccosh;
+            _vy += amount * secden * secsin * secsinh;              
+          }
+        }`;
+    }
+
+    get name(): string {
+        return 'sec2_bs';
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+
+    get funcDependencies(): string[] {
+        return [FUNC_SINH, FUNC_COSH];
+    }
+}
 
 class Secant2Func extends VariationShaderFunc2D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
@@ -146,6 +327,56 @@ class SechFunc extends VariationShaderFunc2D {
 
     get name(): string {
         return 'sech';
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+
+    get funcDependencies(): string[] {
+        return [FUNC_SINH, FUNC_COSH];
+    }
+}
+
+class Sech2_BSFunc extends VariationShaderFunc2D {
+    PARAM_X1 = 'x1'
+    PARAM_X2 = 'x2'
+    PARAM_Y1 = 'y1'
+    PARAM_Y2 = 'y2'
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_X1, type: VariationParamType.VP_NUMBER, initialValue: 1.25 },
+            { name: this.PARAM_X2, type: VariationParamType.VP_NUMBER, initialValue: 0.75 },
+            { name: this.PARAM_Y1, type: VariationParamType.VP_NUMBER, initialValue: 1.5 },
+            { name: this.PARAM_Y2, type: VariationParamType.VP_NUMBER, initialValue: 0.5 }]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        /* complex vars by cothe */
+        /* exp log sin cos tan sec csc cot sinh cosh tanh sech csch coth */
+        /* Variables added by Brad Stefanov */
+        //Hyperbolic Secant SECH
+        return `{
+          float amount = ${variation.amount.toWebGl()};
+          float x1 = ${variation.params.get(this.PARAM_X1)!.toWebGl()};
+          float x2 = ${variation.params.get(this.PARAM_X2)!.toWebGl()};
+          float y1 = ${variation.params.get(this.PARAM_Y1)!.toWebGl()};
+          float y2 = ${variation.params.get(this.PARAM_Y2)!.toWebGl()};
+          float sechsin = sin(_ty * y1);
+          float sechcos = cos(_ty * y2);
+          float sechsinh = sinh(_tx * x1);
+          float sechcosh = cosh(_tx * x2);
+          float d = (cos(2.0 * _ty) + cosh(2.0 * _tx));
+          if (d != 0.0) {
+            float sechden = 2.0 / d;
+            _vx += amount * sechden * sechcos * sechcosh;
+            _vy -= amount * sechden * sechsin * sechsinh;          
+          }
+        }`;
+    }
+
+    get name(): string {
+        return 'sech2_bs';
     }
 
     get variationTypes(): VariationTypes[] {
@@ -2355,9 +2586,12 @@ class YinYangFunc extends VariationShaderFunc2D {
 
 export function registerVars_2D_PartS() {
     VariationShaders.registerVar(new ScryFunc())
+    VariationShaders.registerVar(new Scry2Func())
     VariationShaders.registerVar(new SecFunc())
+    VariationShaders.registerVar(new Sec2_BSFunc())
     VariationShaders.registerVar(new Secant2Func())
     VariationShaders.registerVar(new SechFunc())
+    VariationShaders.registerVar(new Sech2_BSFunc())
     VariationShaders.registerVar(new SeparationFunc())
     VariationShaders.registerVar(new ShiftFunc())
     VariationShaders.registerVar(new ShredlinFunc())
