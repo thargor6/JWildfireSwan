@@ -37,6 +37,9 @@ import {state} from "lit/decorators";
 import {HasValue} from "@hilla/form";
 import '../../components/swan-loading-indicator';
 import {RenderResolution, RenderResolutions} from "Frontend/flames/renderer/render-resolution";
+import {FlamesEndpoint} from "Frontend/generated/endpoints";
+import {FlameMapper} from "Frontend/flames/model/mapper/flame-mapper";
+import {playgroundStore} from "Frontend/stores/playground-store";
 
 @customElement('renderer-view')
 export class RendererView extends View  {
@@ -157,8 +160,8 @@ export class RendererView extends View  {
     }
 
     createFlameRenderer = ()=> {
-        return new FlameRenderer(256, 256,
-          DisplayMode.FLAME, this.getRenderPanel().canvas, undefined,
+      return new FlameRenderer(256, 256,
+        DisplayMode.FLAME, this.getRenderPanel().canvas, undefined,
           false, undefined, 1.0, rendererStore.selectedFlames[0].flame)
     }
 

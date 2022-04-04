@@ -50,27 +50,27 @@ class ParamMapper {
     static mapForRendering(ctx: RenderMappingContext, source: FlameParameter): RenderParameter {
         if(source.datatype==='int') {
             if(source.type==='curve') {
-              const val = Math.round( evaluator.evaluate(source as FloatMotionCurveParameter, ctx.frame) )
-              return RenderParameters.intParam(val)
+                const val = Math.round( evaluator.evaluate(source as FloatMotionCurveParameter, ctx.frame) )
+                return RenderParameters.intParam(val)
             }
             else {
-              return RenderParameters.intParam(source.value)
+                return RenderParameters.intParam(source.value)
             }
         }
         else {
             if(source.type==='curve') {
-              const val = evaluator.evaluate(source as FloatMotionCurveParameter, ctx.frame)
-              const mbLength = ctx.motionBlurTimeLength
-              if(mbLength>EPSILON) {
-                  const nextVal = evaluator.evaluate(source as FloatMotionCurveParameter, ctx.frame + mbLength)
-                  return RenderParameters.lerpParam(val, nextVal)
-              }
-              else {
-                  return RenderParameters.floatParam(val)
-              }
+                const val = evaluator.evaluate(source as FloatMotionCurveParameter, ctx.frame)
+                const mbLength = ctx.motionBlurTimeLength
+                if(mbLength>EPSILON) {
+                    const nextVal = evaluator.evaluate(source as FloatMotionCurveParameter, ctx.frame + mbLength)
+                    return RenderParameters.lerpParam(val, nextVal)
+                }
+                else {
+                    return RenderParameters.floatParam(val)
+                }
             }
             else {
-              return RenderParameters.floatParam(source.value)
+                return RenderParameters.floatParam(source.value)
             }
         }
     }
@@ -358,10 +358,6 @@ class XFormMapper {
         res.xyC20 = ParamMapper.mapForRendering(ctx, source.xyC20)
         res.xyC21 = ParamMapper.mapForRendering(ctx, source.xyC21)
 
-       // res.xyC00 = RenderParameters.lerpParam(source.xyC00.value, source.xyC00.value + 0.5)
-       // res.xyC11 = RenderParameters.lerpParam(source.xyC11.value, source.xyC11.value + 0.5)
-      //  res.xyC20 = RenderParameters.lerpParam(source.xyC20.value, source.xyC20.value + 0.5)
-      //  res.xyC21 = RenderParameters.lerpParam(source.xyC21.value, source.xyC21.value + 0.5)
         res.yzC00 = ParamMapper.mapForRendering(ctx, source.yzC00)
         res.yzC01 = ParamMapper.mapForRendering(ctx, source.yzC01)
         res.yzC10 = ParamMapper.mapForRendering(ctx, source.yzC10)
@@ -382,8 +378,6 @@ class XFormMapper {
         res.xyP11 = ParamMapper.mapForRendering(ctx, source.xyP11)
         res.xyP20 = ParamMapper.mapForRendering(ctx, source.xyP20)
         res.xyP21 = ParamMapper.mapForRendering(ctx, source.xyP21)
-        //  res.xyP20 = RenderParameters.lerpParam(source.xyP20.value, source.xyP20.value + 0.5)
-        //  res.xyP21 = RenderParameters.lerpParam(source.xyP21.value, source.xyP21.value + 0.5)
 
         res.yzP00 = ParamMapper.mapForRendering(ctx, source.yzP00)
         res.yzP01 = ParamMapper.mapForRendering(ctx, source.yzP01)

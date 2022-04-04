@@ -71,7 +71,6 @@ export class FlameRenderer implements CloseableBuffers {
                 private cropRegion: CropRegion | undefined,
                 private qualityScale: number,
                 private flame: Flame) {
-
         const renderMappingCtx = new RenderMappingContext(flame.frame.value, flame.motionBlurLength.value, flame.motionBlurTimeStep.value)
         const renderFlame = FlameMapper.mapForRendering(renderMappingCtx, flame)
         this.prepareFlame(renderFlame)

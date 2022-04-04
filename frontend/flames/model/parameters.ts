@@ -166,6 +166,7 @@ export class IntValueRenderParameter implements RenderParameter {
 
 export class LerpValueRenderParameter implements RenderParameter {
     constructor(private _a: number, private _b: number) {
+        // EMPTY
     }
 
     toWebGl(): string {

@@ -21,10 +21,12 @@ import {MobxLitElement} from "@adobe/lit-mobx";
 import {Upload, UploadSuccessEvent} from "@vaadin/upload";
 import "@vaadin/upload";
 import '@vaadin/vaadin-checkbox'
+import '@vaadin/number-field'
 import {rendererStore} from "Frontend/stores/renderer-store";
 import {FlamesEndpoint, GalleryEndpoint} from "Frontend/generated/endpoints";
 import {FlameMapper} from "Frontend/flames/model/mapper/flame-mapper";
 import {Parameters} from "Frontend/flames/model/parameters";
+import {getTimeStamp} from "Frontend/components/utils";
 
 @customElement('renderer-upload-panel')
 export class RendererUploadPanel extends MobxLitElement {
@@ -37,10 +39,20 @@ export class RendererUploadPanel extends MobxLitElement {
   @state()
   evalMotionCurves = false
 
+  @state()
+  fromFrame = 1
+
+  @state()
+  toFrame = 100000
+
   render() {
     return html`
       <div style="${this.visible ? `display:block;`: `display:none;`}">
+          <div style="margin: 1.0em;">
           <vaadin-checkbox ?checked=${this.evalMotionCurves} @change=${(e: Event)=>this.evalMotionCurves = (e.target as any) ? true: false} label="Render frames/evaluate motion curves"></vaadin-checkbox>
+          <vaadin-number-field label="From frame" @change="${this.fromFrameChanged}" step=${1} min="${1}" value="${this.fromFrame}" has-controls></vaadin-number-field>
+          <vaadin-number-field label="To frame" @change="${this.toFrameChanged}" step=${1} min="${1}" value="${this.toFrame}" has-controls></vaadin-number-field>
+          </div>
           <vaadin-upload
                     id="upload"
                     accept="application/flame,.flame"
@@ -63,6 +75,14 @@ export class RendererUploadPanel extends MobxLitElement {
         'The provided file does not have the correct format. Please provide a flame-xml document.';
       this.upload.i18n = { ...this.upload.i18n };
     }
+  }
+
+  fromFrameChanged = (e: Event) => {
+    this.fromFrame = (e.target as any).value
+  }
+
+  toFrameChanged = (e: Event) => {
+    this.toFrame = (e.target as any).value
   }
 
   private numericPostfix(n: number) {
@@ -94,7 +114,9 @@ export class RendererUploadPanel extends MobxLitElement {
             rendererStore.addFlameWithUuid(uuid, event.detail.file.name, flame)
           }
           else {
-            for(let frame=1; frame<=flame.frameCount.value; frame++) {
+            const fromFrame = typeof this.fromFrame === 'string' ? parseInt(this.fromFrame) : this.fromFrame
+            const toFrame = typeof this.toFrame === 'string' ? parseInt(this.toFrame) : this.toFrame
+            for(let frame=fromFrame; frame<=flame.frameCount.value && frame<=toFrame; frame++) {
               const currFlame = FlameMapper.mapFromBackend(FlameMapper.mapToBackend(flame))
               currFlame.frame =  Parameters.intParam(frame)
               const currName = this.addNumericPostfix(event.detail.file.name, frame)

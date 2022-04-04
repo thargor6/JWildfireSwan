@@ -20,6 +20,7 @@ package org.jwildfire.swan.flames.mapper;
 import org.jwildfire.create.tina.variation.VariationFunc;
 import org.jwildfire.create.tina.variation.VariationFuncList;
 import org.jwildfire.swan.flames.model.flame.FlameParamDataType;
+import org.jwildfire.swan.flames.model.flame.FlameParamType;
 import org.jwildfire.swan.flames.model.flame.Layer;
 import org.jwildfire.swan.flames.model.flame.Variation;
 import org.jwildfire.swan.flames.model.flame.VariationParam;
@@ -168,6 +169,9 @@ public class XFormMapper {
       dstVar.setFunc(varFunc);
       for (int j = 0; j < srcVar.getParams().size(); j++) {
         VariationParam param = srcVar.getParams().get(j);
+        if(param.getValue().getParamType()==FlameParamType.CURVE && dstVar.getMotionCurve(param.getName())==null) {
+          dstVar.createMotionCurve(param.getName());
+        }
         if (param.getValue().getDataType() == FlameParamDataType.INT) {
           varFunc.setParameter(
               param.getName(),

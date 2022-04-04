@@ -53,6 +53,7 @@ export class SwanSlider extends MobxLitElement {
     onPropertyChange: OnPropertyChange = (property: string, changing: boolean, value: number) => {}
 
     render() {
+        this.updateMinMax()
         return html  `
             <div style="display: flex; flex-direction: column;">
                 <label>${this.label}</label>
@@ -72,9 +73,11 @@ export class SwanSlider extends MobxLitElement {
         if(target && this.propName) {
             const currTimeStamp = getTimeStamp()
             if(currTimeStamp > this.lastValueChangeTimeStamp + 25) {
+                console.log("  ", target.immediateValue)
                 this.onPropertyChange(this.propName, true, target.immediateValue)
                 this.lastValueChangeTimeStamp = getTimeStamp()
                 this.value = target.value
+                this.updateMinMax()
             }
         }
     }
@@ -85,6 +88,7 @@ export class SwanSlider extends MobxLitElement {
             this.onPropertyChange(this.propName, false, target.value)
             this.lastValueChangeTimeStamp = getTimeStamp()
             this.value = target.value
+            this.updateMinMax()
         }
     }
 
@@ -94,9 +98,17 @@ export class SwanSlider extends MobxLitElement {
             this.onPropertyChange(this.propName, false, target.value)
             this.lastValueChangeTimeStamp = getTimeStamp()
             this.value = target.value
+            this.updateMinMax()
         }
     }
 
-
+    updateMinMax() {
+        if(this.value<this.minValue) {
+            this.minValue = this.value
+        }
+        if(this.value>this.maxValue) {
+            this.maxValue = this.value
+        }
+    }
 
 }

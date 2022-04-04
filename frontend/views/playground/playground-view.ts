@@ -178,7 +178,7 @@ export class PlaygroundView extends View implements BeforeEnterObserver {
         FlamesEndpoint.convertFlameToXml(FlameMapper.mapToBackend(playgroundStore.flame)).then(flameXml => {
             this.getFlamePanel().flameXml = flameXml
             this.getFlamePanel().transferFlameToClipbord()
-            this.notificationMessage = 'Parameters are now available at the Flame-tab and were copied to the Clipboard'
+            this.notificationMessage = 'Parameters were copied to the Clipboard'
             this.openNotification(1)
         })
           .catch(err=> {
