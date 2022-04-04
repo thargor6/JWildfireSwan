@@ -2,3 +2,4 @@
 /target/
 /.idea/
 /frontend/generated/
+/src/main/resources/examples/_simple.flame
