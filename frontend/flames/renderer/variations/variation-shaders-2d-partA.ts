@@ -369,10 +369,10 @@ class BlobFunc extends VariationShaderFunc2D {
           float amount = ${variation.amount.toWebGl()};
           float low = ${variation.params.get(this.PARAM_LOW)!.toWebGl()};
           float high = ${variation.params.get(this.PARAM_HIGH)!.toWebGl()};
-          int waves = ${variation.params.get(this.PARAM_WAVES)!.toWebGl()};
+          float waves = ${variation.params.get(this.PARAM_WAVES)!.toWebGl()};
           float a = atan2(_tx, _ty);
           float r = sqrt(_tx * _tx + _ty * _ty);
-          r = r * (low + (high - low) * (0.5 + 0.5 * sin(float(waves) * a)));
+          r = r * (low + (high - low) * (0.5 + 0.5 * sin(waves * a)));
           float nx = sin(a) * r;
           float ny = cos(a) * r;
           _vx += amount * nx;

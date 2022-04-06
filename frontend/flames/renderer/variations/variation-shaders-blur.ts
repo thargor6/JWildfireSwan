@@ -162,6 +162,128 @@ class ExBlurFunc extends VariationShaderFunc2D {
     }
 }
 
+class Falloff2Func extends VariationShaderFunc2D {
+    PARAM_SCATTER = 'scatter'
+    PARAM_MINDIST = 'mindist'
+    PARAM_MUL_X = 'mul_x'
+    PARAM_MUL_Y = 'mul_y'
+    PARAM_MUL_Z = 'mul_z'
+    PARAM_MUL_C = 'mul_c'
+    PARAM_X0 = 'x0'
+    PARAM_Y0 = 'y0'
+    PARAM_Z0 = 'z0'
+    PARAM_INVERT = 'invert'
+    PARAM_TYPE = 'type'
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_SCATTER, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
+            { name: this.PARAM_MINDIST, type: VariationParamType.VP_NUMBER, initialValue: 0.5 },
+            { name: this.PARAM_MUL_X, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
+            { name: this.PARAM_MUL_Y, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
+            { name: this.PARAM_MUL_Z, type: VariationParamType.VP_NUMBER, initialValue: 0.0 },
+            { name: this.PARAM_MUL_C, type: VariationParamType.VP_NUMBER, initialValue: 0.0 },
+            { name: this.PARAM_X0, type: VariationParamType.VP_NUMBER, initialValue: 0.0 },
+            { name: this.PARAM_Y0, type: VariationParamType.VP_NUMBER, initialValue: 0.0 },
+            { name: this.PARAM_Z0, type: VariationParamType.VP_NUMBER, initialValue: 0.0 },
+            { name: this.PARAM_INVERT, type: VariationParamType.VP_NUMBER, initialValue: 0 },
+            { name: this.PARAM_TYPE, type: VariationParamType.VP_NUMBER, initialValue: 0 }
+        ]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        /* falloff2 by Xyrus02 */
+        return `{
+          float amount = ${variation.amount.toWebGl()};
+          float scatter = ${variation.params.get(this.PARAM_SCATTER)!.toWebGl()};
+          float mindist = ${variation.params.get(this.PARAM_MINDIST)!.toWebGl()};
+          float mul_x = ${variation.params.get(this.PARAM_MUL_X)!.toWebGl()};
+          float mul_y = ${variation.params.get(this.PARAM_MUL_Y)!.toWebGl()};
+          float mul_z = ${variation.params.get(this.PARAM_MUL_Z)!.toWebGl()};
+          float mul_c = ${variation.params.get(this.PARAM_MUL_C)!.toWebGl()};
+          float x0 = ${variation.params.get(this.PARAM_X0)!.toWebGl()};
+          float y0 = ${variation.params.get(this.PARAM_Y0)!.toWebGl()};
+          float z0 = ${variation.params.get(this.PARAM_Z0)!.toWebGl()};
+          int invert = ${variation.params.get(this.PARAM_INVERT)!.toWebGl()};
+          int type = ${variation.params.get(this.PARAM_TYPE)!.toWebGl()};
+          
+          float _rmax = 0.04 * scatter;
+          float pIn_x = _tx;
+          float pIn_y = _ty;
+          float pIn_z = _tz;
+          if (type == 1) {            
+            float r_in = sqrt(pIn_x*pIn_x + pIn_y*pIn_y + pIn_z*pIn_z) + 1e-6;
+            float d = sqrt(sqr(pIn_x - x0) + sqr(pIn_y - y0) + sqr(pIn_z - z0));
+            if (invert != 0)
+              d = 1.0 - d;
+            if (d < 0.0)
+              d = 0.0;
+            d = (d - mindist) * _rmax;
+            if (d < 0.0)
+              d = 0.0;
+            float sigma = asin(pIn_z / r_in) + mul_z * rand8(tex, rngState) * d;
+            float phi = atan2(pIn_y, pIn_x) + mul_y * rand8(tex, rngState) * d;
+            float r = r_in + mul_x * rand8(tex, rngState) * d;
+            float sins = sin(sigma);
+            float coss = cos(sigma);
+            float sinp = sin(phi);
+            float cosp = cos(phi);
+            _vx += amount * (r * coss * cosp);
+            _vy += amount * (r * coss * sinp);
+            _vz += amount * (sins);
+            _color = abs(fract(_color + mul_c * rand8(tex, rngState) * d));
+          }
+          else if(type==2) {
+            float d = sqrt(sqr(pIn_x - x0) + sqr(pIn_y - y0) + sqr(pIn_z - z0));
+            if (invert != 0)
+              d = 1.0 - d;
+            if (d < 0.0)
+              d = 0.0;
+            d = (d - mindist) * _rmax;
+            if (d < 0.0)
+              d = 0.0;
+            
+            float sigma = d * rand8(tex, rngState) * 2.0 * M_PI;
+            float phi = d * rand8(tex, rngState) * M_PI;
+            float r = d * rand8(tex, rngState);
+            
+            float sins = sin(sigma);
+            float coss = cos(sigma);
+            
+            float sinp = sin(phi);
+            float cosp = cos(phi);
+            
+            _vx += amount * (pIn_x + mul_x * r * coss * cosp);
+            _vy += amount * (pIn_y + mul_y * r * coss * sinp);
+            _vz += amount * (pIn_z + mul_z * r * sins);
+            _color = abs(fract(_color + mul_c * rand8(tex, rngState) * d));
+          }
+          else {
+            float d = sqrt(sqr(pIn_x - x0) + sqr(pIn_y - y0) + sqr(pIn_z - z0));
+            if (invert != 0)
+              d = 1.0 - d;
+            if (d < 0.0)
+              d = 0.0;
+            d = (d - mindist) * _rmax;
+            if (d < 0.0)
+              d = 0.0;
+            
+            _vx += amount * (pIn_x + mul_x * rand8(tex, rngState) * d);
+            _vy += amount * (pIn_y + mul_y * rand8(tex, rngState) * d);
+            _vz += amount * (pIn_z + mul_z * rand8(tex, rngState) * d);
+            _color = abs(fract(_color + mul_c * rand8(tex, rngState) * d));
+          }   
+        }`;
+    }
+
+    get name(): string {
+        return 'falloff2';
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D, VariationTypes.VARTYPE_BLUR];
+    }
+}
+
 class FarBlurFunc extends VariationShaderFunc2D {
     PARAM_X = 'x'
     PARAM_Y = 'y'
@@ -304,6 +426,7 @@ export function registerVars_Blur() {
     VariationShaders.registerVar(new BlurZoomFunc())
     VariationShaders.registerVar(new CircleBlurFunc())
     VariationShaders.registerVar(new ExBlurFunc())
+    VariationShaders.registerVar(new Falloff2Func())
     VariationShaders.registerVar(new FarBlurFunc())
     VariationShaders.registerVar(new NoiseFunc())
     VariationShaders.registerVar(new PreBlurFunc())

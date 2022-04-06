@@ -1357,6 +1357,209 @@ class PowerFunc extends VariationShaderFunc2D {
     }
 }
 
+class PostAxisSymmetryWFFunc extends VariationShaderFunc2D {
+    AXIS_X = 0;
+    AXIS_Y = 1;
+    AXIS_Z = 2;
+
+    PARAM_AXIS = 'axis'
+    PARAM_CENTRE_X = 'centre_x'
+    PARAM_CENTRE_Y = 'centre_y'
+    PARAM_CENTRE_Z = 'centre_z'
+    PARAM_ROTATION = 'rotation'
+    PARAM_X1COLORSHIFT = 'x1colorshift'
+    PARAM_Y1COLORSHIFT = 'y1colorshift'
+    PARAM_Z1COLORSHIFT = 'z1colorshift'
+    PARAM_X2COLORSHIFT = 'x2colorshift'
+    PARAM_Y2COLORSHIFT = 'y2colorshift'
+    PARAM_Z2COLORSHIFT = 'z2colorshift'
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_AXIS, type: VariationParamType.VP_NUMBER, initialValue: this.AXIS_X },
+            { name: this.PARAM_CENTRE_X, type: VariationParamType.VP_NUMBER, initialValue: 0.25 },
+            { name: this.PARAM_CENTRE_Y, type: VariationParamType.VP_NUMBER, initialValue: 0.5 },
+            { name: this.PARAM_CENTRE_Z, type: VariationParamType.VP_NUMBER, initialValue: 0.5 },
+            { name: this.PARAM_ROTATION, type: VariationParamType.VP_NUMBER, initialValue: 30.0 },
+            { name: this.PARAM_X1COLORSHIFT, type: VariationParamType.VP_NUMBER, initialValue: 0.0 },
+            { name: this.PARAM_Y1COLORSHIFT, type: VariationParamType.VP_NUMBER, initialValue: 0.0 },
+            { name: this.PARAM_Z1COLORSHIFT, type: VariationParamType.VP_NUMBER, initialValue: 0.0 },
+            { name: this.PARAM_X2COLORSHIFT, type: VariationParamType.VP_NUMBER, initialValue: 0.0 },
+            { name: this.PARAM_Y2COLORSHIFT, type: VariationParamType.VP_NUMBER, initialValue: 0.0 },
+            { name: this.PARAM_Z2COLORSHIFT, type: VariationParamType.VP_NUMBER, initialValue: 0.0 }
+        ]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        return `{
+          float amount = ${variation.amount.toWebGl()};
+          int axis = ${variation.params.get(this.PARAM_AXIS)!.toWebGl()};
+          float centre_x = ${variation.params.get(this.PARAM_CENTRE_X)!.toWebGl()};
+          float centre_y = ${variation.params.get(this.PARAM_CENTRE_Y)!.toWebGl()};
+          float centre_z = ${variation.params.get(this.PARAM_CENTRE_Z)!.toWebGl()};
+          float rotation = ${variation.params.get(this.PARAM_ROTATION)!.toWebGl()};
+          float x1colorshift = ${variation.params.get(this.PARAM_X1COLORSHIFT)!.toWebGl()};
+          float y1colorshift = ${variation.params.get(this.PARAM_Y1COLORSHIFT)!.toWebGl()};
+          float z1colorshift = ${variation.params.get(this.PARAM_Z1COLORSHIFT)!.toWebGl()};
+          float x2colorshift = ${variation.params.get(this.PARAM_X2COLORSHIFT)!.toWebGl()};
+          float y2colorshift = ${variation.params.get(this.PARAM_Y2COLORSHIFT)!.toWebGl()};
+          float z2colorshift = ${variation.params.get(this.PARAM_Z2COLORSHIFT)!.toWebGl()};
+          if (abs(amount) > EPSILON) {
+            float a = rotation * (2.0*M_PI) / 180.0 / 2.0;
+            bool _doRotate = abs(a) > EPSILON;
+            float _sina = sin(a);
+            float _cosa = cos(a);
+            float _halve_dist = amount / 2.0;
+            if(axis==${this.AXIS_Y}) {
+              float dx, dy;
+              dy = _vy - centre_y;
+              if (rand8(tex, rngState) < 0.5) {
+                float ax = _vx;
+                float ay = centre_y + dy + _halve_dist;
+                if (_doRotate) {
+                  dx = ax - centre_x;
+                  dy = ay - centre_y;
+                  ax = centre_x + dx * _cosa + dy * _sina;
+                  ay = centre_y + dy * _cosa - dx * _sina;
+                }
+                _vx = ax;
+                _vy = ay;
+                _color = mod(_color + y1colorshift, 1.0);
+              } else {
+                float bx = _vx;
+                float by = centre_y - dy - _halve_dist;
+                if (_doRotate) {
+                  dx = bx - centre_x;
+                  dy = by - centre_y;
+                  bx = centre_x + dx * _cosa - dy * _sina;
+                  by = centre_y + dy * _cosa + dx * _sina;
+                  _color = mod(_color + y2colorshift, 1.0);
+                }
+                _vx = bx;
+                _vy = by;
+              }
+            }
+            else if(axis==${this.AXIS_Z}) {
+              float dx, dz;
+              dz = _vz - centre_z;
+              if (rand8(tex, rngState) < 0.5) {
+                float ax = _vx;
+                float az = centre_z + dz + _halve_dist;
+                if (_doRotate) {
+                  dx = ax - centre_x;
+                  dz = az - centre_z;
+                  ax = centre_x + dx * _cosa + dz * _sina;
+                  az = centre_y + dz * _cosa - dx * _sina;
+                }
+                _vx = ax;
+                _vz = az;
+                _color = mod(_color + z1colorshift, 1.0);
+              } else {
+                float bx = _vx;
+                float bz = centre_z - dz - _halve_dist;
+                if (_doRotate) {
+                  dx = bx - centre_x;
+                  dz = bz - centre_z;
+                  bx = centre_x + dx * _cosa - dz * _sina;
+                  bz = centre_y + dz * _cosa + dx * _sina;
+                }
+                _vx = bx;
+                _vz = bz;
+                _color = mod(_color + z2colorshift, 1.0);
+              }
+            }            
+            else { //  AXIS_X
+              float dx, dy;
+              dx = _vx - centre_x;
+              if (rand8(tex, rngState) < 0.5) {
+                float ax = centre_x + dx + _halve_dist;
+                float ay = _vy;
+                if (_doRotate) {
+                  dx = ax - centre_x;
+                  dy = ay - centre_y;
+                  ax = centre_x + dx * _cosa + dy * _sina;
+                  ay = centre_y + dy * _cosa - dx * _sina;
+                }
+                _vx = ax;
+                _vy = ay;
+                _color = mod(_color + x1colorshift, 1.0);
+              } else {
+                float bx = centre_x - dx - _halve_dist;
+                float by = _vy;
+                if (_doRotate) {
+                  dx = bx - centre_x;
+                  dy = by - centre_y;
+                  bx = centre_x + dx * _cosa - dy * _sina;
+                  by = centre_y + dy * _cosa + dx * _sina;
+                }
+                _vx = bx;
+                _vy = by;
+                _color = mod(_color + x2colorshift, 1.0);
+              }
+            }
+          }  
+        }`;
+    }
+
+    get name(): string {
+        return 'post_axis_symmetry_wf';
+    }
+
+    get priority(): number {
+        return 1
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D, VariationTypes.VARTYPE_POST, VariationTypes.VARTYPE_DC];
+    }
+}
+
+class PostPointSymmetryWFFunc extends VariationShaderFunc2D {
+    PARAM_CENTRE_X = 'centre_x'
+    PARAM_CENTRE_Y = 'centre_y'
+    PARAM_ORDER = 'order'
+    PARAM_COLORSHIFT = 'colorshift'
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_CENTRE_X, type: VariationParamType.VP_NUMBER, initialValue: 0.25 },
+            { name: this.PARAM_CENTRE_Y, type: VariationParamType.VP_NUMBER, initialValue: 0.5 },
+            { name: this.PARAM_ORDER, type: VariationParamType.VP_NUMBER, initialValue: 3 },
+            { name: this.PARAM_COLORSHIFT, type: VariationParamType.VP_NUMBER, initialValue: 0.0 }
+        ]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        return `{
+          float amount = ${variation.amount.toWebGl()};
+          float centre_x = ${variation.params.get(this.PARAM_CENTRE_X)!.toWebGl()};
+          float centre_y = ${variation.params.get(this.PARAM_CENTRE_Y)!.toWebGl()};
+          int order = ${variation.params.get(this.PARAM_ORDER)!.toWebGl()};
+          float colorshift = ${variation.params.get(this.PARAM_COLORSHIFT)!.toWebGl()};
+          float da = (2.0*M_PI) / float(order);
+          float dx = (_vx - centre_x) * amount;
+          float dy = (_vy - centre_y) * amount;
+          int idx = iRand8(tex, order, rngState);
+          float angle = float(idx) * da;
+          float sina = sin(angle); 
+          float cosa = cos(angle);
+          _vx = centre_x + dx * cosa + dy * sina;
+          _vy = centre_y + dy * cosa - dx * sina;
+          _color = mod(_color + float(idx) * colorshift, 1.0);
+        }`;
+    }
+
+    get name(): string {
+        return 'post_point_symmetry_wf';
+    }
+
+    get priority(): number {
+        return 1
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D, VariationTypes.VARTYPE_POST, VariationTypes.VARTYPE_DC];
+    }
+}
+
 class ProjectiveFunc extends VariationShaderFunc2D {
     PARAM_A = 'A'
     PARAM_B = 'B'
@@ -1389,12 +1592,12 @@ class ProjectiveFunc extends VariationShaderFunc2D {
           float A = ${variation.params.get(this.PARAM_A)!.toWebGl()};
           float B = ${variation.params.get(this.PARAM_B)!.toWebGl()};
           float C = ${variation.params.get(this.PARAM_C)!.toWebGl()};
-          float A1 = float(${variation.params.get(this.PARAM_A1)});
-          float B1 = float(${variation.params.get(this.PARAM_B1)});
-          float C1 = float(${variation.params.get(this.PARAM_C1)});
-          float A2 = float(${variation.params.get(this.PARAM_A2)});
-          float B2 = float(${variation.params.get(this.PARAM_B2)});
-          float C2 = float(${variation.params.get(this.PARAM_C2)});
+          float A1 = ${variation.params.get(this.PARAM_A1)!.toWebGl()};
+          float B1 = ${variation.params.get(this.PARAM_B1)!.toWebGl()};
+          float C1 = ${variation.params.get(this.PARAM_C1)!.toWebGl()};
+          float A2 = ${variation.params.get(this.PARAM_A2)!.toWebGl()};
+          float B2 = ${variation.params.get(this.PARAM_B2)!.toWebGl()};
+          float C2 = ${variation.params.get(this.PARAM_C2)!.toWebGl()};
           float U = A * _tx + B * _ty + C;
           _vx += amount * (A1 * _tx + B1 * _ty + C1) / U;
           _vy += amount * (A2 * _tx + B2 * _ty + C2) / U;
@@ -1801,6 +2004,8 @@ export function registerVars_2D_PartK() {
     VariationShaders.registerVar(new PopcornFunc())
     VariationShaders.registerVar(new Popcorn2Func())
     VariationShaders.registerVar(new PowerFunc())
+    VariationShaders.registerVar(new PostAxisSymmetryWFFunc())
+    VariationShaders.registerVar(new PostPointSymmetryWFFunc())
     VariationShaders.registerVar(new ProjectiveFunc())
     VariationShaders.registerVar(new PTransformFunc())
     VariationShaders.registerVar(new PyramidFunc())
