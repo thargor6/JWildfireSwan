@@ -37,7 +37,7 @@ export class RendererRenderPanel extends MobxLitElement {
 
   render() {
     return html`
-          <vaadin-button @click="${()=>rendererStore.clearFlames()}">Clear all</vaadin-button>
+          <vaadin-button @click="${()=>rendererStore.clearFlames()}">Clear all (${rendererStore.flames.length})</vaadin-button>
           <vaadin-grid .items=${rendererStore.flames}
                   .selectedItems="${rendererStore.selectedFlames}"
                   @active-item-changed="${(e: GridActiveItemChangedEvent<RendererFlame>) => {

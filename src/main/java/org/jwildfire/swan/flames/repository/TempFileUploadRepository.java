@@ -46,7 +46,7 @@ public class TempFileUploadRepository {
     return RequestContextHolder.currentRequestAttributes().getSessionId();
   }
 
-  public UUID addFile(MultipartFile file) {
+  public synchronized UUID addFile(MultipartFile file) {
     try {
       final String filename = file.getOriginalFilename();
       final byte[] fileContent = file.isEmpty() ? null : file.getInputStream().readAllBytes();
