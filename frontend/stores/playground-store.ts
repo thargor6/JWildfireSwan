@@ -15,20 +15,20 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 */
 
-import { makeAutoObservable } from 'mobx';
+import {makeAutoObservable} from 'mobx';
 import {VariationShaders} from "Frontend/flames/renderer/variations/variation-shaders";
 import {registerVars_2D_PartA} from "Frontend/flames/renderer/variations/variation-shaders-2d-partA";
 import {registerVars_2D_PartK} from "Frontend/flames/renderer/variations/variation-shaders-2d-partK";
 import {registerVars_3D} from "Frontend/flames/renderer/variations/variation-shaders-3d";
 import {registerVars_ZTransforms} from "Frontend/flames/renderer/variations/variation-shaders-ztransform";
 import {Flame} from "Frontend/flames/model/flame";
-import {FlameRenderer} from "Frontend/flames/renderer/flame-renderer";
 import {GalleryEndpoint} from "Frontend/generated/endpoints";
 import {registerVars_Complex} from "Frontend/flames/renderer/variations/variation-shaders-2d-complex";
 import {registerVars_Waves} from "Frontend/flames/renderer/variations/variation-shaders-waves";
 import {registerVar_Synth} from "Frontend/flames/renderer/variations/variation-shaders-synth";
 import {registerVars_Blur} from "Frontend/flames/renderer/variations/variation-shaders-blur";
 import {registerVars_2D_PartS} from "Frontend/flames/renderer/variations/variation-shaders-2d-partS";
+import {ExampleFlame, parseExampleFlame, sortExamples, SortOrder} from "Frontend/stores/example-flames";
 
 type OnInitCallback = () => void
 
@@ -41,7 +41,7 @@ export class PlaygroundStore {
   calculating = false
   lastError = ''
   flame = new Flame()
-  exampleFlamenames: string[] = []
+  exampleFlames: ExampleFlame[] = []
 
   constructor() {
     makeAutoObservable(this);
@@ -52,8 +52,9 @@ export class PlaygroundStore {
       let vars = [...VariationShaders.varNameList]
       vars.sort()
       this.variations = vars
-      const examples = await GalleryEndpoint.getExampleList()
-      this.exampleFlamenames = examples.sort((a, b) => a.localeCompare(b)  )
+      const examples = await GalleryEndpoint.getExampleMetaDataList().then(
+        examples => examples.map(example => parseExampleFlame(example)!).filter(example=>example!==undefined))
+      this.exampleFlames = sortExamples(examples, SortOrder.OLDEST_FIRST)
       this.initFlag = true
       this.notifyInit('store')
     }
@@ -86,9 +87,9 @@ export class PlaygroundStore {
     removeCbs.forEach(key=>this.onInitCallbacks.delete(key))
   }
 
-  public randomExampleFlamename = ()=> {
-    const idx = Math.floor( this.exampleFlamenames.length * Math.random())
-    return idx>=0 && idx<this.exampleFlamenames.length ? this.exampleFlamenames[idx] : ''
+  public randomExampleFlame = (): ExampleFlame => {
+    const idx = Math.floor( this.exampleFlames.length * Math.random())
+    return this.exampleFlames[idx]
   }
 }
 

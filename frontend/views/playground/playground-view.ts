@@ -174,7 +174,7 @@ export class PlaygroundView extends View implements BeforeEnterObserver {
         })
     }
 
-    exportParamsAsXml = (): void => {
+    exportParamsToClipboard = (): void => {
         FlamesEndpoint.convertFlameToXml(FlameMapper.mapToBackend(playgroundStore.flame)).then(flameXml => {
             this.getFlamePanel().flameXml = flameXml
             this.getFlamePanel().transferFlameToClipbord()
@@ -184,12 +184,6 @@ export class PlaygroundView extends View implements BeforeEnterObserver {
           .catch(err=> {
               playgroundStore.lastError = err
           })
-    }
-
-    exportParamsToClipboard = (): void => {
-      this.getFlamePanel().transferFlameToClipbord()
-      this.notificationMessage = 'Flame parameters were copied to the Clipboard'
-      this.openNotification(1)
     }
 
     importParamsFromClipboard = (): void => {
@@ -243,7 +237,7 @@ export class PlaygroundView extends View implements BeforeEnterObserver {
     }
 
     renderFirstFlame = ()=> {
-        this.getFlamePanel().flameName = this.loadExampleAtStartup ? this.loadExampleAtStartup : playgroundStore.randomExampleFlamename()
+        this.getFlamePanel().flameName = this.loadExampleAtStartup ? this.loadExampleAtStartup : playgroundStore.randomExampleFlame().name
         this.importExampleFlame()
         if(this.loadExampleAtStartup) {
             GalleryEndpoint.getExampleFlameXml(this.loadExampleAtStartup).then(flameXml => {
@@ -291,7 +285,7 @@ export class PlaygroundView extends View implements BeforeEnterObserver {
                                              .onCancelRender="${()=>this.getRenderPanel().cancelRender()}"
                       .visible=${this.selectedTab === 1} .onImageSizeChanged="${()=>this.getRenderPanel().rerenderFlame()}"></playground-render-panel>
                     <playground-edit-panel id='editPnl' .onRefresh="${()=>this.getRenderPanel().rerenderFlame()}"
-                                           .onExportParams="${this.exportParamsAsXml}"
+                                           .onExportParams="${this.exportParamsToClipboard}"
                                              .visible=${this.selectedTab === 2}></playground-edit-panel>
 
                  </div>

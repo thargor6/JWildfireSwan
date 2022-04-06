@@ -25,8 +25,9 @@ import '@vaadin/combo-box'
 import {html, nothing} from 'lit';
 import { customElement } from 'lit/decorators.js';
 import { View } from '../../views/view';
-import {galleryStore, SortOrder} from "Frontend/stores/gallery-store";
+import {galleryStore} from "Frontend/stores/gallery-store";
 import {Router} from "@vaadin/router";
+import {SortOrder} from "Frontend/stores/example-flames";
 
 @customElement('gallery-view')
 export class GalleryView extends View {

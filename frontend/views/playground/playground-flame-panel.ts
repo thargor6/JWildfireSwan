@@ -35,6 +35,7 @@ import {playgroundStore} from "Frontend/stores/playground-store";
 import {MobxLitElement} from "@adobe/lit-mobx";
 import {HasValue} from "@hilla/form";
 import {ComboBoxRenderer} from "@vaadin/combo-box";
+import {ExampleFlame} from "Frontend/stores/example-flames";
 
 @customElement('playground-flame-panel')
 export class PlaygroundFlamePanel extends MobxLitElement {
@@ -69,8 +70,8 @@ export class PlaygroundFlamePanel extends MobxLitElement {
     return html`
       <div style="${this.visible ? `display:block;`: `display:none;`}">
         <div style="display:flex; flex-direction: column;">
-          <vaadin-combo-box label="Example flame" .items="${playgroundStore.exampleFlamenames}" value="${this.flameName}"
-              .renderer="${this.exampleFlameRenderer}" @change="${(event: Event) => this.flameNameChanged(event)}"></vaadin-combo-box>
+          <vaadin-combo-box label="Example flame" .items="${playgroundStore.exampleFlames}" value="${this.flameName}"
+            item-value-path="name" item-label-path="title"  .renderer="${this.exampleFlameRenderer}" @change="${(event: Event) => this.flameNameChanged(event)}"></vaadin-combo-box>
 
           <vaadin-vertical-layout theme="padding">
           
@@ -111,10 +112,10 @@ export class PlaygroundFlamePanel extends MobxLitElement {
     navigator.clipboard.writeText(this.flameXml);
   }
 
-  private exampleFlameRenderer: ComboBoxRenderer<string> = (root, _, { item: example }) => {
+  private exampleFlameRenderer: ComboBoxRenderer<ExampleFlame> = (root, _, { item: example }) => {
     render(
       html`
-      <div>${example}!!</div>
+      <div>${example.title}</div>
     `,
       root
     );
