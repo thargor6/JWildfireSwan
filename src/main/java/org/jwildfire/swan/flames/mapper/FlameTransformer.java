@@ -46,7 +46,30 @@ public class FlameTransformer {
   // apply some Swan-specific changes
   public Flame transformFlame(Flame pFlame) {
     Flame flame = pFlame.makeCopy();
-
+    // apply post symmetry by using a final transform
+    switch(flame.getPostSymmetryType()) {
+      case POINT:
+      {
+        PostPointSymmetryWFFunc func = new PostPointSymmetryWFFunc();
+        func.setParameter(PostPointSymmetryWFFunc.PARAM_CENTRE_X, flame.getPostSymmetryCentreX());
+        func.setParameter(PostPointSymmetryWFFunc.PARAM_CENTRE_Y, flame.getPostSymmetryCentreY());
+        func.setParameter(PostPointSymmetryWFFunc.PARAM_ORDER, flame.getPostSymmetryOrder());
+        addPostSymmetryVariation(flame, func, 1.0);
+      }
+      break;
+      case X_AXIS:
+      case Y_AXIS:
+      {
+        PostAxisSymmetryWFFunc func = new PostAxisSymmetryWFFunc();
+        func.setParameter(PostAxisSymmetryWFFunc.PARAM_AXIS, flame.getPostSymmetryType() == PostSymmetryType.X_AXIS ? 0 : 1);
+        func.setParameter(PostAxisSymmetryWFFunc.PARAM_CENTRE_X, flame.getPostSymmetryCentreX());
+        func.setParameter(PostAxisSymmetryWFFunc.PARAM_CENTRE_Y, flame.getPostSymmetryCentreY());
+        func.setParameter(PostAxisSymmetryWFFunc.PARAM_ROTATION, flame.getPostSymmetryRotation());
+        addPostSymmetryVariation(flame, func, flame.getPostSymmetryDistance());
+      }
+      break;
+    }
+    flame.setPostSymmetryType(PostSymmetryType.NONE);
     // emulate the preserveZ-feature by adding zscale-transforms
     if(flame.isPreserveZ()) {
       for(Layer layer: flame.getLayers()) {
