@@ -110,7 +110,7 @@ public class FlamesService {
     int idx = (int)(Math.random()*allGenerators.size());
     String randGenFlameName = allGenerators.get(idx).getName(); //RandomFlameGeneratorList.DEFAULT_GENERATOR_NAME;
     String randGenGradientName = new AllRandomGradientGenerator().getName();
-    String randGenSymmetryName = RandomSymmetryGeneratorList.NONE.getName();
+    String randGenSymmetryName = RandomSymmetryGeneratorList.SPARSE.getName();
     String randGenWFieldName = RandomWeightingFieldGeneratorList.NONE.getName();
 
     VariationFuncList.setSupportedVariations(supportedVariations);

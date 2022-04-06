@@ -40,6 +40,7 @@ import {RenderResolution, RenderResolutions} from "Frontend/flames/renderer/rend
 import {FlamesEndpoint} from "Frontend/generated/endpoints";
 import {FlameMapper} from "Frontend/flames/model/mapper/flame-mapper";
 import {playgroundStore} from "Frontend/stores/playground-store";
+import {Parameters} from "Frontend/flames/model/parameters";
 
 @customElement('renderer-view')
 export class RendererView extends View  {
@@ -65,6 +66,9 @@ export class RendererView extends View  {
 
     @state()
     autoSave = true
+
+    @state()
+    disableTransparency = false
 
     @query('#imageContainer')
     imageContainer!: HTMLDivElement
@@ -96,6 +100,8 @@ export class RendererView extends View  {
 
                           </div>
                           <vaadin-checkbox style="margin-top: 1em;" ?checked=${this.autoSave} label="Automatic download generated files" @change="${(event: Event) => this.autoSaveChanged(event)}"></vaadin-checkbox>
+                          <vaadin-checkbox style="margin-top: 1em;" ?checked=${this.disableTransparency} label="Disable transparency" @change="${(event: Event) => this.disableTransparencyChanged(event)}"></vaadin-checkbox>
+
                            <div style="display: flex; margin-top: 1em; margin-bottom: 1em;">
                              <vaadin-button @click="${this.renderFlames}">Render</vaadin-button>
                              <vaadin-button theme="tertiary" @click="${this.signalCancel}">Cancel</vaadin-button>
@@ -148,6 +154,12 @@ export class RendererView extends View  {
         }
     }
 
+    private disableTransparencyChanged(event: Event) {
+        if ((event.target as HasValue<string>).value) {
+            this.disableTransparency = (event.target as any).checked ? true: false
+        }
+    }
+
     protected firstUpdated(_changedProperties: PropertyValues) {
         super.firstUpdated(_changedProperties);
         const that = this
@@ -183,6 +195,9 @@ export class RendererView extends View  {
     renderNextFlame = ()=> {
         const flame = rendererStore.flames.find(flame => !flame.finished)
         if(flame && !rendererStore.cancelSignalled) {
+            if(this.disableTransparency) {
+                flame.flame.bgTransparency = Parameters.booleanParam(false)
+            }
             if(this.autoSave) {
               while(this.allImageContainer.children.length>this.MAX_IMAGES_HOLD) {
                   this.allImageContainer.removeChild(this.allImageContainer.children[0])
@@ -193,7 +208,7 @@ export class RendererView extends View  {
             const renderPanel = this.getRenderPanel()
             renderPanel.clearRenderer()
             this.getRenderPanel().recreateCanvas()
-            this.renderer =  new FlameRenderer(this.renderSize, this.swarmSize,
+            this.renderer = new FlameRenderer(this.renderSize, this.swarmSize,
               DisplayMode.FLAME, this.getRenderPanel().canvas, this.imageContainer,
               true, RenderResolutions.getCropRegion(this.renderSize, this.cropSize),
               this.qualityScale, flame.flame)
