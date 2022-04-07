@@ -713,6 +713,56 @@ class ModulusFunc extends VariationShaderFunc2D {
     }
 }
 
+class MurlFunc extends VariationShaderFunc2D {
+    PARAM_C = 'c'
+    PARAM_POWER = 'power'
+    PARAM_SIDES = 'sides'
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_C, type: VariationParamType.VP_NUMBER, initialValue: 0.1 },
+            { name: this.PARAM_POWER, type: VariationParamType.VP_NUMBER, initialValue: 1 }]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        /*
+           Original function written in C by Peter Sdobnov (Zueuk).
+           Transcribed into Java by Nic Anderson (chronologicaldot)
+        */
+        return `{
+          float amount = ${variation.amount.toWebGl()};
+          float c = ${variation.params.get(this.PARAM_C)!.toWebGl()};
+          int power = ${variation.params.get(this.PARAM_POWER)!.toWebGl()};
+          float _c = c;
+          if (power != 1) {
+            _c /= (float(power - 1));
+          }
+          float _p2 = float(power) / 2.0;
+          float _vp = amount * (_c + 1.0);
+        
+          float _a = atan2(_ty, _tx) * float(power);
+          float _sina = sin(_a);
+          float _cosa = cos(_a);
+        
+          float _r = _c * pow(sqr(_tx) + sqr(_ty), _p2);
+        
+          float _re = _r * _cosa + 1.0;
+          float _im = _r * _sina;
+          float _rl = _vp / (sqr(_re) + sqr(_im));
+        
+          _vx += _rl * (_tx * _re + _ty * _im);
+          _vy += _rl * (_ty * _re - _tx * _im);
+        }`;
+    }
+
+    get name(): string {
+        return 'murl';
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
 class NGonFunc extends VariationShaderFunc2D {
     PARAM_CIRCLE = 'circle'
     PARAM_CORNERS = 'corners'
@@ -1195,6 +1245,50 @@ class PetalFunc extends VariationShaderFunc2D {
 
     get name(): string {
         return 'petal';
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
+class PhoenixJuliaFunc extends VariationShaderFunc2D {
+    PARAM_POWER = 'power'
+    PARAM_DIST = 'dist'
+    PARAM_X_DISTORT = 'x_distort'
+    PARAM_Y_DISTORT = 'y_distort'
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_POWER, type: VariationParamType.VP_NUMBER, initialValue: 3.0 },
+            { name: this.PARAM_DIST, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
+            { name: this.PARAM_X_DISTORT, type: VariationParamType.VP_NUMBER, initialValue: -0.5 },
+            { name: this.PARAM_Y_DISTORT, type: VariationParamType.VP_NUMBER, initialValue: 0.0 }]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        // phoenix_julia by TyrantWave, http://tyrantwave.deviantart.com/art/PhoenixJulia-Apophysis-Plugin-121246658
+        return `{
+          float amount = ${variation.amount.toWebGl()};
+          float power = ${variation.params.get(this.PARAM_POWER)!.toWebGl()};
+          float dist = ${variation.params.get(this.PARAM_DIST)!.toWebGl()};
+          float x_distort = ${variation.params.get(this.PARAM_X_DISTORT)!.toWebGl()};
+          float y_distort = ${variation.params.get(this.PARAM_Y_DISTORT)!.toWebGl()};
+          float _invN = dist / power;
+          float _inv2PI_N = (2.0*M_PI) / power;
+          float _cN = dist / power / 2.0;
+          float preX = _tx * (x_distort + 1.0);
+          float preY = _ty * (y_distort + 1.0);
+          float a = atan2(preY, preX) * _invN + float(iRand8(tex, 32768, rngState)) * _inv2PI_N;
+          float sina = sin(a);
+          float cosa = cos(a);
+          float r = amount * pow(sqr(_tx) + sqr(_ty), _cN);
+          _vx += r * cosa;
+          _vy += r * sina;
+        }`;
+    }
+
+    get name(): string {
+        return 'phoenix_julia';
     }
 
     get variationTypes(): VariationTypes[] {
@@ -1986,6 +2080,7 @@ export function registerVars_2D_PartK() {
     VariationShaders.registerVar(new MCarpetFunc())
     VariationShaders.registerVar(new MobiusFunc())
     VariationShaders.registerVar(new ModulusFunc())
+    VariationShaders.registerVar(new MurlFunc())
     VariationShaders.registerVar(new NGonFunc())
     VariationShaders.registerVar(new NPolarFunc())
     VariationShaders.registerVar(new OscilloscopeFunc())
@@ -1998,6 +2093,7 @@ export function registerVars_2D_PartK() {
     VariationShaders.registerVar(new PDJFunc())
     VariationShaders.registerVar(new PerspectiveFunc())
     VariationShaders.registerVar(new PetalFunc())
+    VariationShaders.registerVar(new PhoenixJuliaFunc())
     VariationShaders.registerVar(new PieFunc())
     VariationShaders.registerVar(new PolarFunc())
     VariationShaders.registerVar(new Polar2Func())

@@ -2378,6 +2378,53 @@ class VogelFunc extends VariationShaderFunc2D {
     }
 }
 
+class WedgeJuliaFunc extends VariationShaderFunc2D {
+    PARAM_POWER = 'power'
+    PARAM_DIST = 'dist'
+    PARAM_COUNT = 'count'
+    PARAM_ANGLE = 'angle'
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_POWER, type: VariationParamType.VP_NUMBER, initialValue: 7.0 },
+            { name: this.PARAM_DIST, type: VariationParamType.VP_NUMBER, initialValue: 0.2 },
+            { name: this.PARAM_COUNT, type: VariationParamType.VP_NUMBER, initialValue: 2.0 },
+            { name: this.PARAM_ANGLE, type: VariationParamType.VP_NUMBER, initialValue: 0.3 }
+        ]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        /* wedge_julia from apo plugin pack */
+        return `{
+          float amount = ${variation.amount.toWebGl()};
+          float power = ${variation.params.get(this.PARAM_POWER)!.toWebGl()};
+          float dist = ${variation.params.get(this.PARAM_DIST)!.toWebGl()};
+          float count = ${variation.params.get(this.PARAM_COUNT)!.toWebGl()};
+          float angle = ${variation.params.get(this.PARAM_ANGLE)!.toWebGl()};
+          float _theta = atan2(_ty, _tx);
+          float wedgeJulia_cf = 1.0 - angle * count * (1.0 / M_PI) * 0.5;
+          float wedgeJulia_rN = abs(power);
+          float wedgeJulia_cn = dist / power / 2.0;       
+          float r = amount * pow(_r2, wedgeJulia_cn);
+          int t_rnd = int(floor(wedgeJulia_rN * rand8(tex, rngState)));
+          float a = (_theta + 2.0 * M_PI * float(t_rnd)) / power;
+          float c = floor((count * a + M_PI) * (1.0 / M_PI) * 0.5);
+          a = a * wedgeJulia_cf + c * angle;
+          float sa = sin(a);
+          float ca = cos(a);
+          _vx += r * ca;
+          _vy += r * sa;
+        }`;
+    }
+
+    get name(): string {
+        return 'wedge_julia';
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
 class WedgeSphFunc extends VariationShaderFunc2D {
     PARAM_ANGLE = 'angle'
     PARAM_HOLE = 'hole'
@@ -2638,6 +2685,7 @@ export function registerVars_2D_PartS() {
     VariationShaders.registerVar(new VogelFunc())
     VariationShaders.registerVar(new WaffleFunc())
     VariationShaders.registerVar(new WedgeFunc())
+    VariationShaders.registerVar(new WedgeJuliaFunc())
     VariationShaders.registerVar(new WedgeSphFunc())
     VariationShaders.registerVar(new WhorlFunc())
     VariationShaders.registerVar(new XHeartFunc())
