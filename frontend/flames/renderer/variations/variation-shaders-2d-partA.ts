@@ -2375,6 +2375,215 @@ class GlynniaFunc extends VariationShaderFunc2D {
     }
 }
 
+class GlynnSim1Func extends VariationShaderFunc2D {
+    PARAM_RADIUS = 'radius'
+    PARAM_RADIUS1 = 'radius1'
+    PARAM_PHI1 = 'phi1'
+    PARAM_THICKNESS = 'thickness'
+    PARAM_POW = 'pow'
+    PARAM_CONTRAST = 'contrast'
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_RADIUS, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
+            { name: this.PARAM_RADIUS1, type: VariationParamType.VP_NUMBER, initialValue: 0.1 },
+            { name: this.PARAM_PHI1, type: VariationParamType.VP_NUMBER, initialValue: 110.0 },
+            { name: this.PARAM_THICKNESS, type: VariationParamType.VP_NUMBER, initialValue: 0.1 },
+            { name: this.PARAM_POW, type: VariationParamType.VP_NUMBER, initialValue: 1.5 },
+            { name: this.PARAM_CONTRAST, type: VariationParamType.VP_NUMBER, initialValue: 0.50 }]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        /* GlynnSim1 by eralex61, http://eralex61.deviantart.com/art/GlynnSim-plugin-112621621 */
+        return `{
+          float amount = ${variation.amount.toWebGl()};
+          float radius = ${variation.params.get(this.PARAM_RADIUS)!.toWebGl()};
+          float radius1 = ${variation.params.get(this.PARAM_RADIUS1)!.toWebGl()};
+          float phi1 = ${variation.params.get(this.PARAM_PHI1)!.toWebGl()};
+          float thickness = ${variation.params.get(this.PARAM_THICKNESS)!.toWebGl()};
+          float _pow = ${variation.params.get(this.PARAM_POW)!.toWebGl()};
+          float contrast = ${variation.params.get(this.PARAM_CONTRAST)!.toWebGl()};
+          float a = M_PI * phi1 / 180.0;
+          float sinPhi1 = sin(a);
+          float cosPhi1 = cos(a);
+          float _x1 = radius * cosPhi1;
+          float _y1 = radius * sinPhi1;
+          float _absPow = abs(_pow); 
+          float r = sqrt(_tx * _tx + _ty * _ty);
+          float Alpha = radius / r;
+          float tp_x, tp_y;
+          if (r < radius) { 
+            float rr = radius1 * (thickness + (1.0 - thickness) * rand8(tex, rngState));
+            float Phi = 2.0 * M_PI * rand8(tex, rngState);
+            float sinPhi = sin(Phi);
+            float cosPhi = cos(Phi);
+            tp_x = rr * cosPhi + _x1;
+            tp_y = rr * sinPhi + _y1;
+            _vx += amount * tp_x;
+            _vy += amount * tp_y;
+          } else {
+            if (rand8(tex, rngState) > contrast * pow(Alpha, _absPow)) {
+              tp_x = _tx;
+              tp_y = _ty;
+            } else {
+              tp_x = Alpha * Alpha * _tx;
+              tp_y = Alpha * Alpha * _ty;
+            }
+            float Z = sqr(tp_x - _x1) + sqr(tp_y - _y1);
+            if (Z < radius1 * radius1) { 
+              float rr = radius1 * (thickness + (1.0 - thickness) * rand8(tex, rngState));
+              float Phi = 2.0 * M_PI * rand8(tex, rngState);
+              float sinPhi = sin(Phi);
+              float cosPhi = cos(Phi);
+              tp_x = rr * cosPhi + _x1;
+              tp_y = rr * sinPhi + _y1;
+              _vx += amount * tp_x;
+              _vy += amount * tp_y;
+            } else {
+              _vx += amount * tp_x;
+              _vy += amount * tp_y;
+            }
+          } 
+        }`;
+    }
+
+    get name(): string {
+        return 'glynnSim1';
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
+class GlynnSim2Func extends VariationShaderFunc2D {
+    PARAM_RADIUS = 'radius'
+    PARAM_THICKNESS = 'thickness'
+    PARAM_CONTRAST = 'contrast'
+    PARAM_POW = 'pow'
+    PARAM_PHI1 = 'phi1'
+    PARAM_PHI2 = 'phi2'
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_RADIUS, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
+            { name: this.PARAM_THICKNESS, type: VariationParamType.VP_NUMBER, initialValue: 0.1 },
+            { name: this.PARAM_CONTRAST, type: VariationParamType.VP_NUMBER, initialValue: 0.50 },
+            { name: this.PARAM_POW, type: VariationParamType.VP_NUMBER, initialValue: 1.5 },
+            { name: this.PARAM_PHI1, type: VariationParamType.VP_NUMBER, initialValue: 110.0 },
+            { name: this.PARAM_PHI2, type: VariationParamType.VP_NUMBER, initialValue: 150.0 }           ]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        /* GlynnSim2 by eralex61, http://eralex61.deviantart.com/art/GlynnSim-plugin-112621621 */
+        return `{
+          float amount = ${variation.amount.toWebGl()};
+          float radius = ${variation.params.get(this.PARAM_RADIUS)!.toWebGl()};
+          float thickness = ${variation.params.get(this.PARAM_THICKNESS)!.toWebGl()};
+          float contrast = ${variation.params.get(this.PARAM_CONTRAST)!.toWebGl()};
+          float _pow = ${variation.params.get(this.PARAM_POW)!.toWebGl()};          
+          float phi1 = ${variation.params.get(this.PARAM_PHI1)!.toWebGl()};                    
+          float phi2 = ${variation.params.get(this.PARAM_PHI2)!.toWebGl()};
+          float _phi10 = M_PI * phi1 / 180.0;
+          float _phi20 = M_PI * phi2 / 180.0;
+          float _gamma = thickness * (2.0 * radius + thickness) / (radius + thickness);
+          float _delta = _phi20 - _phi10;
+          float _absPow = abs(_pow);
+          float r = sqrt(_tx * _tx + _ty * _ty);
+          float Alpha = radius / r;
+          float tp_x, tp_y;
+          if (r < radius) {
+            float rr = radius + thickness - _gamma * rand8(tex, rngState);
+            float Phi = _phi10 + _delta * rand8(tex, rngState);
+            float sinPhi = sin(Phi);
+            float cosPhi = cos(Phi);
+            tp_x = r * cosPhi;
+            tp_y = r * sinPhi;
+            _vx += amount * tp_x;
+            _vy += amount * tp_y;
+           } 
+           else {
+             if (rand8(tex, rngState) > contrast * pow(Alpha, _absPow)) {
+               _vx += amount * _tx;
+               _vy += amount * _ty;
+             } else {
+               _vx += amount * Alpha * Alpha * _tx;
+               _vy += amount * Alpha * Alpha * _ty;
+             }
+           }  
+        }`;
+    }
+
+    get name(): string {
+        return 'glynnSim2';
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
+class GlynnSim3Func extends VariationShaderFunc2D {
+    PARAM_RADIUS = 'radius'
+    PARAM_THICKNESS = 'thickness'
+    PARAM_CONTRAST = 'contrast'
+    PARAM_POW = 'pow'
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_RADIUS, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
+            { name: this.PARAM_THICKNESS, type: VariationParamType.VP_NUMBER, initialValue: 0.1 },
+            { name: this.PARAM_CONTRAST, type: VariationParamType.VP_NUMBER, initialValue: 0.50 },
+            { name: this.PARAM_POW, type: VariationParamType.VP_NUMBER, initialValue: 1.5 }
+        ]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        /* GlynnSim3 by eralex61, http://eralex61.deviantart.com/art/GlynnSim-plugin-112621621 */
+        return `{
+          float amount = ${variation.amount.toWebGl()};
+          float radius = ${variation.params.get(this.PARAM_RADIUS)!.toWebGl()};
+          float thickness = ${variation.params.get(this.PARAM_THICKNESS)!.toWebGl()};
+          float contrast = ${variation.params.get(this.PARAM_CONTRAST)!.toWebGl()};
+          float _pow = ${variation.params.get(this.PARAM_POW)!.toWebGl()};          
+          float _radius1 = radius + thickness;
+          float _radius2 = sqr(radius) / _radius1;
+          float _gamma = _radius1 / (_radius1 + _radius2);
+          float _absPow = abs(_pow);
+          float r = sqrt(_tx * _tx + _ty * _ty);
+          float alpha = radius / r;
+          if (r < _radius1) {
+            float phi = 2.0 * M_PI * rand8(tex, rngState);
+            float sinPhi = sin(phi);
+            float cosPhi = cos(phi);
+            float r;
+            if (rand8(tex, rngState) < _gamma) {
+              r = _radius1;
+            } else {
+              r = _radius2;
+            }
+            float tp_x = r * cosPhi;
+            float tp_y = r * sinPhi;
+            _vx += amount * tp_x;
+            _vy += amount * tp_y;
+          } else {
+            if (rand8(tex, rngState) > contrast * pow(alpha, _absPow)) {
+              _vx += amount * _tx;
+              _vy += amount * _ty;
+            } else {
+              _vx += amount * alpha * alpha * _tx;
+              _vy += amount * alpha * alpha * _ty;
+            }
+          } 
+        }`;
+    }
+
+    get name(): string {
+        return 'glynnSim3';
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
 class HeartFunc extends VariationShaderFunc2D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         return `{
@@ -3107,6 +3316,9 @@ export function registerVars_2D_PartA() {
     VariationShaders.registerVar(new FourthFunc())
     VariationShaders.registerVar(new GaussianBlurFunc())
     VariationShaders.registerVar(new GlynniaFunc())
+    VariationShaders.registerVar(new GlynnSim1Func())
+    VariationShaders.registerVar(new GlynnSim2Func())
+    VariationShaders.registerVar(new GlynnSim3Func())
     VariationShaders.registerVar(new HeartFunc())
     VariationShaders.registerVar(new HeartWFFunc())
     VariationShaders.registerVar(new HorseshoeFunc())
