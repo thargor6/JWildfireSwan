@@ -89,6 +89,52 @@ export class FloatMotionCurveParameter implements FlameParameter {
     }
 }
 
+export class IntMotionCurveParameter implements FlameParameter {
+    type: FlameParameterType = 'curve'
+    datatype: FlameParameterDataType = 'int'
+    private _xmin
+    private _xmax
+
+    constructor(public value: number, public viewXMin: number, public viewXMax: number, public viewYMin: number,
+                public viewYMax: number, public interpolation: MotionCurveInterpolation, public selectedIdx: number,
+                private _x: Array<number>, private _y: Array<number>, public locked: boolean) {
+        if(_x.length>0) {
+            this._xmin = this._xmax = _x[0]
+            for(let val of _x) {
+                if(val<this._xmin) {
+                    this._xmin = val
+                }
+                else if(val>this._xmax) {
+                    this._xmax = val
+                }
+            }
+        }
+        else {
+            this._xmin = this._xmax = 0
+        }
+    }
+
+    public get x() {
+        return this._x
+    }
+
+    public get xmin() {
+        return this._xmin
+    }
+
+    public get xmax() {
+        return this._xmax
+    }
+
+    public get y() {
+        return this._y
+    }
+
+    public size() {
+        return this._x.length
+    }
+}
+
 class IntScalarParameter implements FlameParameter {
     type: FlameParameterType = 'scalar'
     datatype: FlameParameterDataType = 'int'
@@ -123,10 +169,17 @@ export class Parameters {
         return new BooleanScalarParameter(value ? 1 : 0);
     }
 
-    public static motionCurveParam(value: number, viewXMin: number, viewXMax: number, viewYMin: number,
-                             viewYMax: number, interpolation: MotionCurveInterpolation, selectedIdx: number,
-                             x: Array<number>, y: Array<number>, locked: boolean) {
+    public static floatMotionCurveParam(value: number, viewXMin: number, viewXMax: number, viewYMin: number,
+                                        viewYMax: number, interpolation: MotionCurveInterpolation, selectedIdx: number,
+                                        x: Array<number>, y: Array<number>, locked: boolean) {
         return new FloatMotionCurveParameter(value, viewXMin, viewXMax, viewYMin, viewYMax, interpolation,
+          selectedIdx, x, y, locked)
+    }
+
+    public static intMotionCurveParam(value: number, viewXMin: number, viewXMax: number, viewYMin: number,
+                                   viewYMax: number, interpolation: MotionCurveInterpolation, selectedIdx: number,
+                                   x: Array<number>, y: Array<number>, locked: boolean) {
+        return new IntMotionCurveParameter(value, viewXMin, viewXMax, viewYMin, viewYMax, interpolation,
           selectedIdx, x, y, locked)
     }
 }
@@ -164,13 +217,27 @@ export class IntValueRenderParameter implements RenderParameter {
     }
 }
 
-export class LerpValueRenderParameter implements RenderParameter {
+export class FloatLerpValueRenderParameter implements RenderParameter {
     constructor(private _a: number, private _b: number) {
         // EMPTY
     }
 
     toWebGl(): string {
         return `lerp(float(${this._a}), float(${this._b}), lTime)`
+    }
+
+    equals(refValue: number): boolean {
+        return false
+    }
+}
+
+export class IntLerpValueRenderParameter implements RenderParameter {
+    constructor(private _a: number, private _b: number) {
+        // EMPTY
+    }
+
+    toWebGl(): string {
+        return `ilerp(float(${this._a}), float(${this._b}), lTime)`
     }
 
     equals(refValue: number): boolean {
@@ -187,7 +254,11 @@ export class RenderParameters {
         return new IntValueRenderParameter(value)
     }
 
-    public static lerpParam(a: number, b: number): RenderParameter {
-        return new LerpValueRenderParameter(a, b)
+    public static floatLerpParam(a: number, b: number): RenderParameter {
+        return new FloatLerpValueRenderParameter(a, b)
+    }
+
+    public static intLerpParam(a: number, b: number): RenderParameter {
+        return new IntLerpValueRenderParameter(a, b)
     }
 }

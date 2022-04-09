@@ -50,11 +50,18 @@ class ParamMapper {
     static mapForRendering(ctx: RenderMappingContext, source: FlameParameter): RenderParameter {
         if(source.datatype==='int') {
             if(source.type==='curve') {
-                const val = Math.round( evaluator.evaluate(source as FloatMotionCurveParameter, ctx.frame) )
-                return RenderParameters.intParam(val)
+                const val = evaluator.evaluate(source as FloatMotionCurveParameter, ctx.frame)
+                const mbLength = ctx.motionBlurTimeLength
+                if(mbLength>EPSILON) {
+                    const nextVal = evaluator.evaluate(source as FloatMotionCurveParameter, ctx.frame + mbLength)
+                    return RenderParameters.intLerpParam(val, nextVal)
+                }
+                else {
+                    return RenderParameters.intParam(Math.round(val))
+                }
             }
             else {
-                return RenderParameters.intParam(source.value)
+                return RenderParameters.intParam(Math.round(source.value))
             }
         }
         else {
@@ -63,7 +70,7 @@ class ParamMapper {
                 const mbLength = ctx.motionBlurTimeLength
                 if(mbLength>EPSILON) {
                     const nextVal = evaluator.evaluate(source as FloatMotionCurveParameter, ctx.frame + mbLength)
-                    return RenderParameters.lerpParam(val, nextVal)
+                    return RenderParameters.floatLerpParam(val, nextVal)
                 }
                 else {
                     return RenderParameters.floatParam(val)
@@ -89,11 +96,20 @@ class ParamMapper {
 
     public static mapFromBackend(source: SourceFlameParam): FlameParameter {
       if(source.paramType === FlameParamType.CURVE && source.curve) {
-        return Parameters.motionCurveParam(source.floatScalar ? source.floatScalar! : 0.0,
-            source.curve.viewXMin, source.curve.viewXMax, source.curve.viewYMin, source.curve.viewYMax,
-            ParamMapper.mapInterpolationFromBackend(source.curve.interpolation),
-            source.curve.selectedIdx, source.curve.x ? source.curve.x : [],
-            source.curve.y ? source.curve.y: [], source.curve.locked)
+          if(source.dataType === FlameParamDataType.INT) {
+              return Parameters.intMotionCurveParam(source.intScalar ? source.intScalar! : 0,
+                source.curve.viewXMin, source.curve.viewXMax, source.curve.viewYMin, source.curve.viewYMax,
+                ParamMapper.mapInterpolationFromBackend(source.curve.interpolation),
+                source.curve.selectedIdx, source.curve.x ? source.curve.x : [],
+                source.curve.y ? source.curve.y : [], source.curve.locked)
+          }
+          else {
+              return Parameters.floatMotionCurveParam(source.floatScalar ? source.floatScalar! : 0.0,
+                source.curve.viewXMin, source.curve.viewXMax, source.curve.viewYMin, source.curve.viewYMax,
+                ParamMapper.mapInterpolationFromBackend(source.curve.interpolation),
+                source.curve.selectedIdx, source.curve.x ? source.curve.x : [],
+                source.curve.y ? source.curve.y : [], source.curve.locked)
+          }
       }
       else { // FlameParamType.SCALAR
          if(source.dataType === FlameParamDataType.INT) {

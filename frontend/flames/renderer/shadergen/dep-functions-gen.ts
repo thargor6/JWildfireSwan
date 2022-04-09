@@ -89,6 +89,11 @@ export class DepFunctionsPartShaderGenerator {
       float lerp(float a, float b, float p) {
         return a + p * (b - a);
       }
+      
+      int ilerp(float a, float b, float p) {
+        float v = a + p * (b - a);
+        return v < 0.0 ? int(v-0.5) : int(v+0.5);
+      }
     `
   }
 
