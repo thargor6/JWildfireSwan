@@ -15,7 +15,13 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 */
 
-import {VariationParam, VariationParamType, VariationShaderFunc3D, VariationTypes} from './variation-shader-func';
+import {
+    VariationParam,
+    VariationParamType,
+    VariationShaderFunc2D,
+    VariationShaderFunc3D,
+    VariationTypes
+} from './variation-shader-func';
 import {VariationShaders} from 'Frontend/flames/renderer/variations/variation-shaders';
 import {RenderVariation, RenderXForm} from 'Frontend/flames/model/render-flame';
 import {
@@ -1354,6 +1360,83 @@ class Poincare3DFunc extends VariationShaderFunc3D {
     }
 }
 
+class PointGrid3DWFFunc extends VariationShaderFunc3D {
+    PARAM_XMIN = 'xmin'
+    PARAM_XMAX = 'xmax'
+    PARAM_XCOUNT = 'xcount'
+    PARAM_YMIN = 'ymin'
+    PARAM_YMAX = 'ymax'
+    PARAM_YCOUNT = 'ycount'
+    PARAM_ZMIN = 'zmin'
+    PARAM_ZMAX = 'zmax'
+    PARAM_ZCOUNT = 'zcount'
+    PARAM_DISTORTION = 'distortion'
+    PARAM_SEED = 'seed'
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_XMIN, type: VariationParamType.VP_NUMBER, initialValue: -3.0 },
+            { name: this.PARAM_XMAX, type: VariationParamType.VP_NUMBER, initialValue: 3.0 },
+            { name: this.PARAM_XCOUNT, type: VariationParamType.VP_NUMBER, initialValue: 10 },
+            { name: this.PARAM_YMIN, type: VariationParamType.VP_NUMBER, initialValue: -3.0 },
+            { name: this.PARAM_YMAX, type: VariationParamType.VP_NUMBER, initialValue: 3.0 },
+            { name: this.PARAM_YCOUNT, type: VariationParamType.VP_NUMBER, initialValue: 10 },
+            { name: this.PARAM_ZMIN, type: VariationParamType.VP_NUMBER, initialValue: -1.0 },
+            { name: this.PARAM_ZMAX, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
+            { name: this.PARAM_ZCOUNT, type: VariationParamType.VP_NUMBER, initialValue: 10 },
+            { name: this.PARAM_DISTORTION, type: VariationParamType.VP_NUMBER, initialValue: 2.3 },
+            { name: this.PARAM_SEED, type: VariationParamType.VP_NUMBER, initialValue: 1234 }
+        ]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        // pointgrid3d_wf by Andreas Maschke
+        return `{
+          float amount = ${variation.amount.toWebGl()};
+          float xmin = ${variation.params.get(this.PARAM_XMIN)!.toWebGl()};
+          float xmax = ${variation.params.get(this.PARAM_XMAX)!.toWebGl()};
+          int xcount = ${variation.params.get(this.PARAM_XCOUNT)!.toWebGl()};
+          float ymin = ${variation.params.get(this.PARAM_YMIN)!.toWebGl()};
+          float ymax = ${variation.params.get(this.PARAM_YMAX)!.toWebGl()};
+          int ycount = ${variation.params.get(this.PARAM_YCOUNT)!.toWebGl()};
+          float zmin = ${variation.params.get(this.PARAM_ZMIN)!.toWebGl()};
+          float zmax = ${variation.params.get(this.PARAM_ZMAX)!.toWebGl()};
+          int zcount = ${variation.params.get(this.PARAM_ZCOUNT)!.toWebGl()};
+          float distortion = ${variation.params.get(this.PARAM_DISTORTION)!.toWebGl()};
+          int seed = ${variation.params.get(this.PARAM_SEED)!.toWebGl()};
+          int xIdx = iRand8(tex, xcount, rngState);
+          int yIdx = iRand8(tex, ycount, rngState);
+          int zIdx = iRand8(tex, ycount, rngState);
+          float _dx = (xmax - xmin) / float(xcount);
+          float _dy = (ymax - ymin) / float(ycount);
+          float _dz = (zmax - zmin) / float(zcount);
+          float x = xmin + _dx * float(xIdx);
+          float y = ymin + _dy * float(yIdx);
+          float z = zmin + _dz * float(zIdx);
+          if (distortion > 0.0) {
+            RNGState lRngState = RNGState(float(0.137));
+            vec2 ltex = vec2(float(xIdx*yIdx+zIdx), float(xIdx+yIdx*zIdx));
+            float distx = (0.5 - rand8(ltex, lRngState)) * distortion;
+            float disty = (0.5 - rand8(ltex, lRngState)) * distortion;
+            float distz = (0.5 - rand8(ltex, lRngState)) * distortion;
+            x += distx;
+            y += disty;
+            z += distz;
+          }
+          _vx += x * amount;
+          _vy += y * amount;
+          _vz += z * amount;
+        }`;
+    }
+
+    get name(): string {
+        return 'pointgrid3d_wf';
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_3D];
+    }
+}
+
 class Popcorn2_3DFunc extends VariationShaderFunc3D {
     PARAM_X = 'x'
     PARAM_Y = 'y'
@@ -2635,6 +2718,7 @@ export function registerVars_3D() {
     VariationShaders.registerVar(new PDJ3DFunc())
     VariationShaders.registerVar(new Pie3DFunc())
     VariationShaders.registerVar(new Poincare3DFunc())
+    VariationShaders.registerVar(new PointGrid3DWFFunc())
     VariationShaders.registerVar(new Popcorn2_3DFunc())
     VariationShaders.registerVar(new PostMirrorWFFunc())
     VariationShaders.registerVar(new QuaternionFunc())

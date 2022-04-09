@@ -1332,6 +1332,68 @@ class PieFunc extends VariationShaderFunc2D {
     }
 }
 
+class PointGridWFFunc extends VariationShaderFunc2D {
+    PARAM_XMIN = 'xmin'
+    PARAM_XMAX = 'xmax'
+    PARAM_XCOUNT = 'xcount'
+    PARAM_YMIN = 'ymin'
+    PARAM_YMAX = 'ymax'
+    PARAM_YCOUNT = 'ycount'
+    PARAM_DISTORTION = 'distortion'
+    PARAM_SEED = 'seed'
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_XMIN, type: VariationParamType.VP_NUMBER, initialValue: -3.0 },
+            { name: this.PARAM_XMAX, type: VariationParamType.VP_NUMBER, initialValue: 3.0 },
+            { name: this.PARAM_XCOUNT, type: VariationParamType.VP_NUMBER, initialValue: 32 },
+            { name: this.PARAM_YMIN, type: VariationParamType.VP_NUMBER, initialValue: -3.0 },
+            { name: this.PARAM_YMAX, type: VariationParamType.VP_NUMBER, initialValue: 3.0 },
+            { name: this.PARAM_YCOUNT, type: VariationParamType.VP_NUMBER, initialValue: 32 },
+            { name: this.PARAM_DISTORTION, type: VariationParamType.VP_NUMBER, initialValue: 2.3 },
+            { name: this.PARAM_SEED, type: VariationParamType.VP_NUMBER, initialValue: 1234 }
+        ]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        // pointgrid_wf by Andreas Maschke
+        return `{
+          float amount = ${variation.amount.toWebGl()};
+          float xmin = ${variation.params.get(this.PARAM_XMIN)!.toWebGl()};
+          float xmax = ${variation.params.get(this.PARAM_XMAX)!.toWebGl()};
+          int xcount = ${variation.params.get(this.PARAM_XCOUNT)!.toWebGl()};
+          float ymin = ${variation.params.get(this.PARAM_YMIN)!.toWebGl()};
+          float ymax = ${variation.params.get(this.PARAM_YMAX)!.toWebGl()};
+          int ycount = ${variation.params.get(this.PARAM_YCOUNT)!.toWebGl()};
+          float distortion = ${variation.params.get(this.PARAM_DISTORTION)!.toWebGl()};
+          int seed = ${variation.params.get(this.PARAM_SEED)!.toWebGl()};
+          int xIdx = iRand8(tex, xcount, rngState);
+          int yIdx = iRand8(tex, ycount, rngState);
+          float _dx = (xmax - xmin) / float(xcount);
+          float _dy = (ymax - ymin) / float(ycount);
+          float x = xmin + _dx * float(xIdx);
+          float y = ymin + _dy * float(yIdx);
+          if (distortion > 0.0) {
+            RNGState lRngState = RNGState(float(0.137));
+            vec2 ltex = vec2(float(xIdx), float(yIdx));
+            float distx = (0.5 - rand8(ltex, lRngState)) * distortion;
+            float disty = (0.5 - rand8(ltex, lRngState)) * distortion;
+            x += distx;
+            y += disty;
+          }
+          _vx += x * amount;
+          _vy += y * amount;
+        }`;
+    }
+
+    get name(): string {
+        return 'pointgrid_wf';
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
 class PolarFunc extends VariationShaderFunc2D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         return `{
@@ -2095,6 +2157,7 @@ export function registerVars_2D_PartK() {
     VariationShaders.registerVar(new PetalFunc())
     VariationShaders.registerVar(new PhoenixJuliaFunc())
     VariationShaders.registerVar(new PieFunc())
+    VariationShaders.registerVar(new PointGridWFFunc())
     VariationShaders.registerVar(new PolarFunc())
     VariationShaders.registerVar(new Polar2Func())
     VariationShaders.registerVar(new PopcornFunc())
