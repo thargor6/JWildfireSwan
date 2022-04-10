@@ -54,6 +54,8 @@ export class RenderXForm {
     public xyC11 = RenderParameters.floatParam(1.0)
     public xyC20 = RenderParameters.floatParam(0.0)
     public xyC21 = RenderParameters.floatParam(0.0)
+    public xyCRotate = RenderParameters.floatParam(0.0)
+    public xyCScale = RenderParameters.floatParam(0.0)
 
     public yzC00 = RenderParameters.floatParam(1.0)
     public yzC01 = RenderParameters.floatParam(0.0)
@@ -61,6 +63,8 @@ export class RenderXForm {
     public yzC11 = RenderParameters.floatParam(1.0)
     public yzC20 = RenderParameters.floatParam(0.0)
     public yzC21 = RenderParameters.floatParam(0.0)
+    public yzCRotate = RenderParameters.floatParam(0.0)
+    public yzCScale = RenderParameters.floatParam(0.0)
 
     public zxC00 = RenderParameters.floatParam(1.0)
     public zxC01 = RenderParameters.floatParam(0.0)
@@ -68,6 +72,8 @@ export class RenderXForm {
     public zxC11 = RenderParameters.floatParam(1.0)
     public zxC20 = RenderParameters.floatParam(0.0)
     public zxC21 = RenderParameters.floatParam(0.0)
+    public zxCRotate = RenderParameters.floatParam(0.0)
+    public zxCScale = RenderParameters.floatParam(0.0)
 
     public xyP00 = RenderParameters.floatParam(1.0)
     public xyP01 = RenderParameters.floatParam(0.0)
@@ -75,6 +81,8 @@ export class RenderXForm {
     public xyP11 = RenderParameters.floatParam(1.0)
     public xyP20 = RenderParameters.floatParam(0.0)
     public xyP21 = RenderParameters.floatParam(0.0)
+    public xyPRotate = RenderParameters.floatParam(0.0)
+    public xyPScale = RenderParameters.floatParam(0.0)
 
     public yzP00 = RenderParameters.floatParam(1.0)
     public yzP01 = RenderParameters.floatParam(0.0)
@@ -82,6 +90,8 @@ export class RenderXForm {
     public yzP11 = RenderParameters.floatParam(1.0)
     public yzP20 = RenderParameters.floatParam(0.0)
     public yzP21 = RenderParameters.floatParam(0.0)
+    public yzPRotate = RenderParameters.floatParam(0.0)
+    public yzPScale = RenderParameters.floatParam(0.0)
 
     public zxP00 = RenderParameters.floatParam(1.0)
     public zxP01 = RenderParameters.floatParam(0.0)
@@ -89,6 +99,8 @@ export class RenderXForm {
     public zxP11 = RenderParameters.floatParam(1.0)
     public zxP20 = RenderParameters.floatParam(0.0)
     public zxP21 = RenderParameters.floatParam(0.0)
+    public zxPRotate = RenderParameters.floatParam(0.0)
+    public zxPScale = RenderParameters.floatParam(0.0)
 
     public color = 0.0
     public colorSymmetry = 0.0

@@ -39,6 +39,8 @@ public class XForm {
   @Nonnull private FlameParam xyC11;
   @Nonnull private FlameParam xyC20;
   @Nonnull private FlameParam xyC21;
+  @Nonnull private FlameParam xyRotate;
+  @Nonnull private FlameParam xyScale;
 
   @Nonnull private FlameParam yzC00;
   @Nonnull private FlameParam yzC01;
@@ -46,6 +48,8 @@ public class XForm {
   @Nonnull private FlameParam yzC11;
   @Nonnull private FlameParam yzC20;
   @Nonnull private FlameParam yzC21;
+  @Nonnull private FlameParam yzRotate;
+  @Nonnull private FlameParam yzScale;
 
   @Nonnull private FlameParam zxC00;
   @Nonnull private FlameParam zxC01;
@@ -53,6 +57,8 @@ public class XForm {
   @Nonnull private FlameParam zxC11;
   @Nonnull private FlameParam zxC20;
   @Nonnull private FlameParam zxC21;
+  @Nonnull private FlameParam zxRotate;
+  @Nonnull private FlameParam zxScale;
 
   @Nonnull private FlameParam xyP00;
   @Nonnull private FlameParam xyP01;
@@ -60,6 +66,8 @@ public class XForm {
   @Nonnull private FlameParam xyP11;
   @Nonnull private FlameParam xyP20;
   @Nonnull private FlameParam xyP21;
+  @Nonnull private FlameParam xyPRotate;
+  @Nonnull private FlameParam xyPScale;
 
   @Nonnull private FlameParam yzP00;
   @Nonnull private FlameParam yzP01;
@@ -67,6 +75,8 @@ public class XForm {
   @Nonnull private FlameParam yzP11;
   @Nonnull private FlameParam yzP20;
   @Nonnull private FlameParam yzP21;
+  @Nonnull private FlameParam yzPRotate;
+  @Nonnull private FlameParam yzPScale;
 
   @Nonnull private FlameParam zxP00;
   @Nonnull private FlameParam zxP01;
@@ -74,6 +84,8 @@ public class XForm {
   @Nonnull private FlameParam zxP11;
   @Nonnull private FlameParam zxP20;
   @Nonnull private FlameParam zxP21;
+  @Nonnull private FlameParam zxPRotate;
+  @Nonnull private FlameParam zxPScale;
 
   @Nonnull private final List<@Nonnull Double> modifiedWeights = new ArrayList<>();
   @Nonnull private final List<@Nonnull Variation> variations = new ArrayList<>();

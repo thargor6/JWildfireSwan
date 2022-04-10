@@ -243,6 +243,8 @@ class XFormMapper {
         res.xyC11 = ParamMapper.mapFromBackend(source.xyC11)
         res.xyC20 = ParamMapper.mapFromBackend(source.xyC20)
         res.xyC21 = ParamMapper.mapFromBackend(source.xyC21)
+        res.xyCRotate = ParamMapper.mapFromBackend(source.xyRotate)
+        res.xyCScale = ParamMapper.mapFromBackend(source.xyScale)
 
         res.yzC00 = ParamMapper.mapFromBackend(source.yzC00)
         res.yzC01 = ParamMapper.mapFromBackend(source.yzC01)
@@ -250,6 +252,8 @@ class XFormMapper {
         res.yzC11 = ParamMapper.mapFromBackend(source.yzC11)
         res.yzC20 = ParamMapper.mapFromBackend(source.yzC20)
         res.yzC21 = ParamMapper.mapFromBackend(source.yzC21)
+        res.yzCRotate = ParamMapper.mapFromBackend(source.yzRotate)
+        res.yzCScale = ParamMapper.mapFromBackend(source.yzScale)
 
         res.zxC00 = ParamMapper.mapFromBackend(source.zxC00)
         res.zxC01 = ParamMapper.mapFromBackend(source.zxC01)
@@ -257,6 +261,8 @@ class XFormMapper {
         res.zxC11 = ParamMapper.mapFromBackend(source.zxC11)
         res.zxC20 = ParamMapper.mapFromBackend(source.zxC20)
         res.zxC21 = ParamMapper.mapFromBackend(source.zxC21)
+        res.zxCRotate = ParamMapper.mapFromBackend(source.zxRotate)
+        res.zxCScale = ParamMapper.mapFromBackend(source.zxScale)
 
         res.xyP00 = ParamMapper.mapFromBackend(source.xyP00)
         res.xyP01 = ParamMapper.mapFromBackend(source.xyP01)
@@ -264,6 +270,8 @@ class XFormMapper {
         res.xyP11 = ParamMapper.mapFromBackend(source.xyP11)
         res.xyP20 = ParamMapper.mapFromBackend(source.xyP20)
         res.xyP21 = ParamMapper.mapFromBackend(source.xyP21)
+        res.xyPRotate = ParamMapper.mapFromBackend(source.xyPRotate)
+        res.xyPScale = ParamMapper.mapFromBackend(source.xyPScale)
 
         res.yzP00 = ParamMapper.mapFromBackend(source.yzP00)
         res.yzP01 = ParamMapper.mapFromBackend(source.yzP01)
@@ -271,6 +279,8 @@ class XFormMapper {
         res.yzP11 = ParamMapper.mapFromBackend(source.yzP11)
         res.yzP20 = ParamMapper.mapFromBackend(source.yzP20)
         res.yzP21 = ParamMapper.mapFromBackend(source.yzP21)
+        res.yzPRotate = ParamMapper.mapFromBackend(source.yzPRotate)
+        res.yzPScale = ParamMapper.mapFromBackend(source.yzPScale)
 
         res.zxP00 = ParamMapper.mapFromBackend(source.zxP00)
         res.zxP01 = ParamMapper.mapFromBackend(source.zxP01)
@@ -278,6 +288,8 @@ class XFormMapper {
         res.zxP11 = ParamMapper.mapFromBackend(source.zxP11)
         res.zxP20 = ParamMapper.mapFromBackend(source.zxP20)
         res.zxP21 = ParamMapper.mapFromBackend(source.zxP21)
+        res.zxPRotate = ParamMapper.mapFromBackend(source.zxPRotate)
+        res.zxPScale = ParamMapper.mapFromBackend(source.zxPScale)
 
         source.variations.map(svar => {
             res.variations.push(VariationMapper.mapFromBackend(svar))
@@ -297,6 +309,8 @@ class XFormMapper {
             xyC11:ParamMapper.mapToBackend(source.xyC11),
             xyC20:ParamMapper.mapToBackend(source.xyC20),
             xyC21:ParamMapper.mapToBackend(source.xyC21),
+            xyRotate:ParamMapper.mapToBackend(source.xyCRotate),
+            xyScale:ParamMapper.mapToBackend(source.xyCScale),
 
             yzC00:ParamMapper.mapToBackend(source.yzC00),
             yzC01:ParamMapper.mapToBackend(source.yzC01),
@@ -304,6 +318,8 @@ class XFormMapper {
             yzC11:ParamMapper.mapToBackend(source.yzC11),
             yzC20:ParamMapper.mapToBackend(source.yzC20),
             yzC21:ParamMapper.mapToBackend(source.yzC21),
+            yzRotate:ParamMapper.mapToBackend(source.yzCRotate),
+            yzScale:ParamMapper.mapToBackend(source.yzCScale),
 
             zxC00:ParamMapper.mapToBackend(source.zxC00),
             zxC01:ParamMapper.mapToBackend(source.zxC01),
@@ -311,6 +327,8 @@ class XFormMapper {
             zxC11:ParamMapper.mapToBackend(source.zxC11),
             zxC20:ParamMapper.mapToBackend(source.zxC20),
             zxC21:ParamMapper.mapToBackend(source.zxC21),
+            zxRotate:ParamMapper.mapToBackend(source.zxCRotate),
+            zxScale:ParamMapper.mapToBackend(source.zxCScale),
 
             xyP00:ParamMapper.mapToBackend(source.xyP00),
             xyP01:ParamMapper.mapToBackend(source.xyP01),
@@ -318,6 +336,8 @@ class XFormMapper {
             xyP11:ParamMapper.mapToBackend(source.xyP11),
             xyP20:ParamMapper.mapToBackend(source.xyP20),
             xyP21:ParamMapper.mapToBackend(source.xyP21),
+            xyPRotate:ParamMapper.mapToBackend(source.xyPRotate),
+            xyPScale:ParamMapper.mapToBackend(source.xyPScale),
 
             yzP00:ParamMapper.mapToBackend(source.yzP00),
             yzP01:ParamMapper.mapToBackend(source.yzP01),
@@ -325,6 +345,8 @@ class XFormMapper {
             yzP11:ParamMapper.mapToBackend(source.yzP11),
             yzP20:ParamMapper.mapToBackend(source.yzP20),
             yzP21:ParamMapper.mapToBackend(source.yzP21),
+            yzPRotate:ParamMapper.mapToBackend(source.yzPRotate),
+            yzPScale:ParamMapper.mapToBackend(source.yzPScale),
 
             zxP00:ParamMapper.mapToBackend(source.zxP00),
             zxP01:ParamMapper.mapToBackend(source.zxP01),
@@ -332,6 +354,8 @@ class XFormMapper {
             zxP11:ParamMapper.mapToBackend(source.zxP11),
             zxP20:ParamMapper.mapToBackend(source.zxP20),
             zxP21:ParamMapper.mapToBackend(source.zxP21),
+            zxPRotate:ParamMapper.mapToBackend(source.zxPRotate),
+            zxPScale:ParamMapper.mapToBackend(source.zxPScale),
 
             modifiedWeights: new Array<number>(),
             variations: new Array<SourceVariation>()
@@ -373,6 +397,8 @@ class XFormMapper {
         res.xyC11 = ParamMapper.mapForRendering(ctx, source.xyC11)
         res.xyC20 = ParamMapper.mapForRendering(ctx, source.xyC20)
         res.xyC21 = ParamMapper.mapForRendering(ctx, source.xyC21)
+        res.xyCRotate = ParamMapper.mapForRendering(ctx, source.xyCRotate)
+        res.xyCScale = ParamMapper.mapForRendering(ctx, source.xyCScale)
 
         res.yzC00 = ParamMapper.mapForRendering(ctx, source.yzC00)
         res.yzC01 = ParamMapper.mapForRendering(ctx, source.yzC01)
@@ -380,6 +406,8 @@ class XFormMapper {
         res.yzC11 = ParamMapper.mapForRendering(ctx, source.yzC11)
         res.yzC20 = ParamMapper.mapForRendering(ctx, source.yzC20)
         res.yzC21 = ParamMapper.mapForRendering(ctx, source.yzC21)
+        res.yzCRotate = ParamMapper.mapForRendering(ctx, source.yzCRotate)
+        res.yzCScale = ParamMapper.mapForRendering(ctx, source.yzCScale)
 
         res.zxC00 = ParamMapper.mapForRendering(ctx, source.zxC00)
         res.zxC01 = ParamMapper.mapForRendering(ctx, source.zxC01)
@@ -387,6 +415,8 @@ class XFormMapper {
         res.zxC11 = ParamMapper.mapForRendering(ctx, source.zxC11)
         res.zxC20 = ParamMapper.mapForRendering(ctx, source.zxC20)
         res.zxC21 = ParamMapper.mapForRendering(ctx, source.zxC21)
+        res.zxCRotate = ParamMapper.mapForRendering(ctx, source.zxCRotate)
+        res.zxCScale = ParamMapper.mapForRendering(ctx, source.zxCScale)
 
         res.xyP00 = ParamMapper.mapForRendering(ctx, source.xyP00)
         res.xyP01 = ParamMapper.mapForRendering(ctx, source.xyP01)
@@ -394,6 +424,8 @@ class XFormMapper {
         res.xyP11 = ParamMapper.mapForRendering(ctx, source.xyP11)
         res.xyP20 = ParamMapper.mapForRendering(ctx, source.xyP20)
         res.xyP21 = ParamMapper.mapForRendering(ctx, source.xyP21)
+        res.xyPRotate = ParamMapper.mapForRendering(ctx, source.xyPRotate)
+        res.xyPScale = ParamMapper.mapForRendering(ctx, source.xyPScale)
 
         res.yzP00 = ParamMapper.mapForRendering(ctx, source.yzP00)
         res.yzP01 = ParamMapper.mapForRendering(ctx, source.yzP01)
@@ -401,6 +433,8 @@ class XFormMapper {
         res.yzP11 = ParamMapper.mapForRendering(ctx, source.yzP11)
         res.yzP20 = ParamMapper.mapForRendering(ctx, source.yzP20)
         res.yzP21 = ParamMapper.mapForRendering(ctx, source.yzP21)
+        res.yzPRotate = ParamMapper.mapForRendering(ctx, source.yzPRotate)
+        res.yzPScale = ParamMapper.mapForRendering(ctx, source.yzPScale)
 
         res.zxP00 = ParamMapper.mapForRendering(ctx, source.zxP00)
         res.zxP01 = ParamMapper.mapForRendering(ctx, source.zxP01)
@@ -408,6 +442,8 @@ class XFormMapper {
         res.zxP11 = ParamMapper.mapForRendering(ctx, source.zxP11)
         res.zxP20 = ParamMapper.mapForRendering(ctx, source.zxP20)
         res.zxP21 = ParamMapper.mapForRendering(ctx, source.zxP21)
+        res.zxPRotate = ParamMapper.mapForRendering(ctx, source.zxPRotate)
+        res.zxPScale = ParamMapper.mapForRendering(ctx, source.zxPScale)
 
         source.variations.map(svar => {
             res.variations.push(VariationMapper.mapForRendering(ctx, svar))
