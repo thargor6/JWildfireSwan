@@ -2608,6 +2608,41 @@ class Tangent3DFunc extends VariationShaderFunc3D {
     }
 }
 
+class TanqFunc extends VariationShaderFunc3D {
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        return `{
+          float amount = ${variation.amount.toWebGl()};
+          float abs_v = hypot(_ty, _tz);
+          float s = sin(_tx);
+          float sysz = sqr(_ty) + sqr(_tz);
+          float ni = amount / (sqr(_tx) + sysz);
+          float c = cos(_tx);
+          float sh = sinh(abs_v);
+          float ch = cosh(abs_v);
+          float C = c * sh / abs_v;
+          float B = -s * sh / abs_v;
+          float stcv = s * ch;
+          float nstcv = -stcv;
+          float ctcv = c * ch;
+          _vx += (stcv * ctcv + C * B * sysz) * ni;
+          _vy += (nstcv * B * _ty + C * _ty * ctcv) * ni;
+          _vz += (nstcv * B * _tz + C * _tz * ctcv) * ni;
+        }`;
+    }
+
+    get name(): string {
+        return 'tanq';
+    }
+
+    get funcDependencies(): string[] {
+        return [FUNC_SINH, FUNC_COSH, FUNC_HYPOT];
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_3D];
+    }
+}
+
 class TaurusFunc extends VariationShaderFunc3D {
     PARAM_R = 'r'
     PARAM_N = 'n'
@@ -2735,6 +2770,7 @@ export function registerVars_3D() {
     VariationShaders.registerVar(new Square3DFunc())
     VariationShaders.registerVar(new SVFFunc())
     VariationShaders.registerVar(new Tangent3DFunc())
+    VariationShaders.registerVar(new TanqFunc())
     VariationShaders.registerVar(new TaurusFunc())
     VariationShaders.registerVar(new Tile_LogFunc())
 }

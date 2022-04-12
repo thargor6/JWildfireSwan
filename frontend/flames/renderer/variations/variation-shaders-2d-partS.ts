@@ -1372,6 +1372,49 @@ class StripesFunc extends VariationShaderFunc2D {
     }
 }
 
+class StripfitFunc extends VariationShaderFunc2D {
+    PARAM_DX = 'dx'
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_DX, type: VariationParamType.VP_NUMBER, initialValue: 1.0 }]
+    }
+
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        /* stripfit by dark-beam
+         * https://www.deviantart.com/dark-beam/art/Stripfit-764742549
+         * converted for JWF by dark_beam and Brad Stefanov		 */
+        return `{
+          float amount = ${variation.amount.toWebGl()};
+          float dx = ${variation.params.get(this.PARAM_DX)!.toWebGl()};
+          float fity;
+          float dxp = -0.5 * dx;
+          if (amount != 0.) {
+            _vx += amount * _tx;
+            if (_ty > 1.0) {
+              fity = mod(_ty + 1.0, 2.0);
+              _vy += amount * (-1.0 + fity);
+              _vx += (_ty - fity + 1.0) * dxp;
+            } else if (_ty < -1.0) {
+              fity = mod(1.0 - _ty, 2.0);
+              _vy += amount * (1.0 - fity);
+              _vx += (_ty + fity - 1.0) * dxp;
+            } else {
+              _vy += amount * _ty;
+            }
+          }
+        }`;
+    }
+
+    get name(): string {
+        return 'stripfit';
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
 class SuperShapeFunc extends VariationShaderFunc2D {
     PARAM_RND = 'rnd'
     PARAM_M = 'm'
@@ -2666,6 +2709,7 @@ export function registerVars_2D_PartS() {
     VariationShaders.registerVar(new SquishFunc())
     VariationShaders.registerVar(new StarBlurFunc())
     VariationShaders.registerVar(new StripesFunc())
+    VariationShaders.registerVar(new StripfitFunc())
     VariationShaders.registerVar(new SuperShapeFunc())
     VariationShaders.registerVar(new SwirlFunc())
     VariationShaders.registerVar(new Swirl3Func())

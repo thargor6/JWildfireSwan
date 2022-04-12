@@ -21,7 +21,9 @@ import {RenderVariation, RenderXForm} from 'Frontend/flames/model/render-flame';
 import {
     FUNC_ACOSH,
     FUNC_COSH,
-    FUNC_MODULO, FUNC_RINT, FUNC_SGN,
+    FUNC_MODULO,
+    FUNC_RINT,
+    FUNC_SGN,
     FUNC_SINH,
     FUNC_SQRT1PM1
 } from 'Frontend/flames/renderer/variations/variation-math-functions';
@@ -1607,6 +1609,47 @@ class Disc2Func extends VariationShaderFunc2D {
 
     get variationTypes(): VariationTypes[] {
         return [VariationTypes.VARTYPE_2D];
+    }
+}
+
+class DustPointFunc extends VariationShaderFunc2D {
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        /**
+         * Three Point Pivot/Overlap IFS Triangle
+         *
+         * @author Jesus Sosa
+         * @date November 4, 2017
+         * based on a work of Roger Bagula:
+         * http://paulbourke.net/fractals/ifs_curved/roger5.c
+         */
+        return `{
+          float amount = ${variation.amount.toWebGl()};
+          float x, y, p, r;
+          p = (rand8(tex, rngState) < 0.5) ? 1.0 : -1.0;
+          r = sqrt(_tx * _tx + _ty * _ty);
+          float w = rand8(tex, rngState);
+          if (w < 0.50) {
+            x = _tx / r - 1.0;
+            y = p * _ty / r;
+          } else if (w < 0.75) {
+            x = _tx / 3.0;
+            y = _ty / 3.0;
+          } else {
+            x = _tx / 3.0 + 2.0 / 3.0;
+            y = _ty / 3.0;
+          }
+          _vx += x * amount;
+          _vy += y * amount;
+        }`;
+    }
+
+    get name(): string {
+        return 'dustpoint';
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D, VariationTypes.VARTYPE_BASE_SHAPE];
     }
 }
 
@@ -3293,6 +3336,7 @@ export function registerVars_2D_PartA() {
     VariationShaders.registerVar(new DiamondFunc())
     VariationShaders.registerVar(new DiscFunc())
     VariationShaders.registerVar(new Disc2Func())
+    VariationShaders.registerVar(new DustPointFunc())
     VariationShaders.registerVar(new EclipseFunc())
     VariationShaders.registerVar(new EDiscFunc())
     VariationShaders.registerVar(new EJuliaFunc())
