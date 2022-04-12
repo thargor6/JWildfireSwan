@@ -48,7 +48,7 @@ public class XFormMapper {
     res.setXyC20(FlameParamMapper.mapFloatParamFromJwildfire(source.getXYCoeff20(), source.getXYCoeff20Curve()));
     res.setXyC21(FlameParamMapper.mapFloatParamFromJwildfire(source.getXYCoeff21(), source.getXYCoeff21Curve()));
     res.setXyRotate(FlameParamMapper.mapFloatParamFromJwildfire(0.0, source.getXYRotateCurve()));
-    res.setXyScale(FlameParamMapper.mapFloatParamFromJwildfire(0.0, source.getXYScaleCurve()));
+    res.setXyScale(FlameParamMapper.mapFloatParamFromJwildfire(1.0, source.getXYScaleCurve()));
 
     res.setYzC00(FlameParamMapper.mapFloatParamFromJwildfire(source.getYZCoeff00(), source.getYZCoeff00Curve()));
     res.setYzC01(FlameParamMapper.mapFloatParamFromJwildfire(source.getYZCoeff01(), source.getYZCoeff01Curve()));
@@ -57,7 +57,7 @@ public class XFormMapper {
     res.setYzC20(FlameParamMapper.mapFloatParamFromJwildfire(source.getYZCoeff20(), source.getYZCoeff20Curve()));
     res.setYzC21(FlameParamMapper.mapFloatParamFromJwildfire(source.getYZCoeff21(), source.getYZCoeff21Curve()));
     res.setYzRotate(FlameParamMapper.mapFloatParamFromJwildfire(0.0, source.getYZRotateCurve()));
-    res.setYzScale(FlameParamMapper.mapFloatParamFromJwildfire(0.0, source.getYZScaleCurve()));
+    res.setYzScale(FlameParamMapper.mapFloatParamFromJwildfire(1.0, source.getYZScaleCurve()));
 
     res.setZxC00(FlameParamMapper.mapFloatParamFromJwildfire(source.getZXCoeff00(), source.getZXCoeff00Curve()));
     res.setZxC01(FlameParamMapper.mapFloatParamFromJwildfire(source.getZXCoeff01(), source.getZXCoeff01Curve()));
@@ -66,7 +66,7 @@ public class XFormMapper {
     res.setZxC20(FlameParamMapper.mapFloatParamFromJwildfire(source.getZXCoeff20(), source.getZXCoeff20Curve()));
     res.setZxC21(FlameParamMapper.mapFloatParamFromJwildfire(source.getZXCoeff21(), source.getZXCoeff21Curve()));
     res.setZxRotate(FlameParamMapper.mapFloatParamFromJwildfire(0.0, source.getZXRotateCurve()));
-    res.setZxScale(FlameParamMapper.mapFloatParamFromJwildfire(0.0, source.getZXScaleCurve()));
+    res.setZxScale(FlameParamMapper.mapFloatParamFromJwildfire(1.0, source.getZXScaleCurve()));
 
     res.setXyP00(FlameParamMapper.mapFloatParamFromJwildfire(source.getXYPostCoeff00(), source.getXYPostCoeff00Curve()));
     res.setXyP01(FlameParamMapper.mapFloatParamFromJwildfire(source.getXYPostCoeff01(), source.getXYPostCoeff01Curve()));
@@ -75,7 +75,7 @@ public class XFormMapper {
     res.setXyP20(FlameParamMapper.mapFloatParamFromJwildfire(source.getXYPostCoeff20(), source.getXYPostCoeff20Curve()));
     res.setXyP21(FlameParamMapper.mapFloatParamFromJwildfire(source.getXYPostCoeff21(), source.getXYPostCoeff21Curve()));
     res.setXyPRotate(FlameParamMapper.mapFloatParamFromJwildfire(0.0, source.getXYPostRotateCurve()));
-    res.setXyPScale(FlameParamMapper.mapFloatParamFromJwildfire(0.0, source.getXYPostScaleCurve()));
+    res.setXyPScale(FlameParamMapper.mapFloatParamFromJwildfire(1.0, source.getXYPostScaleCurve()));
 
     res.setYzP00(FlameParamMapper.mapFloatParamFromJwildfire(source.getYZPostCoeff00(), source.getYZPostCoeff00Curve()));
     res.setYzP01(FlameParamMapper.mapFloatParamFromJwildfire(source.getYZPostCoeff01(), source.getYZPostCoeff01Curve()));
@@ -84,7 +84,7 @@ public class XFormMapper {
     res.setYzP20(FlameParamMapper.mapFloatParamFromJwildfire(source.getYZPostCoeff20(), source.getYZPostCoeff20Curve()));
     res.setYzP21(FlameParamMapper.mapFloatParamFromJwildfire(source.getYZPostCoeff21(), source.getYZPostCoeff21Curve()));
     res.setYzPRotate(FlameParamMapper.mapFloatParamFromJwildfire(0.0, source.getYZPostRotateCurve()));
-    res.setYzPScale(FlameParamMapper.mapFloatParamFromJwildfire(0.0, source.getYZPostScaleCurve()));
+    res.setYzPScale(FlameParamMapper.mapFloatParamFromJwildfire(1.0, source.getYZPostScaleCurve()));
 
     res.setZxP00(FlameParamMapper.mapFloatParamFromJwildfire(source.getZXPostCoeff00(), source.getZXPostCoeff00Curve()));
     res.setZxP01(FlameParamMapper.mapFloatParamFromJwildfire(source.getZXPostCoeff01(), source.getZXPostCoeff01Curve()));
@@ -93,7 +93,7 @@ public class XFormMapper {
     res.setZxP20(FlameParamMapper.mapFloatParamFromJwildfire(source.getZXPostCoeff20(), source.getZXPostCoeff20Curve()));
     res.setZxP21(FlameParamMapper.mapFloatParamFromJwildfire(source.getZXPostCoeff21(), source.getZXPostCoeff21Curve()));
     res.setZxPRotate(FlameParamMapper.mapFloatParamFromJwildfire(0.0, source.getZXPostRotateCurve()));
-    res.setZxPScale(FlameParamMapper.mapFloatParamFromJwildfire(0.0, source.getZXPostScaleCurve()));
+    res.setZxPScale(FlameParamMapper.mapFloatParamFromJwildfire(1.0, source.getZXPostScaleCurve()));
 
     for(int i=0;i<source.getVariationCount();i++) {
       org.jwildfire.create.tina.variation.Variation srcVar = source.getVariation(i);

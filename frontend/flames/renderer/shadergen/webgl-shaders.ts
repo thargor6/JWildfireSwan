@@ -91,8 +91,9 @@ export class WebglShaders implements CloseableBuffers{
         this.prog_points.time = gl.getUniformLocation(this.prog_points, "time")!;
         this.prog_points.seed = gl.getUniformLocation(this.prog_points, "seed")!;
 
+        console.log("FLAME", flame)
         this.compPointsFragmentShader = new CompPointsFragmentShaderGenerator().createShader(flame, flame.layers[0]);
-        // console.log(this.compPointsFragmentShader)
+         console.log(this.compPointsFragmentShader)
         this.prog_comp = compileShaderDirect(gl, shader_direct_vs, this.compPointsFragmentShader, {RESOLUTION: swarm_size}) as IteratePointsProgram;
         this.prog_comp.vertexPositionAttribute = gl.getAttribLocation(this.prog_comp, "aVertexPosition");
         gl.enableVertexAttribArray(this.prog_comp.vertexPositionAttribute);
