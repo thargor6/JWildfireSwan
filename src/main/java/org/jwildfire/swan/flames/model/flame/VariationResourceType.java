@@ -22,15 +22,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.ArrayList;
-import java.util.List;
-
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
-public class Variation {
-  @Nonnull private String name;
-  @Nonnull private FlameParam amount;
-  @Nonnull private final List<@Nonnull VariationParam> params = new ArrayList<>();
-  @Nonnull private final List<@Nonnull VariationResource> resources = new ArrayList<>();
+public enum VariationResourceType {
+  BYTEARRAY, HREF, IMAGE_FILENAME, IMAGE_FILE, SVG_FILE, FONT_NAME, JAVA_CODE, OBJ_MESH, FLAME_FILENAME
 }

@@ -22,15 +22,11 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Variation {
+public class VariationResource {
   @Nonnull private String name;
-  @Nonnull private FlameParam amount;
-  @Nonnull private final List<@Nonnull VariationParam> params = new ArrayList<>();
-  @Nonnull private final List<@Nonnull VariationResource> resources = new ArrayList<>();
+  @Nonnull private VariationResourceType resourceType;
+  private String stringValue;
 }

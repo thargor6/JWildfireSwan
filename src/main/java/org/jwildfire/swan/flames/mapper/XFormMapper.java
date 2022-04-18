@@ -17,6 +17,9 @@
 
 package org.jwildfire.swan.flames.mapper;
 
+import com.google.common.base.Charsets;
+import org.jwildfire.base.Tools;
+import org.jwildfire.create.tina.variation.RessourceType;
 import org.jwildfire.create.tina.variation.VariationFunc;
 import org.jwildfire.create.tina.variation.VariationFuncList;
 import org.jwildfire.swan.flames.model.flame.FlameParamDataType;
@@ -24,6 +27,8 @@ import org.jwildfire.swan.flames.model.flame.FlameParamType;
 import org.jwildfire.swan.flames.model.flame.Layer;
 import org.jwildfire.swan.flames.model.flame.Variation;
 import org.jwildfire.swan.flames.model.flame.VariationParam;
+import org.jwildfire.swan.flames.model.flame.VariationResource;
+import org.jwildfire.swan.flames.model.flame.VariationResourceType;
 import org.jwildfire.swan.flames.model.flame.XForm;
 import org.springframework.stereotype.Service;
 
@@ -100,6 +105,7 @@ public class XFormMapper {
       Variation dstVar = new Variation();
       dstVar.setAmount(FlameParamMapper.mapFloatParamFromJwildfire(srcVar.getAmount(), srcVar.getAmountCurve()));
       dstVar.setName(srcVar.getFunc().getName());
+      // regular parameters
       for (int j = 0; j < srcVar.getFunc().getParameterNames().length; j++) {
         String pName = srcVar.getFunc().getParameterNames()[j];
         Object pValue = srcVar.getFunc().getParameterValues()[j];
@@ -112,10 +118,38 @@ public class XFormMapper {
           }
         }
       };
-      // TODO manage also resource parameters
+      // resources
+      for (int j = 0; srcVar.getFunc().getRessourceNames()!=null && j < srcVar.getFunc().getRessourceNames().length; j++) {
+        String rName = srcVar.getFunc().getRessourceNames()[j];
+        RessourceType rType = srcVar.getFunc().getRessourceType(rName);
+        byte[] rValue = srcVar.getFunc().getRessource(rName);
+        VariationResource resource = new VariationResource();
+        resource.setName(rName);
+        resource.setResourceType(VariationResourceType.valueOf(rType.name()));
+        if(isByteArrayType(resource.getResourceType())) {
+          resource.setStringValue(Tools.byteArrayToHexString(rValue));
+        }
+        else {
+          resource.setStringValue(rValue!=null ? new String(rValue, Charsets.UTF_8) : "");
+        }
+        dstVar.getResources().add(resource);
+      }
+      //
       res.getVariations().add(dstVar);
     }
     return res;
+  }
+
+  private boolean isByteArrayType(VariationResourceType resourceType) {
+    switch(resourceType) {
+      case BYTEARRAY:
+      case IMAGE_FILE:
+      case SVG_FILE:
+      case OBJ_MESH:
+        return true;
+      default:
+        return false;
+    }
   }
 
   public org.jwildfire.create.tina.base.XForm mapToJwildfire(Layer sourceLayer, XForm source) {
@@ -191,6 +225,7 @@ public class XFormMapper {
       dstVar.setAmount(FlameParamMapper.mapFloatParamToJwildfire(srcVar.getAmount(), dstVar.getAmountCurve()));
       VariationFunc varFunc = VariationFuncList.getVariationFuncInstance(srcVar.getName(), true);
       dstVar.setFunc(varFunc);
+      // regular params
       for (int j = 0; j < srcVar.getParams().size(); j++) {
         VariationParam param = srcVar.getParams().get(j);
         if(param.getValue().getParamType()==FlameParamType.CURVE && dstVar.getMotionCurve(param.getName())==null) {
@@ -209,7 +244,17 @@ public class XFormMapper {
                           param.getValue(), dstVar.getMotionCurve(param.getName())));
         }
       };
-      // TODO manage also resource parameters
+      // resources
+      for (int j = 0; j < srcVar.getResources().size(); j++) {
+        VariationResource resource = srcVar.getResources().get(j);
+        if(isByteArrayType(resource.getResourceType())) {
+          varFunc.setRessource(resource.getName(), Tools.hexStringToByteArray(resource.getStringValue()));
+        }
+        else {
+          varFunc.setRessource(resource.getName(), resource.getStringValue()!=null ? resource.getStringValue().getBytes(Charsets.UTF_8) : null);
+        }
+      }
+      //
       res.getVariations().add(dstVar);
     }
     return res;
