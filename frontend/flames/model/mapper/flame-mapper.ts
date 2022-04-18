@@ -16,34 +16,100 @@
 */
 
 import {default as SourceFlameParam} from '../../../generated/org/jwildfire/swan/flames/model/flame/FlameParam'
-import {default as SourceFlameParamCurveInterpolation} from '../../../generated/org/jwildfire/swan/flames/model/flame/FlameParamCurveInterpolation'
+import {
+    default as SourceFlameParamCurveInterpolation
+} from '../../../generated/org/jwildfire/swan/flames/model/flame/FlameParamCurveInterpolation'
+import {
+    default as SourceFlameResource
+} from '../../../generated/org/jwildfire/swan/flames/model/flame/VariationResource'
+import VariationResourceType, {
+    default as SourceVariationResourceType
+} from '../../../generated/org/jwildfire/swan/flames/model/flame/VariationResourceType'
 import {default as SourceXForm} from '../../../generated/org/jwildfire/swan/flames/model/flame/XForm'
 import {default as SourceLayer} from '../../../generated/org/jwildfire/swan/flames/model/flame/Layer'
 import {default as SourceFlame} from '../../../generated/org/jwildfire/swan/flames/model/flame/Flame'
 import {default as SourceVariation} from '../../../generated/org/jwildfire/swan/flames/model/flame/Variation'
 import {Color, Flame, Layer, Variation, XForm} from "../flame";
 import {
-    FlameParameter, FloatMotionCurveParameter,
+    FlameParameter,
+    FlameResource,
+    FlameResourceType,
+    FloatMotionCurveParameter,
     MotionCurveInterpolation,
     Parameters,
     RenderParameter,
-    RenderParameters
+    RenderParameters,
+    RenderResource
 } from "Frontend/flames/model/parameters";
 import {
     RenderColor,
-    RenderMappingContext,
     RenderFlame,
     RenderLayer,
+    RenderMappingContext,
     RenderVariation,
     RenderXForm
 } from "Frontend/flames/model/render-flame";
 import FlameParamType from "Frontend/generated/org/jwildfire/swan/flames/model/flame/FlameParamType";
 import FlameParamDataType from "Frontend/generated/org/jwildfire/swan/flames/model/flame/FlameParamDataType";
 import VariationParam from "Frontend/generated/org/jwildfire/swan/flames/model/flame/VariationParam";
+import VariationResource from "Frontend/generated/org/jwildfire/swan/flames/model/flame/VariationResource";
 import {MotionCurveEvaluator} from "Frontend/flames/animation/motion-curve-eval";
 import {EPSILON} from "Frontend/flames/renderer/mathlib";
 
 const evaluator = new MotionCurveEvaluator()
+
+class ResourceMapper {
+    public static mapFromBackend(source: SourceFlameResource): FlameResource {
+        function mapResourceTypeFromBackend(resourceType: SourceVariationResourceType): FlameResourceType {
+            switch(resourceType) {
+                case SourceVariationResourceType.HREF: return 'href'
+                case SourceVariationResourceType.FLAME_FILENAME: return 'flame_filename'
+                case SourceVariationResourceType.FONT_NAME: return 'font_name'
+                case SourceVariationResourceType.IMAGE_FILE: return 'image_file'
+                case SourceVariationResourceType.IMAGE_FILENAME: return 'image_filename'
+                case SourceVariationResourceType.FONT_NAME: return 'font_name'
+                case SourceVariationResourceType.JAVA_CODE: return 'java_code'
+                case SourceVariationResourceType.OBJ_MESH: return 'obj_mesh'
+                case SourceVariationResourceType.SVG_FILE: return 'svg_file'
+                case SourceVariationResourceType.BYTEARRAY:
+                default:
+                    return 'bytearray'
+            }
+        }
+        return {
+          name: source.name,
+          type: mapResourceTypeFromBackend(source.resourceType),
+          stringValue: source.stringValue
+      }
+    }
+
+    public static mapToBackend(source: FlameResource): SourceFlameResource {
+
+        function mapResourceTypeToBackend(type: FlameResourceType): VariationResourceType {
+            switch(type) {
+                case 'href': return VariationResourceType.HREF
+                case 'image_filename': return VariationResourceType.IMAGE_FILENAME
+                case 'image_file': return VariationResourceType.IMAGE_FILE
+                case 'svg_file': return VariationResourceType.SVG_FILE
+                case 'font_name': return VariationResourceType.FONT_NAME
+                case 'java_code': return VariationResourceType.JAVA_CODE
+                case 'obj_mesh': return VariationResourceType.OBJ_MESH
+                case 'flame_filename': return VariationResourceType.FLAME_FILENAME
+                case 'bytearray':
+                default: return VariationResourceType.BYTEARRAY
+            }
+        }
+        return {
+            name: source.name,
+            resourceType: mapResourceTypeToBackend(source.type),
+            stringValue: source.stringValue
+        }
+    }
+
+    public static mapForRendering(ctx: RenderMappingContext, source: FlameResource): RenderResource {
+      return new RenderResource(source.stringValue)
+    }
+}
 
 class ParamMapper {
 
@@ -191,6 +257,9 @@ class VariationMapper {
         source.params.map(sd => {
           res.params.set(sd.name, ParamMapper.mapFromBackend(sd.value))
         })
+        source.resources.map(sr => {
+          res.resources.set(sr.name, ResourceMapper.mapFromBackend(sr))
+        })
         return res;
     }
 
@@ -198,13 +267,17 @@ class VariationMapper {
         const res: SourceVariation = {
             name: source.name,
             amount: ParamMapper.mapToBackend(source.amount),
-            params: new Array<VariationParam>()
+            params: new Array<VariationParam>(),
+            resources: new Array<VariationResource>()
         }
         source.params.forEach((value, key) => {
             res.params.push({
                 name: key,
                 value: ParamMapper.mapToBackend(value)
             })
+        })
+        source.resources.forEach((value, key) => {
+            res.resources.push(ResourceMapper.mapToBackend(value))
         })
         return res;
     }
@@ -215,6 +288,9 @@ class VariationMapper {
         res.amount = ParamMapper.mapForRendering(ctx, source.amount)
         source.params.forEach((value, key) => {
           res.params.set(key, ParamMapper.mapForRendering(ctx, value))
+        })
+        source.resources.forEach((value, key) => {
+            res.resources.set(key, ResourceMapper.mapForRendering(ctx, value))
         })
         return res;
     }

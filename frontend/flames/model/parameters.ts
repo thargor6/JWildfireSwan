@@ -18,14 +18,22 @@
 import {EPSILON} from "Frontend/flames/renderer/mathlib";
 import FlameParamCurveInterpolation
     from "Frontend/generated/org/jwildfire/swan/flames/model/flame/FlameParamCurveInterpolation";
+import {hexStringToString} from "Frontend/flames/renderer/string-util";
 
 export type FlameParameterType = 'scalar' | 'curve'
 export type FlameParameterDataType = 'float' | 'int' | 'boolean'
+export type FlameResourceType = 'bytearray' | 'href' | 'image_filename' | 'image_file' | 'svg_file' |  'font_name' | 'java_code' | 'obj_mesh' | 'flame_filename'
 
 export interface FlameParameter {
     type: FlameParameterType
     datatype: FlameParameterDataType
     value: number
+}
+
+export interface FlameResource {
+    name: string
+    type: FlameResourceType
+    stringValue?: string
 }
 
 class FloatScalarParameter implements FlameParameter {
@@ -188,6 +196,20 @@ export class Parameters {
 export interface RenderParameter {
     toWebGl(): string
     equals(refValue: number): boolean
+}
+
+export class RenderResource {
+    constructor(private _stringValue?: string) {
+    }
+
+    get stringValue(): string {
+        return this._stringValue?? ''
+    }
+
+    get decodedHexStringValue(): string {
+        return hexStringToString(this._stringValue?? '')
+    }
+
 }
 
 export class FloatValueRenderParameter implements RenderParameter {

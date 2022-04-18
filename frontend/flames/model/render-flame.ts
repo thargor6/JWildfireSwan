@@ -15,7 +15,7 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 */
 
-import {RenderParameter, RenderParameters} from "Frontend/flames/model/parameters";
+import {RenderParameter, RenderParameters, RenderResource} from "Frontend/flames/model/parameters";
 
 export class RenderMappingContext {
    constructor(private _frame: number, private _motionBlurLength: number,
@@ -41,9 +41,15 @@ export class RenderColor {
 export class RenderVariation {
     public name = ''
     public amount = RenderParameters.floatParam(1.0)
+
     private _params = new Map<string, RenderParameter>()
     public get params() {
         return this._params
+    }
+
+    private _resources = new Map<string, RenderResource>()
+    public get resources() {
+        return this._resources
     }
 }
 

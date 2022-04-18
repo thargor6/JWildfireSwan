@@ -15,7 +15,7 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 */
 
-import {FlameParameter, Parameters} from "Frontend/flames/model/parameters";
+import {FlameParameter, FlameResource, Parameters} from "Frontend/flames/model/parameters";
 
 export const GRADIENT_SIZE = 256
 
@@ -26,11 +26,17 @@ export class Color {
 }
 
 export class Variation {
-    public name = 'linear';
-    public amount: FlameParameter = Parameters.floatParam(1.0);
-    private _params = new Map<string, FlameParameter>();
+    public name = 'linear'
+    public amount: FlameParameter = Parameters.floatParam(1.0)
+
+    private _params = new Map<string, FlameParameter>()
     public get params() {
         return this._params
+    }
+
+    private _resources = new Map<string, FlameResource>()
+    public get resources() {
+        return this._resources
     }
 }
 
