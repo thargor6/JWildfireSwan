@@ -29,6 +29,7 @@ import {registerVar_Synth} from "Frontend/flames/renderer/variations/variation-s
 import {registerVars_Blur} from "Frontend/flames/renderer/variations/variation-shaders-blur";
 import {registerVars_2D_PartS} from "Frontend/flames/renderer/variations/variation-shaders-2d-partS";
 import {ExampleFlame, parseExampleFlame, sortExamples, SortOrder} from "Frontend/stores/example-flames";
+import {registerVars_Plot} from "Frontend/flames/renderer/variations/variation-shaders-plot";
 
 type OnInitCallback = () => void
 
@@ -103,5 +104,6 @@ registerVars_Waves()
 registerVar_Synth()
 registerVars_3D()
 registerVars_ZTransforms()
+registerVars_Plot()
 
 export const playgroundStore = new PlaygroundStore()

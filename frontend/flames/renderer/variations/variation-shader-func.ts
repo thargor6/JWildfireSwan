@@ -27,7 +27,8 @@ export enum VariationTypes {
     VARTYPE_BASE_SHAPE,
     VARTYPE_PRE,
     VARTYPE_POST,
-    VARTYPE_CROP
+    VARTYPE_CROP,
+    VARTYPE_EDIT_FORMULA
 }
 
 export enum VariationParamType {
@@ -36,9 +37,14 @@ export enum VariationParamType {
 }
 
 export interface VariationParam {
-    name: string;
-    type: VariationParamType;
-    initialValue: number;
+    name: string
+    type: VariationParamType
+    initialValue: number
+}
+
+export interface VariationPreset {
+    id?: number
+    caption?: string
 }
 
 export abstract class VariationShaderFunc {

@@ -3,3 +3,4 @@
 /.idea/
 /frontend/generated/
 /src/main/resources/examples/_simple.flame
+/src/main/resources/examples/animation*.flame
