@@ -2811,6 +2811,40 @@ class HeartWFFunc extends VariationShaderFunc2D {
     }
 }
 
+class HenonFunc extends VariationShaderFunc2D {
+    PARAM_A = 'a'
+    PARAM_B = 'b'
+    PARAM_C = 'c'
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_A, type: VariationParamType.VP_NUMBER, initialValue: 0.5 },
+            { name: this.PARAM_B, type: VariationParamType.VP_NUMBER, initialValue: 1.0},
+            { name: this.PARAM_C, type: VariationParamType.VP_NUMBER, initialValue: 1.0}
+        ]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        // Henon by TyrantWave
+        // https://www.deviantart.com/tyrantwave/art/Henon-and-Lozi-Apo-Plugins-125039554
+        return `{
+            float amount = ${variation.amount.toWebGl()};
+            float a = ${variation.params.get(this.PARAM_A)!.toWebGl()};
+            float b = ${variation.params.get(this.PARAM_B)!.toWebGl()};
+            float c = ${variation.params.get(this.PARAM_C)!.toWebGl()};
+            _vx += (c - (a * sqr(_tx)) + _ty) * amount;
+            _vy += b * _tx * amount;
+        }`;
+    }
+
+    get name(): string {
+        return 'henon';
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
 class HorseshoeFunc extends VariationShaderFunc2D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         return `{
@@ -3044,6 +3078,25 @@ class IDiscFunc extends VariationShaderFunc2D {
 
     get name(): string {
         return 'idisc';
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
+class InvpolarFunc extends VariationShaderFunc2D {
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        return `{
+           float amount = ${variation.amount.toWebGl()};
+           float ny = 1.0 + _ty;
+           _vx += amount * ny * (sin(_tx * M_PI));
+           _vy += amount * ny * (cos(_tx * M_PI));
+        }`;
+    }
+
+    get name(): string {
+        return 'invpolar';
     }
 
     get variationTypes(): VariationTypes[] {
@@ -3365,6 +3418,7 @@ export function registerVars_2D_PartA() {
     VariationShaders.registerVar(new GlynnSim3Func())
     VariationShaders.registerVar(new HeartFunc())
     VariationShaders.registerVar(new HeartWFFunc())
+    VariationShaders.registerVar(new HenonFunc())
     VariationShaders.registerVar(new HorseshoeFunc())
     VariationShaders.registerVar(new HyperbolicFunc())
     VariationShaders.registerVar(new HypertileFunc())
@@ -3372,6 +3426,7 @@ export function registerVars_2D_PartA() {
     VariationShaders.registerVar(new Hypertile2Func())
     VariationShaders.registerVar(new JapaneseMapleLeafFunc())
     VariationShaders.registerVar(new IDiscFunc())
+    VariationShaders.registerVar(new InvpolarFunc())
     VariationShaders.registerVar(new JuliaFunc())
     VariationShaders.registerVar(new JuliaCFunc())
     VariationShaders.registerVar(new JuliaNFunc())

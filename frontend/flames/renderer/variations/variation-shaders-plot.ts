@@ -29,12 +29,35 @@ import {M_PI} from "Frontend/flames/renderer/mathlib";
 /*
   be sure to import this class somewhere and call registerVars_Plot()
  */
+
+const rewriteFormula = (formula: string): string => {
+  let newFormula
+  if(!formula || formula==='') {
+    newFormula = '0'
+  }
+  else {
+    newFormula = formula
+  }
+
+  // add decimal point to whole numbers
+  newFormula = newFormula.replace(/(\d+)[\.]?(\d*)([*\/+-\?\)]?)/g, '$1.$3')
+  // fabs -> abs
+  newFormula = newFormula.replace(/fabs\(/g, 'abs(')
+
+  console.log(formula, '->', newFormula)
+  return newFormula
+}
+
 interface YPlot2DWFFuncPreset extends VariationPreset {
   formula?: string
   xmin: number
   xmax: number
   param_a?: number
   param_b?: number
+  param_c?: number
+  param_d?: number
+  param_e?: number
+  param_f?: number
 }
 
 class YPlot2DWFFunc extends VariationShaderFunc3D {
@@ -105,8 +128,7 @@ class YPlot2DWFFunc extends VariationShaderFunc3D {
     }
 
     getCode(xform: RenderXForm, variation: RenderVariation): string {
-        const formula = this.rewriteFormula(variation.resources.get(this.RESOURCE_FORMULA)!.decodedHexStringValue)
-
+        const formula = rewriteFormula(variation.resources.get(this.RESOURCE_FORMULA)!.decodedHexStringValue)
         return `{
           float amount = ${variation.amount.toWebGl()};
           float xmin = ${variation.params.get(this.PARAM_XMIN)!.toWebGl()};
@@ -161,7 +183,10 @@ class YPlot2DWFFunc extends VariationShaderFunc3D {
           float z = _zmin + randV * _dz;
           float y = ${formula};
           if(direct_color>0) {
-            if(color_mode==${this.CM_Y}) {
+            if(color_mode==${this.CM_COLORMAP}) {
+              // not supported
+            }
+            else if(color_mode==${this.CM_Y}) {
               _color = (y - _ymin) / _dy;
             }
             else {
@@ -183,26 +208,168 @@ class YPlot2DWFFunc extends VariationShaderFunc3D {
     get variationTypes(): VariationTypes[] {
         return [VariationTypes.VARTYPE_3D, VariationTypes.VARTYPE_BASE_SHAPE, VariationTypes.VARTYPE_EDIT_FORMULA, VariationTypes.VARTYPE_DC];
     }
+}
 
-    rewriteFormula = (formula: string): string => {
-      let newFormula
-      if(!formula || formula==='') {
-        newFormula = '0'
-      }
-      else {
-        newFormula = formula
-      }
+interface YPlot3DWFFuncPreset extends VariationPreset {
+  formula?: string
+  xmin: number
+  xmax: number
+  zmin: number
+  zmax: number
+  param_a?: number
+  param_b?: number
+  param_c?: number
+  param_d?: number
+  param_e?: number
+  param_f?: number
+}
 
-      // add decimal point to whole numbers
-      newFormula = newFormula.replace(/(\d+)[\.]?(\d*)([*\/+-\?\)]?)/g, '$1.$3')
-      // fabs -> abs
-      newFormula = newFormula.replace(/fabs\(/g, 'abs(')
+class YPlot3DWFFunc extends VariationShaderFunc3D {
+  PARAM_XMIN = 'xmin'
+  PARAM_XMAX = 'xmax'
+  PARAM_YMIN = 'ymin'
+  PARAM_YMAX = 'ymax'
+  PARAM_ZMIN = 'zmin'
+  PARAM_ZMAX = 'zmax'
+  PARAM_DIRECT_COLOR = 'direct_color'
+  PARAM_COLOR_MODE = 'color_mode'
+  PARAM_A = 'param_a'
+  PARAM_B = 'param_b'
+  PARAM_C = 'param_c'
+  PARAM_D = 'param_d'
+  PARAM_E = 'param_e'
+  PARAM_F = 'param_f'
 
-      console.log(formula, '->', newFormula)
-      return newFormula
-    }
+  RESOURCE_FORMULA = 'formula'
+
+  CM_COLORMAP = 0
+  CM_X = 1
+  CM_Y = 2
+  CM_Z = 3
+  CM_XZ = 4
+
+  get params(): VariationParam[] {
+    return [{ name: this.PARAM_XMIN, type: VariationParamType.VP_NUMBER, initialValue: -3.0 },
+      { name: this.PARAM_XMAX, type: VariationParamType.VP_NUMBER, initialValue: 2.0 },
+      { name: this.PARAM_YMIN, type: VariationParamType.VP_NUMBER, initialValue: -4.0 },
+      { name: this.PARAM_YMAX, type: VariationParamType.VP_NUMBER, initialValue: 4.0 },
+      { name: this.PARAM_ZMIN, type: VariationParamType.VP_NUMBER, initialValue: -2.0 },
+      { name: this.PARAM_ZMAX, type: VariationParamType.VP_NUMBER, initialValue: 2.0 },
+      { name: this.PARAM_DIRECT_COLOR, type: VariationParamType.VP_NUMBER, initialValue: 1 },
+      { name: this.PARAM_COLOR_MODE, type: VariationParamType.VP_NUMBER, initialValue: this.CM_Z },
+      { name: this.PARAM_A, type: VariationParamType.VP_NUMBER, initialValue: 0.0 },
+      { name: this.PARAM_B, type: VariationParamType.VP_NUMBER, initialValue: 0.0 },
+      { name: this.PARAM_C, type: VariationParamType.VP_NUMBER, initialValue: 0.0 },
+      { name: this.PARAM_D, type: VariationParamType.VP_NUMBER, initialValue: 0.0 },
+      { name: this.PARAM_E, type: VariationParamType.VP_NUMBER, initialValue: 0.0 },
+      { name: this.PARAM_F, type: VariationParamType.VP_NUMBER, initialValue: 0.0 }
+    ]
+  }
+
+  get presets(): YPlot3DWFFuncPreset[] {
+    return [
+      // Formulas provided by Andreas Maschke
+      {id: 0, formula: 'sin(2*exp(-4*(x*x+z*z)))', xmin: -3.0, xmax: 2.0, zmin: -2.0, zmax: 2.0},
+      {id: 1, formula: 'cos(x*z*12)/6', xmin: -3.0, xmax: 2.0, zmin: -2.0, zmax: 2.0},
+      {id: 2, formula: 'cos(sqrt(x*x+z*z)*14)*exp(-2*(x*x+z*z))', xmin: -3.0, xmax: 2.0, zmin: -2.0, zmax: 2.0},
+      {id: 3, formula: 'cos(atan(x/z)*8)/4*sin(sqrt(x*x+z*z)*3)', xmin: -3.0, xmax: 2.0, zmin: -2.0, zmax: 2.0},
+      {id: 4, formula: '(sin(x)*sin(x)+cos(z)*cos(z))/(5+x*x+z*z)', xmin: -3.0, xmax: 2.0, zmin: -2.0, zmax: 2.0},
+      {id: 5, formula: 'cos(2*pi*(x+z))*(1-sqrt(x*x+z*z))', xmin: -3.0, xmax: 2.0, zmin: -2.0, zmax: 2.0},
+      {id: 6, formula: 'sin(x*x+z*z)', xmin: -3.0, xmax: 2.0, zmin: -2.0, zmax: 2.0}
+    ]
+  }
+
+  getCode(xform: RenderXForm, variation: RenderVariation): string {
+    const formula = rewriteFormula(variation.resources.get(this.RESOURCE_FORMULA)!.decodedHexStringValue)
+    return `{
+          float amount = ${variation.amount.toWebGl()};
+          float xmin = ${variation.params.get(this.PARAM_XMIN)!.toWebGl()};
+          float xmax = ${variation.params.get(this.PARAM_XMAX)!.toWebGl()};
+          float ymin = ${variation.params.get(this.PARAM_YMIN)!.toWebGl()};
+          float ymax = ${variation.params.get(this.PARAM_YMAX)!.toWebGl()};
+          float zmin = ${variation.params.get(this.PARAM_ZMIN)!.toWebGl()};
+          float zmax = ${variation.params.get(this.PARAM_ZMAX)!.toWebGl()};
+          float param_a = ${variation.params.get(this.PARAM_A)!.toWebGl()};
+          float param_b = ${variation.params.get(this.PARAM_B)!.toWebGl()};
+          float param_c = ${variation.params.get(this.PARAM_C)!.toWebGl()};
+          float param_d = ${variation.params.get(this.PARAM_D)!.toWebGl()};
+          float param_e = ${variation.params.get(this.PARAM_E)!.toWebGl()};
+          float param_f = ${variation.params.get(this.PARAM_F)!.toWebGl()};
+          int direct_color = ${variation.params.get(this.PARAM_DIRECT_COLOR)!.toWebGl()};
+          int color_mode = ${variation.params.get(this.PARAM_COLOR_MODE)!.toWebGl()};
+       
+          float _xmin, _xmax, _dx;
+          float _ymin, _ymax, _dy;
+          float _zmin, _zmax, _dz;
+          
+          _xmin = xmin;
+          _xmax = xmax;
+          if (_xmin > _xmax) {
+            float t = _xmin;
+            _xmin = _xmax;
+            _xmax = t;
+          }
+          _dx = _xmax - _xmin;
+        
+          _ymin = ymin;
+          _ymax = ymax;
+          if (_ymin > _ymax) {
+            float t = _ymin;
+            _ymin = _ymax;
+            _ymax = t;
+          }
+          _dy = _ymax - _ymin;
+        
+          _zmin = zmin;
+          _zmax = zmax;
+          if (_zmin > _zmax) {
+            float t = _zmin;
+            _zmin = _zmax;
+            _zmax = t;
+          }
+          _dz = _zmax - _zmin;
+          
+          float randU = rand8(tex, rngState);
+          float randV = rand8(tex, rngState);
+          float x = _xmin + randU * _dx;
+          float z = _zmin + randV * _dz;
+          float y = ${formula};
+          if(direct_color>0) {
+            if(color_mode==${this.CM_COLORMAP}) {
+              // not supported
+            }
+            else if(color_mode==${this.CM_Y}) {
+              _color = (y - _ymin) / _dy;
+            }
+            else if(color_mode==${this.CM_X}) {
+              _color = (x - _xmin) / _dx;
+            } 
+            else if(color_mode==${this.CM_XZ}) {
+              _color = (x - _xmin) / _dx * (z - _zmin) / _dz;
+            }
+            else { // CM_Z
+              _color = (z - _zmin) / _dz;
+            }
+            if (_color < 0.0) _color = 0.0;
+            else if (_color > 1.0) _color = 1.0;
+          }
+          _vx += amount * x;
+          _vy += amount * y;
+          _vz += amount * z;
+        }`;
+  }
+
+  get name(): string {
+    return 'yplot3d_wf';
+  }
+
+  get variationTypes(): VariationTypes[] {
+    return [VariationTypes.VARTYPE_3D, VariationTypes.VARTYPE_BASE_SHAPE, VariationTypes.VARTYPE_EDIT_FORMULA, VariationTypes.VARTYPE_DC];
+  }
+
 }
 
 export function registerVars_Plot() {
     VariationShaders.registerVar(new YPlot2DWFFunc())
+    VariationShaders.registerVar(new YPlot3DWFFunc())
 }

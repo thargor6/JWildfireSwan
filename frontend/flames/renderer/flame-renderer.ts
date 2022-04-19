@@ -149,7 +149,7 @@ export class FlameRenderer implements CloseableBuffers {
         this.currSampleCount += this.samplesPerFrame
         const finishedPct = this.currSampleCount / this.maxSampleCount * 100.0
 
-        if (finishedPct>1.25) {
+        if (finishedPct>0.75) {
             this.iterator.plotHistogram();
         }
 
