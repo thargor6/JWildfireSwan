@@ -3104,6 +3104,32 @@ class InvpolarFunc extends VariationShaderFunc2D {
     }
 }
 
+class InvSquircularFunc extends VariationShaderFunc2D {
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        return `{
+           float amount = ${variation.amount.toWebGl()};
+           if (amount != 0.0) {
+             float u = _tx;
+             float v = _ty;
+             float r = u * u + v * v;
+             
+             float r2 = sqrt(r * (amount * amount * r - 4.0 * u * u * v * v) / amount);
+             r = sqrt(r - r2) / 1.414213562;
+             _vx += r / u;
+             _vy += r / v;
+           }
+        }`;
+    }
+
+    get name(): string {
+        return 'invsquircular';
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
 class JuliaFunc extends VariationShaderFunc2D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         return `{
@@ -3427,6 +3453,7 @@ export function registerVars_2D_PartA() {
     VariationShaders.registerVar(new JapaneseMapleLeafFunc())
     VariationShaders.registerVar(new IDiscFunc())
     VariationShaders.registerVar(new InvpolarFunc())
+    VariationShaders.registerVar(new InvSquircularFunc())
     VariationShaders.registerVar(new JuliaFunc())
     VariationShaders.registerVar(new JuliaCFunc())
     VariationShaders.registerVar(new JuliaNFunc())
