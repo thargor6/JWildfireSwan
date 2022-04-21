@@ -2845,6 +2845,126 @@ class HenonFunc extends VariationShaderFunc2D {
     }
 }
 
+class HoleFunc extends VariationShaderFunc2D {
+    PARAM_A = 'a'
+    PARAM_INSIDE = 'inside'
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_A, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
+            { name: this.PARAM_INSIDE, type: VariationParamType.VP_NUMBER, initialValue: 0}
+        ]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        return `{
+            float amount = ${variation.amount.toWebGl()};
+            float a = ${variation.params.get(this.PARAM_A)!.toWebGl()};
+            int inside = ${variation.params.get(this.PARAM_INSIDE)!.toWebGl()};
+            float alpha = atan2(_ty,_tx);
+            float delta = pow(alpha/M_PI + 1.0, a);
+            float r;
+            if (inside!=0)
+              r = amount*delta/(_tx*_tx + _ty*_ty + delta);
+            else
+              r = amount*sqrt(_tx*_tx + _ty*_ty + delta);
+            float s = sin(alpha);
+            float c = cos(alpha);
+            _vx += r * c;
+            _vy += r * s;
+        }`;
+    }
+
+    get name(): string {
+        return 'hole';
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
+class Hole2Func extends VariationShaderFunc2D {
+    PARAM_A = 'a'
+    PARAM_B = 'b'
+    PARAM_C = 'c'
+    PARAM_D = 'd'
+    PARAM_INSIDE = 'inside'
+    PARAM_SHAPE = 'shape'
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_A, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
+            { name: this.PARAM_B, type: VariationParamType.VP_NUMBER, initialValue: 2.0 },
+            { name: this.PARAM_C, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
+            { name: this.PARAM_D, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
+            { name: this.PARAM_INSIDE, type: VariationParamType.VP_NUMBER, initialValue: 0},
+            { name: this.PARAM_SHAPE, type: VariationParamType.VP_NUMBER, initialValue: 0 }
+        ]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        // Hole2 by Michael Faber, Brad Stefanov, and Rick Sidwell
+        return `{
+            float amount = ${variation.amount.toWebGl()};
+            float a = ${variation.params.get(this.PARAM_A)!.toWebGl()};
+            float b = ${variation.params.get(this.PARAM_B)!.toWebGl()};
+            float c = ${variation.params.get(this.PARAM_C)!.toWebGl()};
+            float d = ${variation.params.get(this.PARAM_D)!.toWebGl()};
+            int inside = ${variation.params.get(this.PARAM_INSIDE)!.toWebGl()};
+            int shape = ${variation.params.get(this.PARAM_SHAPE)!.toWebGl()};
+            float _theta = atan2(_ty, _tx);
+            float rhosq = _r2;
+            float theta = _theta * d;
+            float delta = pow(theta / M_PI + 1.0, a) * c;
+            float r1 = 1.0;
+            if(shape<=0) { 
+              r1 = sqrt(rhosq) + delta;
+            }
+            else if(shape==1) {
+              r1 = sqrt(rhosq + delta);
+            }
+            else if(shape==2) {
+              r1 = sqrt(rhosq + sin(b * theta) + delta);
+            }
+            else if(shape==3) {
+              r1 = sqrt(rhosq + sin(theta) + delta);
+            }
+            else if(shape==4) {
+              r1 = sqrt(rhosq + sqr(theta) - delta + 1.0);
+            }  
+            else if(shape==5) {
+              r1 = sqrt(rhosq + abs(tan(theta)) + delta);
+            }
+            else if(shape==6) {
+              r1 = sqrt(rhosq * (1.0 + sin(b * theta)) + delta);
+            }
+            else if(shape==7) {
+              r1 = sqrt(rhosq + abs(sin(0.5 * b * theta)) + delta);
+            }
+            else if(shape==8) {
+              r1 = sqrt(rhosq + sin(M_PI * sin(b * theta)) + delta);
+            }
+            else if(shape>=9) {
+              r1 = sqrt(rhosq + (sin(b * theta) + sin(2.0 * b * theta + (M_PI*0.5))) / 2.0 + delta);
+            }                    
+            if (inside != 0)
+              r1 = amount / r1;
+            else
+              r1 = amount * r1;
+            
+            _vx += r1 * cos(theta);
+            _vy += r1 * sin(theta);
+        }`;
+    }
+
+    get name(): string {
+        return 'hole2';
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
 class HorseshoeFunc extends VariationShaderFunc2D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         return `{
@@ -3445,6 +3565,8 @@ export function registerVars_2D_PartA() {
     VariationShaders.registerVar(new HeartFunc())
     VariationShaders.registerVar(new HeartWFFunc())
     VariationShaders.registerVar(new HenonFunc())
+    VariationShaders.registerVar(new HoleFunc())
+    VariationShaders.registerVar(new Hole2Func())
     VariationShaders.registerVar(new HorseshoeFunc())
     VariationShaders.registerVar(new HyperbolicFunc())
     VariationShaders.registerVar(new HypertileFunc())

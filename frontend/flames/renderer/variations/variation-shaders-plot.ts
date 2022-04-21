@@ -214,6 +214,186 @@ class PolarPlot2DWFFunc extends VariationShaderFunc3D {
 
 }
 
+interface PolarPlot3DWFFuncPreset extends VariationPreset {
+  formula: string
+  cylindrical: number
+  tmin: number
+  tmax: number
+  umin: number
+  umax: number
+  param_a?: number
+  param_b?: number
+  param_c?: number
+  param_d?: number
+  param_e?: number
+  param_f?: number
+}
+
+class PolarPlot3DWFFunc extends VariationShaderFunc3D {
+  PARAM_TMIN = 'tmin'
+  PARAM_TMAX = 'tmax'
+  PARAM_UMIN = 'umin'
+  PARAM_UMAX = 'umax'
+  PARAM_RMIN = 'rmin'
+  PARAM_RMAX = 'rmax'
+  PARAM_CYLINDRICAL = 'cylindrical'
+  PARAM_DIRECT_COLOR = 'direct_color'
+  PARAM_COLOR_MODE = 'color_mode'
+  PARAM_A = 'param_a'
+  PARAM_B = 'param_b'
+  PARAM_C = 'param_c'
+  PARAM_D = 'param_d'
+  PARAM_E = 'param_e'
+  PARAM_F = 'param_f'
+
+  RESOURCE_FORMULA = 'formula'
+
+  CM_COLORMAP = 0
+  CM_T = 1
+  CM_U = 2
+  CM_R = 3
+  CM_TU = 4
+
+  get params(): VariationParam[] {
+    return [{ name: this.PARAM_TMIN, type: VariationParamType.VP_NUMBER, initialValue: -M_PI },
+      { name: this.PARAM_TMAX, type: VariationParamType.VP_NUMBER, initialValue: M_PI },
+      { name: this.PARAM_UMIN, type: VariationParamType.VP_NUMBER, initialValue: 0.0 },
+      { name: this.PARAM_UMAX, type: VariationParamType.VP_NUMBER, initialValue: M_PI },
+      { name: this.PARAM_RMIN, type: VariationParamType.VP_NUMBER, initialValue: -2.0 },
+      { name: this.PARAM_RMAX, type: VariationParamType.VP_NUMBER, initialValue: 2.0 },
+      { name: this.PARAM_DIRECT_COLOR, type: VariationParamType.VP_NUMBER, initialValue: 1 },
+      { name: this.PARAM_CYLINDRICAL, type: VariationParamType.VP_NUMBER, initialValue: 0 },
+      { name: this.PARAM_COLOR_MODE, type: VariationParamType.VP_NUMBER, initialValue: this.CM_U },
+      { name: this.PARAM_A, type: VariationParamType.VP_NUMBER, initialValue: 0.0 },
+      { name: this.PARAM_B, type: VariationParamType.VP_NUMBER, initialValue: 0.0 },
+      { name: this.PARAM_C, type: VariationParamType.VP_NUMBER, initialValue: 0.0 },
+      { name: this.PARAM_D, type: VariationParamType.VP_NUMBER, initialValue: 0.0 },
+      { name: this.PARAM_E, type: VariationParamType.VP_NUMBER, initialValue: 0.0 },
+      { name: this.PARAM_F, type: VariationParamType.VP_NUMBER, initialValue: 0.0 }
+    ]
+  }
+
+  get presets(): PolarPlot3DWFFuncPreset[] {
+    return [
+      // Formulas provided by Rick Sidwell
+      {id: 0, formula: 'sin(param_a*u) + param_b', cylindrical: 0, tmin: -M_PI, tmax: M_PI, umin: -M_PI, umax: M_PI, param_a: 5, param_b: 2},
+      {id: 1, formula: 'sin(param_a*u) + param_b', cylindrical: 1, tmin: -M_PI, tmax: M_PI, umin: -M_PI, umax: M_PI, param_a: 5, param_b: 2},
+      {id: 2, formula: 'u', cylindrical: 0, tmin: -M_PI, tmax: M_PI, umin: 0.0, umax: 4.7},
+      {id: 3, formula: '(sin(param_a*t) + cos(param_b*u)) + param_c', cylindrical: 0, tmin: -M_PI, tmax: M_PI, umin: -1.570796, umax: 1.570796, param_a: 5, param_b: 6, param_c: 0.25},
+      {id: 4, formula: '(sin(param_a*t + param_b*u)) + param_c', cylindrical: 0, tmin: -M_PI, tmax: M_PI, umin: -1.570796, umax: 1.570796, param_a: 5, param_b: 7, param_c: 0},
+      {id: 5, formula: '(sin(param_a*t + param_b*u)) + param_c', cylindrical: 1, tmin: -M_PI, tmax: M_PI, umin: -3.0, umax: 3.0, param_a: 4, param_b: 4, param_c: 1},
+      {id: 6, formula: 'sin(param_a*t)+param_b*u', cylindrical: 1, tmin: -M_PI, tmax: M_PI, umin: -2.0, umax: 2.0, param_a: 4, param_b: 1.25},
+      {id: 7, formula: 't / (param_a + u) + param_b', cylindrical: 1, tmin: -4.712389, tmax: 4.712389, umin: 0.0, umax: 2.5, param_a: 1, param_b: 0},
+      {id: 8, formula: 'sqr(u) + param_a', cylindrical: 1, tmin: -M_PI, tmax: M_PI, umin: -1.5, umax: 1.5},
+      {id: 9, formula: 'cos(param_a*t + sin(param_b*u)) + param_c', cylindrical: 0, tmin: -M_PI, tmax: M_PI, umin: -M_PI, umax: M_PI, param_a: 2, param_b: 3, param_c: 0}]
+  }
+
+  getCode(xform: RenderXForm, variation: RenderVariation): string {
+    const formula = rewriteFormula(variation.resources.get(this.RESOURCE_FORMULA)!.decodedHexStringValue)
+    return `{
+          float amount = ${variation.amount.toWebGl()};
+          float tmin = ${variation.params.get(this.PARAM_TMIN)!.toWebGl()};
+          float tmax = ${variation.params.get(this.PARAM_TMAX)!.toWebGl()};
+          float umin = ${variation.params.get(this.PARAM_UMIN)!.toWebGl()};
+          float umax = ${variation.params.get(this.PARAM_UMAX)!.toWebGl()};
+          float rmin = ${variation.params.get(this.PARAM_RMIN)!.toWebGl()};
+          float rmax = ${variation.params.get(this.PARAM_RMAX)!.toWebGl()};
+          float param_a = ${variation.params.get(this.PARAM_A)!.toWebGl()};
+          float param_b = ${variation.params.get(this.PARAM_B)!.toWebGl()};
+          float param_c = ${variation.params.get(this.PARAM_C)!.toWebGl()};
+          float param_d = ${variation.params.get(this.PARAM_D)!.toWebGl()};
+          float param_e = ${variation.params.get(this.PARAM_E)!.toWebGl()};
+          float param_f = ${variation.params.get(this.PARAM_F)!.toWebGl()};
+          int cylindrical = ${variation.params.get(this.PARAM_CYLINDRICAL)!.toWebGl()};
+          int direct_color = ${variation.params.get(this.PARAM_DIRECT_COLOR)!.toWebGl()};
+          int color_mode = ${variation.params.get(this.PARAM_COLOR_MODE)!.toWebGl()};
+       
+          float _tmin, _tmax, _dt;
+          float _umin, _umax, _du;
+          float _rmin, _rmax, _dr;
+          
+          _tmin = tmin;
+          _tmax = tmax;
+          if (_tmin > _tmax) {
+            float t = _tmin;
+            _tmin = _tmax;
+            _tmax = t;
+          }
+          _dt = _tmax - _tmin;
+        
+          _umin = umin;
+          _umax = umax;
+          if (_umin > _umax) {
+            float t = _umin;
+            _umin = _umax;
+            _umax = t;
+          }
+          _du = _umax - _umin;
+          
+          _rmin = rmin;
+          _rmax = rmax;
+          if (_rmin > _rmax) {
+            float t = _rmin;
+            _rmin = _rmax;
+            _rmax = t;
+          }
+          _dr = _rmax - _rmin;
+
+          float randT = rand8(tex, rngState);
+          float randU = rand8(tex, rngState);
+          float t = _tmin + randT * _dt;
+          float u = _umin + randU * _du;
+          float r = ${formula};
+          float x, y, z;
+          if(cylindrical == 0) {
+            x = r * sin(u) * cos(t);
+            y = r * sin(u) * sin(t);
+            z = r * cos(u);
+          }
+          else {
+            x = r * cos(t);
+            y = r * sin(t);
+            z = u;
+          }
+          if(direct_color>0) {
+            if(color_mode==${this.CM_COLORMAP}) {
+              // not supported
+            }
+            else if(color_mode==${this.CM_T}) {
+              _color = (t - _tmin) / _dt;
+            }
+            else if(color_mode==${this.CM_U}) {
+              _color = (u - _umin) / _du;
+            }
+            else if(color_mode==${this.CM_R}) {
+              _color = (r - _rmin) / _dr;
+            }
+            else if(color_mode==${this.CM_TU}) { 
+              _color = (t - _tmin) / _dt * (u - _umin) / _du;
+            };
+            if (_color < 0.0) _color = 0.0;
+            else if (_color > 1.0) _color = 1.0;
+          }
+          _vx += amount * x;
+          _vy += amount * y;
+          _vz += amount * z;
+        }`;
+  }
+
+  get name(): string {
+    return 'polarplot3d_wf';
+  }
+
+  get funcDependencies(): string[] {
+    return [FUNC_SINH, FUNC_COSH, FUNC_TANH];
+  }
+
+  get variationTypes(): VariationTypes[] {
+    return [VariationTypes.VARTYPE_3D, VariationTypes.VARTYPE_BASE_SHAPE, VariationTypes.VARTYPE_EDIT_FORMULA, VariationTypes.VARTYPE_DC];
+  }
+
+}
+
 interface YPlot2DWFFuncPreset extends VariationPreset {
   formula?: string
   xmin: number
@@ -384,7 +564,7 @@ interface YPlot3DWFFuncPreset extends VariationPreset {
   formula?: string
   xmin: number
   xmax: number
-  zmin: number
+  umin: number
   zmax: number
   param_a?: number
   param_b?: number
@@ -439,13 +619,13 @@ class YPlot3DWFFunc extends VariationShaderFunc3D {
   get presets(): YPlot3DWFFuncPreset[] {
     return [
       // Formulas provided by Andreas Maschke
-      {id: 0, formula: 'sin(2*exp(-4*(x*x+z*z)))', xmin: -3.0, xmax: 2.0, zmin: -2.0, zmax: 2.0},
-      {id: 1, formula: 'cos(x*z*12)/6', xmin: -3.0, xmax: 2.0, zmin: -2.0, zmax: 2.0},
-      {id: 2, formula: 'cos(sqrt(x*x+z*z)*14)*exp(-2*(x*x+z*z))', xmin: -3.0, xmax: 2.0, zmin: -2.0, zmax: 2.0},
-      {id: 3, formula: 'cos(atan(x/z)*8)/4*sin(sqrt(x*x+z*z)*3)', xmin: -3.0, xmax: 2.0, zmin: -2.0, zmax: 2.0},
-      {id: 4, formula: '(sin(x)*sin(x)+cos(z)*cos(z))/(5+x*x+z*z)', xmin: -3.0, xmax: 2.0, zmin: -2.0, zmax: 2.0},
-      {id: 5, formula: 'cos(2*pi*(x+z))*(1-sqrt(x*x+z*z))', xmin: -3.0, xmax: 2.0, zmin: -2.0, zmax: 2.0},
-      {id: 6, formula: 'sin(x*x+z*z)', xmin: -3.0, xmax: 2.0, zmin: -2.0, zmax: 2.0}
+      {id: 0, formula: 'sin(2*exp(-4*(x*x+z*z)))', xmin: -3.0, xmax: 2.0, umin: -2.0, zmax: 2.0},
+      {id: 1, formula: 'cos(x*z*12)/6', xmin: -3.0, xmax: 2.0, umin: -2.0, zmax: 2.0},
+      {id: 2, formula: 'cos(sqrt(x*x+z*z)*14)*exp(-2*(x*x+z*z))', xmin: -3.0, xmax: 2.0, umin: -2.0, zmax: 2.0},
+      {id: 3, formula: 'cos(atan(x/z)*8)/4*sin(sqrt(x*x+z*z)*3)', xmin: -3.0, xmax: 2.0, umin: -2.0, zmax: 2.0},
+      {id: 4, formula: '(sin(x)*sin(x)+cos(z)*cos(z))/(5+x*x+z*z)', xmin: -3.0, xmax: 2.0, umin: -2.0, zmax: 2.0},
+      {id: 5, formula: 'cos(2*pi*(x+z))*(1-sqrt(x*x+z*z))', xmin: -3.0, xmax: 2.0, umin: -2.0, zmax: 2.0},
+      {id: 6, formula: 'sin(x*x+z*z)', xmin: -3.0, xmax: 2.0, umin: -2.0, zmax: 2.0}
     ]
   }
 
@@ -545,6 +725,7 @@ class YPlot3DWFFunc extends VariationShaderFunc3D {
 
 export function registerVars_Plot() {
     VariationShaders.registerVar(new PolarPlot2DWFFunc())
+    VariationShaders.registerVar(new PolarPlot3DWFFunc())
     VariationShaders.registerVar(new YPlot2DWFFunc())
     VariationShaders.registerVar(new YPlot3DWFFunc())
 }
