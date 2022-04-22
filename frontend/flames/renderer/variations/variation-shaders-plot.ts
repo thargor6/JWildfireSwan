@@ -49,6 +49,214 @@ const rewriteFormula = (formula: string): string => {
   return newFormula
 }
 
+interface ParPlot2DWFFuncPreset extends VariationPreset {
+  id: number
+  xformula: string
+  yformula: string
+  zformula: string
+  caption?: string
+  umin: number
+  umax: number
+  vmin: number
+  vmax: number
+  param_a?: number
+  param_b?: number
+  param_c?: number
+  param_d?: number
+  param_e?: number
+  param_f?: number
+}
+
+class ParPlot2DWFFunc extends VariationShaderFunc3D {
+  PARAM_UMIN = 'umin'
+  PARAM_UMAX = 'umax'
+  PARAM_VMIN = 'vmin'
+  PARAM_VMAX = 'vmax'
+  PARAM_DIRECT_COLOR = 'direct_color'
+  PARAM_COLOR_MODE = 'color_mode'
+  PARAM_SOLID = 'solid'
+  PARAM_A = 'param_a'
+  PARAM_B = 'param_b'
+  PARAM_C = 'param_c'
+  PARAM_D = 'param_d'
+  PARAM_E = 'param_e'
+  PARAM_F = 'param_f'
+
+  RESOURCE_XFORMULA = 'xformula'
+  RESOURCE_YFORMULA = 'yformula'
+  RESOURCE_ZFORMULA = 'zformula'
+
+  CM_COLORMAP = 0;
+  CM_U = 1;
+  CM_V = 2;
+  CM_UV = 3;
+
+  get params(): VariationParam[] {
+    return [
+      { name: this.PARAM_UMIN, type: VariationParamType.VP_NUMBER, initialValue: 0.0 },
+      { name: this.PARAM_UMAX, type: VariationParamType.VP_NUMBER, initialValue: 2.0 * M_PI },
+      { name: this.PARAM_VMIN, type: VariationParamType.VP_NUMBER, initialValue: 0.0 },
+      { name: this.PARAM_VMAX, type: VariationParamType.VP_NUMBER, initialValue: 2.0 * M_PI },
+      { name: this.PARAM_DIRECT_COLOR, type: VariationParamType.VP_NUMBER, initialValue: 1 },
+      { name: this.PARAM_COLOR_MODE, type: VariationParamType.VP_NUMBER, initialValue: this.CM_UV },
+      { name: this.PARAM_SOLID, type: VariationParamType.VP_NUMBER, initialValue: 1 },
+      { name: this.PARAM_A, type: VariationParamType.VP_NUMBER, initialValue: 0.0 },
+      { name: this.PARAM_B, type: VariationParamType.VP_NUMBER, initialValue: 0.0 },
+      { name: this.PARAM_C, type: VariationParamType.VP_NUMBER, initialValue: 0.0 },
+      { name: this.PARAM_D, type: VariationParamType.VP_NUMBER, initialValue: 0.0 },
+      { name: this.PARAM_E, type: VariationParamType.VP_NUMBER, initialValue: 0.0 },
+      { name: this.PARAM_F, type: VariationParamType.VP_NUMBER, initialValue: 0.0 }
+    ]
+  }
+
+  get presets(): ParPlot2DWFFuncPreset[] {
+    return [
+      // Formulas provided by Andreas Maschke
+      { id: 0, xformula: 'cos(u)*(4.0+cos(v))', yformula: 'sin(u)*(4.0+cos(v))', zformula: '4.0*sin(2.0*u)+sin(v)*(1.2-sin(v))', umin: 0.0, umax: 2.0 * M_PI, vmin: 0.0, vmax: 2.0 * M_PI},
+      { id: 1, xformula: 'cos(v)*sin(2*u)', yformula: 'sin(v)*sin(2*u)', zformula: 'sin(2*v)*sqr((cos(u)))', umin: 0.0, umax: M_PI, vmin: 0.0, vmax: M_PI},
+      { id: 2, xformula: 'cos(u)*(exp(u/10.0)-1)*(cos(v)+0.8)', yformula: 'sin(u)*(exp(u/10.0)-1)*(cos(v)+0.8)', zformula: '(exp(u/10.0)-1)*sin(v)', umin: 0.0, umax: 5 * M_PI, vmin: 0.0, vmax: 2 * M_PI},
+      { id: 3, xformula: 'cos(v)*(2.0+sin(u+v/3.0))', yformula: 'sin(v)*(2.0+sin(u+v/3.0))', zformula: 'cos(u+v/3.0)', umin: 0.0, umax: 2 * M_PI, vmin: 0.0, vmax: 2 * M_PI},
+      { id: 4, xformula: 'cos(u)*(2.0+cos(v))', yformula: 'sin(u)*(2.0+cos(v))', zformula: '(u-2.0*pi)+sin(v)', umin: 0.0, umax: 4.0 * M_PI, vmin: 0.0, vmax: 2.0 * M_PI},
+      { id: 5, xformula: 'u*cos(v)', yformula: 'u*sin(v)', zformula: 'sqr(cos(4.0*u))*exp(0-u)', umin: 0.0, umax: M_PI, vmin: 0.0, vmax: 2.0 * M_PI},
+      { id: 6, xformula: 'cos(u)*(2.0+sqr(cos(u/2.0))*sin(v))', yformula: 'sin(u)*(2.0+sqr(cos(u/2.0))*sin(v))', zformula: 'sqr(cos(u/2.0))*cos(v)', umin: 0.0 - M_PI, umax: M_PI, vmin: 0.0 - M_PI, vmax: 2.0 * M_PI},
+      { id: 7, xformula: 'cos(u)*(4.0+cos(v))', yformula: 'sin(u)*(4.0+cos(v))', zformula: '3.0*sin(u)+(sin(3.0*v)*(1.2+sin(3.0*v)))', umin: 0.0, umax: 2.0 * M_PI, vmin: 0.0, vmax: 2.0 * M_PI},
+      { id: 8, xformula: 'u*cos(v)', yformula: 'v*cos(u)', zformula: 'u*v*sin(u)*sin(v)', umin: 0.0 - M_PI, umax: M_PI, vmin: 0.0 - M_PI, vmax: M_PI},
+      { id: 9, xformula: 'cos(u)*sin(v*v*v/(pi*pi))', yformula: 'sin(u)*sin(v)', zformula: 'cos(v)', umin: 0.0, umax: 2.0 * M_PI, vmin: 0.0, vmax: M_PI},
+      { id: 10, xformula: 'cos(u)*((cos(3.0*u)+2.0)*sin(v)+0.5)', yformula: 'sin(u)*((cos(3.0*u)+2)*sin(v)+0.5)', zformula: '(cos(3.0*u)+2.0)*cos(v)', umin: 0.0, umax: 2.0 * M_PI, vmin: 0.0, vmax: 2.0 * M_PI},
+      { id: 11, caption: 'source: https://reference.wolfram.com/language/tutorial/ParametricPlots.html', xformula: 'sin(u)*sin(v)+0.05*cos(20.0*v)', yformula: 'cos(u)*sin(v)+0.05*cos(20.0*u)', zformula: 'cos(v)', umin: -M_PI, umax: M_PI, vmin: -M_PI, vmax: M_PI},
+      { id: 12, caption: 'Shell, provided by Dimitri Augusto Rocha, source: https://renklisheyler.wordpress.com/2012/04/27/algebraic-surfaces/', xformula: '2.0*(1.0-exp(u/(6.0*pi)))*cos(u)*sqr(cos(v/2.0))', yformula: '2.0*(-1.0+exp(u/(6.0*pi)))*sin(u)*sqr(cos(v/2.0))', zformula: '1.0-exp(u/(3.0*pi))-sin(v)+exp(u/(6.0*pi))*sin(v)', umin: 0, umax: 6 * M_PI, vmin: 0, vmax: 2 * M_PI},
+
+      // Formulas, provided by Frank Baumann
+      { id: 13, caption: 'Slinky attempt info provided by Don Town found at http://mathworld.wolfram.com/Slinky.html', xformula: '(6.0+2.0*cos(u*v))*cos(u)', yformula: '(6.0+2.0*cos(u*v))*sin(u)', zformula: '(2.0*u+2.0*sin(u*v))', umin: 0, umax: 6 * M_PI, vmin: 0, vmax: 6 * M_PI},
+      { id: 14, caption: 'Real slinky for Don Town (very thin wire - still trying to find a way to thicken the wire)', xformula: '(1.0+0.25*cos(75.0*u))*cos(u)', yformula: '(1.0+0.25*cos(75.0*u))*sin(u)', zformula: 'u+sin(75.0*u)', umin: -2 * M_PI, umax: 2 * M_PI, vmin: -2 * M_PI, vmax: 2 * M_PI},
+      { id: 15, caption: 'Spherical spiral (very thin wire - still trying to find a way to thicken the wire)', xformula: '7.83*cos((v-pi)/2.0)*(cos(16.4*v))', yformula: '7.83*cos((v-pi)/2.0)*(sin(16.4*v))', zformula: '7.83*sin((v-pi)/2.0)', umin: 0, umax: 2 * M_PI, vmin: 0, vmax: 2 * M_PI},
+      { id: 16, caption: 'Spherical rose shape', xformula: '(2.0 + sin(7.0*u + 5.0*v))*cos(u)*sin(v)', yformula: '(2.0 + sin(7.0*u + 5.0*v))*sin(u)*sin(v)', zformula: '(2.0 + sin(7.0*u + 5.0*v))*cos(v)', umin: -M_PI, umax: M_PI, vmin: -M_PI, vmax: M_PI},
+      { id: 17, caption: 'Folded box shape', xformula: 'sin(u)*sin(v)', yformula: 'cos(v)*cos(u)', zformula: 'sin(sin(u)+cos(v))', umin: -M_PI, umax: M_PI, vmin: -M_PI, vmax: M_PI},
+      { id: 18, caption: 'Wavy Heart', xformula: '(2.0*v*cos(u))', yformula: '2.0*v*(sin(u))+v*fabs(cos(u))', zformula: 'cos(3.0*v)*sin(3.0*v)', umin: 0, umax: 6, vmin: 0, vmax: 6},
+      { id: 19, caption: 'Nameless#1 (interesting shape)', xformula: 'v*sin(fabs(u))', yformula: 'u*sin(fabs(v))', zformula: 'u+fabs(sin(v*u))', umin: -M_PI, umax: M_PI, vmin: -M_PI, vmax: M_PI},
+      { id: 20, caption: 'Bubble gum', xformula: 'cos(u)*(6.0-(5.0/4.0+sin(3.0-v))*sin(v-3.0-u))', yformula: '(6.0-(5.0/4.0+sin(3.0*v))*sin(v-3.0*u))*sin(u)', zformula: '-cos(v-3.0*u)*(5.0/4.0+sin(3.0*v))', umin: -M_PI, umax: M_PI, vmin: -M_PI, vmax: M_PI},
+      { id: 21, caption: 'Twisted Torus', xformula: '(4.0+(sin(4.0*(v+2.0*u))+1.25)*cos(v))*cos(u)', yformula: '(4.0+(sin(4.0*(v+2.0*u))+1.25)*cos(v))*sin(u)', zformula: '((sin(4*(v+2.0*u))+1.25)*sin(v))', umin: -M_PI, umax: M_PI, vmin: -M_PI, vmax: M_PI},
+      { id: 22, caption: 'Vase', xformula: 'u', yformula: 'sin(v)*(u*u*u+2.0*u*u-2.0*u+2.0)/5.0', zformula: 'cos(v)*(u*u*u+2.0*u*u-2.0*u+2.0)/5.0', umin: -2.3, umax: 1.3, vmin: 0, vmax: 2 * M_PI},
+      { id: 23, caption: 'Breather --- (This one can be slow depending on your computer capabilities)', xformula: '-0.8*u+(2*0.75*cosh(0.5*u)*sinh(0.5*u))/(0.5*((sqrt(0.75)*sqr(cosh(0.5*u))) +sqr(0.5*sin(sqrt(0.75)*v))))', yformula: '(2.0*sqrt(0.75)*cosh(0.5*u)*(-(sqrt(0.75)*cos(v)*cos(sqrt(0.75)*v))-sin(v)*sin(sqrt(0.75)*v)))/(0.5*sqr((sqrt(0.75)*cosh(0.5*u)) +sqr(0.5*sin(sqrt(0.75)*v))))', zformula: '(2.0*sqrt(0.75)*cosh(0.5*u)*(-(sqrt(0.75)*sin(v)*cos(sqrt(0.75)*v))+cos(v)*sin(sqrt(0.75)*v)))/(0.5*sqr((sqrt(0.75)*cosh(0.5*u)) +sqr(0.5*sin(sqrt(0.75)*v))))', umin: -15, umax: 15, vmin: -24.55, vmax: 22},
+      { id: 24, caption: 'Lissajous 3D', xformula: 'cos(u+0)+0.06*sin(1*v)', yformula: 'cos(15.0*u+0)-0.6*cos(1*v)', zformula: 'sin(12.0*u+0)+0.06*sin(1*v)', umin: 0, umax: 2 * M_PI, vmin: -0.5, vmax: 0.5},
+      { id: 25, caption: 'Double Mushroom (set pitch close to 90 degrees to see mushroom)', xformula: '(cos(2.0*u))/(sqrt(2.0)+sin(2.0*v))', yformula: 'sin(2.0*u)/(sqrt(2.0)+sin(2.0*v))', zformula: 'v/(sqrt(5.0)+cos(2.0*v))', umin: -M_PI, umax: M_PI, vmin: -3, vmax: 8},
+      { id: 26, caption: 'Trangluoid trefoil', xformula: '2.0*sin(3.0*u)/(2.0+cos(v))', yformula: '2.0*(sin(u)+2.0*sin(2.0*u))/(2.0+cos(v+2.0*pi/3.0))', zformula: '(cos(u)-2.0*cos(2.0*u))*(2.0+cos(v))*(2.0+cos(v+2.0*pi/3.0))/4.0', umin: -M_PI, umax: M_PI, vmin: -M_PI, vmax: M_PI},
+      { id: 27, caption: 'Shell #1', xformula: 'pow(1.2,u)*(1+cos(v))*cos(u)', yformula: 'pow(1.2,u)*(1+cos(v))*sin(u)', zformula: 'pow(1.2,u)*sin(v)-1.5*pow(1.2,u)', umin: -12, umax: 6, vmin: -M_PI, vmax: M_PI},
+      { id: 28, caption: 'Shell #2', xformula: 'u*cos(u)*(cos(v)+1)', yformula: 'u*sin(u)*(cos(v)+1)', zformula: 'u*sin(v)-((u+3.0)/8.0*pi)*u/3.0', umin: 0, umax: 20, vmin: -M_PI, vmax: M_PI},
+      { id: 29, caption: 'Trefoil Knot', xformula: 'cos(u)*cos(v)+3.0*cos(u)*(1.5+sin(u*5.0/3.0)/2.0)', yformula: 'sin(u)*cos(v)+3.0*sin(u)*(1.5+sin(u*5.0/3.0)/2.0)', zformula: 'sin(v)+2*cos(u*5/3)', umin: 0, umax: 20, vmin: -M_PI, vmax: M_PI},
+      //PASTA
+
+          { id: 30, caption: 'Penne Rigate', xformula: '0.1*cos(u)', yformula: '-0.1*sin(u)', zformula: 'v+0.1*sin(u)', umin: 0, umax: 2 * M_PI, vmin: -0.5, vmax: 0.5},
+          { id: 31, caption: 'Conchiglie Rigate', xformula: '(u/(pi+pi))*(1.0-2.0*v*v)*cos(u)', yformula: '(u/(pi+pi))*(1.0-2.0*v*v)*sin(u)', zformula: 'v', umin: 0.5235988, umax: 6.8067841, vmin: -0.5, vmax: 0.5},
+          { id: 32, caption: 'Cavatappi', xformula: '(3.0+2.0*cos(v))*cos(u)', yformula: '(3.0+2.0*cos(v))*sin(u)', zformula: 'u+2.0*sin(v)', umin: -12.5663706, umax: 2 * M_PI, vmin: 0, vmax: 2 * M_PI},
+          { id: 33, caption: 'Farfalle', xformula: 'u+(1.0/10.0)*sin(10.0*v)', yformula: '((2.0*v)/3.0)*(1.2-(1.0/(1.0+u*u)))', zformula: 'sin(pi*v)/(2.0*pi*v)', umin: -3, umax: 3, vmin: -M_PI, vmax: M_PI},
+          { id: 34, caption: 'Fusilli', xformula: '(v/3.0)*cos(u-(pi+pi)/3.0)', yformula: '(v/3.0)*sin(u-(pi+pi)/3.0)', zformula: 'u/10.0+(v*v)/2', umin: -2 * M_PI, umax: 2 * M_PI, vmin: 0, vmax: 0.5},
+          { id: 35, caption: 'Under the sea Formula, supplied by Don Town, M=2,N=5', xformula: 'u*cos(v)', yformula: 'u*sin(v)', zformula: 'exp(-u*u)*(sin(param_a*pi*(u))-u*cos(param_b*v))', param_a: 2, param_b: 5, umin: 0.0, umax: 2.0, vmin: 0.0, vmax: 2*M_PI},
+          // Parplot equations by Sarah Griffin,
+          // The elliptic cone and ellipsoid came from a highschool math cheatsheet, originally from a book of math tables. The crossbar twist is derived from parplot2d_wf#8. The rest are from my imagination and prayer. , { id: 36, caption: 'Parallelogram' , xformula: 'u*param_a', yformula: 'v*param_b', zformula: 'u*param_c+v*param_d', param_a: 1, param_b: 1, param_c: 1, param_d: 1, umin: -9.42477796, umax: 9.42477796, vmin: -9.42477796, vmax: 9.42477796},
+          { id: 37, caption: 'Sine wave Surface', xformula: 'u*param_a', yformula: 'v*param_b', zformula: 'sin(v*param_c)* param_d', param_a: 1, param_b: 1, param_c: 1, param_d: 1, umin: -9.42477796, umax: 9.42477796, vmin: -9.42477796, vmax: 9.42477796},
+          { id: 38, caption: 'Elliptic Cone', xformula: 'cos(u*param_a)*sin(v*param_b)', yformula: 'sin(u*param_c)*sin(v*param_d)', zformula: 'sin(v*param_e)', param_a: 1, param_b: 1, param_c: 1, param_d: 1, param_e: 1, umin: -3.1415927, umax: 3.1415927, vmin: -3.1415927, vmax: 3.1415927},
+          { id: 39, caption: 'Ellipsoid ( Change (0,0) to create ovoid)', xformula: 'cos(u*param_a)*sin(v*param_b)', yformula: 'sin(u*param_c)*sin(v*param_d)', zformula: 'cos(v*param_e)', param_a: 1, param_b: 1, param_c: 1, param_d: 1, param_e: 1, umin: -3.1415927, umax: 3.1415927, vmin: -3.1415927, vmax: 3.1415927},
+          { id: 40, caption: 'CrossBar Twist', xformula: 'u*cos(v*param_a)-u*param_b', yformula: 'v*cos(u*param_c)-v*param_d', zformula: 'u*v*sin(u*param_e)*sin(v*param_f)-u/v', param_a: 1, param_b: 1, param_c: 1, param_d: 1, param_e: 1, param_f: 1, umin: -3.1415927, umax: 3.1415927, vmin: -3.1415927, vmax: 3.1415927},
+          { id: 41, caption: 'Rippled Ribbon', xformula: 'cos(u*param_a)*sin(u*param_b)-u*param_c', yformula: 'sin(u*param_d)*cos(v*param_e)-u*param_f', zformula: 'cos(u)*sin(u)', param_a: 1, param_b: 1, param_c: 1, param_d: 1, param_e: 1, param_f: 1, umin: -9.42477796, umax: 9.42477796, vmin: -9.42477796, vmax: 9.42477796},
+          { id: 42, caption: 'Channel Surface', xformula: 'cos(u*param_a)*sin(u*param_b)-u*param_c', yformula: '(v/param_d)*cos(u*param_e)-v*param_f', zformula: 'cos(u)*sin(u)', param_a: 1, param_b: 1, param_c: 1, param_d: 3, param_e: 1, param_f: 1, umin: -9.42477796, umax: 9.42477796, vmin: -9.42477796, vmax: 9.42477796},
+          { id: 43, caption: 'Wavy Surface', xformula: 'cos(v*param_a)+sin(v*param_b)-u*param_c', yformula: '(v/param_d)*cos(u*param_e)-v*param_f', zformula: 'cos(u)-sin(u)', param_a: 1, param_b: 1, param_c: 1, param_d: 3, param_e: 1, param_f: 1, umin: -9.42477796, umax: 9.42477796, vmin: -9.42477796, vmax: 9.42477796},
+          { id: 44, caption: 'Rippled Surface', xformula: 'cos(u*param_a)*sin(v*param_b)-u-v', yformula: 'sin(v*param_c)*cos(v*param_d)-u*param_e', zformula: 'cos(u*param_f)*sin(u*param_f)', param_a: 1, param_b: 1, param_c: 1, param_d: 1, param_e: 1, param_f: 1, umin: -9.42477796, umax: 9.42477796, vmin: -9.42477796, vmax: 9.42477796},
+          { id: 45, caption: 'Furled Surface', xformula: 'cos(u)*sin(u)-v', yformula: '(v/3)*cos(u)-v', zformula: 'cos(u)*sin(u)', umin: -6.2831853, umax: 6.2831853, vmin: -6.2831853, vmax: 6.2831853},
+          { id: 46, caption: 'Accordion Surface', xformula: 'cos(u)*sin(v)+(u*v)', yformula: 'sin(v)*cos(v)*(u+v)', zformula: 'cos(u)*sin(u)', umin: -6.2831853, umax: 6.2831853, vmin: -6.2831853, vmax: 6.2831853}
+                  ]
+  }
+
+  getCode(xform: RenderXForm, variation: RenderVariation): string {
+    const xformula = rewriteFormula(variation.resources.get(this.RESOURCE_XFORMULA)!.decodedHexStringValue)
+    const yformula = rewriteFormula(variation.resources.get(this.RESOURCE_YFORMULA)!.decodedHexStringValue)
+    const zformula = rewriteFormula(variation.resources.get(this.RESOURCE_ZFORMULA)!.decodedHexStringValue)
+    return `{
+          float amount = ${variation.amount.toWebGl()};
+          float umin = ${variation.params.get(this.PARAM_UMIN)!.toWebGl()};
+          float umax = ${variation.params.get(this.PARAM_UMAX)!.toWebGl()};
+          float vmin = ${variation.params.get(this.PARAM_VMIN)!.toWebGl()};
+          float vmax = ${variation.params.get(this.PARAM_VMAX)!.toWebGl()};
+          float param_a = ${variation.params.get(this.PARAM_A)!.toWebGl()};
+          float param_b = ${variation.params.get(this.PARAM_B)!.toWebGl()};
+          float param_c = ${variation.params.get(this.PARAM_C)!.toWebGl()};
+          float param_d = ${variation.params.get(this.PARAM_D)!.toWebGl()};
+          float param_e = ${variation.params.get(this.PARAM_E)!.toWebGl()};
+          float param_f = ${variation.params.get(this.PARAM_F)!.toWebGl()};
+          int solid = ${variation.params.get(this.PARAM_SOLID)!.toWebGl()};
+          int direct_color = ${variation.params.get(this.PARAM_DIRECT_COLOR)!.toWebGl()};
+          int color_mode = ${variation.params.get(this.PARAM_COLOR_MODE)!.toWebGl()};
+       
+          float pi = M_PI;
+          float _umin, _umax, _du;
+          float _vmin, _vmax, _dv;
+       
+          _umin = umin;
+          _umax = umax;
+          if (_umin > _umax) {
+            float t = _umin;
+            _umin = _umax;
+            _umax = t;
+          }
+          _du = _umax - _umin;
+          
+          _vmin = vmin;
+          _vmax = vmax;
+          if (_vmin > _vmax) {
+            float t = _vmin;
+            _vmin = _vmax;
+            _vmax = t;
+          }
+          _dv = _vmax - _vmin;
+          float randU, randV;
+          if(solid==0) {
+            randU = _tx;
+            randV = _ty;
+          }
+          else {
+            randU = rand8(tex, rngState);
+            randV = rand8(tex, rngState);
+          }
+          float u = _umin + randU * _du;
+          float v = _vmin + randV * _dv;
+          float x = ${xformula};
+          float y = ${yformula}; 
+          float z = ${zformula};
+          if(direct_color>0) {
+            if(color_mode==${this.CM_COLORMAP}) {
+              // not supported
+            }
+            else if(color_mode==${this.CM_V}) {
+              _color = (v - _vmin) / _dv;
+            }
+            else if(color_mode==${this.CM_U}) { 
+              _color = (u - _umin) / _du;
+            }
+            else { // CM_UV
+              _color = (v - _vmin) / _dv * (u - _umin) / _du;
+            };
+            if (_color < 0.0) _color = 0.0;
+            else if (_color > 1.0) _color = 1.0;
+          }
+          _vx += amount * x;
+          _vy += amount * y;
+          _vz += amount * z;   
+        }`;
+  }
+
+  get name(): string {
+    return 'parplot2d_wf';
+  }
+
+  get funcDependencies(): string[] {
+    return [FUNC_SINH, FUNC_COSH, FUNC_TANH];
+  }
+
+  get variationTypes(): VariationTypes[] {
+    return [VariationTypes.VARTYPE_3D, VariationTypes.VARTYPE_BASE_SHAPE, VariationTypes.VARTYPE_EDIT_FORMULA, VariationTypes.VARTYPE_DC];
+  }
+
+}
 
 interface PolarPlot2DWFFuncPreset extends VariationPreset {
   formula?: string
@@ -144,6 +352,7 @@ class PolarPlot2DWFFunc extends VariationShaderFunc3D {
           int direct_color = ${variation.params.get(this.PARAM_DIRECT_COLOR)!.toWebGl()};
           int color_mode = ${variation.params.get(this.PARAM_COLOR_MODE)!.toWebGl()};
        
+          float pi = M_PI;
           float _tmin, _tmax, _dt;
           float _rmin, _rmax, _dr;
           float _zmin, _zmax, _dz;
@@ -308,6 +517,7 @@ class PolarPlot3DWFFunc extends VariationShaderFunc3D {
           int direct_color = ${variation.params.get(this.PARAM_DIRECT_COLOR)!.toWebGl()};
           int color_mode = ${variation.params.get(this.PARAM_COLOR_MODE)!.toWebGl()};
        
+          float pi = M_PI;
           float _tmin, _tmax, _dt;
           float _umin, _umax, _du;
           float _rmin, _rmax, _dr;
@@ -492,6 +702,7 @@ class YPlot2DWFFunc extends VariationShaderFunc3D {
           int direct_color = ${variation.params.get(this.PARAM_DIRECT_COLOR)!.toWebGl()};
           int color_mode = ${variation.params.get(this.PARAM_COLOR_MODE)!.toWebGl()};
        
+          float pi = M_PI;
           float _xmin, _xmax, _dx;
           float _ymin, _ymax, _dy;
           float _zmin, _zmax, _dz;
@@ -648,6 +859,7 @@ class YPlot3DWFFunc extends VariationShaderFunc3D {
           int direct_color = ${variation.params.get(this.PARAM_DIRECT_COLOR)!.toWebGl()};
           int color_mode = ${variation.params.get(this.PARAM_COLOR_MODE)!.toWebGl()};
        
+          float pi = M_PI;
           float _xmin, _xmax, _dx;
           float _ymin, _ymax, _dy;
           float _zmin, _zmax, _dz;
@@ -724,6 +936,7 @@ class YPlot3DWFFunc extends VariationShaderFunc3D {
 }
 
 export function registerVars_Plot() {
+    VariationShaders.registerVar(new ParPlot2DWFFunc())
     VariationShaders.registerVar(new PolarPlot2DWFFunc())
     VariationShaders.registerVar(new PolarPlot3DWFFunc())
     VariationShaders.registerVar(new YPlot2DWFFunc())
