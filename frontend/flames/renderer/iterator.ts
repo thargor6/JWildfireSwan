@@ -65,8 +65,6 @@ export class FlameIterator {
 
         gl.drawArrays(gl.TRIANGLE_STRIP, 0, this.ctx.buffers.quadVertexPositionBuffer!.numItems);
 
-
-
         // C += Ci
         gl.useProgram(this.ctx.shaders.prog_comp_col);
 

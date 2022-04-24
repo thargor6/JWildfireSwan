@@ -145,26 +145,25 @@ class ParPlot2DWFFunc extends VariationShaderFunc3D {
       { id: 28, caption: 'Shell #2', xformula: 'u*cos(u)*(cos(v)+1)', yformula: 'u*sin(u)*(cos(v)+1)', zformula: 'u*sin(v)-((u+3.0)/8.0*pi)*u/3.0', umin: 0, umax: 20, vmin: -M_PI, vmax: M_PI},
       { id: 29, caption: 'Trefoil Knot', xformula: 'cos(u)*cos(v)+3.0*cos(u)*(1.5+sin(u*5.0/3.0)/2.0)', yformula: 'sin(u)*cos(v)+3.0*sin(u)*(1.5+sin(u*5.0/3.0)/2.0)', zformula: 'sin(v)+2*cos(u*5/3)', umin: 0, umax: 20, vmin: -M_PI, vmax: M_PI},
       //PASTA
-
-          { id: 30, caption: 'Penne Rigate', xformula: '0.1*cos(u)', yformula: '-0.1*sin(u)', zformula: 'v+0.1*sin(u)', umin: 0, umax: 2 * M_PI, vmin: -0.5, vmax: 0.5},
-          { id: 31, caption: 'Conchiglie Rigate', xformula: '(u/(pi+pi))*(1.0-2.0*v*v)*cos(u)', yformula: '(u/(pi+pi))*(1.0-2.0*v*v)*sin(u)', zformula: 'v', umin: 0.5235988, umax: 6.8067841, vmin: -0.5, vmax: 0.5},
-          { id: 32, caption: 'Cavatappi', xformula: '(3.0+2.0*cos(v))*cos(u)', yformula: '(3.0+2.0*cos(v))*sin(u)', zformula: 'u+2.0*sin(v)', umin: -12.5663706, umax: 2 * M_PI, vmin: 0, vmax: 2 * M_PI},
-          { id: 33, caption: 'Farfalle', xformula: 'u+(1.0/10.0)*sin(10.0*v)', yformula: '((2.0*v)/3.0)*(1.2-(1.0/(1.0+u*u)))', zformula: 'sin(pi*v)/(2.0*pi*v)', umin: -3, umax: 3, vmin: -M_PI, vmax: M_PI},
-          { id: 34, caption: 'Fusilli', xformula: '(v/3.0)*cos(u-(pi+pi)/3.0)', yformula: '(v/3.0)*sin(u-(pi+pi)/3.0)', zformula: 'u/10.0+(v*v)/2', umin: -2 * M_PI, umax: 2 * M_PI, vmin: 0, vmax: 0.5},
-          { id: 35, caption: 'Under the sea Formula, supplied by Don Town, M=2,N=5', xformula: 'u*cos(v)', yformula: 'u*sin(v)', zformula: 'exp(-u*u)*(sin(param_a*pi*(u))-u*cos(param_b*v))', param_a: 2, param_b: 5, umin: 0.0, umax: 2.0, vmin: 0.0, vmax: 2*M_PI},
-          // Parplot equations by Sarah Griffin,
-          // The elliptic cone and ellipsoid came from a highschool math cheatsheet, originally from a book of math tables. The crossbar twist is derived from parplot2d_wf#8. The rest are from my imagination and prayer. , { id: 36, caption: 'Parallelogram' , xformula: 'u*param_a', yformula: 'v*param_b', zformula: 'u*param_c+v*param_d', param_a: 1, param_b: 1, param_c: 1, param_d: 1, umin: -9.42477796, umax: 9.42477796, vmin: -9.42477796, vmax: 9.42477796},
-          { id: 37, caption: 'Sine wave Surface', xformula: 'u*param_a', yformula: 'v*param_b', zformula: 'sin(v*param_c)* param_d', param_a: 1, param_b: 1, param_c: 1, param_d: 1, umin: -9.42477796, umax: 9.42477796, vmin: -9.42477796, vmax: 9.42477796},
-          { id: 38, caption: 'Elliptic Cone', xformula: 'cos(u*param_a)*sin(v*param_b)', yformula: 'sin(u*param_c)*sin(v*param_d)', zformula: 'sin(v*param_e)', param_a: 1, param_b: 1, param_c: 1, param_d: 1, param_e: 1, umin: -3.1415927, umax: 3.1415927, vmin: -3.1415927, vmax: 3.1415927},
-          { id: 39, caption: 'Ellipsoid ( Change (0,0) to create ovoid)', xformula: 'cos(u*param_a)*sin(v*param_b)', yformula: 'sin(u*param_c)*sin(v*param_d)', zformula: 'cos(v*param_e)', param_a: 1, param_b: 1, param_c: 1, param_d: 1, param_e: 1, umin: -3.1415927, umax: 3.1415927, vmin: -3.1415927, vmax: 3.1415927},
-          { id: 40, caption: 'CrossBar Twist', xformula: 'u*cos(v*param_a)-u*param_b', yformula: 'v*cos(u*param_c)-v*param_d', zformula: 'u*v*sin(u*param_e)*sin(v*param_f)-u/v', param_a: 1, param_b: 1, param_c: 1, param_d: 1, param_e: 1, param_f: 1, umin: -3.1415927, umax: 3.1415927, vmin: -3.1415927, vmax: 3.1415927},
-          { id: 41, caption: 'Rippled Ribbon', xformula: 'cos(u*param_a)*sin(u*param_b)-u*param_c', yformula: 'sin(u*param_d)*cos(v*param_e)-u*param_f', zformula: 'cos(u)*sin(u)', param_a: 1, param_b: 1, param_c: 1, param_d: 1, param_e: 1, param_f: 1, umin: -9.42477796, umax: 9.42477796, vmin: -9.42477796, vmax: 9.42477796},
-          { id: 42, caption: 'Channel Surface', xformula: 'cos(u*param_a)*sin(u*param_b)-u*param_c', yformula: '(v/param_d)*cos(u*param_e)-v*param_f', zformula: 'cos(u)*sin(u)', param_a: 1, param_b: 1, param_c: 1, param_d: 3, param_e: 1, param_f: 1, umin: -9.42477796, umax: 9.42477796, vmin: -9.42477796, vmax: 9.42477796},
-          { id: 43, caption: 'Wavy Surface', xformula: 'cos(v*param_a)+sin(v*param_b)-u*param_c', yformula: '(v/param_d)*cos(u*param_e)-v*param_f', zformula: 'cos(u)-sin(u)', param_a: 1, param_b: 1, param_c: 1, param_d: 3, param_e: 1, param_f: 1, umin: -9.42477796, umax: 9.42477796, vmin: -9.42477796, vmax: 9.42477796},
-          { id: 44, caption: 'Rippled Surface', xformula: 'cos(u*param_a)*sin(v*param_b)-u-v', yformula: 'sin(v*param_c)*cos(v*param_d)-u*param_e', zformula: 'cos(u*param_f)*sin(u*param_f)', param_a: 1, param_b: 1, param_c: 1, param_d: 1, param_e: 1, param_f: 1, umin: -9.42477796, umax: 9.42477796, vmin: -9.42477796, vmax: 9.42477796},
-          { id: 45, caption: 'Furled Surface', xformula: 'cos(u)*sin(u)-v', yformula: '(v/3)*cos(u)-v', zformula: 'cos(u)*sin(u)', umin: -6.2831853, umax: 6.2831853, vmin: -6.2831853, vmax: 6.2831853},
-          { id: 46, caption: 'Accordion Surface', xformula: 'cos(u)*sin(v)+(u*v)', yformula: 'sin(v)*cos(v)*(u+v)', zformula: 'cos(u)*sin(u)', umin: -6.2831853, umax: 6.2831853, vmin: -6.2831853, vmax: 6.2831853}
-                  ]
+      { id: 30, caption: 'Penne Rigate', xformula: '0.1*cos(u)', yformula: '-0.1*sin(u)', zformula: 'v+0.1*sin(u)', umin: 0, umax: 2 * M_PI, vmin: -0.5, vmax: 0.5},
+      { id: 31, caption: 'Conchiglie Rigate', xformula: '(u/(pi+pi))*(1.0-2.0*v*v)*cos(u)', yformula: '(u/(pi+pi))*(1.0-2.0*v*v)*sin(u)', zformula: 'v', umin: 0.5235988, umax: 6.8067841, vmin: -0.5, vmax: 0.5},
+      { id: 32, caption: 'Cavatappi', xformula: '(3.0+2.0*cos(v))*cos(u)', yformula: '(3.0+2.0*cos(v))*sin(u)', zformula: 'u+2.0*sin(v)', umin: -12.5663706, umax: 2 * M_PI, vmin: 0, vmax: 2 * M_PI},
+      { id: 33, caption: 'Farfalle', xformula: 'u+(1.0/10.0)*sin(10.0*v)', yformula: '((2.0*v)/3.0)*(1.2-(1.0/(1.0+u*u)))', zformula: 'sin(pi*v)/(2.0*pi*v)', umin: -3, umax: 3, vmin: -M_PI, vmax: M_PI},
+      { id: 34, caption: 'Fusilli', xformula: '(v/3.0)*cos(u-(pi+pi)/3.0)', yformula: '(v/3.0)*sin(u-(pi+pi)/3.0)', zformula: 'u/10.0+(v*v)/2', umin: -2 * M_PI, umax: 2 * M_PI, vmin: 0, vmax: 0.5},
+      { id: 35, caption: 'Under the sea Formula, supplied by Don Town, M=2,N=5', xformula: 'u*cos(v)', yformula: 'u*sin(v)', zformula: 'exp(-u*u)*(sin(param_a*pi*(u))-u*cos(param_b*v))', param_a: 2, param_b: 5, umin: 0.0, umax: 2.0, vmin: 0.0, vmax: 2*M_PI},
+      // Parplot equations by Sarah Griffin,
+      // The elliptic cone and ellipsoid came from a highschool math cheatsheet, originally from a book of math tables. The crossbar twist is derived from parplot2d_wf#8. The rest are from my imagination and prayer. , { id: 36, caption: 'Parallelogram' , xformula: 'u*param_a', yformula: 'v*param_b', zformula: 'u*param_c+v*param_d', param_a: 1, param_b: 1, param_c: 1, param_d: 1, umin: -9.42477796, umax: 9.42477796, vmin: -9.42477796, vmax: 9.42477796},
+      { id: 37, caption: 'Sine wave Surface', xformula: 'u*param_a', yformula: 'v*param_b', zformula: 'sin(v*param_c)* param_d', param_a: 1, param_b: 1, param_c: 1, param_d: 1, umin: -9.42477796, umax: 9.42477796, vmin: -9.42477796, vmax: 9.42477796},
+      { id: 38, caption: 'Elliptic Cone', xformula: 'cos(u*param_a)*sin(v*param_b)', yformula: 'sin(u*param_c)*sin(v*param_d)', zformula: 'sin(v*param_e)', param_a: 1, param_b: 1, param_c: 1, param_d: 1, param_e: 1, umin: -3.1415927, umax: 3.1415927, vmin: -3.1415927, vmax: 3.1415927},
+      { id: 39, caption: 'Ellipsoid ( Change (0,0) to create ovoid)', xformula: 'cos(u*param_a)*sin(v*param_b)', yformula: 'sin(u*param_c)*sin(v*param_d)', zformula: 'cos(v*param_e)', param_a: 1, param_b: 1, param_c: 1, param_d: 1, param_e: 1, umin: -3.1415927, umax: 3.1415927, vmin: -3.1415927, vmax: 3.1415927},
+      { id: 40, caption: 'CrossBar Twist', xformula: 'u*cos(v*param_a)-u*param_b', yformula: 'v*cos(u*param_c)-v*param_d', zformula: 'u*v*sin(u*param_e)*sin(v*param_f)-u/v', param_a: 1, param_b: 1, param_c: 1, param_d: 1, param_e: 1, param_f: 1, umin: -3.1415927, umax: 3.1415927, vmin: -3.1415927, vmax: 3.1415927},
+      { id: 41, caption: 'Rippled Ribbon', xformula: 'cos(u*param_a)*sin(u*param_b)-u*param_c', yformula: 'sin(u*param_d)*cos(v*param_e)-u*param_f', zformula: 'cos(u)*sin(u)', param_a: 1, param_b: 1, param_c: 1, param_d: 1, param_e: 1, param_f: 1, umin: -9.42477796, umax: 9.42477796, vmin: -9.42477796, vmax: 9.42477796},
+      { id: 42, caption: 'Channel Surface', xformula: 'cos(u*param_a)*sin(u*param_b)-u*param_c', yformula: '(v/param_d)*cos(u*param_e)-v*param_f', zformula: 'cos(u)*sin(u)', param_a: 1, param_b: 1, param_c: 1, param_d: 3, param_e: 1, param_f: 1, umin: -9.42477796, umax: 9.42477796, vmin: -9.42477796, vmax: 9.42477796},
+      { id: 43, caption: 'Wavy Surface', xformula: 'cos(v*param_a)+sin(v*param_b)-u*param_c', yformula: '(v/param_d)*cos(u*param_e)-v*param_f', zformula: 'cos(u)-sin(u)', param_a: 1, param_b: 1, param_c: 1, param_d: 3, param_e: 1, param_f: 1, umin: -9.42477796, umax: 9.42477796, vmin: -9.42477796, vmax: 9.42477796},
+      { id: 44, caption: 'Rippled Surface', xformula: 'cos(u*param_a)*sin(v*param_b)-u-v', yformula: 'sin(v*param_c)*cos(v*param_d)-u*param_e', zformula: 'cos(u*param_f)*sin(u*param_f)', param_a: 1, param_b: 1, param_c: 1, param_d: 1, param_e: 1, param_f: 1, umin: -9.42477796, umax: 9.42477796, vmin: -9.42477796, vmax: 9.42477796},
+      { id: 45, caption: 'Furled Surface', xformula: 'cos(u)*sin(u)-v', yformula: '(v/3)*cos(u)-v', zformula: 'cos(u)*sin(u)', umin: -6.2831853, umax: 6.2831853, vmin: -6.2831853, vmax: 6.2831853},
+      { id: 46, caption: 'Accordion Surface', xformula: 'cos(u)*sin(v)+(u*v)', yformula: 'sin(v)*cos(v)*(u+v)', zformula: 'cos(u)*sin(u)', umin: -6.2831853, umax: 6.2831853, vmin: -6.2831853, vmax: 6.2831853}
+    ]
   }
 
   getCode(xform: RenderXForm, variation: RenderVariation): string {
@@ -584,6 +583,7 @@ class PolarPlot3DWFFunc extends VariationShaderFunc3D {
             if (_color < 0.0) _color = 0.0;
             else if (_color > 1.0) _color = 1.0;
           }
+                   
           _vx += amount * x;
           _vy += amount * y;
           _vz += amount * z;

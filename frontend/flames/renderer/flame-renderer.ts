@@ -140,18 +140,25 @@ export class FlameRenderer implements CloseableBuffers {
     public drawScene() {
         this.isFinished = false
         this.settings.frames = this.currFrameCount;
+        // TODO remove
         this.settings.brightness = 1.0 // this.brightnessElement.value;
         this.settings.time += 0.01;
-        //
-        this.iterator.iterateIFS();
-        //
 
-        this.currSampleCount += this.samplesPerFrame
-        const finishedPct = this.currSampleCount / this.maxSampleCount * 100.0
+        const iterationsPerFrame = 7
 
-        if (finishedPct>0.75) {
-            this.iterator.plotHistogram();
+        //
+        for(let iter=0;iter<iterationsPerFrame; iter++) {
+            this.iterator.iterateIFS();
+            this.currSampleCount += this.samplesPerFrame
+            const finishedPct = this.currSampleCount / this.maxSampleCount * 100.0
+            if ( finishedPct > 1.25) {
+                this.iterator.plotHistogram();
+            }
         }
+        this.currFrameCount++
+        //
+
+
 
         //
         switch(this.settings.displayMode) {
@@ -168,13 +175,7 @@ export class FlameRenderer implements CloseableBuffers {
             default:
                 this.display.displayFlame();
         }
-        this.currFrameCount++;
-/*
-        if(this.currFrameCount>3) {
-          this.currFrameCount=0;
-          this.ctx.textures.clearHistogram();
-        }
-*/
+
         this.currTimeStampInMs = getTimeStamp()
         const elapsedTimeInSeconds = (this.currTimeStampInMs-this.startTimeStampInMs) / 1000
         if(this.cancelSignalled) {

@@ -101,22 +101,21 @@ export class CompPointsFragmentShaderGenerator {
            
 			void main(void) {
 				vec2 tex = gl_FragCoord.xy / <%= RESOLUTION %>;
-				vec3 point = texture2D(uTexSamp, tex).xyz;
+				vec4 point = texture2D(uTexSamp, tex).xyzw;
 			  float lTime = texture2D(motionBlurTimeSamp, tex).x;
-
-				float xFormIdxAndColor = texture2D(uTexSamp, tex).w;
-				int xFormIdx = int(floor(texture2D(uTexSamp, tex).w));
-				float _color = xFormIdxAndColor - float(xFormIdx);
+				float xFormIdxAndColor = point.w;
 				
+				int xFormIdx = int(floor(xFormIdxAndColor));
+				float _color = xFormIdxAndColor - float(xFormIdx);
 				RNGState rngState = RNGState(rand0(tex));
+							
 			  float _tx, _ty, _tz;
         float _vx = 0.0, _vy = 0.0, _vz = 0.0;
         _tz = point.z;
 				${this.addXForms(layer)}
-				point = vec3(_vx, _vy, _vz);
-			  // must ensure that color is already in the range [0..1)
+			  // must ensure that color is already in the range [0..1)		
 				xFormIdxAndColor = float(xFormIdx) + _color;
-				gl_FragColor = vec4(point, xFormIdxAndColor);
+				gl_FragColor = vec4(_vx, _vy, _vz, xFormIdxAndColor);
 			}
 			`;
     }
