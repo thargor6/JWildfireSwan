@@ -5,7 +5,7 @@
     <groupId>org.jwildfire.swan</groupId>
     <artifactId>jwildfireswan</artifactId>
     <name>Project base for Spring Boot and Vaadin Flow</name>
-    <version>0.232.0-SNAPSHOT</version>
+    <version>0.233.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <properties>
@@ -14,6 +14,9 @@
         <mapstruct.version>1.4.2.Final</mapstruct.version>
         <build.timestamp>${maven.build.timestamp}</build.timestamp>
         <maven.build.timestamp.format>yyyy-MM-dd HH:mm</maven.build.timestamp.format>
+
+        <drivers.dir>${project.basedir}/drivers</drivers.dir>
+        <drivers.downloader.phase>pre-integration-test</drivers.downloader.phase>
     </properties>
 
     <parent>
@@ -272,8 +275,170 @@
                         </executions>
                         <configuration>
                              <productionMode>true</productionMode>
-                            <pnpmEnable>true</pnpmEnable>
+                            <pnpmEnable>false</pnpmEnable>
                         </configuration>
+                    </plugin>
+
+                    <!-- Electron build begin -->
+                    <plugin>
+                        <groupId>com.github.eirslett</groupId>
+                        <artifactId>frontend-maven-plugin</artifactId>
+                        <version>1.12.1</version>
+                        <configuration>
+                            <installDirectory>target/node</installDirectory>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>install node</id>
+                                <goals>
+                                    <goal>install-node-and-npm</goal>
+                                </goals>
+                                <configuration>
+                                    <nodeVersion>v16.14.0</nodeVersion>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>npm install</id>
+                                <goals>
+                                    <goal>npm</goal>
+                                </goals>
+                                <phase>package</phase>
+                                <configuration>
+                                    <arguments>install</arguments>
+                                    <workingDirectory>target/electron</workingDirectory>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>install electron-packager -g</id>
+                                <goals>
+                                    <goal>npm</goal>
+                                </goals>
+                                <phase>generate-resources</phase>
+                                <configuration>
+                                    <arguments>install electron-packager -g</arguments>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>package electron windows</id>
+                                <goals>
+                                    <goal>npm</goal>
+                                </goals>
+                                <phase>package</phase>
+                                <configuration>
+                                    <arguments>run package-windows</arguments>
+                                    <workingDirectory>target/electron</workingDirectory>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>package electron mac</id>
+                                <goals>
+                                    <goal>npm</goal>
+                                </goals>
+                                <phase>package</phase>
+                                <configuration>
+                                    <arguments>run package-mac</arguments>
+                                    <workingDirectory>target/electron</workingDirectory>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>package electron linux</id>
+                                <goals>
+                                    <goal>npm</goal>
+                                </goals>
+                                <phase>package</phase>
+                                <configuration>
+                                    <arguments>run package-linux</arguments>
+                                    <workingDirectory>target/electron</workingDirectory>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <!-- open-jdk download -->
+                    <plugin>
+                        <groupId>com.googlecode.maven-download-plugin</groupId>
+                        <artifactId>download-maven-plugin</artifactId>
+                        <version>1.6.0</version>
+                        <executions>
+                            <execution>
+                                <id>download-openjdk-jre-windows</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>wget</goal>
+                                </goals>
+                                <configuration>
+                                    <!-- When updating the URL also update the variable 'jreFolder' in src/main/electron/main.js -->
+                                    <url>
+                                        https://github.com/AdoptOpenJDK/openjdk8-binaries/releases/download/jdk8u265-b01/OpenJDK8U-jre_x64_windows_hotspot_8u265b01.zip
+                                    </url>
+                                    <outputDirectory>
+                                        ${project.build.directory}/electron/application-win32-x64/resources/app/java
+                                    </outputDirectory>
+                                    <outputFileName>jre_windows.zip</outputFileName>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>download-openjdk-jre-mac-os</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>wget</goal>
+                                </goals>
+                                <configuration>
+                                    <!-- When updating the URL also update the variable 'jreFolder' in src/main/electron/main.js -->
+                                    <url>
+                                        https://github.com/AdoptOpenJDK/openjdk8-binaries/releases/download/jdk8u265-b01/OpenJDK8U-jre_x64_mac_hotspot_8u265b01.tar.gz
+                                    </url>
+                                    <outputDirectory>
+                                        ${project.build.directory}/electron/application-darwin-x64/application.app/Contents/Resources/app/java
+                                    </outputDirectory>
+                                    <outputFileName>jre_mac.tar.gz</outputFileName>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>download-openjdk-jre-linux</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>wget</goal>
+                                </goals>
+                                <configuration>
+                                    <!-- When updating the URL also update the variable 'jreFolder' in src/main/electron/main.js -->
+                                    <url>
+                                        https://github.com/AdoptOpenJDK/openjdk8-binaries/releases/download/jdk8u265-b01/OpenJDK8U-jre_x64_linux_hotspot_8u265b01.tar.gz
+                                    </url>
+                                    <outputDirectory>
+                                        ${project.build.directory}/electron/application-linux-x64/resources/app/java
+                                    </outputDirectory>
+                                    <outputFileName>jre_linux.tar.gz</outputFileName>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <artifactId>maven-resources-plugin</artifactId>
+                        <version>3.2.0</version>
+                        <executions>
+                            <execution>
+                                <id>copy-resources</id>
+                                <!-- here the phase you need -->
+                                <phase>validate</phase>
+                                <goals>
+                                    <goal>copy-resources</goal>
+                                </goals>
+                                <configuration>
+                                    <outputDirectory>${basedir}/target/electron</outputDirectory>
+                                    <resources>
+                                        <resource>
+                                            <directory>src/main/javascript</directory>
+                                        </resource>
+                                        <resource>
+                                            <directory>.</directory>
+                                            <includes>
+                                                <include>LICENSE</include>
+                                            </includes>
+                                        </resource>
+                                    </resources>
+                                </configuration>
+                            </execution>
+                        </executions>
                     </plugin>
                 </plugins>
             </build>
