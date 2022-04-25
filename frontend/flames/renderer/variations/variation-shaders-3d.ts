@@ -655,6 +655,36 @@ class Foci3DFunc extends VariationShaderFunc3D {
     }
 }
 
+class HelicoidFunc extends VariationShaderFunc3D {
+    PARAM_FREQUENCY = 'frequency'
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_FREQUENCY, type: VariationParamType.VP_NUMBER, initialValue: 1.0 }]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        /* helicoid by zy0rg, http://zy0rg.deviantart.com/art/Helix-Helicoid-687956099 converted by Brad Stefanov */
+        return `{
+            float amount = ${variation.amount.toWebGl()};
+            float frequency = ${variation.params.get(this.PARAM_FREQUENCY)!.toWebGl()};
+            float range = sqrt(_tx * _tx + _ty * _ty);
+            float s = sin(_tz * (2.0*M_PI) * frequency + atan2(_ty, _tx));
+            float c = cos(_tz * (2.0*M_PI) * frequency + atan2(_ty, _tx));      
+            _vx += amount * c * range;
+            _vy += amount * s * range;
+            _vz += amount * _tz;
+        }`;
+    }
+
+    get name(): string {
+        return 'helicoid';
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_3D];
+    }
+}
+
 class HemisphereFunc extends VariationShaderFunc3D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         return `{
@@ -2685,7 +2715,6 @@ class TaurusFunc extends VariationShaderFunc3D {
     }
 }
 
-
 class Tile_LogFunc extends VariationShaderFunc3D {
     PARAM_SPREAD = 'spread'
 
@@ -2720,6 +2749,27 @@ class Tile_LogFunc extends VariationShaderFunc3D {
     }
 }
 
+class WhitneyUmbrellaFunc extends VariationShaderFunc3D {
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        /* whitney_umbrella by Don Town */
+        return `{
+          float amount = ${variation.amount.toWebGl()};
+          float u = _tx;
+          float v = _ty;
+          _vx += amount * u * v;
+          _vy += amount * u;
+          _vz += amount * v * v;
+        }`;
+    }
+
+    get name(): string {
+        return 'whitney_umbrella';
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_3D];
+    }
+}
 
 export function registerVars_3D() {
     VariationShaders.registerVar(new Affine3DFunc())
@@ -2737,6 +2787,7 @@ export function registerVars_3D() {
     VariationShaders.registerVar(new CylinderApoFunc())
     VariationShaders.registerVar(new DinisSurfaceWFFunc())
     VariationShaders.registerVar(new Foci3DFunc())
+    VariationShaders.registerVar(new HelicoidFunc())
     VariationShaders.registerVar(new HemisphereFunc())
     VariationShaders.registerVar(new HOFunc())
     VariationShaders.registerVar(new Hypertile3DFunc())
@@ -2773,4 +2824,5 @@ export function registerVars_3D() {
     VariationShaders.registerVar(new TanqFunc())
     VariationShaders.registerVar(new TaurusFunc())
     VariationShaders.registerVar(new Tile_LogFunc())
+    VariationShaders.registerVar(new WhitneyUmbrellaFunc())
 }

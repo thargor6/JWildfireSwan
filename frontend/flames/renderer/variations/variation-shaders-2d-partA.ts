@@ -3205,6 +3205,64 @@ class IDiscFunc extends VariationShaderFunc2D {
     }
 }
 
+class InvertedJuliaFunc extends VariationShaderFunc2D {
+    PARAM_POWER = 'power'
+    PARAM_Y2_MULT = 'y2_mult'
+    PARAM_A2X_MULT = 'a2x_mult'
+    PARAM_A2Y_MULT = 'a2y_mult'
+    PARAM_A2Y_ADD = 'a2y_add'
+    PARAM_COS_MULT = 'cos_mult'
+    PARAM_Y_MULT = 'y_mult'
+    PARAM_CENTER = 'center'
+    PARAM_X2Y2_ADD = 'x2y2_add'
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_POWER, type: VariationParamType.VP_NUMBER, initialValue: 0.25 },
+            { name: this.PARAM_Y2_MULT, type: VariationParamType.VP_NUMBER, initialValue: 1.0},
+            { name: this.PARAM_A2X_MULT, type: VariationParamType.VP_NUMBER, initialValue: 1.0},
+            { name: this.PARAM_A2Y_MULT, type: VariationParamType.VP_NUMBER, initialValue: 1.0},
+            { name: this.PARAM_A2Y_ADD, type: VariationParamType.VP_NUMBER, initialValue: 0.0},
+            { name: this.PARAM_COS_MULT, type: VariationParamType.VP_NUMBER, initialValue: 1.0},
+            { name: this.PARAM_Y_MULT, type: VariationParamType.VP_NUMBER, initialValue: 1.0},
+            { name: this.PARAM_CENTER, type: VariationParamType.VP_NUMBER, initialValue: M_PI},
+            { name: this.PARAM_X2Y2_ADD, type: VariationParamType.VP_NUMBER, initialValue: 0.0}
+        ]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        //Inverted_Julia by Whittaker Courtney 12-11-2018
+        //Based on the Julia variation but with an adjustable inward center and variables.
+        return `{
+            float amount = ${variation.amount.toWebGl()};
+            float power = ${variation.params.get(this.PARAM_POWER)!.toWebGl()};
+            float y2_mult = ${variation.params.get(this.PARAM_Y2_MULT)!.toWebGl()};
+            float a2x_mult = ${variation.params.get(this.PARAM_A2X_MULT)!.toWebGl()};
+            float a2y_mult = ${variation.params.get(this.PARAM_A2Y_MULT)!.toWebGl()};
+            float a2y_add = ${variation.params.get(this.PARAM_A2Y_ADD)!.toWebGl()}; 
+            float cos_mult = ${variation.params.get(this.PARAM_COS_MULT)!.toWebGl()}; 
+            float y_mult = ${variation.params.get(this.PARAM_Y_MULT)!.toWebGl()}; 
+            float center = ${variation.params.get(this.PARAM_CENTER)!.toWebGl()}; 
+            float x2y2_add = ${variation.params.get(this.PARAM_X2Y2_ADD)!.toWebGl()}; 
+            float x = _tx;
+            float y = _ty;
+            float xs = x * x;
+            float ys = y * y;
+            float z = pow(xs + (ys * y2_mult), power) + x2y2_add;
+            float q = atan2(x * a2x_mult, y * a2y_mult + a2y_add) * 0.5 + M_PI * float(int(2.0 * rand8(tex, rngState)));
+            _vx += amount * cos(z * cos_mult) * (sin(q) / z / center);
+            _vy += amount * cos(z * cos_mult) * (cos(q) / z / center) * y_mult;
+        }`;
+    }
+
+    get name(): string {
+        return 'inverted_julia';
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
 class InvpolarFunc extends VariationShaderFunc2D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         return `{
@@ -3572,10 +3630,11 @@ export function registerVars_2D_PartA() {
     VariationShaders.registerVar(new HypertileFunc())
     VariationShaders.registerVar(new Hypertile1Func())
     VariationShaders.registerVar(new Hypertile2Func())
-    VariationShaders.registerVar(new JapaneseMapleLeafFunc())
     VariationShaders.registerVar(new IDiscFunc())
+    VariationShaders.registerVar(new InvertedJuliaFunc())
     VariationShaders.registerVar(new InvpolarFunc())
     VariationShaders.registerVar(new InvSquircularFunc())
+    VariationShaders.registerVar(new JapaneseMapleLeafFunc())
     VariationShaders.registerVar(new JuliaFunc())
     VariationShaders.registerVar(new JuliaCFunc())
     VariationShaders.registerVar(new JuliaNFunc())
