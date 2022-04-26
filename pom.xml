@@ -5,7 +5,7 @@
     <groupId>org.jwildfire.swan</groupId>
     <artifactId>jwildfireswan</artifactId>
     <name>Project base for Spring Boot and Vaadin Flow</name>
-    <version>0.235.0-SNAPSHOT</version>
+    <version>0.236.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <properties>
@@ -100,16 +100,6 @@
         </dependency>
 
         <dependency>
-            <groupId>com.h2database</groupId>
-            <artifactId>h2</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-jpa</artifactId>
-        </dependency>
-
-        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-validation</artifactId>
         </dependency>
@@ -118,34 +108,6 @@
             <artifactId>spring-boot-devtools</artifactId>
             <optional>true</optional>
         </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.vaadin</groupId>
-            <artifactId>vaadin-testbench</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <!-- Include JUnit 4 support for TestBench and others -->
-        <dependency>
-            <groupId>org.junit.vintage</groupId>
-            <artifactId>junit-vintage-engine</artifactId>
-            <scope>test</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.hamcrest</groupId>
-                    <artifactId>hamcrest-core</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>io.github.bonigarcia</groupId>
-            <artifactId>webdrivermanager</artifactId>
-            <version>4.4.0</version>
-            <scope>test</scope>
-        </dependency>
 
         <dependency>
             <groupId>org.jwildfire</groupId>
@@ -153,12 +115,12 @@
             <version>7.42.0-SNAPSHOT</version>
         </dependency>
 
-            <dependency>
-                <groupId>org.projectlombok</groupId>
-                <artifactId>lombok</artifactId>
-                <version>1.18.22</version>
-                <scope>provided</scope>
-            </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.22</version>
+            <scope>provided</scope>
+        </dependency>
 
         <dependency>
             <groupId>org.mapstruct</groupId>
@@ -170,8 +132,6 @@
             <artifactId>log4j-over-slf4j</artifactId>
             <version>1.7.29</version>
         </dependency>
-
-
     </dependencies>
 
     <build>
@@ -278,217 +238,8 @@
                             <pnpmEnable>false</pnpmEnable>
                         </configuration>
                     </plugin>
-
-                    <!-- Electron build begin -->
-                    <plugin>
-                        <groupId>com.github.eirslett</groupId>
-                        <artifactId>frontend-maven-plugin</artifactId>
-                        <version>1.12.1</version>
-                        <configuration>
-                            <installDirectory>target/node</installDirectory>
-                        </configuration>
-                        <executions>
-                            <execution>
-                                <id>install node</id>
-                                <goals>
-                                    <goal>install-node-and-npm</goal>
-                                </goals>
-                                <configuration>
-                                    <nodeVersion>v16.14.0</nodeVersion>
-                                </configuration>
-                            </execution>
-                            <execution>
-                                <id>npm install</id>
-                                <goals>
-                                    <goal>npm</goal>
-                                </goals>
-                                <phase>package</phase>
-                                <configuration>
-                                    <arguments>install</arguments>
-                                    <workingDirectory>target/electron</workingDirectory>
-                                </configuration>
-                            </execution>
-                            <execution>
-                                <id>install electron-packager -g</id>
-                                <goals>
-                                    <goal>npm</goal>
-                                </goals>
-                                <phase>generate-resources</phase>
-                                <configuration>
-                                    <arguments>install electron-packager -g</arguments>
-                                </configuration>
-                            </execution>
-                            <execution>
-                                <id>package electron windows</id>
-                                <goals>
-                                    <goal>npm</goal>
-                                </goals>
-                                <phase>package</phase>
-                                <configuration>
-                                    <arguments>run package-windows</arguments>
-                                    <workingDirectory>target/electron</workingDirectory>
-                                </configuration>
-                            </execution>
-                            <execution>
-                                <id>package electron mac</id>
-                                <goals>
-                                    <goal>npm</goal>
-                                </goals>
-                                <phase>package</phase>
-                                <configuration>
-                                    <arguments>run package-mac</arguments>
-                                    <workingDirectory>target/electron</workingDirectory>
-                                </configuration>
-                            </execution>
-                            <execution>
-                                <id>package electron linux</id>
-                                <goals>
-                                    <goal>npm</goal>
-                                </goals>
-                                <phase>package</phase>
-                                <configuration>
-                                    <arguments>run package-linux</arguments>
-                                    <workingDirectory>target/electron</workingDirectory>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    <!-- open-jdk download -->
-                    <plugin>
-                        <groupId>com.googlecode.maven-download-plugin</groupId>
-                        <artifactId>download-maven-plugin</artifactId>
-                        <version>1.6.0</version>
-                        <executions>
-                            <execution>
-                                <id>download-openjdk-jre-windows</id>
-                                <phase>package</phase>
-                                <goals>
-                                    <goal>wget</goal>
-                                </goals>
-                                <configuration>
-                                    <!-- When updating the URL also update the variable 'jreFolder' in src/main/electron/main.js -->
-                                    <url>
-                                        https://github.com/AdoptOpenJDK/openjdk8-binaries/releases/download/jdk8u265-b01/OpenJDK8U-jre_x64_windows_hotspot_8u265b01.zip
-                                    </url>
-                                    <outputDirectory>
-                                        ${project.build.directory}/electron/application-win32-x64/resources/app/java
-                                    </outputDirectory>
-                                    <outputFileName>jre_windows.zip</outputFileName>
-                                </configuration>
-                            </execution>
-                            <execution>
-                                <id>download-openjdk-jre-mac-os</id>
-                                <phase>package</phase>
-                                <goals>
-                                    <goal>wget</goal>
-                                </goals>
-                                <configuration>
-                                    <!-- When updating the URL also update the variable 'jreFolder' in src/main/electron/main.js -->
-                                    <url>
-                                        https://github.com/AdoptOpenJDK/openjdk8-binaries/releases/download/jdk8u265-b01/OpenJDK8U-jre_x64_mac_hotspot_8u265b01.tar.gz
-                                    </url>
-                                    <outputDirectory>
-                                        ${project.build.directory}/electron/application-darwin-x64/application.app/Contents/Resources/app/java
-                                    </outputDirectory>
-                                    <outputFileName>jre_mac.tar.gz</outputFileName>
-                                </configuration>
-                            </execution>
-                            <execution>
-                                <id>download-openjdk-jre-linux</id>
-                                <phase>package</phase>
-                                <goals>
-                                    <goal>wget</goal>
-                                </goals>
-                                <configuration>
-                                    <!-- When updating the URL also update the variable 'jreFolder' in src/main/electron/main.js -->
-                                    <url>
-                                        https://github.com/AdoptOpenJDK/openjdk8-binaries/releases/download/jdk8u265-b01/OpenJDK8U-jre_x64_linux_hotspot_8u265b01.tar.gz
-                                    </url>
-                                    <outputDirectory>
-                                        ${project.build.directory}/electron/application-linux-x64/resources/app/java
-                                    </outputDirectory>
-                                    <outputFileName>jre_linux.tar.gz</outputFileName>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    <plugin>
-                        <artifactId>maven-resources-plugin</artifactId>
-                        <version>3.2.0</version>
-                        <executions>
-                            <execution>
-                                <id>copy-resources</id>
-                                <!-- here the phase you need -->
-                                <phase>validate</phase>
-                                <goals>
-                                    <goal>copy-resources</goal>
-                                </goals>
-                                <configuration>
-                                    <outputDirectory>${basedir}/target/electron</outputDirectory>
-                                    <resources>
-                                        <resource>
-                                            <directory>src/main/javascript</directory>
-                                        </resource>
-                                        <resource>
-                                            <directory>.</directory>
-                                            <includes>
-                                                <include>LICENSE</include>
-                                            </includes>
-                                        </resource>
-                                    </resources>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
                 </plugins>
             </build>
         </profile>
-
-        <profile>
-            <id>it</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.springframework.boot</groupId>
-                        <artifactId>spring-boot-maven-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>start-spring-boot</id>
-                                <phase>pre-integration-test</phase>
-                                <goals>
-                                    <goal>start</goal>
-                                </goals>
-                            </execution>
-                            <execution>
-                                <id>stop-spring-boot</id>
-                                <phase>post-integration-test</phase>
-                                <goals>
-                                    <goal>stop</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-
-                    <!-- Runs the integration tests (*IT) after the server is started -->
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-failsafe-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <goals>
-                                    <goal>integration-test</goal>
-                                    <goal>verify</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                        <configuration>
-                            <trimStackTrace>false</trimStackTrace>
-                            <enableAssertions>true</enableAssertions>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-
     </profiles>
 </project>

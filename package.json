@@ -190,7 +190,6 @@
     "@vaadin/radio-group": "$@vaadin/radio-group",
     "@vaadin/scroller": "$@vaadin/scroller",
     "@vaadin/select": "$@vaadin/select",
-    "@webcomponents/shadycss": "$@webcomponents/shadycss",
     "@vaadin/split-layout": "$@vaadin/split-layout",
     "@vaadin/tabs": "$@vaadin/tabs",
     "@vaadin/text-area": "$@vaadin/text-area",
@@ -264,7 +263,9 @@
     "lit": "$lit",
     "mobx": "$mobx",
     "@hilla/form": "$@hilla/form",
-    "@hilla/frontend": "$@hilla/frontend"
+    "@hilla/frontend": "$@hilla/frontend",
+    "@polymer/paper-slider": "$@polymer/paper-slider",
+    "chokidar": "$chokidar"
   },
   "vaadin": {
     "dependencies": {
