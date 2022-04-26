@@ -26,7 +26,6 @@
     </parent>
 
     <repositories>
-
         <!-- The order of definitions matters. Explicitly defining central here to make sure it has the highest priority. -->
         <repository>
             <id>github</id>
@@ -56,8 +55,6 @@
                 <enabled>false</enabled>
             </snapshots>
         </repository>
-
-
     </repositories>
 
     <pluginRepositories>
