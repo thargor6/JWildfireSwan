@@ -1716,6 +1716,47 @@ class PostPointSymmetryWFFunc extends VariationShaderFunc2D {
     }
 }
 
+class PreRectWFFunc extends VariationShaderFunc2D {
+    PARAM_X0 = 'x0'
+    PARAM_X1 = 'x1'
+    PARAM_Y0 = 'y0'
+    PARAM_Y1 = 'y1'
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_X0, type: VariationParamType.VP_NUMBER, initialValue: -0.5 },
+            { name: this.PARAM_X1, type: VariationParamType.VP_NUMBER, initialValue: 0.5 },
+            { name: this.PARAM_Y0, type: VariationParamType.VP_NUMBER, initialValue: -0.5 },
+            { name: this.PARAM_Y1, type: VariationParamType.VP_NUMBER, initialValue: 0.5 }
+        ]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        return `{
+          float amount = ${variation.amount.toWebGl()};
+          float x0 = ${variation.params.get(this.PARAM_X0)!.toWebGl()};
+          float x1 = ${variation.params.get(this.PARAM_X1)!.toWebGl()};
+          float y0 = ${variation.params.get(this.PARAM_Y0)!.toWebGl()};
+          float y1 = ${variation.params.get(this.PARAM_Y1)!.toWebGl()};
+          float dx = x1 - x0;
+          float dy = y1 - y0;
+          _tx = amount * (x0 + dx * rand8(tex, rngState));
+          _ty = amount * (y0 + dy * rand8(tex, rngState));
+        }`;
+    }
+
+    get name(): string {
+        return 'pre_rect_wf';
+    }
+
+    get priority(): number {
+        return -1
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
 class ProjectiveFunc extends VariationShaderFunc2D {
     PARAM_A = 'A'
     PARAM_B = 'B'
@@ -2165,6 +2206,7 @@ export function registerVars_2D_PartK() {
     VariationShaders.registerVar(new PowerFunc())
     VariationShaders.registerVar(new PostAxisSymmetryWFFunc())
     VariationShaders.registerVar(new PostPointSymmetryWFFunc())
+    VariationShaders.registerVar(new PreRectWFFunc())
     VariationShaders.registerVar(new ProjectiveFunc())
     VariationShaders.registerVar(new PTransformFunc())
     VariationShaders.registerVar(new PyramidFunc())

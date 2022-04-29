@@ -22,7 +22,7 @@ import {
     FUNC_ACOSH,
     FUNC_COSH,
     FUNC_MODULO,
-    FUNC_RINT,
+    FUNC_RINT, FUNC_ROUND,
     FUNC_SGN,
     FUNC_SINH,
     FUNC_SQRT1PM1
@@ -3205,6 +3205,89 @@ class IDiscFunc extends VariationShaderFunc2D {
     }
 }
 
+class IntersectionFunc extends VariationShaderFunc2D {
+    PARAM_XWIDTH = 'xwidth'
+    PARAM_XTILESIZE = 'xtilesize'
+    PARAM_XMOD1 = 'xmod1'
+    PARAM_XMOD2 = 'xmod2'
+    PARAM_XHEIGHT = 'xheight'
+    PARAM_YHEIGHT = 'yheight'
+    PARAM_YTILESIZE = 'ytilesize'
+    PARAM_YMOD1 = 'ymod1'
+    PARAM_YMOD2 = 'ymod2'
+    PARAM_YWIDTH = 'ywidth'
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_XWIDTH, type: VariationParamType.VP_NUMBER, initialValue: 5.0 },
+            { name: this.PARAM_XTILESIZE, type: VariationParamType.VP_NUMBER, initialValue: 0.5 },
+            { name: this.PARAM_XMOD1, type: VariationParamType.VP_NUMBER, initialValue: 0.3 },
+            { name: this.PARAM_XMOD2, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
+            { name: this.PARAM_XHEIGHT, type: VariationParamType.VP_NUMBER, initialValue: 0.5},
+            { name: this.PARAM_YHEIGHT, type: VariationParamType.VP_NUMBER, initialValue: 5.0 },
+            { name: this.PARAM_YTILESIZE, type: VariationParamType.VP_NUMBER, initialValue: 0.5 },
+            { name: this.PARAM_YMOD1, type: VariationParamType.VP_NUMBER, initialValue: 0.3 },
+            { name: this.PARAM_YMOD2, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
+            { name: this.PARAM_YWIDTH, type: VariationParamType.VP_NUMBER, initialValue: 0.5 }
+        ]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        /* intersection by Brad Stefanov */
+        return `{
+            float amount = ${variation.amount.toWebGl()};
+            float xwidth = ${variation.params.get(this.PARAM_XWIDTH)!.toWebGl()};
+            float xtilesize = ${variation.params.get(this.PARAM_XTILESIZE)!.toWebGl()};
+            float xmod1 = ${variation.params.get(this.PARAM_XMOD1)!.toWebGl()};
+            float xmod2 = ${variation.params.get(this.PARAM_XMOD2)!.toWebGl()};
+            float xheight = ${variation.params.get(this.PARAM_XHEIGHT)!.toWebGl()};
+            float yheight = ${variation.params.get(this.PARAM_YHEIGHT)!.toWebGl()};
+            float ytilesize = ${variation.params.get(this.PARAM_YTILESIZE)!.toWebGl()};
+            float ymod1 = ${variation.params.get(this.PARAM_YMOD1)!.toWebGl()};
+            float ymod2 = ${variation.params.get(this.PARAM_YMOD2)!.toWebGl()};
+            float ywidth = ${variation.params.get(this.PARAM_YWIDTH)!.toWebGl()};
+            float _xr1 = xmod2 * xmod1;
+            float  _yr1 = ymod2 * ymod1;
+            if (rand8(tex, rngState) < 0.5) {
+              float x = -xwidth;
+              if (rand8(tex, rngState) < 0.5)
+                x = xwidth;
+              _vx += xtilesize * (_tx + round(x * log(rand8(tex, rngState))));
+              if (_ty > xmod1) {
+                _vy += xheight * (-xmod1 + mod(_ty + xmod1, _xr1));
+              } else if (_ty < -xmod1) {
+                _vy += xheight * (xmod1 - mod(xmod1 - _ty, _xr1));
+              } else {
+                _vy += xheight * _ty;
+              }
+            } else {
+              float y = -yheight;
+              if (rand8(tex, rngState) < 0.5)
+                y = yheight;
+              _vy += ytilesize * (_ty + round(y * log(rand8(tex, rngState))));
+              if (_tx > ymod1) {
+                _vx += ywidth * (-ymod1 + mod(_tx + ymod1, _yr1));
+              } else if (_tx < -ymod1) {
+                _vx += ywidth * (ymod1 - mod(ymod1 - _tx, _yr1));
+              } else {
+                _vx += ywidth * _tx;
+              }
+            }
+        }`;
+    }
+
+    get name(): string {
+        return 'intersection';
+    }
+
+    get funcDependencies(): string[] {
+        return [FUNC_ROUND];
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
 class InvertedJuliaFunc extends VariationShaderFunc2D {
     PARAM_POWER = 'power'
     PARAM_Y2_MULT = 'y2_mult'
@@ -3631,6 +3714,7 @@ export function registerVars_2D_PartA() {
     VariationShaders.registerVar(new Hypertile1Func())
     VariationShaders.registerVar(new Hypertile2Func())
     VariationShaders.registerVar(new IDiscFunc())
+    VariationShaders.registerVar(new IntersectionFunc())
     VariationShaders.registerVar(new InvertedJuliaFunc())
     VariationShaders.registerVar(new InvpolarFunc())
     VariationShaders.registerVar(new InvSquircularFunc())

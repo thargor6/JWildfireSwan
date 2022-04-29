@@ -1415,6 +1415,60 @@ class StripfitFunc extends VariationShaderFunc2D {
     }
 }
 
+class STwinFunc extends VariationShaderFunc2D {
+    PARAM_DISTORT = 'distort'
+    PARAM_OFFSET_XY = 'offset_xy'
+    PARAM_OFFNET_X2 = 'offset_x2'
+    PARAM_OFFSET_Y2 = 'offset_y2'
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_DISTORT, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
+            { name: this.PARAM_OFFSET_XY, type: VariationParamType.VP_NUMBER, initialValue: 0.0 },
+            { name: this.PARAM_OFFNET_X2, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
+            { name: this.PARAM_OFFSET_Y2, type: VariationParamType.VP_NUMBER, initialValue: 1.0 }
+        ]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        /*
+         *  STwinFunc: JWildfire variation,
+         *  JWildfire variation, ported from "stwin" Apophysis7X plugin, plus added extra user-configurable parameters
+         *  original Apophysis7X plugin author xyrus02 ?
+         *  ported to JWildfire varation by CozyG
+         */
+        return `{
+          float amount = ${variation.amount.toWebGl()};
+          float distort = ${variation.params.get(this.PARAM_DISTORT)!.toWebGl()};
+          float offset_xy = ${variation.params.get(this.PARAM_OFFSET_XY)!.toWebGl()};
+          float offset_x2 = ${variation.params.get(this.PARAM_OFFNET_X2)!.toWebGl()};
+          float offset_y2 = ${variation.params.get(this.PARAM_OFFSET_Y2)!.toWebGl()};
+          float multiplier = 0.05;
+          float multiplier2 = 0.0001;
+          float multiplier3 = 0.1;
+          float x = _tx * amount * multiplier;
+          float y = _ty * amount * multiplier;
+          float x2 = x * x + (offset_x2 * multiplier2);
+          float y2 = y * y + (offset_y2 * multiplier2);
+          float result = (x2 - y2) * sin((2.0*M_PI) * distort * (x + y + (offset_xy * multiplier3)));
+          float divident = x2 + y2;
+          if (divident == 0.0) {
+            divident = 1.0;
+          }
+          result = result / divident;
+          _vx += (amount * _tx) + result;
+          _vy += (amount * _ty) + result;
+        }`;
+    }
+
+    get name(): string {
+        return 'stwin';
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D, VariationTypes.VARTYPE_BASE_SHAPE];
+    }
+}
+
 class SuperShapeFunc extends VariationShaderFunc2D {
     PARAM_RND = 'rnd'
     PARAM_M = 'm'
@@ -2710,6 +2764,7 @@ export function registerVars_2D_PartS() {
     VariationShaders.registerVar(new StarBlurFunc())
     VariationShaders.registerVar(new StripesFunc())
     VariationShaders.registerVar(new StripfitFunc())
+    VariationShaders.registerVar(new STwinFunc())
     VariationShaders.registerVar(new SuperShapeFunc())
     VariationShaders.registerVar(new SwirlFunc())
     VariationShaders.registerVar(new Swirl3Func())
