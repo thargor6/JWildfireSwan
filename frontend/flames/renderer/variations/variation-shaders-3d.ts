@@ -15,13 +15,7 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 */
 
-import {
-    VariationParam,
-    VariationParamType,
-    VariationShaderFunc2D,
-    VariationShaderFunc3D,
-    VariationTypes
-} from './variation-shader-func';
+import {VariationParam, VariationParamType, VariationShaderFunc3D, VariationTypes} from './variation-shader-func';
 import {VariationShaders} from 'Frontend/flames/renderer/variations/variation-shaders';
 import {RenderVariation, RenderXForm} from 'Frontend/flames/model/render-flame';
 import {
@@ -2619,6 +2613,35 @@ class SVFFunc extends VariationShaderFunc3D {
     }
 }
 
+class Swirl3DWFFunc extends VariationShaderFunc3D {
+    PARAM_N = 'n'
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_N, type: VariationParamType.VP_NUMBER, initialValue: 0.0 }]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        return `{
+            float amount = ${variation.amount.toWebGl()};
+            float n = ${variation.params.get(this.PARAM_N)!.toWebGl()};
+            float rad = _r;
+            float ang = atan2(_ty, _tx);
+            _vx += amount * (rad * cos(ang));
+            _vy += amount * (rad * sin(ang));
+            _vz += amount * (sin(6.0 * cos(rad) - n * ang));
+            _color = abs(sin(6.0 * cos(rad) - n * ang));
+        }`;
+    }
+
+    get name(): string {
+        return 'swirl3D_wf';
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_3D, VariationTypes.VARTYPE_DC];
+    }
+}
+
 class Tangent3DFunc extends VariationShaderFunc3D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         return `{
@@ -2820,6 +2843,7 @@ export function registerVars_3D() {
     VariationShaders.registerVar(new Splits3DFunc())
     VariationShaders.registerVar(new Square3DFunc())
     VariationShaders.registerVar(new SVFFunc())
+    VariationShaders.registerVar(new Swirl3DWFFunc())
     VariationShaders.registerVar(new Tangent3DFunc())
     VariationShaders.registerVar(new TanqFunc())
     VariationShaders.registerVar(new TaurusFunc())

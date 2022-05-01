@@ -1716,6 +1716,56 @@ class PostPointSymmetryWFFunc extends VariationShaderFunc2D {
     }
 }
 
+class PowBlockFunc extends VariationShaderFunc2D {
+    PARAM_NUMERATOR = 'numerator'
+    PARAM_DEMONIATOR = 'denominator'
+    PARAM_CORRECTN = 'correctn'
+    PARAM_CORRECTD = 'correctd'
+    PARAM_ROOT = 'root'
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_NUMERATOR, type: VariationParamType.VP_NUMBER, initialValue: 5.0 },
+            { name: this.PARAM_DEMONIATOR, type: VariationParamType.VP_NUMBER, initialValue: 2.5 },
+            { name: this.PARAM_CORRECTN, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
+            { name: this.PARAM_CORRECTD, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
+            { name: this.PARAM_ROOT, type: VariationParamType.VP_NUMBER, initialValue: 1.0 }
+        ]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        // pow_block optimized version, original by cothe coded by DarkBeam 2014
+        return `{
+          float amount = ${variation.amount.toWebGl()};
+          float numerator = ${variation.params.get(this.PARAM_NUMERATOR)!.toWebGl()};
+          float denominator = ${variation.params.get(this.PARAM_DEMONIATOR)!.toWebGl()};
+          float correctn = ${variation.params.get(this.PARAM_CORRECTN)!.toWebGl()};
+          float correctd = ${variation.params.get(this.PARAM_CORRECTD)!.toWebGl()};
+          float root = ${variation.params.get(this.PARAM_ROOT)!.toWebGl()};
+          float _power = denominator * correctn * 1.0 / (abs(correctd) + EPSILON);
+          if (abs(_power) <= EPSILON)
+           _power = EPSILON;
+          _power = (numerator * 0.5) / _power;
+          float _deneps = denominator;
+          if (abs(_deneps) <= EPSILON)
+           _deneps = EPSILON;
+          _deneps = 1.0 / _deneps;
+          float _theta = atan2(_ty, _tx);
+          float r2 = pow(_r2, _power) * amount;
+          float ran = ((_theta) * _deneps + (root * (2.0*M_PI) * floor(rand8(tex, rngState) * denominator) * _deneps)) * numerator;
+          _vx += r2 * cos(ran);
+          _vy += r2 * sin(ran);
+        }`;
+    }
+
+    get name(): string {
+        return 'pow_block';
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
 class PreRectWFFunc extends VariationShaderFunc2D {
     PARAM_X0 = 'x0'
     PARAM_X1 = 'x1'
@@ -2206,6 +2256,7 @@ export function registerVars_2D_PartK() {
     VariationShaders.registerVar(new PowerFunc())
     VariationShaders.registerVar(new PostAxisSymmetryWFFunc())
     VariationShaders.registerVar(new PostPointSymmetryWFFunc())
+    VariationShaders.registerVar(new PowBlockFunc())
     VariationShaders.registerVar(new PreRectWFFunc())
     VariationShaders.registerVar(new ProjectiveFunc())
     VariationShaders.registerVar(new PTransformFunc())

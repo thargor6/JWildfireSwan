@@ -2386,6 +2386,50 @@ class WaffleFunc extends VariationShaderFunc2D {
     }
 }
 
+class WallPaperFunc extends VariationShaderFunc2D {
+    PARAM_A = 'a'
+    PARAM_B = 'b'
+    PARAM_C= 'c'
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_A, type: VariationParamType.VP_NUMBER, initialValue: 1.156 },
+            { name: this.PARAM_B, type: VariationParamType.VP_NUMBER, initialValue: -0.28 },
+            { name: this.PARAM_C, type: VariationParamType.VP_NUMBER, initialValue: 21.288 }]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        /**
+         * WallPaper
+         *
+         * @author Jesus Sosa
+         * @date November 4, 2017
+         * based on a work of:
+         * http://paulbourke.net/fractals/wallpaper/
+         */
+        return `{
+          float amount = ${variation.amount.toWebGl()};
+          float a = ${variation.params.get(this.PARAM_A)!.toWebGl()};
+          float b = ${variation.params.get(this.PARAM_B)!.toWebGl()};
+          float c = ${variation.params.get(this.PARAM_C)!.toWebGl()};
+          if (rand8(tex, rngState) < 0.5) {
+            _vx += _ty - (int(_tx)<0 ? -1.0 : 1.0) * sqrt(abs(b * _tx - c));
+            _vy += a - _tx;
+          } else {
+            _vx = _tx;
+            _vy = _ty;
+          }
+        }`;
+    }
+
+    get name(): string {
+        return 'wallpaper_js';
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
 class WedgeFunc extends VariationShaderFunc2D {
     PARAM_ANGLE = 'angle'
     PARAM_HOLE = 'hole'
@@ -2783,6 +2827,7 @@ export function registerVars_2D_PartS() {
     VariationShaders.registerVar(new UnpolarFunc())
     VariationShaders.registerVar(new VogelFunc())
     VariationShaders.registerVar(new WaffleFunc())
+    VariationShaders.registerVar(new WallPaperFunc())
     VariationShaders.registerVar(new WedgeFunc())
     VariationShaders.registerVar(new WedgeJuliaFunc())
     VariationShaders.registerVar(new WedgeSphFunc())
