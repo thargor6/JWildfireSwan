@@ -15,10 +15,7 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 */
 
-import {
-    VariationShaderFunc3D,
-    VariationTypes
-} from './variation-shader-func';
+import {VariationParam, VariationParamType, VariationShaderFunc3D, VariationTypes} from './variation-shader-func';
 import {VariationShaders} from 'Frontend/flames/renderer/variations/variation-shaders';
 import {RenderVariation, RenderXForm} from 'Frontend/flames/model/render-flame';
 
@@ -172,6 +169,77 @@ class InflateZ_6Func extends VariationShaderFunc3D {
     }
 }
 
+class PostFlattenFunc extends VariationShaderFunc3D {
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        return `{
+           float amount = ${variation.amount.toWebGl()};
+           float post_flatten = min(abs(amount), 1.0);
+           _vz = _vz * (1.0 - post_flatten);
+        }`;
+    }
+
+    get name(): string {
+        return 'post_flatten';
+    }
+
+    get priority(): number {
+        return 1
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_ZTRANSFORM, VariationTypes.VARTYPE_POST];
+    }
+}
+
+class PostZScaleWFFunc extends VariationShaderFunc3D {
+    PARAM_ZTRANSLATE = 'ztranslate'
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_ZTRANSLATE, type: VariationParamType.VP_NUMBER, initialValue: 0.0 }]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        return `{
+           float amount = ${variation.amount.toWebGl()};
+           float ztranslate = ${variation.params.get(this.PARAM_ZTRANSLATE)!.toWebGl()};
+           _vz = amount * _vz + ztranslate;
+        }`;
+    }
+
+    get name(): string {
+        return 'post_zscale_wf';
+    }
+
+    get priority(): number {
+        return 1
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_ZTRANSFORM, VariationTypes.VARTYPE_POST];
+    }
+}
+
+class PostZTranslateWFFunc extends VariationShaderFunc3D {
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        return `{
+           float amount = ${variation.amount.toWebGl()};
+           _vz += amount;
+         }`;
+    }
+
+    get name(): string {
+        return 'post_ztranslate_wf';
+    }
+
+    get priority(): number {
+        return 1
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_ZTRANSFORM, VariationTypes.VARTYPE_POST];
+    }
+}
+
 class ZBlurFunc extends VariationShaderFunc3D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         return `{
@@ -188,7 +256,6 @@ class ZBlurFunc extends VariationShaderFunc3D {
         return [VariationTypes.VARTYPE_ZTRANSFORM];
     }
 }
-
 
 class ZConeFunc extends VariationShaderFunc3D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
@@ -249,6 +316,9 @@ export function registerVars_ZTransforms() {
     VariationShaders.registerVar(new InflateZ_4Func())
     VariationShaders.registerVar(new InflateZ_5Func())
     VariationShaders.registerVar(new InflateZ_6Func())
+    VariationShaders.registerVar(new PostFlattenFunc())
+    VariationShaders.registerVar(new PostZScaleWFFunc())
+    VariationShaders.registerVar(new PostZTranslateWFFunc())
     VariationShaders.registerVar(new ZBlurFunc())
     VariationShaders.registerVar(new ZConeFunc())
     VariationShaders.registerVar(new ZScaleFunc())
