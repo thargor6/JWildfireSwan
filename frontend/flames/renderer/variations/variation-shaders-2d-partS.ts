@@ -15,7 +15,13 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 */
 
-import {VariationParam, VariationParamType, VariationShaderFunc2D, VariationTypes} from './variation-shader-func';
+import {
+    VariationParam,
+    VariationParamType,
+    VariationShaderFunc2D,
+    VariationShaderFunc3D,
+    VariationTypes
+} from './variation-shader-func';
 import {VariationShaders} from 'Frontend/flames/renderer/variations/variation-shaders';
 import {RenderVariation, RenderXForm} from 'Frontend/flames/model/render-flame';
 import {
@@ -2327,6 +2333,140 @@ class UnpolarFunc extends VariationShaderFunc2D {
     }
 }
 
+class WFunc extends VariationShaderFunc2D {
+    PARAM_ANGLE = 'angle'
+    PARAM_HYPERGON = 'hypergon'
+    PARAM_HYPERGON_N = 'hypergon_n'
+    PARAM_HYPERGON_R = 'hypergon_r'
+    PARAM_STAR = 'star'
+    PARAM_STAR_N = 'star_n'
+    PARAM_STAR_SLOPE = 'star_slope'
+    PARAM_LITUUS = 'lituus'
+    PARAM_LITUUS_A = 'lituus_a'
+    PARAM_SUPER = 'super'
+    PARAM_SUPER_M = 'super_m'
+    PARAM_SUPER_N1 = 'super_n1'
+    PARAM_SUPER_N2 = 'super_n2'
+    PARAM_SUPER_N3 = 'super_n3'
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_ANGLE, type: VariationParamType.VP_NUMBER, initialValue: 0.42 },
+            { name: this.PARAM_HYPERGON, type: VariationParamType.VP_NUMBER, initialValue: 0.5 },
+            { name: this.PARAM_HYPERGON_N, type: VariationParamType.VP_NUMBER, initialValue: 4 },
+            { name: this.PARAM_HYPERGON_R, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
+            { name: this.PARAM_STAR, type: VariationParamType.VP_NUMBER, initialValue: 0.25 },
+            { name: this.PARAM_STAR_N, type: VariationParamType.VP_NUMBER, initialValue: 5 },
+            { name: this.PARAM_STAR_SLOPE, type: VariationParamType.VP_NUMBER, initialValue: 2.0 },
+            { name: this.PARAM_LITUUS, type: VariationParamType.VP_NUMBER, initialValue: 0.0 },
+            { name: this.PARAM_LITUUS_A, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
+            { name: this.PARAM_SUPER, type: VariationParamType.VP_NUMBER, initialValue: 0.0 },
+            { name: this.PARAM_SUPER_M, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
+            { name: this.PARAM_SUPER_N1, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
+            { name: this.PARAM_SUPER_N2, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
+            { name: this.PARAM_SUPER_N3, type: VariationParamType.VP_NUMBER, initialValue: 0.0 }]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        /* w by Michael Faber,  http://michaelfaber.deviantart.com/art/The-Lost-Variations-258913970 */
+        return `{
+          float amount = ${variation.amount.toWebGl()};
+          float angle = ${variation.params.get(this.PARAM_ANGLE)!.toWebGl()};
+          float hypergon = ${variation.params.get(this.PARAM_HYPERGON)!.toWebGl()};
+          int hypergon_n = ${variation.params.get(this.PARAM_HYPERGON_N)!.toWebGl()};
+          float hypergon_r = ${variation.params.get(this.PARAM_HYPERGON_R)!.toWebGl()};
+          float star = ${variation.params.get(this.PARAM_STAR)!.toWebGl()};
+          int star_n = ${variation.params.get(this.PARAM_STAR_N)!.toWebGl()};
+          float star_slope = ${variation.params.get(this.PARAM_STAR_SLOPE)!.toWebGl()};
+          float lituus = ${variation.params.get(this.PARAM_LITUUS)!.toWebGl()};
+          float lituus_a = ${variation.params.get(this.PARAM_LITUUS_A)!.toWebGl()};
+          float _super = ${variation.params.get(this.PARAM_SUPER)!.toWebGl()};
+          float super_m = ${variation.params.get(this.PARAM_SUPER_M)!.toWebGl()};
+          float super_n1 = ${variation.params.get(this.PARAM_SUPER_N1)!.toWebGl()};
+          float super_n2 = ${variation.params.get(this.PARAM_SUPER_N2)!.toWebGl()};
+          float super_n3 = ${variation.params.get(this.PARAM_SUPER_N3)!.toWebGl()};
+          float _hypergon_d, _hypergon_n, _lituus_a, _star_n, _star_slope, _super_m, _super_n1; _hypergon_d = sqrt(1.0 + sqr(hypergon_r));
+          _hypergon_n = float(hypergon_n);
+          _lituus_a = -lituus_a;
+          _star_n = float(star_n);
+          _star_slope = tan(star_slope);
+          _super_m = super_m / 4.0;
+          _super_n1 = -1.0 / (super_n1 + EPSILON);    float a = atan2(_ty, _tx);
+          float r = sqrt(sqr(_tx) + sqr(_ty));
+          float a2 = a + angle;
+          if (a2 < -M_PI)
+            a2 += (2.0*M_PI);
+          if (a2 > M_PI)
+            a2 -= (2.0*M_PI);
+          float s, c;
+          float total = 0.0;
+          float total2 = 0.0;
+          float temp1, temp2;
+          if (hypergon != 0.0) {
+            temp1 = mod(abs(a), (2.0*M_PI) / _hypergon_n) - M_PI / _hypergon_n;
+            temp2 = sqr(tan(temp1)) + 1.0;
+            if (temp2 >= sqr(_hypergon_d)) {
+              total += hypergon;
+            } else {
+              total += hypergon * (_hypergon_d - sqrt(sqr(_hypergon_d) - temp2)) / sqrt(temp2);
+            }
+          }
+          if (star != 0.0) {
+            temp1 = tan(abs(mod(abs(a), (2.0*M_PI) / _star_n) - M_PI / _star_n));
+            total += star * sqrt(sqr(_star_slope) * (1.0 + sqr(temp1)) / sqr(temp1 + _star_slope));
+          }
+          if (lituus != 0.0) {
+            total += lituus * pow(a / M_PI + 1.0, _lituus_a);
+          }
+          if (_super != 0.0) {
+            float ang = a * _super_m;
+            s = sin(ang);
+            c = cos(ang);
+            total += _super * pow(pow(abs(c), super_n2) + pow(abs(s), super_n3), _super_n1);
+          }
+          if (r <= total) {
+            if (hypergon != 0.0) {
+              temp1 = mod(abs(a2), (2.0*M_PI) / _hypergon_n) - M_PI / _hypergon_n;
+              temp2 = sqr(tan(temp1)) + 1.0;
+              if (temp2 >= sqr(_hypergon_d)) {
+                total2 += hypergon;
+              } else {
+                total2 += hypergon * (_hypergon_d - sqrt(sqr(_hypergon_d) - temp2)) / sqrt(temp2);
+              }
+            }
+            if (star != 0.0) {
+              temp1 = tan(abs(mod(abs(a2), (2.0*M_PI) / _star_n) - M_PI / _star_n));
+              total2 += star * sqrt(sqr(_star_slope) * (1.0 + sqr(temp1)) / sqr(temp1 + _star_slope));
+            }
+            if (lituus != 0.0) {
+              total2 += lituus * pow(a2 / M_PI + 1.0, _lituus_a);
+            }
+            if (_super != 0.0) {
+              float ang = a2 * _super_m;
+              s = sin(ang);
+              c = cos(ang);
+              total2 += _super * pow(pow(abs(c), super_n2) + pow(abs(s), super_n3), _super_n1);
+            }
+            r = amount * total2 * r / total;
+            s = sin(a2);
+            c = cos(a2);
+            _vx += r * c;
+            _vy += r * s;
+          } else {
+            _vx += amount * _tx;
+            _vy += amount * _ty;
+          }
+        }`;
+    }
+
+    get name(): string {
+        return 'w';
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
 class WaffleFunc extends VariationShaderFunc2D {
     PARAM_SLICES = 'slices'
     PARAM_XTHICKNESS = 'xthickness'
@@ -2649,6 +2789,107 @@ class WhorlFunc extends VariationShaderFunc2D {
     }
 }
 
+class XFunc extends VariationShaderFunc2D {
+    PARAM_HYPERGON = 'hypergon'
+    PARAM_HYPERGON_N = 'hypergon_n'
+    PARAM_HYPERGON_R = 'hypergon_r'
+    PARAM_STAR = 'star'
+    PARAM_STAR_N = 'star_n'
+    PARAM_STAR_SLOPE = 'star_slope'
+    PARAM_LITUUS = 'lituus'
+    PARAM_LITUUS_A = 'lituus_a'
+    PARAM_SUPER = 'super'
+    PARAM_SUPER_M = 'super_m'
+    PARAM_SUPER_N1 = 'super_n1'
+    PARAM_SUPER_N2 = 'super_n2'
+    PARAM_SUPER_N3 = 'super_n3'
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_HYPERGON, type: VariationParamType.VP_NUMBER, initialValue: 0.5 },
+            { name: this.PARAM_HYPERGON_N, type: VariationParamType.VP_NUMBER, initialValue: 4 },
+            { name: this.PARAM_HYPERGON_R, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
+            { name: this.PARAM_STAR, type: VariationParamType.VP_NUMBER, initialValue: 0.25 },
+            { name: this.PARAM_STAR_N, type: VariationParamType.VP_NUMBER, initialValue: 5 },
+            { name: this.PARAM_STAR_SLOPE, type: VariationParamType.VP_NUMBER, initialValue: 2.0 },
+            { name: this.PARAM_LITUUS, type: VariationParamType.VP_NUMBER, initialValue: 0.0 },
+            { name: this.PARAM_LITUUS_A, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
+            { name: this.PARAM_SUPER, type: VariationParamType.VP_NUMBER, initialValue: 0.0 },
+            { name: this.PARAM_SUPER_M, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
+            { name: this.PARAM_SUPER_N1, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
+            { name: this.PARAM_SUPER_N2, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
+            { name: this.PARAM_SUPER_N3, type: VariationParamType.VP_NUMBER, initialValue: 0.0 }]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        /* x by Michael Faber,  http://michaelfaber.deviantart.com/art/The-Lost-Variations-258913970 */
+        return `{
+          float amount = ${variation.amount.toWebGl()};
+          float hypergon = ${variation.params.get(this.PARAM_HYPERGON)!.toWebGl()};
+          int hypergon_n = ${variation.params.get(this.PARAM_HYPERGON_N)!.toWebGl()};
+          float hypergon_r = ${variation.params.get(this.PARAM_HYPERGON_R)!.toWebGl()};
+          float star = ${variation.params.get(this.PARAM_STAR)!.toWebGl()};
+          int star_n = ${variation.params.get(this.PARAM_STAR_N)!.toWebGl()};
+          float star_slope = ${variation.params.get(this.PARAM_STAR_SLOPE)!.toWebGl()};
+          float lituus = ${variation.params.get(this.PARAM_LITUUS)!.toWebGl()};
+          float lituus_a = ${variation.params.get(this.PARAM_LITUUS_A)!.toWebGl()};
+          float _super = ${variation.params.get(this.PARAM_SUPER)!.toWebGl()};
+          float super_m = ${variation.params.get(this.PARAM_SUPER_M)!.toWebGl()};
+          float super_n1 = ${variation.params.get(this.PARAM_SUPER_N1)!.toWebGl()};
+          float super_n2 = ${variation.params.get(this.PARAM_SUPER_N2)!.toWebGl()};
+          float super_n3 = ${variation.params.get(this.PARAM_SUPER_N3)!.toWebGl()};
+         
+          float _hypergon_d, _hypergon_n, _lituus_a, _star_n, _star_slope, _super_m, _super_n1;_hypergon_d = sqrt(1.0 + sqr(hypergon_r));
+          _hypergon_n = float(hypergon_n);
+          _lituus_a = -lituus_a;
+          _star_n = float(star_n);
+          _star_slope = tan(star_slope);
+          _super_m = super_m / 4.0;
+          _super_n1 = -1.0 / (super_n1 + EPSILON);
+          float a = atan2(_ty, _tx);
+          float r;
+          float s, c;
+          float total = 0.0;
+          float temp1, temp2;
+        
+          if (hypergon != 0.0) {
+            temp1 = mod(abs(a), (2.0*M_PI) / _hypergon_n) - M_PI / _hypergon_n;
+            temp2 = sqr(tan(temp1)) + 1.0;
+            if (temp2 >= sqr(_hypergon_d)) {
+              total += hypergon;
+            } else {
+              total += hypergon * (_hypergon_d - sqrt(sqr(_hypergon_d) - temp2)) / sqrt(temp2);
+            }
+          }
+          if (star != 0.0) {
+            temp1 = tan(abs(mod(abs(a), (2.0*M_PI) / _star_n) - M_PI / _star_n));
+            total += star * sqrt(sqr(_star_slope) * (1.0 + sqr(temp1)) / sqr(temp1 + _star_slope));
+          }
+          if (lituus != 0.0) {
+            total += lituus * pow(a / M_PI + 1.0, _lituus_a);
+          }
+          if (_super != 0.0) {
+            float ang = a * _super_m;
+            s = sin(ang);
+            c = cos(ang);
+            total += _super * pow(pow(abs(c), super_n2) + pow(abs(s), super_n3), _super_n1);
+          }
+          r = amount * sqrt(sqr(_tx) + sqr(_ty) + sqr(total));
+          s = sin(a);
+          c = cos(a);
+          _vx += r * c;
+          _vy += r * s;
+        }`;
+    }
+
+    get name(): string {
+        return 'x';
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
 class XHeartFunc extends VariationShaderFunc2D {
     PARAM_ANGLE = 'angle'
     PARAM_RATIO = 'ratio'
@@ -2687,6 +2928,106 @@ class XHeartFunc extends VariationShaderFunc2D {
 
     get name(): string {
         return 'xheart';
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
+class YFunc extends VariationShaderFunc2D {
+    PARAM_HYPERGON = 'hypergon'
+    PARAM_HYPERGON_N = 'hypergon_n'
+    PARAM_HYPERGON_R = 'hypergon_r'
+    PARAM_STAR = 'star'
+    PARAM_STAR_N = 'star_n'
+    PARAM_STAR_SLOPE = 'star_slope'
+    PARAM_LITUUS = 'lituus'
+    PARAM_LITUUS_A = 'lituus_a'
+    PARAM_SUPER = 'super'
+    PARAM_SUPER_M = 'super_m'
+    PARAM_SUPER_N1 = 'super_n1'
+    PARAM_SUPER_N2 = 'super_n2'
+    PARAM_SUPER_N3 = 'super_n3'
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_HYPERGON, type: VariationParamType.VP_NUMBER, initialValue: 0.5 },
+            { name: this.PARAM_HYPERGON_N, type: VariationParamType.VP_NUMBER, initialValue: 4 },
+            { name: this.PARAM_HYPERGON_R, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
+            { name: this.PARAM_STAR, type: VariationParamType.VP_NUMBER, initialValue: 0.25 },
+            { name: this.PARAM_STAR_N, type: VariationParamType.VP_NUMBER, initialValue: 5 },
+            { name: this.PARAM_STAR_SLOPE, type: VariationParamType.VP_NUMBER, initialValue: 2.0 },
+            { name: this.PARAM_LITUUS, type: VariationParamType.VP_NUMBER, initialValue: 0.0 },
+            { name: this.PARAM_LITUUS_A, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
+            { name: this.PARAM_SUPER, type: VariationParamType.VP_NUMBER, initialValue: 0.0 },
+            { name: this.PARAM_SUPER_M, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
+            { name: this.PARAM_SUPER_N1, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
+            { name: this.PARAM_SUPER_N2, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
+            { name: this.PARAM_SUPER_N3, type: VariationParamType.VP_NUMBER, initialValue: 0.0 }]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        /* y by Michael Faber,  http://michaelfaber.deviantart.com/art/The-Lost-Variations-258913970 */
+        return `{
+          float amount = ${variation.amount.toWebGl()};
+          float hypergon = ${variation.params.get(this.PARAM_HYPERGON)!.toWebGl()};
+          int hypergon_n = ${variation.params.get(this.PARAM_HYPERGON_N)!.toWebGl()};
+          float hypergon_r = ${variation.params.get(this.PARAM_HYPERGON_R)!.toWebGl()};
+          float star = ${variation.params.get(this.PARAM_STAR)!.toWebGl()};
+          int star_n = ${variation.params.get(this.PARAM_STAR_N)!.toWebGl()};
+          float star_slope = ${variation.params.get(this.PARAM_STAR_SLOPE)!.toWebGl()};
+          float lituus = ${variation.params.get(this.PARAM_LITUUS)!.toWebGl()};
+          float lituus_a = ${variation.params.get(this.PARAM_LITUUS_A)!.toWebGl()};
+          float _super = ${variation.params.get(this.PARAM_SUPER)!.toWebGl()};
+          float super_m = ${variation.params.get(this.PARAM_SUPER_M)!.toWebGl()};
+          float super_n1 = ${variation.params.get(this.PARAM_SUPER_N1)!.toWebGl()};
+          float super_n2 = ${variation.params.get(this.PARAM_SUPER_N2)!.toWebGl()};
+          float super_n3 = ${variation.params.get(this.PARAM_SUPER_N3)!.toWebGl()};
+         
+          float _hypergon_d, _hypergon_n, _lituus_a, _star_n, _star_slope, _super_m, _super_n1; _hypergon_d = sqrt(1.0 + sqr(hypergon_r));
+          _hypergon_n = float(hypergon_n);
+          _lituus_a = -lituus_a;
+          _star_n = float(star_n);
+          _star_slope = tan(star_slope);
+          _super_m = super_m / 4.0;
+          _super_n1 = -1.0 / (super_n1 + EPSILON);
+          float a = atan2(_ty, _tx);
+          float r;
+          float s, c;
+          float total = 0.0;
+          float temp1, temp2;
+          if (hypergon != 0.0) {
+            temp1 = mod(abs(a), (2.0*M_PI) / _hypergon_n) - M_PI / _hypergon_n;
+            temp2 = sqr(tan(temp1)) + 1.0;
+            if (temp2 >= sqr(_hypergon_d)) {
+              total += hypergon;
+            } else {
+              total += hypergon * (_hypergon_d - sqrt(sqr(_hypergon_d) - temp2)) / sqrt(temp2);
+            }
+          }
+          if (star != 0.0) {
+            temp1 = tan(abs(mod(abs(a), (2.0*M_PI) / _star_n) - M_PI / _star_n));
+            total += star * sqrt(sqr(_star_slope) * (1.0 + sqr(temp1)) / sqr(temp1 + _star_slope));
+          }
+          if (lituus != 0.0) {
+            total += lituus * pow(a / M_PI + 1.0, _lituus_a);
+          }
+          if (_super != 0.0) {
+            float ang = a * _super_m;
+            s = sin(ang);
+            c = cos(ang);
+            total += _super * pow(pow(abs(c), super_n2) + pow(abs(s), super_n3), _super_n1);
+          }
+          r = amount * sqr(total) / sqrt(sqr(_tx) + sqr(_ty));
+          s = sin(a);
+          c = cos(a);
+          _vx += r * c;
+          _vy += r * s;
+        }`;
+    }
+
+    get name(): string {
+        return 'y';
     }
 
     get variationTypes(): VariationTypes[] {
@@ -2772,6 +3113,106 @@ class YinYangFunc extends VariationShaderFunc2D {
     }
 }
 
+class ZFunc extends VariationShaderFunc2D {
+    PARAM_HYPERGON = 'hypergon'
+    PARAM_HYPERGON_N = 'hypergon_n'
+    PARAM_HYPERGON_R = 'hypergon_r'
+    PARAM_STAR = 'star'
+    PARAM_STAR_N = 'star_n'
+    PARAM_STAR_SLOPE = 'star_slope'
+    PARAM_LITUUS = 'lituus'
+    PARAM_LITUUS_A = 'lituus_a'
+    PARAM_SUPER = 'super'
+    PARAM_SUPER_M = 'super_m'
+    PARAM_SUPER_N1 = 'super_n1'
+    PARAM_SUPER_N2 = 'super_n2'
+    PARAM_SUPER_N3 = 'super_n3'
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_HYPERGON, type: VariationParamType.VP_NUMBER, initialValue: 0.5 },
+            { name: this.PARAM_HYPERGON_N, type: VariationParamType.VP_NUMBER, initialValue: 4 },
+            { name: this.PARAM_HYPERGON_R, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
+            { name: this.PARAM_STAR, type: VariationParamType.VP_NUMBER, initialValue: 0.25 },
+            { name: this.PARAM_STAR_N, type: VariationParamType.VP_NUMBER, initialValue: 5 },
+            { name: this.PARAM_STAR_SLOPE, type: VariationParamType.VP_NUMBER, initialValue: 2.0 },
+            { name: this.PARAM_LITUUS, type: VariationParamType.VP_NUMBER, initialValue: 0.0 },
+            { name: this.PARAM_LITUUS_A, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
+            { name: this.PARAM_SUPER, type: VariationParamType.VP_NUMBER, initialValue: 0.0 },
+            { name: this.PARAM_SUPER_M, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
+            { name: this.PARAM_SUPER_N1, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
+            { name: this.PARAM_SUPER_N2, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
+            { name: this.PARAM_SUPER_N3, type: VariationParamType.VP_NUMBER, initialValue: 0.0 }]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        /* z by Michael Faber,  http://michaelfaber.deviantart.com/art/The-Lost-Variations-258913970 */
+        return `{
+          float amount = ${variation.amount.toWebGl()};
+          float hypergon = ${variation.params.get(this.PARAM_HYPERGON)!.toWebGl()};
+          int hypergon_n = ${variation.params.get(this.PARAM_HYPERGON_N)!.toWebGl()};
+          float hypergon_r = ${variation.params.get(this.PARAM_HYPERGON_R)!.toWebGl()};
+          float star = ${variation.params.get(this.PARAM_STAR)!.toWebGl()};
+          int star_n = ${variation.params.get(this.PARAM_STAR_N)!.toWebGl()};
+          float star_slope = ${variation.params.get(this.PARAM_STAR_SLOPE)!.toWebGl()};
+          float lituus = ${variation.params.get(this.PARAM_LITUUS)!.toWebGl()};
+          float lituus_a = ${variation.params.get(this.PARAM_LITUUS_A)!.toWebGl()};
+          float _super = ${variation.params.get(this.PARAM_SUPER)!.toWebGl()};
+          float super_m = ${variation.params.get(this.PARAM_SUPER_M)!.toWebGl()};
+          float super_n1 = ${variation.params.get(this.PARAM_SUPER_N1)!.toWebGl()};
+          float super_n2 = ${variation.params.get(this.PARAM_SUPER_N2)!.toWebGl()};
+          float super_n3 = ${variation.params.get(this.PARAM_SUPER_N3)!.toWebGl()};
+         
+          float _hypergon_d, _hypergon_n, _lituus_a, _star_n, _star_slope, _super_m, _super_n1;_hypergon_d = sqrt(1.0 + sqr(hypergon_r));
+          _hypergon_n = float(hypergon_n);
+          _lituus_a = -lituus_a;
+          _star_n = float(star_n);
+          _star_slope = tan(star_slope);
+          _super_m = super_m / 4.0;
+          _super_n1 = -1.0 / (super_n1 + EPSILON);   
+          float a = atan2(_ty, _tx);
+          float r;
+          float s, c;
+          float total = 0.0;
+          float temp1, temp2;
+          if (hypergon != 0.0) {
+            temp1 = mod(abs(a), (2.0*M_PI) / _hypergon_n) - M_PI / _hypergon_n;
+            temp2 = sqr(tan(temp1)) + 1.0;
+            if (temp2 >= sqr(_hypergon_d)) {
+              total += hypergon;
+            } else {
+              total += hypergon * (_hypergon_d - sqrt(sqr(_hypergon_d) - temp2)) / sqrt(temp2);
+            }
+          }
+          if (star != 0.0) {
+            temp1 = tan(abs(mod(abs(a), (2.0*M_PI) / _star_n) - M_PI / _star_n));
+            total += star * sqrt(sqr(_star_slope) * (1.0 + sqr(temp1)) / sqr(temp1 + _star_slope));
+          }
+          if (lituus != 0.0) {
+            total += lituus * pow(a / M_PI + 1.0, _lituus_a);
+          }
+          if (_super != 0.0) {
+            float ang = a * _super_m;
+            s = sin(ang);
+            c = cos(ang);
+            total += _super * pow(pow(abs(c), super_n2) + pow(abs(s), super_n3), _super_n1);
+          }
+          r = amount * (sqrt(sqr(_tx) + sqr(_ty)) + total);   
+          s = sin(a);
+          c = cos(a);
+          _vx += r * c;
+          _vy += r * s;
+        }`;
+    }
+
+    get name(): string {
+        return 'z';
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
 export function registerVars_2D_PartS() {
     VariationShaders.registerVar(new ScryFunc())
     VariationShaders.registerVar(new Scry2Func())
@@ -2826,12 +3267,16 @@ export function registerVars_2D_PartS() {
     VariationShaders.registerVar(new TwoFaceFunc())
     VariationShaders.registerVar(new UnpolarFunc())
     VariationShaders.registerVar(new VogelFunc())
+    VariationShaders.registerVar(new WFunc())
     VariationShaders.registerVar(new WaffleFunc())
     VariationShaders.registerVar(new WallPaperFunc())
     VariationShaders.registerVar(new WedgeFunc())
     VariationShaders.registerVar(new WedgeJuliaFunc())
     VariationShaders.registerVar(new WedgeSphFunc())
     VariationShaders.registerVar(new WhorlFunc())
+    VariationShaders.registerVar(new XFunc())
     VariationShaders.registerVar(new XHeartFunc())
+    VariationShaders.registerVar(new YFunc())
     VariationShaders.registerVar(new YinYangFunc())
+    VariationShaders.registerVar(new ZFunc())
 }
