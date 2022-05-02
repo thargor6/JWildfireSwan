@@ -147,6 +147,105 @@ class LayeredSpiralFunc extends VariationShaderFunc2D {
     }
 }
 
+class LazyJessFunc extends VariationShaderFunc2D {
+    PARAM_N = 'n'
+    PARAM_SPIN = 'spin'
+    PARAM_SPACE = 'space'
+    PARAM_CORNER = 'corner'
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_N, type: VariationParamType.VP_NUMBER, initialValue: 4 },
+            { name: this.PARAM_SPIN, type: VariationParamType.VP_NUMBER, initialValue: M_PI},
+            { name: this.PARAM_SPACE, type: VariationParamType.VP_NUMBER, initialValue: 0.0},
+            { name: this.PARAM_CORNER, type: VariationParamType.VP_NUMBER, initialValue: 1}
+        ]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        /* lazyjess by FarDareisMai, http://fardareismai.deviantart.com/art/Apophysis-Plugin-Lazyjess-268929293 */
+        return `{
+          float amount = ${variation.amount.toWebGl()};
+          int n = ${variation.params.get(this.PARAM_N)!.toWebGl()};
+          float spin = ${variation.params.get(this.PARAM_SPIN)!.toWebGl()};
+          float space = ${variation.params.get(this.PARAM_SPACE)!.toWebGl()};
+          int corner = ${variation.params.get(this.PARAM_CORNER)!.toWebGl()};
+          float M_SQRT2 = 1.414213562;
+          float vertex, sin_vertex, pie_slice, half_slice, corner_rotation;
+          if (n < 2) {
+            n = 2;
+          }
+          vertex = M_PI * (float(n) - 2.0) / (2.0 * float(n));
+          sin_vertex = sin(vertex);
+          pie_slice = (2.0*M_PI) / float(n);
+          half_slice = pie_slice / 2.0;
+          corner_rotation = float(corner - 1) * pie_slice;
+          float theta, sina, cosa;
+          float x = _tx;
+          float y = _ty;
+          float modulus = sqrt(x * x + y * y);       
+          if (n == 2) {
+            if (abs(x) < amount) {
+              theta = atan2(y, x) + spin;
+              sina = sin(theta);
+              cosa = cos(theta);
+              x = amount * modulus * cosa;
+              y = amount * modulus * sina;
+              if (abs(x) < amount) {
+                _vx += x;
+                _vy += y;
+              } else {
+                theta = atan2(y, x) - spin + corner_rotation;
+                sina = sin(theta);
+                cosa = cos(theta);
+                _vx += amount * modulus * cosa;
+                _vy -= amount * modulus * sina;
+              }
+            } else {
+              modulus = 1.0 + space / modulus;
+              _vx += amount * modulus * x;
+              _vy += amount * modulus * y;
+            }
+          } else {
+            theta = atan2(y, x) + (2.0*M_PI);
+            float theta_diff = mod(theta + half_slice, pie_slice);
+            float r = amount * M_SQRT2 * sin_vertex / sin(M_PI - theta_diff - vertex);
+            if (modulus < r) {
+              theta = atan2(y, x) + spin + (2.0*M_PI);
+              sina = sin(theta);
+              cosa = cos(theta);
+              x = amount * modulus * cosa;
+              y = amount * modulus * sina;
+              theta_diff = mod(theta + half_slice, pie_slice);
+              r = amount * M_SQRT2 * sin_vertex / sin(M_PI - theta_diff - vertex);
+              modulus = sqrt(x * x + y * y);        
+              if (modulus < r) {
+                _vx += x;
+                _vy += y;
+              } else {
+                theta = atan2(y, x) - spin + corner_rotation + (2.0*M_PI);
+                sina = sin(theta);
+                cosa = cos(theta);
+                _vx += amount * modulus * cosa;
+                _vy -= amount * modulus * sina;
+              }
+            } else {
+              modulus = 1.0 + space / modulus;
+              _vx += amount * modulus * x;
+              _vy += amount * modulus * y;
+            }
+          }
+        }`;
+    }
+
+    get name(): string {
+        return 'lazyjess';
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
 class LazySusanFunc extends VariationShaderFunc2D {
     PARAM_SPACE = 'space'
     PARAM_TWIST = 'twist'
@@ -669,6 +768,83 @@ class MobiusFunc extends VariationShaderFunc2D {
     }
 }
 
+class MobiusNFunc extends VariationShaderFunc2D {
+    PARAM_RE_A = 're_a'
+    PARAM_RE_B = 're_b'
+    PARAM_RE_C = 're_c'
+    PARAM_RE_D = 're_d'
+    PARAM_IM_A = 'im_a'
+    PARAM_IM_B = 'im_b'
+    PARAM_IM_C = 'im_c'
+    PARAM_IM_D = 'im_d'
+    PARAM_POWER = 'power'
+    PARAM_DIST = 'dist'
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_RE_A, type: VariationParamType.VP_NUMBER, initialValue: 1.1 },
+            { name: this.PARAM_RE_B, type: VariationParamType.VP_NUMBER, initialValue: 0.0 },
+            { name: this.PARAM_RE_C, type: VariationParamType.VP_NUMBER, initialValue: 0.20 },
+            { name: this.PARAM_RE_D, type: VariationParamType.VP_NUMBER, initialValue: 0.9 },
+            { name: this.PARAM_IM_A, type: VariationParamType.VP_NUMBER, initialValue: 0.10 },
+            { name: this.PARAM_IM_B, type: VariationParamType.VP_NUMBER, initialValue: -0.22 },
+            { name: this.PARAM_IM_C, type: VariationParamType.VP_NUMBER, initialValue: -0.05 },
+            { name: this.PARAM_IM_D, type: VariationParamType.VP_NUMBER, initialValue: 0.10 },
+            { name: this.PARAM_POWER, type: VariationParamType.VP_NUMBER, initialValue: 1.8 },
+            { name: this.PARAM_DIST, type: VariationParamType.VP_NUMBER, initialValue: 1.0 }
+        ]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        // MobiusN, by eralex61, transcribed by chronologicaldot, fixed by thargor6
+        return `{
+          float amount = ${variation.amount.toWebGl()};
+          float re_a = ${variation.params.get(this.PARAM_RE_A)!.toWebGl()};
+          float re_b = ${variation.params.get(this.PARAM_RE_B)!.toWebGl()};
+          float re_c = ${variation.params.get(this.PARAM_RE_C)!.toWebGl()};
+          float re_d = ${variation.params.get(this.PARAM_RE_D)!.toWebGl()};
+          float im_a = ${variation.params.get(this.PARAM_IM_A)!.toWebGl()};
+          float im_b = ${variation.params.get(this.PARAM_IM_B)!.toWebGl()};
+          float im_c = ${variation.params.get(this.PARAM_IM_C)!.toWebGl()};
+          float im_d = ${variation.params.get(this.PARAM_IM_D)!.toWebGl()};
+          float power = ${variation.params.get(this.PARAM_POWER)!.toWebGl()};
+          float dist = ${variation.params.get(this.PARAM_DIST)!.toWebGl()};
+          if (abs(power) < 1.0)
+            power = 1.0;
+          float realU, imagU, realV, imagV, radV, x, y, z, r, alpha, sina, cosa, n;
+          z = 4.0 * dist / power;
+          r = pow(_r, z);
+          alpha = atan2(_ty, _tx) * power;
+          sina = sin(alpha);
+          cosa = cos(alpha);
+          x = r * cosa;
+          y = r * sina;
+          realU = re_a * x - im_a * y + re_b;
+          imagU = re_a * y + im_a * x + im_b;
+          realV = re_c * x - im_c * y + re_d;
+          imagV = re_c * y + im_c * x + im_d;
+          radV = sqr(realV) + sqr(imagV);
+          x = (realU * realV + imagU * imagV) / radV;
+          y = (imagU * realV - realU * imagV) / radV;
+          z = 1.0 / z;
+          r = pow(sqrt(sqr(x) + sqr(y)), z);
+          n = floor(power * rand8(tex, rngState));
+          alpha = (atan2(y, x) + n * (2.0*M_PI)) / floor(power);
+          sina = sin(alpha);
+          cosa = cos(alpha);
+          _vx += amount * r * cosa;
+          _vy += amount * r * sina;
+        }`;
+    }
+
+    get name(): string {
+        return 'mobiusN';
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
 class ModulusFunc extends VariationShaderFunc2D {
     PARAM_X = 'x'
     PARAM_Y = 'y'
@@ -852,6 +1028,99 @@ class NPolarFunc extends VariationShaderFunc2D {
 
     get funcDependencies(): string[] {
         return [FUNC_MODULO];
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
+class OrthoFunc extends VariationShaderFunc2D {
+    PARAM_IN = 'in'
+    PARAM_OUT = 'out'
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_IN, type: VariationParamType.VP_NUMBER, initialValue: 0.0 },
+            { name: this.PARAM_OUT, type: VariationParamType.VP_NUMBER, initialValue: 0.0 }]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        /* ortho by Michael Faber,  http://michaelfaber.deviantart.com/art/The-Lost-Variations-258913970 */
+        return `{
+          float amount = ${variation.amount.toWebGl()};
+          float _in = ${variation.params.get(this.PARAM_IN)!.toWebGl()};
+          float _out = ${variation.params.get(this.PARAM_OUT)!.toWebGl()};
+          float r, a, ta;
+          float xo;
+          float ro;
+          float c, s;
+          float x, y, tc, ts;
+          float theta;
+          r = sqr(_tx) + sqr(_ty);
+          if (r < 1.0) { 
+            if (_tx >= 0.0) {
+              xo = (r + 1.0) / (2.0 * _tx);
+              ro = sqrt(sqr(_tx - xo) + sqr(_ty));
+              theta = atan2(1.0, ro);
+              a = mod(_in * theta + atan2(_ty, xo - _tx) + theta, 2.0 * theta) - theta;
+              s = sin(a);
+              c = cos(a);
+              _vx += amount * (xo - c * ro);
+              _vy += amount * s * ro;
+            } else {
+              xo = -(r + 1.0) / (2.0 * _tx);
+              ro = sqrt(sqr(-_tx - xo) + sqr(_ty));
+              theta = atan2(1.0, ro);
+              a = mod(_in * theta + atan2(_ty, xo + _tx) + theta, 2.0 * theta) - theta;
+              s = sin(a);
+              c = cos(a);
+              _vx -= amount * (xo - c * ro);
+              _vy += amount * s * ro;
+            }
+          } else {
+            r = 1.0 / sqrt(r);
+            ta = atan2(_ty, _tx);
+            ts = sin(ta);
+            tc = cos(ta);
+            x = r * tc;
+            y = r * ts;
+            if (x >= 0.0) {
+              xo = (sqr(x) + sqr(y) + 1.0) / (2.0 * x);
+              ro = sqrt(sqr(x - xo) + sqr(y));
+              theta = atan2(1.0, ro);
+              a = mod(_out * theta + atan2(y, xo - x) + theta, 2.0 * theta) - theta;
+              s = sin(a);
+              c = cos(a);
+              x = (xo - c * ro);
+              y = s * ro;
+              ta = atan2(y, x);
+              ts = sin(ta);
+              tc = cos(ta);
+              r = 1.0 / sqrt(sqr(x) + sqr(y));
+              _vx += amount * r * tc;
+              _vy += amount * r * ts;
+            } else {
+              xo = -(sqr(x) + sqr(y) + 1.0) / (2.0 * x);
+              ro = sqrt(sqr(-x - xo) + sqr(y));
+              theta = atan2(1.0, ro);
+              a = mod(_out * theta + atan2(y, xo + x) + theta, 2.0 * theta) - theta;
+              s = sin(a);
+              c = cos(a);
+              x = (xo - c * ro);
+              y = s * ro;
+              ta = atan2(y, x);
+              ts = sin(ta);
+              tc = cos(ta);
+              r = 1.0 / sqrt(sqr(x) + sqr(y));
+              _vx -= amount * r * tc;
+              _vy += amount * r * ts;
+            }
+          }
+        }`;
+    }
+
+    get name(): string {
+        return 'ortho';
     }
 
     get variationTypes(): VariationTypes[] {
@@ -2222,6 +2491,7 @@ export function registerVars_2D_PartK() {
     VariationShaders.registerVar(new KaleidoscopeFunc())
     VariationShaders.registerVar(new LaceJSFunc())
     VariationShaders.registerVar(new LayeredSpiralFunc())
+    VariationShaders.registerVar(new LazyJessFunc())
     VariationShaders.registerVar(new LazySusanFunc())
     VariationShaders.registerVar(new LazyTravisFunc())
     VariationShaders.registerVar(new LinearFunc())
@@ -2232,10 +2502,12 @@ export function registerVars_2D_PartK() {
     VariationShaders.registerVar(new Loonie2Func())
     VariationShaders.registerVar(new MCarpetFunc())
     VariationShaders.registerVar(new MobiusFunc())
+    VariationShaders.registerVar(new MobiusNFunc())
     VariationShaders.registerVar(new ModulusFunc())
     VariationShaders.registerVar(new MurlFunc())
     VariationShaders.registerVar(new NGonFunc())
     VariationShaders.registerVar(new NPolarFunc())
+    VariationShaders.registerVar(new OrthoFunc())
     VariationShaders.registerVar(new OscilloscopeFunc())
     VariationShaders.registerVar(new Oscilloscope2Func())
     VariationShaders.registerVar(new OvoidFunc())
