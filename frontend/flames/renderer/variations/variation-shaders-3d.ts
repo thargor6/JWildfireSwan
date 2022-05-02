@@ -20,7 +20,7 @@ import {VariationShaders} from 'Frontend/flames/renderer/variations/variation-sh
 import {RenderVariation, RenderXForm} from 'Frontend/flames/model/render-flame';
 import {
     FUNC_COSH,
-    FUNC_HYPOT,
+    FUNC_HYPOT, FUNC_MODULO,
     FUNC_ROUND,
     FUNC_SGN,
     FUNC_SINH
@@ -984,6 +984,76 @@ class Julia3DZFunc extends VariationShaderFunc3D {
     }
 }
 
+class LazySensenFunc extends VariationShaderFunc3D {
+    PARAM_SCALE_X = 'scale_x'
+    PARAM_SCALE_Y = 'scale_y'
+    PARAM_SCALE_Z = 'scale_z'
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_SCALE_X, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
+            { name: this.PARAM_SCALE_Y, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
+            { name: this.PARAM_SCALE_Z, type: VariationParamType.VP_NUMBER, initialValue: 0.0 }]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        /*
+         * lazysensen by bezo97,
+         * https://bezo97.tk/plugins.html
+         */
+        return `{
+          float amount = ${variation.amount.toWebGl()};
+          float scale_x = ${variation.params.get(this.PARAM_SCALE_X)!.toWebGl()};
+          float scale_y = ${variation.params.get(this.PARAM_SCALE_Y)!.toWebGl()};
+          float scale_z = ${variation.params.get(this.PARAM_SCALE_Z)!.toWebGl()};
+           if (scale_x != 0.0) {
+            int nr = int(floor(_tx * scale_x));
+            if (nr >= 0) {
+              if (modulo(nr, 2) == 1)
+                _tx = -_tx;
+            } else {
+              if (modulo(nr, 2) == 0)
+                _tx = -_tx;
+            }
+          }
+          if (scale_y != 0.0) {
+            int nr = int(floor(_ty * scale_y));
+            if (nr >= 0) {
+              if (modulo(nr, 2) == 1)
+                _ty = -_ty;
+            } else {
+              if (modulo(nr, 2) == 0)
+                _ty = -_ty;
+            }
+          }
+          if (scale_z != 0.0) {
+            int nr = int(floor(_tz * scale_z));
+            if (nr >= 0) {
+              if (modulo(nr, 2) == 1)
+                _tz = -_tz;
+            } else {
+              if (modulo(nr, 2) == 0)
+                _tz = -_tz;
+            }
+          }
+          _vx += amount * _tx;
+          _vy += amount * _ty;
+          _vz += amount * _tz;
+        }`;
+    }
+
+    get funcDependencies(): string[] {
+        return [FUNC_MODULO];
+    }
+
+    get name(): string {
+        return 'lazysensen';
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_3D];
+    }
+}
+
 class LineFunc extends VariationShaderFunc3D {
     PARAM_DELTA = 'delta'
     PARAM_PHI = 'phi'
@@ -1324,6 +1394,181 @@ class PDJ3DFunc extends VariationShaderFunc3D {
 
     get name(): string {
         return 'pdj3D';
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_3D];
+    }
+}
+
+class Petal3DFunc extends VariationShaderFunc3D {
+    PARAM_MODE = 'mode'
+    PARAM_X1 = 'x1'
+    PARAM_X2 = 'x2'
+    PARAM_X3 = 'x3'
+    PARAM_X4 = 'x4'
+    PARAM_X5 = 'x5'
+    PARAM_X6 = 'x6'
+    PARAM_Y1 = 'y1'
+    PARAM_Y2 = 'y2'
+    PARAM_Y3 = 'y3'
+    PARAM_Y4 = 'y4'
+    PARAM_Y5 = 'y5'
+    PARAM_Y6 = 'y6'
+    PARAM_Z1 = 'z1'
+    PARAM_Z2 = 'z2'
+    PARAM_Z3 = 'z3'
+    PARAM_Z4 = 'z4'
+    PARAM_Z5 = 'z5'
+    PARAM_Z6 = 'z6'
+    PARAM_WARP = 'warp'
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_MODE, type: VariationParamType.VP_NUMBER, initialValue: 1 },
+            { name: this.PARAM_X1, type: VariationParamType.VP_NUMBER, initialValue: 0.0 },
+            { name: this.PARAM_X2, type: VariationParamType.VP_NUMBER, initialValue: 0.0 },
+            { name: this.PARAM_X3, type: VariationParamType.VP_NUMBER, initialValue: 0.0 },
+            { name: this.PARAM_X4, type: VariationParamType.VP_NUMBER, initialValue: 0.0 },
+            { name: this.PARAM_X5, type: VariationParamType.VP_NUMBER, initialValue: 0.0 },
+            { name: this.PARAM_X6, type: VariationParamType.VP_NUMBER, initialValue: 0.0 },
+            { name: this.PARAM_Y1, type: VariationParamType.VP_NUMBER, initialValue: 0.0 },
+            { name: this.PARAM_Y2, type: VariationParamType.VP_NUMBER, initialValue: 0.0 },
+            { name: this.PARAM_Y3, type: VariationParamType.VP_NUMBER, initialValue: 0.0 },
+            { name: this.PARAM_Y4, type: VariationParamType.VP_NUMBER, initialValue: 0.0 },
+            { name: this.PARAM_Y5, type: VariationParamType.VP_NUMBER, initialValue: 0.0 },
+            { name: this.PARAM_Y6, type: VariationParamType.VP_NUMBER, initialValue: 0.0 },
+            { name: this.PARAM_Z1, type: VariationParamType.VP_NUMBER, initialValue: 0.0 },
+            { name: this.PARAM_Z2, type: VariationParamType.VP_NUMBER, initialValue: 0.0 },
+            { name: this.PARAM_Z3, type: VariationParamType.VP_NUMBER, initialValue: 0.0 },
+            { name: this.PARAM_Z4, type: VariationParamType.VP_NUMBER, initialValue: 0.0 },
+            { name: this.PARAM_Z5, type: VariationParamType.VP_NUMBER, initialValue: 0.0 },
+            { name: this.PARAM_Z6, type: VariationParamType.VP_NUMBER, initialValue: 0.0 },
+            { name: this.PARAM_WARP, type: VariationParamType.VP_NUMBER, initialValue: 1.0 }]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        // petal by Raykoid666,
+        // http://raykoid666.deviantart.com/art/re-pack-1-new-plugins-100092186
+        // Added variables by Brad Stefanov
+        return `{
+          float amount = ${variation.amount.toWebGl()};
+          int mode = ${variation.params.get(this.PARAM_MODE)!.toWebGl()};
+          float x1 = ${variation.params.get(this.PARAM_X1)!.toWebGl()};
+          float x2 = ${variation.params.get(this.PARAM_X2)!.toWebGl()};
+          float x3 = ${variation.params.get(this.PARAM_X3)!.toWebGl()};
+          float x4 = ${variation.params.get(this.PARAM_X4)!.toWebGl()};
+          float x5 = ${variation.params.get(this.PARAM_X5)!.toWebGl()};
+          float x6 = ${variation.params.get(this.PARAM_X6)!.toWebGl()};
+          float y1 = ${variation.params.get(this.PARAM_Y1)!.toWebGl()};
+          float y2 = ${variation.params.get(this.PARAM_Y2)!.toWebGl()};
+          float y3 = ${variation.params.get(this.PARAM_Y3)!.toWebGl()};
+          float y4 = ${variation.params.get(this.PARAM_Y4)!.toWebGl()};
+          float y5 = ${variation.params.get(this.PARAM_Y5)!.toWebGl()};
+          float y6 = ${variation.params.get(this.PARAM_Y6)!.toWebGl()};
+          float z1 = ${variation.params.get(this.PARAM_Z1)!.toWebGl()};
+          float z2 = ${variation.params.get(this.PARAM_Z2)!.toWebGl()};
+          float z3 = ${variation.params.get(this.PARAM_Z3)!.toWebGl()};
+          float z4 = ${variation.params.get(this.PARAM_Z4)!.toWebGl()};
+          float z5 = ${variation.params.get(this.PARAM_Z5)!.toWebGl()};
+          float z6 = ${variation.params.get(this.PARAM_Z6)!.toWebGl()};
+          float warp = ${variation.params.get(this.PARAM_WARP)!.toWebGl()};
+          float ax = cos(_tx * warp); 
+          float bx = (cos(_tx + x1) * cos(_ty + x2)) * (cos(_tx + x3) * cos(_ty + x4)) * (cos(_tx + x5) * cos(_ty + x6));
+          float by = (sin(_tx + y1) * cos(_ty + y2)) * (sin(_tx + y3) * cos(_ty + y4)) * (sin(_tx + y5) * cos(_ty + y6));
+          float zy = (sin(_tz + z1) * cos(_ty + z2)) * (sin(_tz + z3) * cos(_ty + z4)) * (sin(_tz + z5) * cos(_ty + z6));
+          float zx = (sin(_tz + z1) * cos(_tx + z2)) * (sin(_tz + z3) * cos(_tx + z4)) * (sin(_tz + z5) * cos(_tx + z6));
+          float yz = (sin(_ty + z1) * cos(_tz + z2)) * (sin(_ty + z3) * cos(_tz + z4)) * (sin(_ty + z5) * cos(_tz + z6));
+          float xz = (sin(_tx + z1) * cos(_tz + z2)) * (sin(_tx + z3) * cos(_tz + z4)) * (sin(_tx + z5) * cos(_tz + z6));
+          _vx += amount * ax * bx;
+          _vy += amount * ax * by;
+          if (mode <= 0) {
+           _vz += amount * _tz;
+          } else if (mode == 1) {
+           _vz += amount * ax * zx;
+          } else if (mode == 2) {
+           _vz += amount * ax * zy;
+          } else if (mode == 3) {
+           _vz += amount * ax * yz;
+          } else if (mode >= 4) {
+           _vz += amount * ax * xz;
+          }
+        }`;
+    }
+
+    get name(): string {
+        return 'petal3D';
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_3D];
+    }
+}
+
+class Petal3DApoFunc extends VariationShaderFunc3D {
+    PARAM_WIDTH = 'width'
+    PARAM_ZSHAPE = 'Zshape'
+    PARAM_SCALE1 = 'scale1'
+    PARAM_SCALE2 = 'scale2'
+    PARAM_STYLE = 'style'
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_WIDTH, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
+            { name: this.PARAM_ZSHAPE, type: VariationParamType.VP_NUMBER, initialValue: 0.25 },
+            { name: this.PARAM_SCALE1, type: VariationParamType.VP_NUMBER, initialValue: 0.25 },
+            { name: this.PARAM_SCALE2, type: VariationParamType.VP_NUMBER, initialValue: 0.25 },
+            { name: this.PARAM_STYLE, type: VariationParamType.VP_NUMBER, initialValue: 0.0 }]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        // petal3D by Larry Berlin (aporev)
+        // https://www.deviantart.com/aporev/art/petal3D-plugin-139564066
+        return `{
+          float amount = ${variation.amount.toWebGl()};
+          float width = ${variation.params.get(this.PARAM_WIDTH)!.toWebGl()};
+          float Zshape = ${variation.params.get(this.PARAM_ZSHAPE)!.toWebGl()};
+          float scale1 = ${variation.params.get(this.PARAM_SCALE1)!.toWebGl()};
+          float scale2 = ${variation.params.get(this.PARAM_SCALE2)!.toWebGl()};
+          float style = ${variation.params.get(this.PARAM_STYLE)!.toWebGl()};
+          float shaper, shaper2, tmpPY, tmpPZ, tmpSmth;
+          float squeeze;
+          int posNeg = 1;
+          if(rand8(tex, rngState) < 0.5) {
+              posNeg = -1;
+          }
+          float styleSign = style >= 0.0 ? 1.0 : -1.0; 
+          float a = cos(_tx);
+          float bx = (cos(_tx)*cos(_ty))*(cos(_tx)*cos(_ty))*(cos(_tx)*cos(_ty)); 
+          float by = (sin(_tx)*cos(_ty))*(sin(_tx)*cos(_ty))*(sin(_tx)*cos(_ty));         
+          _vx += amount * a * bx;
+          tmpPY = amount * a * by * width;
+          _vy += tmpPY;      
+          if(abs(scale1)>1.0) {
+              squeeze = abs(scale1)-1.0;  
+              shaper  = (-sin(_tx*scale1*M_PI))*0.5+(_tx*squeeze*0.5)+sin(abs(_ty*scale2*M_PI)); 
+              shaper2 = (-sin(_tx*scale1*M_PI))*0.5+(_tx*squeeze*0.5)+tmpPY*scale2*0.5;
+          }
+          else {
+              squeeze = 0.0;
+              shaper  = (-sin(_tx*scale1*M_PI))*0.5+sin(abs(_ty*scale2*M_PI));
+              shaper2 = (-sin(_tx*scale1*M_PI))*0.5+tmpPY*scale2*0.5;
+          }
+          tmpSmth=0.5-sqr(style);
+          tmpPZ = shaper;
+          if(abs(style)>0.707106781) {
+            tmpPZ = shaper2*styleSign;
+          }
+          else if(style<0.0) {
+            tmpPZ = tmpSmth*2.0*shaper - (1.0-tmpSmth*2.0)*shaper2;
+          }
+          else if(style>0.0) {
+            tmpPZ = tmpSmth*2.0*shaper + (1.0-tmpSmth*2.0)*shaper2;
+          }
+          _vz += amount*tmpPZ* Zshape;  
+        }`;
+    }
+
+    get name(): string {
+        return 'petal3D_apo';
     }
 
     get variationTypes(): VariationTypes[] {
@@ -2818,6 +3063,7 @@ export function registerVars_3D() {
     VariationShaders.registerVar(new Hypertile3D2Func())
     VariationShaders.registerVar(new Julia3DFunc())
     VariationShaders.registerVar(new Julia3DZFunc())
+    VariationShaders.registerVar(new LazySensenFunc())
     VariationShaders.registerVar(new LineFunc())
     VariationShaders.registerVar(new Linear3DFunc())
     VariationShaders.registerVar(new LinearT3DFunc())
@@ -2825,6 +3071,8 @@ export function registerVars_3D() {
     VariationShaders.registerVar(new OctagonFunc())
     VariationShaders.registerVar(new Ovoid3DFunc())
     VariationShaders.registerVar(new PDJ3DFunc())
+    VariationShaders.registerVar(new Petal3DFunc())
+    VariationShaders.registerVar(new Petal3DApoFunc())
     VariationShaders.registerVar(new Pie3DFunc())
     VariationShaders.registerVar(new Poincare3DFunc())
     VariationShaders.registerVar(new PointGrid3DWFFunc())
