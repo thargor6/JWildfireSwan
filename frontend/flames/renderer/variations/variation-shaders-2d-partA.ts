@@ -32,6 +32,113 @@ import {M_PI} from "Frontend/flames/renderer/mathlib";
 /*
   be sure to import this class somewhere and call registerVars_2D_PartA()
  */
+class ApocarpetFunc extends VariationShaderFunc2D {
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        /**
+         * Roger Bagula Function
+         *
+         * @author Jesus Sosa
+         * @date November 4, 2017
+         * based on a work of:
+         * http://paulbourke.net/fractals/kissingcircles/roger17.c
+         */
+        return `{
+            float amount = ${variation.amount.toWebGl()};
+            float x = 0.0, y = 0.0;
+            float r = 0.414213562;
+            float denom = _tx * _tx + _ty * _ty;
+            int weight = int(6.0 * rand8(tex, rngState));
+            if(weight==0) {
+              x = 2.0 * _tx * _ty / denom;
+              y = (_tx * _tx - _ty * _ty) / denom;
+            }
+            else if(weight==1) {
+              x = _tx * r - r;
+              y = _ty * r - r;
+            }
+            else if(weight==2) {
+              x = _tx * r + r;
+              y = _ty * r + r;
+            }
+            else if(weight==3) {
+              x = _tx * r + r;
+              y = _ty * r - r;
+            }
+            else if(weight==4){
+              x = _tx * r - r;
+              y = _ty * r + r;
+            }
+            else {
+              x = (_tx * _tx - _ty * _ty) / denom;
+              y = 2.0 * _tx * _ty / denom;
+            }
+            _vx += x * amount;
+            _vy += y * amount;
+        }`;
+    }
+
+    get name(): string {
+        return 'apocarpet_js';
+    }
+
+    get funcDependencies(): string[] {
+        return [FUNC_MODULO];
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
+
+class ApollonyFunc extends VariationShaderFunc2D {
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        /**
+         * Apollony IFS
+         *
+         * @author Jesus Sosa
+         * @date January 22, 2018
+         * based on a work of:
+         * http://paulbourke.net/fractals/apollony/apollony.c
+         */
+        return `{
+              float amount = ${variation.amount.toWebGl()};
+              float x, y, a0, b0, f1x, f1y;
+              float r = sqrt(3.0);
+              a0 = 3.0 * (1.0 + r - _tx) / (pow(1.0 + r - _tx, 2.0) + _ty * _ty) - (1.0 + r) / (2.0 + r);
+              b0 = 3.0 * _ty / (pow(1.0 + r - _tx, 2.0) + _ty * _ty);
+              f1x = a0 / (a0 * a0 + b0 * b0);
+              f1y = -b0 / (a0 * a0 + b0 * b0);
+              int w = int(4.0 * rand8(tex, rngState));
+            
+              if (modulo(w, 3) == 0) {
+                x = a0;
+                y = b0;
+              } else if (modulo(w, 3) == 1) {
+                x = -f1x / 2.0 - f1y * r / 2.0;
+                y = f1x * r / 2.0 - f1y / 2.0;
+              } else {
+                x = -f1x / 2.0 + f1y * r / 2.0;
+                y = -f1x * r / 2.0 - f1y / 2.0;
+              }
+              _vx += x * amount;
+              _vy += y * amount;
+        }`;
+    }
+
+    get name(): string {
+        return 'apollony';
+    }
+
+    get funcDependencies(): string[] {
+        return [FUNC_MODULO];
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
 class ArchFunc extends VariationShaderFunc2D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         return `{
@@ -100,6 +207,47 @@ class AsteriaFunc extends VariationShaderFunc2D {
 
     get name(): string {
         return 'asteria';
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
+class AtanFunc extends VariationShaderFunc2D {
+    PARAM_MODE = 'Mode'
+    PARAM_STRETCH = 'Stretch'
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_MODE, type: VariationParamType.VP_NUMBER, initialValue: 0 },
+            { name: this.PARAM_STRETCH, type: VariationParamType.VP_NUMBER, initialValue: 1.0 }
+        ]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        /* atan by FractalDesire http://fractaldesire.deviantart.com/art/atan-Plugin-688802474 converted by Brad Stefanov */
+        return `{
+          float amount = ${variation.amount.toWebGl()};
+          int Mode = ${variation.params.get(this.PARAM_MODE)!.toWebGl()};
+          float Stretch = ${variation.params.get(this.PARAM_STRETCH)!.toWebGl()};
+          float norm = 1.0 / (M_PI*0.5) * amount;
+          if(Mode==0) {
+            _vx += amount * _tx;
+            _vy += norm * atan(Stretch * _ty);
+          }
+          else if(Mode==1) {
+            _vx += norm * atan(Stretch * _tx);
+            _vy += amount * _ty;
+          }
+          else if(Mode==2) {
+            _vx += norm * atan(Stretch * _tx);
+            _vy += norm * atan(Stretch * _ty);
+          }
+        }`;
+    }
+
+    get name(): string {
+        return 'atan';
     }
 
     get variationTypes(): VariationTypes[] {
@@ -3635,8 +3783,11 @@ class JuliascopeFunc extends VariationShaderFunc2D {
 }
 
 export function registerVars_2D_PartA() {
+    VariationShaders.registerVar(new ApocarpetFunc())
+    VariationShaders.registerVar(new ApollonyFunc())
     VariationShaders.registerVar(new ArchFunc())
     VariationShaders.registerVar(new AsteriaFunc())
+    VariationShaders.registerVar(new AtanFunc())
     VariationShaders.registerVar(new AugerFunc())
     VariationShaders.registerVar(new BarycentroidFunc())
     VariationShaders.registerVar(new BentFunc())
