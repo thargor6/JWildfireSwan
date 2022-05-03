@@ -13,7 +13,8 @@ let loading = null;
 let serverProcess = null;
 let allowClose = false;
 //const jreFolder = 'jdk8u265-b01-jre';
-const jreFolder = 'jdk-11.0.9.1+1';
+//const jreFolder = 'jdk-11.0.9.1+1';
+const jreFolder = 'jdk-11.0.9.1+1-jre';
 
 function error_log(exception) {
     console.log(exception)
@@ -109,9 +110,15 @@ try {
         var filename = getJavaFile();
         platform = process.platform;
         if (platform === 'win32') {
-            return child_process.spawn(jreFolder + path.sep + 'bin' + path.sep + 'java', ['-jar', '-Dvaadin.productionMode=true', '-Dserver.port=' + port, filename, '--logging.file=application.log'], {
-                cwd: app.getAppPath() + path.sep + 'java' + path.sep
-            }).on('error', function (code, signal) {
+            console.log(app.getAppPath() + path.sep + 'java' + path.sep + jreFolder + path.sep + 'bin' + path.sep + 'java' + ' -jar' + ' -Dvaadin.productionMode=true' + ' -Dserver.port=' + port + ' '+app.getAppPath() + path.sep + 'java' + path.sep + filename + ' --logging.file=application.log');
+
+            return child_process.exec(app.getAppPath() + path.sep + 'java' + path.sep + jreFolder + path.sep + 'bin' + path.sep + 'java' + ' -jar' + ' -Dvaadin.productionMode=true' + ' -Dserver.port=' + port + ' '+app.getAppPath() + path.sep + 'java' + path.sep + filename + ' --logging.file=application.log')
+
+
+//            return child_process.spawn(jreFolder + path.sep + 'bin' + path.sep + 'java', ['-jar', '-Dvaadin.productionMode=true', '-Dserver.port=' + port, filename, '--logging.file=application.log'], {
+//                cwd: app.getAppPath() + path.sep + 'java' + path.sep
+//            })
+                .on('error', function (code, signal) {
                 '+ path.sep +'
                 showStartUpErrorMessage();
             });

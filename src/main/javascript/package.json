@@ -12,8 +12,10 @@
   "scripts": {
     "package": "electron-packager ./ --icon=icon.ico",
     "package-windows": "electron-packager ./ --icon=icon.ico  --platform=win32",
-    "package-linux": "electron-packager ./ --icon=icon.ico  --platform=linux",
-    "package-mac": "electron-packager ./ --icon=icon.ico --platform=darwin",
+    "package-linux": "echo ok",
+    "package-mac": "echo ok",
+    "package-linux_": "electron-packager ./ --icon=icon.ico  --platform=linux",
+    "package-mac_": "electron-packager ./ --icon=icon.ico --platform=darwin",
     "package-all": "electron-packager ./ --icon=icon.ico --platform=all"
   },
   "devDependencies": {
