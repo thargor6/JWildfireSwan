@@ -1,0 +1,23 @@
+{
+  "name": "application",
+  "version": "1.0.0",
+  "main": "./main.js",
+  "license": "GPL-3.0",
+  "description": "Electron wrapper for 'application'",
+  "dependencies": {
+    "minimal-request-promise": "^1.5.0",
+    "get-port": "^5.1.1",
+    "decompress": "^4.2.1"
+  },
+  "scripts": {
+    "package": "electron-packager ./ --icon=icon.ico",
+    "package-windows": "electron-packager ./ --icon=icon.ico  --platform=win32",
+    "package-linux": "electron-packager ./ --icon=icon.ico  --platform=linux",
+    "package-mac": "electron-packager ./ --icon=icon.ico --platform=darwin",
+    "package-all": "electron-packager ./ --icon=icon.ico --platform=all"
+  },
+  "devDependencies": {
+    "electron-packager": "^15.1.0",
+    "electron": "^17.4.1"
+  }
+}
