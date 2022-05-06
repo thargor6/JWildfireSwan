@@ -22,6 +22,34 @@ import {RenderVariation, RenderXForm} from 'Frontend/flames/model/render-flame';
 /*
   be sure to import this class somewhere and call registerVars_ZTransforms()
  */
+class ExtrudeFunc extends VariationShaderFunc3D {
+    PARAM_ROOT_FACE = 'root_face'
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_ROOT_FACE, type: VariationParamType.VP_NUMBER, initialValue: 0.5 }]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        return `{
+           float amount = ${variation.amount.toWebGl()};
+           float root_face = ${variation.params.get(this.PARAM_ROOT_FACE)!.toWebGl()};
+           if (rand8(tex, rngState) < root_face) {
+              _vz = (amount < 0.0 ? 0.0 : amount);
+            } else {
+              _vz = amount * rand8(tex, rngState);
+            }
+        }`;
+    }
+
+    get name(): string {
+        return 'extrude';
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_ZTRANSFORM];
+    }
+}
+
 class FlattenFunc extends VariationShaderFunc3D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         return `{
@@ -240,6 +268,70 @@ class PostZTranslateWFFunc extends VariationShaderFunc3D {
     }
 }
 
+class PreFlattenFunc extends VariationShaderFunc3D {
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        return `{
+           float amount = ${variation.amount.toWebGl()};
+           float pre_flatten = min(abs(amount), 1.0);
+           _vz = _vz * (1.0 - pre_flatten);
+         }`;
+    }
+
+    get name(): string {
+        return 'pre_flatten';
+    }
+
+    get priority(): number {
+        return -1
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_ZTRANSFORM, VariationTypes.VARTYPE_PRE];
+    }
+}
+
+class PreZScaleFunc extends VariationShaderFunc3D {
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        return `{
+           float amount = ${variation.amount.toWebGl()};
+           _tz *= amount;
+         }`;
+    }
+
+    get name(): string {
+        return 'pre_zscale';
+    }
+
+    get priority(): number {
+        return -1
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_ZTRANSFORM, VariationTypes.VARTYPE_PRE];
+    }
+}
+
+class PreZTranslateFunc extends VariationShaderFunc3D {
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        return `{
+           float amount = ${variation.amount.toWebGl()};
+           _tz += amount;
+         }`;
+    }
+
+    get name(): string {
+        return 'pre_ztranslate';
+    }
+
+    get priority(): number {
+        return -1
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_ZTRANSFORM, VariationTypes.VARTYPE_PRE];
+    }
+}
+
 class ZBlurFunc extends VariationShaderFunc3D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         return `{
@@ -309,6 +401,7 @@ class ZTranslateFunc extends VariationShaderFunc3D {
 }
 
 export function registerVars_ZTransforms() {
+    VariationShaders.registerVar(new ExtrudeFunc())
     VariationShaders.registerVar(new FlattenFunc())
     VariationShaders.registerVar(new InflateZ_1Func())
     VariationShaders.registerVar(new InflateZ_2Func())
@@ -319,6 +412,9 @@ export function registerVars_ZTransforms() {
     VariationShaders.registerVar(new PostFlattenFunc())
     VariationShaders.registerVar(new PostZScaleWFFunc())
     VariationShaders.registerVar(new PostZTranslateWFFunc())
+    VariationShaders.registerVar(new PreFlattenFunc())
+    VariationShaders.registerVar(new PreZScaleFunc())
+    VariationShaders.registerVar(new PreZTranslateFunc())
     VariationShaders.registerVar(new ZBlurFunc())
     VariationShaders.registerVar(new ZConeFunc())
     VariationShaders.registerVar(new ZScaleFunc())
