@@ -119,6 +119,7 @@
     "@vaadin/vertical-layout": "23.0.6",
     "@vaadin/virtual-list": "23.0.6",
     "construct-style-sheets-polyfill": "3.0.4",
+    "electron": "^17.4.1",
     "line-awesome": "1.3.0",
     "lit": "2.1.4",
     "mobx": "^6.3.5"
@@ -139,7 +140,7 @@
     "typescript": "4.5.3",
     "webpack": "4.46.0",
     "webpack-cli": "4.9.2",
-    "webpack-dev-server": "4.7.4",
+    "webpack-dev-server": "4.8.1",
     "webpack-merge": "4.2.2",
     "workbox-core": "6.5.0",
     "workbox-precaching": "6.5.0",
@@ -265,7 +266,8 @@
     "@hilla/form": "$@hilla/form",
     "@hilla/frontend": "$@hilla/frontend",
     "@polymer/paper-slider": "$@polymer/paper-slider",
-    "chokidar": "$chokidar"
+    "chokidar": "$chokidar",
+    "electron": "$electron"
   },
   "vaadin": {
     "dependencies": {
@@ -402,12 +404,12 @@
       "typescript": "4.5.3",
       "webpack": "4.46.0",
       "webpack-cli": "4.9.2",
-      "webpack-dev-server": "4.7.4",
+      "webpack-dev-server": "4.8.1",
       "webpack-merge": "4.2.2",
       "workbox-core": "6.5.0",
       "workbox-precaching": "6.5.0",
       "workbox-webpack-plugin": "6.5.0"
     },
-    "hash": "e17afbd18b390ad7d1d9b6f72e7e98d3aa1ffbaa743f0491865baf7c41387e04"
+    "hash": "cf007170c9edc23e70043df17de75b85bd5ed5f3bb3d1ee82fad5972aee66cdb"
   }
 }

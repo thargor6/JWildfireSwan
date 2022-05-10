@@ -231,6 +231,7 @@ export class FlameRenderer implements CloseableBuffers {
                         const divElement = document.createElement('div')
                         divElement.innerText = `Cropped resolution: ${croppedWidth}x${croppedHeight}, render time: ${Math.round(elapsedTimeInSeconds*100)/100}  s`
                         this.imgCaptureContainer.appendChild(divElement)
+                        this.notifyImageRendered(imgElement)
                     }
                     else {
                         const imgData =  this.canvas.toDataURL("image/jpg")
@@ -243,17 +244,27 @@ export class FlameRenderer implements CloseableBuffers {
                         const divElement = document.createElement('div')
                         divElement.innerText = `Resolution: ${this.canvas.width}x${this.canvas.height}, render time: ${Math.round(elapsedTimeInSeconds*100)/100}  s`
                         this.imgCaptureContainer.appendChild(divElement)
+                        this.notifyImageRendered(imgElement)
                     }
                 }
-
-
-
                 this.onRenderFinished(this.currFrameCount, elapsedTimeInSeconds)
                 this.isFinished = true
               }
         }
     }
 
+    private notifyImageRendered(imgElement: HTMLImageElement) {
+        if (window.require) {
+            const electron = window.require('electron')
+            if(electron) {
+                const ipcRenderer = electron.ipcRenderer
+                if (ipcRenderer) {
+                    ipcRenderer.send('image:rendered', imgElement.src)
+                    console.log("sent image url")
+                }
+            }
+        }
+    }
 
     public signalCancel(cb: OnRenderCancelledCallback | undefined) {
         if(!this.isFinished) {
