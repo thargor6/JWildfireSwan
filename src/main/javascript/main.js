@@ -1,10 +1,11 @@
 const {
-    app, BrowserWindow, dialog
+    app, BrowserWindow, dialog, ipcMain
 } = require('electron');
 const getPort = require('get-port');
 const decompress = require('decompress');
 const child_process = require('child_process');
 const requestPromise = require('minimal-request-promise');
+const log = require('electron-log');
 let i18n;
 const path = require('path');
 const fs = require("fs");
@@ -15,6 +16,7 @@ let allowClose = false;
 //const jreFolder = 'jdk8u265-b01-jre';
 //const jreFolder = 'jdk-11.0.9.1+1';
 const jreFolder = 'jdk-11.0.9.1+1-jre';
+
 
 function error_log(exception) {
     console.log(exception)
@@ -34,9 +36,14 @@ try {
             , width: 1200
             , height: 800
             , frame: true
+          , webPreferences: {
+                nodeIntegration: true,
+                contextIsolation: false
+            }
         });
         mainWindow.setMenu(null);
         mainWindow.loadURL(appUrl);
+
         mainWindow.once('ready-to-show', () => {
             loading.hide();
             mainWindow.show();
@@ -68,7 +75,7 @@ try {
         }, function (response) {
             setTimeout(function () {
                 awaitStartUp(appUrl, callback);
-            }, 20000);
+            }, 15000);
         });
     };
     const focusSecondInstance = function () {
@@ -111,13 +118,7 @@ try {
         platform = process.platform;
         if (platform === 'win32') {
             console.log(app.getAppPath() + path.sep + 'java' + path.sep + jreFolder + path.sep + 'bin' + path.sep + 'java' + ' -jar' + ' -Dvaadin.productionMode=true' + ' -Dserver.port=' + port + ' '+app.getAppPath() + path.sep + 'java' + path.sep + filename + ' --logging.file=application.log');
-
             return child_process.exec(app.getAppPath() + path.sep + 'java' + path.sep + jreFolder + path.sep + 'bin' + path.sep + 'java' + ' -jar' + ' -Dvaadin.productionMode=true' + ' -Dserver.port=' + port + ' '+app.getAppPath() + path.sep + 'java' + path.sep + filename + ' --logging.file=application.log')
-
-
-//            return child_process.spawn(jreFolder + path.sep + 'bin' + path.sep + 'java', ['-jar', '-Dvaadin.productionMode=true', '-Dserver.port=' + port, filename, '--logging.file=application.log'], {
-//                cwd: app.getAppPath() + path.sep + 'java' + path.sep
-//            })
                 .on('error', function (code, signal) {
                 '+ path.sep +'
                 showStartUpErrorMessage();
@@ -125,7 +126,7 @@ try {
         } else if (platform === 'darwin') {
             child_process.exec('chmod +X ' + app.getAppPath() + '/java/' + jreFolder + '/Contents/Home/bin/' + 'java');
             console.log('chmod +X ' + app.getAppPath() + '/java/' + jreFolder + '/Contents/Home/bin/' + 'java')
-
+/*
             if (!app.getAppPath().startsWith("/Applications/")) {
                 dialog.showMessageBox(null, {
                     type: 'error'
@@ -136,12 +137,8 @@ try {
                 app.quit();
                 return null;
             }
-            console.log(jreFolder, filename)
-/*
-            return child_process.spawn(app.getAppPath() + '/java/' + jreFolder + '/Contents/Home/bin/java', ['-jar', '-Dvaadin.productionMode=true', '-Dserver.port=' + port, app.getAppPath() + '/java/' + filename, '--logging.file=application.log'], {
-                cwd: app.getAppPath() + '/java/'
-            })
   */
+            console.log(jreFolder, filename)
             console.log(app.getAppPath() + '/java/' + jreFolder + '/Contents/Home/bin/java' + ' -jar' + ' -Dvaadin.productionMode=true' + ' -Dserver.port=' + port + ' '+app.getAppPath() + '/java/' + filename + ' --logging.file=application.log');
 
             return child_process.exec(app.getAppPath() + '/java/' + jreFolder + '/Contents/Home/bin/java' + ' -jar' + ' -Dvaadin.productionMode=true' + ' -Dserver.port=' + port + ' '+app.getAppPath() + '/java/' + filename + ' --logging.file=application.log')
@@ -189,6 +186,8 @@ try {
         app.on('window-all-closed', function () {
             app.quit();
         });
+
+
         app.on('ready', function () {
             i18n = new (require('./translations/i18n'));
             try {

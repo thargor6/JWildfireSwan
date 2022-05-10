@@ -5,21 +5,23 @@
   "license": "GPL-3.0",
   "description": "Electron wrapper for 'application'",
   "dependencies": {
-    "minimal-request-promise": "^1.5.0",
+    "decompress": "^4.2.1",
+    "electron-log": "^4.4.7",
     "get-port": "^5.1.1",
-    "decompress": "^4.2.1"
+    "minimal-request-promise": "^1.5.0"
   },
   "scripts": {
     "package": "electron-packager ./ --icon=icon.ico",
-    "package-windows": "electron-packager ./ --icon=icon.ico  --platform=win32",
-    "package-linux": "echo ok",
-    "package-mac": "echo ok",
+    "package-windows_": "electron-packager ./ --icon=icon.ico  --platform=win32",
     "package-linux_": "electron-packager ./ --icon=icon.ico  --platform=linux",
-    "package-mac_": "electron-packager ./ --icon=icon.ico --platform=darwin",
-    "package-all": "electron-packager ./ --icon=icon.ico --platform=all"
+    "package-mac": "electron-packager ./ --icon=icon.ico --platform=darwin",
+    "package-windows": "echo ok",
+    "package-linux": "echo ok",
+    "package-all": "electron-packager ./ --icon=icon.ico --platform=all",
+    "electron": "electron --trace-warnings ."
   },
   "devDependencies": {
-    "electron-packager": "^15.1.0",
-    "electron": "^17.4.1"
+    "electron": "^17.4.1",
+    "electron-packager": "^15.1.0"
   }
 }
