@@ -29,6 +29,7 @@ import {FlameMapper} from "Frontend/flames/model/mapper/flame-mapper";
 import {RenderColor, RenderMappingContext, RenderFlame} from "Frontend/flames/model/render-flame";
 import {getTimeStamp} from "Frontend/components/utils";
 import {CropRegion} from "Frontend/flames/renderer/render-resolution";
+import {appStore} from "Frontend/stores/app-store";
 
 type RenderFinishedHandler = (frameCount: number, elapsedTimeInMs: number) => void
 type RenderProgressHandler = (currSampleCount: number, maxSampleCount: number, frameCount: number, elapsedTimeInMs: number) => void
@@ -68,6 +69,7 @@ export class FlameRenderer implements CloseableBuffers {
                 private canvas: HTMLCanvasElement,
                 private imgCaptureContainer: HTMLDivElement | undefined,
                 private autoCaptureImage: boolean,
+                private imgOutputFilename: string,
                 private cropRegion: CropRegion | undefined,
                 private qualityScale: number,
                 private flame: Flame) {
@@ -231,7 +233,9 @@ export class FlameRenderer implements CloseableBuffers {
                         const divElement = document.createElement('div')
                         divElement.innerText = `Cropped resolution: ${croppedWidth}x${croppedHeight}, render time: ${Math.round(elapsedTimeInSeconds*100)/100}  s`
                         this.imgCaptureContainer.appendChild(divElement)
-                        this.notifyImageRendered(imgElement)
+                        if(this.imgOutputFilename && this.imgOutputFilename.length > 0) {
+                            this.notifyImageRendered(imgElement, this.imgOutputFilename)
+                        }
                     }
                     else {
                         const imgData =  this.canvas.toDataURL("image/jpg")
@@ -244,7 +248,9 @@ export class FlameRenderer implements CloseableBuffers {
                         const divElement = document.createElement('div')
                         divElement.innerText = `Resolution: ${this.canvas.width}x${this.canvas.height}, render time: ${Math.round(elapsedTimeInSeconds*100)/100}  s`
                         this.imgCaptureContainer.appendChild(divElement)
-                        this.notifyImageRendered(imgElement)
+                        if(this.imgOutputFilename && this.imgOutputFilename.length > 0) {
+                            this.notifyImageRendered(imgElement, this.imgOutputFilename)
+                        }
                     }
                 }
                 this.onRenderFinished(this.currFrameCount, elapsedTimeInSeconds)
@@ -253,16 +259,13 @@ export class FlameRenderer implements CloseableBuffers {
         }
     }
 
-    private notifyImageRendered(imgElement: HTMLImageElement) {
-        if (window.require) {
-            const electron = window.require('electron')
-            if(electron) {
-                const ipcRenderer = electron.ipcRenderer
-                if (ipcRenderer) {
-                    ipcRenderer.send('image:rendered', imgElement.src)
-                    console.log("sent image url")
-                }
-            }
+    private notifyImageRendered(imgElement: HTMLImageElement, imgOutputFilename: string) {
+        if(appStore.hasElectron) {
+            appStore.ipcRenderer.send('image:rendered', {
+                src: imgElement.src,
+                filename: imgOutputFilename}
+            )
+            console.log("sent image url", imgOutputFilename)
         }
     }
 

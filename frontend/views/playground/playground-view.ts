@@ -83,6 +83,7 @@ export class PlaygroundView extends View implements BeforeEnterObserver {
         return new FlameRenderer(this.getRenderSettingsPanel().renderSize, this.getRenderSettingsPanel().swarmSize,
            this.getRenderSettingsPanel().displayMode, this.getRenderPanel().canvas,
           this.getRenderSettingsPanel().capturedImageContainer, true,
+          '',
           RenderResolutions.getCropRegion(this.getRenderSettingsPanel().renderSize,
             this.getRenderSettingsPanel().cropSize), this.getRenderSettingsPanel().qualityScale,
           playgroundStore.flame)
@@ -283,6 +284,7 @@ export class PlaygroundView extends View implements BeforeEnterObserver {
                     .onFlameNameChanged="${this.importExampleFlame}"></playground-flame-panel>
                     <playground-render-panel id='viewOptsPnl' .onRefresh="${()=>this.getRenderPanel().rerenderFlame()}"
                                              .onCancelRender="${()=>this.getRenderPanel().cancelRender()}"
+                                             .onRenderAndSave="${()=>this.getRenderPanel().renderAndSave()}"
                       .visible=${this.selectedTab === 1} .onImageSizeChanged="${()=>this.getRenderPanel().rerenderFlame()}"></playground-render-panel>
                     <playground-edit-panel id='editPnl' .onRefresh="${()=>this.getRenderPanel().rerenderFlame()}"
                                            .onExportParams="${this.exportParamsToClipboard}"

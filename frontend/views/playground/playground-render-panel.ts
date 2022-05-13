@@ -48,6 +48,9 @@ export class PlaygroundRenderPanel extends MobxLitElement {
   onCancelRender = ()=>{}
 
   @property()
+  onRenderAndSave = ()=>{}
+
+  @property()
   onImageSizeChanged: ()=>void = ()=>{}
 
   @state()
@@ -111,6 +114,7 @@ export class PlaygroundRenderPanel extends MobxLitElement {
             <div style="display: flex; align-items: center;">
                 <vaadin-button theme="primary" style="max-width: 10em;" @click="${this.onRefresh}">Refresh</vaadin-button>
                 <vaadin-button theme="tertiary" style="max-width: 10em;" @click="${this.onCancelRender}">Cancel</vaadin-button>
+                <vaadin-button theme="primary" style="max-width: 10em;" @click="${this.onRenderAndSave}">Render</vaadin-button>
             </div>
         </div>
       </vertical-layout>

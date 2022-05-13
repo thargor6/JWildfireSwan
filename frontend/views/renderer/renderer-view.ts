@@ -174,7 +174,7 @@ export class RendererView extends View  {
     createFlameRenderer = ()=> {
       return new FlameRenderer(256, 256,
         DisplayMode.FLAME, this.getRenderPanel().canvas, undefined,
-          false, undefined, 1.0, rendererStore.selectedFlames[0].flame)
+          false, '', undefined, 1.0, rendererStore.selectedFlames[0].flame)
     }
 
     getRenderPanel = (): RenderPanel =>  {
@@ -210,7 +210,9 @@ export class RendererView extends View  {
             this.getRenderPanel().recreateCanvas()
             this.renderer = new FlameRenderer(this.renderSize, this.swarmSize,
               DisplayMode.FLAME, this.getRenderPanel().canvas, this.imageContainer,
-              true, RenderResolutions.getCropRegion(this.renderSize, this.cropSize),
+              true, '',
+              // TODO: renderPath
+              RenderResolutions.getCropRegion(this.renderSize, this.cropSize),
               this.qualityScale, flame.flame)
             this.renderer.onRenderFinished=this.onFlameFinished.bind(this, flame)
             this.getRenderPanel().rerenderFlame(this.renderer)

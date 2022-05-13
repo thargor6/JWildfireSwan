@@ -1,7 +1,10 @@
-- fix basic camera stuff
-- user settings
+- central log window (saving/loading files)
+- support for layers
+- post-denoise
+- antialiasing settings
+- edit affine transforms
+- edit nonlinear transforms
+- website
+- update on Patreon
 - display shader code in browser
-- line codes for shader display
-- dynamic param evaluation stuff
-- basic editor
-- more variations
+  - line codes for shader display

@@ -16,6 +16,10 @@ export class AppStore {
 
   variations: string[] = []
 
+  _hasElectron = false
+  _checkedForElectron = false
+  _ipcRenderer: any = undefined
+
   constructor() {
     makeAutoObservable(this);
     this.initVariations();
@@ -37,6 +41,26 @@ export class AppStore {
     }
     this.currentViewTitle = (location?.route as any)?.title || '';
   }
+
+  get hasElectron(): boolean {
+    if(!this._checkedForElectron) {
+      this._hasElectron = false
+      if (window.require) {
+        const electron = window.require('electron')
+        if(electron) {
+          this._ipcRenderer = electron.ipcRenderer
+          this._hasElectron = this._ipcRenderer ? true : false
+        }
+      }
+      this._checkedForElectron = true
+    }
+    return this._hasElectron
+  }
+
+  get ipcRenderer() {
+    return this.hasElectron ? this._ipcRenderer : undefined
+  }
+
 }
 
 export const appStore = new AppStore();
