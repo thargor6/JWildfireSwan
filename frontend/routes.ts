@@ -46,6 +46,16 @@ export const views: ViewRoute[] = [
     title: 'Playground',
   },
   {
+    path: 'randomizer',
+    component: 'randomizer-view',
+    icon: 'la la-th-list',
+    title: 'Flame randomizer',
+    action: async (_context, _command) => {
+      await import('./views/randomizer/randomizer-view');
+      return;
+    },
+  },
+  {
     path: 'gallery',
     component: 'gallery-view',
     icon: 'la la-th-list',
