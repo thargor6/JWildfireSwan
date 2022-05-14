@@ -33,11 +33,34 @@ import {registerVars_Plot} from "Frontend/flames/renderer/variations/variation-s
 
 type OnInitCallback = () => void
 
+export class RandomFlame {
+  name = 'name'
+  caption = 'caption'
+  title = 'title'
+  description = 'description'
+
+
+  constructor(private _flame: Flame, private _imgSrc: string) {
+  }
+
+  get flame() {
+    return this._flame
+  }
+
+  get imgSrc() {
+    return this._imgSrc
+  }
+}
+
 export class RandomizerStore {
   refreshing = true
   calculating = false
   lastError = ''
-  flame = new Flame()
+  pageSize = 12
+  currentPage = 1
+  currFlame = new Flame()
+  currFlameIdx = 0
+  randomFlames = new Array<RandomFlame>()
 
   constructor() {
     makeAutoObservable(this);
