@@ -599,7 +599,11 @@ export class LayerMapper {
 export class FlameMapper {
     public static mapFromBackend(source: SourceFlame): Flame {
         const res = new Flame()
-        res.uid = source.uid
+        res.resolutionProfile = source.resolutionProfile?? ''
+        res.qualityProfile = source.qualityProfile?? ''
+        res.name = source.name?? ''
+        res.bgImageFilename = source.bgImageFilename?? ''
+        res.lastFilename = source.lastFilename?? ''
         res.brightness = Parameters.floatParam(source.brightness)
         res.whiteLevel = Parameters.floatParam(source.whiteLevel)
         res.contrast = Parameters.floatParam(source.contrast)
@@ -652,7 +656,11 @@ export class FlameMapper {
 
     public static mapToBackend(source: Flame): SourceFlame {
         const res: SourceFlame = {
-          uid: source.uid,
+          resolutionProfile: source.resolutionProfile,
+          qualityProfile: source.qualityProfile,
+          name: source.name,
+          bgImageFilename: source.bgImageFilename,
+          lastFilename: source.lastFilename,
           brightness: source.brightness.value,
           whiteLevel: source.whiteLevel.value,
           contrast: source.contrast.value,

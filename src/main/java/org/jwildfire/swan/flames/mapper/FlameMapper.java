@@ -76,6 +76,11 @@ public class FlameMapper {
     res.setFrame(transformedSource.getFrame());
     res.setFrameCount(transformedSource.getFrameCount());
     res.setFps(transformedSource.getFps());
+    res.setResolutionProfile(transformedSource.getResolutionProfile());
+    res.setQualityProfile(transformedSource.getQualityProfile());
+    res.setName(transformedSource.getName());
+    res.setBgImageFilename(transformedSource.getBGImageFilename());
+    res.setLastFilename(transformedSource.getLastFilename());
     res.getLayers().clear();
     transformedSource.getLayers().stream()
         .forEach(layer -> res.getLayers().add(layerMapper.mapFromJwildfire(transformedSource, layer)));
@@ -128,6 +133,11 @@ public class FlameMapper {
     res.setFrame(source.getFrame());
     res.setFrameCount(source.getFrameCount());
     res.setFps(source.getFps());
+    res.setResolutionProfile(source.getResolutionProfile());
+    res.setQualityProfile(source.getQualityProfile());
+    res.setName(source.getName());
+    res.setBGImageFilename(source.getBgImageFilename());
+    res.setLastFilename(source.getLastFilename());
     res.getLayers().clear();
     source.getLayers().stream()
             .forEach(layer -> res.getLayers().add(layerMapper.mapToJwildfire(layer)));

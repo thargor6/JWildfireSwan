@@ -53,7 +53,6 @@ export class RandomFlame {
 }
 
 export class RandomizerStore {
-  refreshing = true
   calculating = false
   lastError = ''
   pageSize = 12

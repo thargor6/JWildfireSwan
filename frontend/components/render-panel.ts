@@ -60,6 +60,8 @@ export class RenderPanel extends MobxLitElement {
 
   onCreateFlameRenderer?: ()=>FlameRenderer
 
+  onRenderFinished?: (frameCount: number, elapsedTimeInS: number) => void
+
   renderer: FlameRenderer | undefined = undefined
 
   render() {
@@ -102,6 +104,10 @@ export class RenderPanel extends MobxLitElement {
     }
   }
 
+  renderAndSave = ()=> {
+    console.log("SAVE")
+  }
+
   public rerenderFlame = (renderer: FlameRenderer | undefined = undefined)=> {
     if(this.renderer) {
       const reuseCanvas = this.hasCanvas()
@@ -140,7 +146,7 @@ export class RenderPanel extends MobxLitElement {
     }
     else {
       this.renderer = this.onCreateFlameRenderer!();
-      this.renderer.onRenderFinished = this.onRenderFinished
+      this.renderer.onRenderFinished = this.execOnRenderFinished
       this.renderer.onRenderCancelled = this.onRenderCancelled
       this.renderer.onUpdateRenderProgress = this.onUpdateRenderProgress
     }
@@ -148,10 +154,13 @@ export class RenderPanel extends MobxLitElement {
     this.renderer.drawScene()
   }
 
-  onRenderFinished = (frameCount: number, elapsedTimeInS: number) => {
+  execOnRenderFinished = (frameCount: number, elapsedTimeInS: number) => {
     this.renderProgress = 1.0
     this.renderInfo = 'Rendering finished after ' + Math.round((elapsedTimeInS + Number.EPSILON) * 100) / 100 + ' s'
     AppInfoEndpoint.incFlamesRendered()
+    if(this.onRenderFinished) {
+      this.onRenderFinished(frameCount, elapsedTimeInS)
+    }
   }
 
   onRenderCancelled = (frameCount: number, elapsedTimeInS: number) => {

@@ -128,7 +128,11 @@ export class Layer {
 }
 
 export class Flame {
-    public uid: string = '';
+    public resolutionProfile: string = ''
+    public qualityProfile: string = ''
+    public name: string = ''
+    public bgImageFilename: string = ''
+    public lastFilename: string = ''
     public brightness = Parameters.floatParam(1.0)
     public whiteLevel = Parameters.floatParam(200.0)
     public contrast = Parameters.floatParam(1.0)

@@ -30,9 +30,6 @@ import java.util.UUID;
 @NoArgsConstructor
 public class Flame {
   @Nonnull
-  private UUID uid;
-
-  @Nonnull
   private double brightness;
 
   @Nonnull
@@ -164,7 +161,16 @@ public class Flame {
   @Nonnull
   private int fps;
 
+  private String resolutionProfile;
+
+  private String qualityProfile;
+
+  private String name;
+
+  private String bgImageFilename;
+
+  private String lastFilename;
+
   @Nonnull
   private final List<@Nonnull Layer> layers = new ArrayList<>();
-
 }
