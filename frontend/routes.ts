@@ -46,6 +46,12 @@ export const views: ViewRoute[] = [
     title: 'Playground',
   },
   {
+    path: 'playground/rnd/:rndFlameName',
+    component: 'playground-view',
+    icon: 'la la-file',
+    title: 'Playground',
+  },
+  {
     path: 'randomizer',
     component: 'randomizer-view',
     icon: 'la la-th-list',

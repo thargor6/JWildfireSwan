@@ -82,10 +82,10 @@ export class RandomizerView extends View {
                 >
                   <img @click="${this.renderExample.bind(this, randomFlame.flame.name)}" class="w-full" style="cursor: pointer;" loading="lazy" src="${randomFlame.imgSrc}" />
                 </div>
-                <span class="text-xl font-semibold">${randomFlame.title}</span>
+                <span class="text-xl font-semibold">${randomFlame.flame.name}</span>
                 ${(randomFlame.flame.name && randomFlame.flame.name!=='') ? html `<span class="text-s text-secondary">${randomFlame.flame.name}</span>`: nothing}  
                 
-                   <vaadin-button @click="${this.renderExample.bind(this, randomFlame.name)}">Render in Playground</vaadin-button>
+                   <vaadin-button @click="${this.renderExample.bind(this, randomFlame.flame.name)}">Render in Playground</vaadin-button>
               </li>
             `
   }
@@ -95,8 +95,8 @@ export class RandomizerView extends View {
     this.classList.add('flex', 'flex-col', 'h-full');
   }
 
-  renderExample = (example: string) => {
-      Router.go('/playground/'+example)
+  renderExample = (flameName: string) => {
+      Router.go('/playground/rnd/'+flameName)
   }
 
   createRandomFlame = () => {
@@ -140,6 +140,14 @@ export class RandomizerView extends View {
     const imgCnt = this.getCapturedImageContainer()
     const img = imgCnt.querySelector("img")
     if(img) {
+      // ensure unique name in store
+      let flameName = randomizerStore.currFlame.name
+      let counter = 1
+      while(randomizerStore.hasFlameWithName(flameName)) {
+        flameName = randomizerStore.currFlame.name + '_' + counter++;
+      }
+      randomizerStore.currFlame.name = flameName
+      // add the flame and image to the store
       const rndFlame = new RandomFlame(randomizerStore.currFlame, img.src)
       const rndFlames = [rndFlame, ...randomizerStore.randomFlames]
       randomizerStore.randomFlames = [...rndFlames]

@@ -52,6 +52,7 @@ import '../../components/render-panel'
 import {BeforeEnterObserver, PreventAndRedirectCommands, Router, RouterLocation} from "@vaadin/router";
 import {RenderPanel} from "Frontend/components/render-panel";
 import {RenderResolutions} from "Frontend/flames/renderer/render-resolution";
+import {RandomFlame, randomizerStore} from 'Frontend/stores/randomizer-store';
 
 @customElement('playground-view')
 export class PlaygroundView extends View implements BeforeEnterObserver {
@@ -65,6 +66,7 @@ export class PlaygroundView extends View implements BeforeEnterObserver {
     notificationMessage = ''
 
     loadExampleAtStartup: string | undefined = undefined
+    loadRndFlameAtStartup: string | undefined = undefined
 
     render() {
         return html`
@@ -237,24 +239,63 @@ export class PlaygroundView extends View implements BeforeEnterObserver {
             })
     }
 
-    renderFirstFlame = ()=> {
-        this.getFlamePanel().flameName = this.loadExampleAtStartup ? this.loadExampleAtStartup : playgroundStore.randomExampleFlame().name
-        this.importExampleFlame()
-        if(this.loadExampleAtStartup) {
-            GalleryEndpoint.getExampleFlameXml(this.loadExampleAtStartup).then(flameXml => {
-                this.getFlamePanel().flameXml = flameXml
-            })
+    importRandomFlame = (flameName: string): void => {
+        if(!flameName) {
+            return
         }
+        playgroundStore.calculating = true
+        playgroundStore.lastError = ''
+
+        playgroundStore.refreshing = true
+        try {
+           let rndFlame = randomizerStore.randomFlames.find( f => f.flame.name === flameName)
+            if(!rndFlame) {
+                console.log("random flame #"+flameName+"# not found");
+            }
+            else {
+                playgroundStore.flame = rndFlame.flame
+                FlamesEndpoint.convertFlameToXml(FlameMapper.mapToBackend(rndFlame.flame)).then(
+                  flameXml => this.getFlamePanel().flameXml = flameXml
+                )
+                this.getRenderPanel().rerenderFlame()
+            }
+            playgroundStore.calculating = false
+        }
+        finally {
+            playgroundStore.refreshing = false
+        }
+    }
+
+    renderFirstFlame = ()=> {
+      if(this.loadRndFlameAtStartup && this.loadRndFlameAtStartup.length>0) {
+        this.importRandomFlame(this.loadRndFlameAtStartup)
+      }
+      else {
+          this.getFlamePanel().flameName = this.loadExampleAtStartup ? this.loadExampleAtStartup : playgroundStore.randomExampleFlame().name
+          this.importExampleFlame()
+          if (this.loadExampleAtStartup) {
+              GalleryEndpoint.getExampleFlameXml(this.loadExampleAtStartup).then(flameXml => {
+                  this.getFlamePanel().flameXml = flameXml
+              })
+          }
+      }
     }
 
     onBeforeEnter(
         _location: RouterLocation,
         _commands: PreventAndRedirectCommands,
         _router: Router) {
+
         const exampleName = _location.params['example'] as string;
         if(exampleName && exampleName!=='') {
             this.loadExampleAtStartup = exampleName
         }
+
+        const rndFlameName = _location.params['rndFlameName'] as string;
+        if(rndFlameName && rndFlameName!=='') {
+            this.loadRndFlameAtStartup = rndFlameName
+        }
+
     }
 
     private renderMainTabs = () => {
