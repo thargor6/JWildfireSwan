@@ -1,14 +1,22 @@
+/*--------------------------------------------------------------------------------*/
+/*                                    Imports                                     */
+/*------------------------------------------------------------------------------- */
 const {
     app, BrowserWindow, dialog, ipcMain
 } = require('electron');
+
 const getPort = require('get-port');
 const decompress = require('decompress');
 const child_process = require('child_process');
 const requestPromise = require('minimal-request-promise');
 const log = require('electron-log');
-let i18n;
 const path = require('path');
 const fs = require("fs");
+const os = require('os');
+/*--------------------------------------------------------------------------------*/
+/*                                      Globals                                   */
+/*------------------------------------------------------------------------------- */
+let i18n;
 let mainWindow = null;
 let loading = null;
 let serverProcess = null;
@@ -17,7 +25,6 @@ let allowClose = false;
 //const jreFolder = 'jdk-11.0.9.1+1';
 const jreFolder = 'jdk-11.0.9.1+1-jre';
 
-
 function error_log(exception) {
     console.log(exception)
     console.log(exception.stack)
@@ -25,10 +32,63 @@ function error_log(exception) {
         if (err) throw err;
     });
 }
+/*--------------------------------------------------------------------------------*/
+/*                                  Preferences                                   */
+/*------------------------------------------------------------------------------- */
+let prefs = {
+    flamesPath: '',
+    imagesPath: ''
+}
 
+const _prefsFilename = 'JWildfireSwan.prefs'
+const _baseFolder = 'JWildfireSwan'
+
+function loadPrefs() {
+  const filenamePath = path.join(os.homedir(), _prefsFilename)
+  if(fs.existsSync(filenamePath)) {
+    try {
+        const prefsData = fs.readFileSync(filenamePath);
+        prefs = JSON.parse(prefsData);
+    }
+    catch(err) {
+        log.error(err)
+    }
+  }
+  if(!prefs.imagesPath || prefs.imagesPath.length==0) {
+      prefs.imagesPath = path.join(os.homedir(), _baseFolder, 'images')
+  }
+  if(!prefs.flamesPath || prefs.flamesPath.length==0) {
+      prefs.flamesPath = path.join(os.homedir(), _baseFolder, 'flames')
+  }
+
+    log.info('Prefs:' + JSON.stringify(prefs))
+}
+
+/*
+
+            console.log(os.homedir());
+
+            // Creates /tmp/a/apple, regardless of whether `/tmp` and /tmp/a exist.
+fs.mkdir('/tmp/a/apple', { recursive: true }, (err) => {
+  if (err) throw err;
+});
+
+
+function ensureDirectoryExistence(filePath) {
+  var dirname = path.dirname(filePath);
+  if (fs.existsSync(dirname)) {
+    return true;
+  }
+  ensureDirectoryExistence(dirname);
+  fs.mkdirSync(dirname);
+}
+ */
+/*--------------------------------------------------------------------------------*/
+/*                                      Main                                      */
+/*------------------------------------------------------------------------------- */
 try {
+    loadPrefs();
     const gotTheLock = app.requestSingleInstanceLock();
-
     const showApplication = function (appUrl) {
         mainWindow = new BrowserWindow({
             title: i18n.__('application-name')
@@ -186,7 +246,16 @@ try {
         app.on('window-all-closed', function () {
             app.quit();
         });
+        ipcMain.on('image:rendered', (event, data) => {
+            const base64Data = data.replace(/^data:image\/png;base64,/, "")
+            // TODO real path
+            const filePath = '/Users/amaschke/dat_image.png'
 
+            fs.writeFile(filePath, base64Data, 'base64', function (err) {
+                log.error(err)
+            });
+            log.info("RENDERED: " +  filePath)
+        })
 
         app.on('ready', function () {
             i18n = new (require('./translations/i18n'));
