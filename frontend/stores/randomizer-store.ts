@@ -34,6 +34,7 @@ import {registerVars_Plot} from "Frontend/flames/renderer/variations/variation-s
 type OnInitCallback = () => void
 
 export class RandomFlame {
+  subBatch = new Array<RandomFlame>()
 
   constructor(private _flame: Flame, private _imgSrc: string) {
   }
@@ -45,25 +46,82 @@ export class RandomFlame {
   get imgSrc() {
     return this._imgSrc
   }
+
 }
 
 export class RandomizerStore {
   calculating = false
   lastError = ''
-  pageSize = 12
-  currentPage = 1
   currFlame = new Flame()
-  currFlameIdx = 0
-  randomFlames = new Array<RandomFlame>()
+  currRndStackIdx = 0
+  currBaseFlamename: string | undefined = undefined
+  cancelSignalled = false
 
-  hasFlameWithName(name: string) {
-    return this.randomFlames.filter( f => f.flame.name === name).length > 0
-  }
+  randomFlames = new Array<RandomFlame>()
 
   constructor() {
     makeAutoObservable(this);
   }
 
+  getFlameByName(name: string): RandomFlame | undefined {
+    return this.randomFlames.find( f => f.flame.name === name)
+  }
+
+  getFlameIdxByName(name: string): number {
+    const flame = this.getFlameByName(name)
+    return flame ? this.randomFlames.indexOf(flame) : -1
+  }
+
+  hasFlameWithName(name: string) {
+    return this.getFlameByName(name) != undefined
+  }
+
+  deleteFlame(flameName: string) {
+    const flameIdx = this.getFlameIdxByName(flameName)
+    if (flameIdx>=0) {
+      let newFlames = [...this.randomFlames]
+      newFlames.splice(flameIdx, 1)
+      this.randomFlames = newFlames
+    }
+  }
+
+  addRandomFlame(flame: Flame, imgSrc: string) {
+    // ensure unique name in store
+    let flameName = flame.name
+    let counter = 1
+    while(this.hasFlameWithName(flameName)) {
+      flameName = flame.name + '_' + counter++;
+    }
+    // add the flame and image to the store
+    const rndFlame = new RandomFlame(flame, imgSrc)
+    rndFlame.flame.name = flameName
+    const rndFlames = [rndFlame, ...randomizerStore.randomFlames]
+    randomizerStore.randomFlames = [...rndFlames]
+  }
+
+  addSubRandomFlame(parentFlameName: string, flame: Flame, imgSrc: string) {
+    const parentFlame = this.getFlameByName(parentFlameName)
+    if(!parentFlame) {
+      console.log("Parent flame " + parentFlameName + "not found")
+    }
+    else {
+      // ensure unique name in store
+      let flameName = flame.name
+  /*
+      let counter = 1
+      while (this.hasFlameWithName(flameName)) {
+        flameName = flame.name + '_' + counter++;
+      }
+
+   */
+      // add the flame and image to the store
+      const rndFlame = new RandomFlame(flame, imgSrc)
+      rndFlame.flame.name = flameName
+      const rndSubFlames = [rndFlame, ...parentFlame.subBatch]
+      parentFlame.subBatch = [...rndSubFlames]
+      randomizerStore.randomFlames = [...randomizerStore.randomFlames]
+    }
+  }
 }
 
 export const randomizerStore = new RandomizerStore()
