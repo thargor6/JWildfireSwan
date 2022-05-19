@@ -99,7 +99,7 @@ export class RandomizerStore {
     randomizerStore.randomFlames = [...rndFlames]
   }
 
-  addSubRandomFlame(parentFlameName: string, flame: Flame, imgSrc: string) {
+  addSubRandomFlame(parentFlameName: string, flame: Flame, imgSrc: string, maxSubBatchSize: number) {
     const parentFlame = this.getFlameByName(parentFlameName)
     if(!parentFlame) {
       console.log("Parent flame " + parentFlameName + "not found")
@@ -107,20 +107,24 @@ export class RandomizerStore {
     else {
       // ensure unique name in store
       let flameName = flame.name
-  /*
       let counter = 1
-      while (this.hasFlameWithName(flameName)) {
+      while (this.hasSubFlameWithName(parentFlame, flameName)) {
         flameName = flame.name + '_' + counter++;
       }
-
-   */
       // add the flame and image to the store
       const rndFlame = new RandomFlame(flame, imgSrc)
       rndFlame.flame.name = flameName
-      const rndSubFlames = [rndFlame, ...parentFlame.subBatch]
+      let rndSubFlames = [rndFlame, ...parentFlame.subBatch]
+      if(maxSubBatchSize>0 && rndSubFlames.length>maxSubBatchSize) {
+        rndSubFlames = rndSubFlames.slice(0, maxSubBatchSize)
+      }
       parentFlame.subBatch = [...rndSubFlames]
       randomizerStore.randomFlames = [...randomizerStore.randomFlames]
     }
+  }
+
+  private hasSubFlameWithName(parentFlame: RandomFlame, flameName: string) {
+    return parentFlame.subBatch.find( r=> r.flame.name === flameName) != undefined
   }
 }
 

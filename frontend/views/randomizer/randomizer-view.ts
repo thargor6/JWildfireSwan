@@ -50,15 +50,15 @@ export class RandomizerView extends View {
         <vaadin-horizontal-layout class="items-center justify-between">
           <vaadin-vertical-layout>
             <h2 class="mb-0 mt-xl text-3xl">Flame randomizer</h2>
-            <p class="mb-xl mt-0 text-secondary">A gallery of example flames.</p>
-            <p class="mb-xl mt-0 text-secondary">All images where rendered inside the browser</p>
+            <p class="mb-xl mt-0 text-secondary">(work in progress)</p>
+            <p class="mb-xl mt-0 text-secondary">...</p>
           </vaadin-vertical-layout>
 
             <render-panel style="display: none;" .onCreateFlameRenderer=${this.createFlameRenderer}></render-panel>
 
             <vaadin-button style="width: 14em;" ?disabled=${randomizerStore.calculating} theme="tertiary" @click="${this.deleteAll}">Delete all</vaadin-button>
 
-            <vaadin-button style="width: 14em;" ?disabled=${randomizerStore.calculating} theme="primary" @click="${this.createRandomFlameStack}">Generate random flame</vaadin-button>
+            <vaadin-button style="width: 14em;" ?disabled=${randomizerStore.calculating} theme="primary" @click="${this.createRandomFlameStack}">Generate ${prefsStore.prefs.randomizerPrefs.batchsize} flames</vaadin-button>
             <vaadin-button style="width: 14em;" ?disabled=${!randomizerStore.calculating} theme="secondary" @click="${this.cancelBatch}">Cancel</vaadin-button>
             
             <swan-loading-indicator .loading=${randomizerStore.calculating} caption="Calculating..."></swan-loading-indicator>
@@ -80,48 +80,40 @@ export class RandomizerView extends View {
 
   renderRandomFlame = (randomFlame: RandomFlame) => {
     return html`
-              <li class="bg-contrast-5 items-start p-m rounded-l">
-                <div
-                  class="bg-contrast flex items-center justify-center mb-m overflow-hidden rounded-m w-full"
-                  style="max-height: 12em;"
-                >
-                  <img @click="${this.exportFlame.bind(this, randomFlame.flame.name)}" class="w-full" style="cursor: pointer;" loading="lazy" src="${randomFlame.imgSrc}" />
-                </div>
-                <span class="text-xl font-semibold">${randomFlame.flame.name}</span>
-                 
-                   <vaadin-button @click="${this.exportFlame.bind(this, randomFlame.flame.name)}">Render in Playground</vaadin-button>
-                  <vaadin-button @click="${this.deleteFlame.bind(this, randomFlame.flame.name)}"><vaadin-icon icon="vaadin:close"></vaadin-icon></vaadin-button>
-                  <vaadin-button @click="${this.createRandomFlameSubStack.bind(this, randomFlame.flame.name)}"><vaadin-icon icon="vaadin:grid-small-o"></vaadin-icon></vaadin-button>
-
-
-                  <ol class="gap-m grid list-none m-0 p-0" style="grid-template-columns: repeat(auto-fill, minmax(20em, 1fr));">
-                      ${randomFlame.subBatch.map(
-                              (randomFlame) => html`
-                ${randomFlame ? this.renderSubRandomFlame(randomFlame): nothing}  
-            `
-                      )}
+              <li class="bg-contrast-5 items-start p-s rounded-m">
+                <div style="display: flex; flex-direction: column;">  
+                  <div>  
+                    <div class="bg-contrast flex items-center justify-center mb-m overflow-hidden rounded-s w-full" style="max-height: 12em;">
+                      <img @click="${this.exportFlame.bind(this, randomFlame.flame.name)}" class="w-full" style="cursor: pointer;" loading="lazy" src="${randomFlame.imgSrc}" />
+                    </div>
+                    <span class="text-xl font-semibold">${randomFlame.flame.name}</span>
+                    <vaadin-button @click="${this.exportFlame.bind(this, randomFlame.flame.name)}">Render in Playground</vaadin-button>
+                    <vaadin-button @click="${this.deleteFlame.bind(this, randomFlame.flame.name)}"><vaadin-icon icon="vaadin:close"></vaadin-icon></vaadin-button>
+                    <vaadin-button @click="${this.createRandomFlameSubStack.bind(this, randomFlame.flame.name)}"><vaadin-icon icon="vaadin:grid-small-o"></vaadin-icon></vaadin-button>
+                  </div>
+                  <ol class="gap-m grid list-none m-0 p-0" style="grid-template-columns: 50% 50%;">
+                   ${randomFlame.subBatch.map(
+                     (randomFlame) => html`
+                          ${randomFlame ? this.renderSubRandomFlame(randomFlame): nothing}  
+                        `)}
                   </ol>
-                  
-                  
+                </div>
               </li>
             `
   }
 
   renderSubRandomFlame = (randomFlame: RandomFlame) => {
     return html`
-              <li class="bg-contrast-5 items-start p-m rounded-l">
+              <li class="bg-contrast-5 items-start p-s rounded-m">
                 <div
-                  class="bg-contrast flex items-center justify-center mb-m overflow-hidden rounded-m w-full"
-                  style="max-height: 12em;"
-                >
+                  class="bg-contrast flex items-center justify-center mb-m overflow-hidden rounded-s"
+                  style="max-height: 6em;">
                   <img @click="${this.exportFlame.bind(this, randomFlame.flame.name)}" class="w-full" style="cursor: pointer;" loading="lazy" src="${randomFlame.imgSrc}" />
                 </div>
-                <span class="text-xl font-semibold">${randomFlame.flame.name}</span>
-                 
-                   <vaadin-button @click="${this.exportFlame.bind(this, randomFlame.flame.name)}">Render in Playground</vaadin-button>
-                  <vaadin-button @click="${this.deleteFlame.bind(this, randomFlame.flame.name)}"><vaadin-icon icon="vaadin:close"></vaadin-icon></vaadin-button>
-                      
-                  
+                <div class="p-s" style="display: flex;">  
+                <vaadin-button @click="${this.exportFlame.bind(this, randomFlame.flame.name)}"><vaadin-icon icon="vaadin:close"></vaadin-icon></vaadin-button>
+                <vaadin-button @click="${this.deleteFlame.bind(this, randomFlame.flame.name)}"><vaadin-icon icon="vaadin:close"></vaadin-icon></vaadin-button>
+                </div> 
               </li>
             `
   }
@@ -145,7 +137,7 @@ export class RandomizerView extends View {
     randomizerStore.cancelSignalled = false
     randomizerStore.currRndStackIdx = prefsStore.prefs.randomizerPrefs.subBatchSize
     randomizerStore.currBaseFlamename = flameName
-    this.createRandomFlame()
+    this.createRandomGradient()
   }
 
   createRandomFlameStack = () => {
@@ -168,6 +160,25 @@ export class RandomizerView extends View {
       randomizerStore.calculating = false
       randomizerStore.lastError = err
     })
+  }
+
+  createRandomGradient = () => {
+    randomizerStore.lastError = ''
+
+    const rndFlame = randomizerStore.getFlameByName(randomizerStore.currBaseFlamename!)
+    if(rndFlame) {
+      randomizerStore.calculating = true
+
+      FlamesEndpoint.generateRandomGradientForFlame(FlameMapper.mapToBackend(rndFlame.flame)).then(
+        randomFlame => {
+          randomizerStore.currFlame = FlameMapper.mapFromBackend(randomFlame.flame)
+          this.getRenderPanel().rerenderFlame()
+        }
+      ).catch(err => {
+        randomizerStore.calculating = false
+        randomizerStore.lastError = err
+      })
+    }
   }
 
   getRenderPanel = (): RenderPanel =>  {
@@ -197,7 +208,7 @@ export class RandomizerView extends View {
     const img = imgCnt.querySelector("img")
     if(img) {
       if(randomizerStore.currBaseFlamename) {
-        randomizerStore.addSubRandomFlame(randomizerStore.currBaseFlamename, randomizerStore.currFlame, img.src)
+        randomizerStore.addSubRandomFlame(randomizerStore.currBaseFlamename, randomizerStore.currFlame, img.src, prefsStore.prefs.randomizerPrefs.subBatchSize)
       }
       else {
         randomizerStore.addRandomFlame(randomizerStore.currFlame, img.src)
@@ -206,7 +217,12 @@ export class RandomizerView extends View {
     }
 
     if(--randomizerStore.currRndStackIdx > 0 && !randomizerStore.cancelSignalled) {
-      this.createRandomFlame()
+      if(randomizerStore.currBaseFlamename) {
+        this.createRandomGradient()
+      }
+      else {
+        this.createRandomFlame()
+      }
     }
   }
 
