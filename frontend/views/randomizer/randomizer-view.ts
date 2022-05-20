@@ -93,8 +93,8 @@ export class RandomizerView extends View {
                   </div>
                   <ol class="gap-m grid list-none m-0 p-0" style="grid-template-columns: 50% 50%;">
                    ${randomFlame.subBatch.map(
-                     (randomFlame) => html`
-                          ${randomFlame ? this.renderSubRandomFlame(randomFlame): nothing}  
+                     (randomSubFlame) => html`
+                          ${randomSubFlame ? this.renderSubRandomFlame(randomFlame, randomSubFlame): nothing}  
                         `)}
                   </ol>
                 </div>
@@ -102,17 +102,17 @@ export class RandomizerView extends View {
             `
   }
 
-  renderSubRandomFlame = (randomFlame: RandomFlame) => {
+  renderSubRandomFlame = (parentFlame: RandomFlame, randomFlame: RandomFlame) => {
     return html`
               <li class="bg-contrast-5 items-start p-s rounded-m">
                 <div
                   class="bg-contrast flex items-center justify-center mb-m overflow-hidden rounded-s"
                   style="max-height: 6em;">
-                  <img @click="${this.exportFlame.bind(this, randomFlame.flame.name)}" class="w-full" style="cursor: pointer;" loading="lazy" src="${randomFlame.imgSrc}" />
+                  <img @click="${this.exportSubFlame.bind(this, parentFlame.flame.name, randomFlame.flame.name)}" class="w-full" style="cursor: pointer;" loading="lazy" src="${randomFlame.imgSrc}" />
                 </div>
                 <div class="p-s" style="display: flex;">  
-                <vaadin-button @click="${this.exportFlame.bind(this, randomFlame.flame.name)}"><vaadin-icon icon="vaadin:close"></vaadin-icon></vaadin-button>
-                <vaadin-button @click="${this.deleteFlame.bind(this, randomFlame.flame.name)}"><vaadin-icon icon="vaadin:close"></vaadin-icon></vaadin-button>
+                <vaadin-button @click="${this.exportSubFlame.bind(this, parentFlame.flame.name, randomFlame.flame.name)}"><vaadin-icon icon="vaadin:close"></vaadin-icon></vaadin-button>
+                <vaadin-button @click="${this.deleteSubFlame.bind(this, parentFlame.flame.name, randomFlame.flame.name)}"><vaadin-icon icon="vaadin:close"></vaadin-icon></vaadin-button>
                 </div> 
               </li>
             `
@@ -124,14 +124,20 @@ export class RandomizerView extends View {
   }
 
   exportFlame = (flameName: string) => {
-      Router.go('/playground/rnd/'+flameName)
+      Router.go(`/playground/rnd/${flameName}`)
   }
 
   deleteFlame = (flameName: string) => {
     randomizerStore.deleteFlame(flameName)
   }
 
+  exportSubFlame = (parentFlameName: string, flameName: string) => {
+    Router.go(`/playground/rnd/${parentFlameName}/${flameName}`)
+  }
 
+  deleteSubFlame = (parentFlameName: string, flameName: string) => {
+    randomizerStore.deleteSubFlame(parentFlameName, flameName)
+  }
 
   createRandomFlameSubStack = (flameName: string) => {
     randomizerStore.cancelSignalled = false

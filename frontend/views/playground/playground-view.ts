@@ -248,8 +248,15 @@ export class PlaygroundView extends View implements BeforeEnterObserver {
 
         playgroundStore.refreshing = true
         try {
-           let rndFlame = randomizerStore.randomFlames.find( f => f.flame.name === flameName)
-            if(!rndFlame) {
+           let rndFlame;
+           if(flameName.includes('/')) {
+               const [parentName, subFlameName] = flameName.split('/')
+               rndFlame = randomizerStore.getSubFlameByName(parentName,subFlameName )
+           }
+           else {
+               rndFlame = randomizerStore.getFlameByName(flameName)
+           }
+           if(!rndFlame) {
                 console.log("random flame #"+flameName+"# not found");
             }
             else {
@@ -285,6 +292,8 @@ export class PlaygroundView extends View implements BeforeEnterObserver {
         _location: RouterLocation,
         _commands: PreventAndRedirectCommands,
         _router: Router) {
+        this.loadExampleAtStartup = ''
+        this.loadRndFlameAtStartup = ''
 
         const exampleName = _location.params['example'] as string;
         if(exampleName && exampleName!=='') {
@@ -293,9 +302,14 @@ export class PlaygroundView extends View implements BeforeEnterObserver {
 
         const rndFlameName = _location.params['rndFlameName'] as string;
         if(rndFlameName && rndFlameName!=='') {
-            this.loadRndFlameAtStartup = rndFlameName
+            const parentRndFlameName = _location.params['parentRndFlameName'] as string;
+            if(parentRndFlameName && parentRndFlameName.length>0) {
+                this.loadRndFlameAtStartup = `${parentRndFlameName}/${rndFlameName}`
+            }
+            else {
+                this.loadRndFlameAtStartup = rndFlameName
+            }
         }
-
     }
 
     private renderMainTabs = () => {

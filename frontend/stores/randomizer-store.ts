@@ -85,6 +85,31 @@ export class RandomizerStore {
     }
   }
 
+  deleteSubFlame(parentFlameName: string, flameName: string) {
+    const flame = this.getFlameByName(parentFlameName)
+    if (flame) {
+      for(let idx=0;idx<flame.subBatch.length;idx++) {
+        if(flame.subBatch[idx].flame.name === flameName) {
+          let newSubFlames = [...flame.subBatch]
+          newSubFlames.splice(idx, 1)
+          flame.subBatch = newSubFlames
+          this.randomFlames = [...this.randomFlames]
+          break;
+        }
+      }
+    }
+  }
+
+  getSubFlameByName(parentName: string, name: string): RandomFlame | undefined {
+    const parent = this.getFlameByName(parentName)
+    if(parent) {
+      return parent.subBatch.find( f => f.flame.name === name)
+    }
+    else {
+      return undefined
+    }
+  }
+
   addRandomFlame(flame: Flame, imgSrc: string) {
     // ensure unique name in store
     let flameName = flame.name
