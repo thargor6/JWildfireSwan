@@ -102,4 +102,23 @@ export class FlameRendererDisplay {
         gl.drawArrays(gl.TRIANGLE_STRIP, 0, this.ctx.buffers.quadVertexPositionBuffer!.numItems);
     }
 
+    public displayMotionBlurTime() {
+        const gl = this.ctx.gl;
+        const canvas_size = this.settings.canvas_size;
+        gl.disable(gl.BLEND);
+        gl.viewport(0, 0, canvas_size, canvas_size);
+        gl.useProgram(this.ctx.shaders.prog_show_raw);
+        gl.activeTexture(gl.TEXTURE0);
+        gl.bindTexture(gl.TEXTURE_2D, this.ctx.textures._texture1);
+        gl.uniform1i(this.ctx.shaders.prog_show_raw!.uTexSamp, 0);
+        gl.uniform1i(this.ctx.shaders.prog_show_raw!.pTexSamp, 1);
+        gl.uniform1i(this.ctx.shaders.prog_show_raw!.gradTexSamp, 2);
+        gl.uniform1i(this.ctx.shaders.prog_show_raw!.motionBlurTimeSamp, 3);
+        gl.uniform1i(this.ctx.shaders.prog_show_raw!.displayMode, 2);
+        gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+        gl.bindBuffer(gl.ARRAY_BUFFER, this.ctx.buffers.quadVertexPositionBuffer);
+        gl.vertexAttribPointer(this.ctx.shaders.prog_comp!.vertexPositionAttribute, this.ctx.buffers.quadVertexPositionBuffer!.itemSize, gl.FLOAT, false, 0, 0);
+        gl.drawArrays(gl.TRIANGLE_STRIP, 0, this.ctx.buffers.quadVertexPositionBuffer!.numItems);
+    }
+
 }

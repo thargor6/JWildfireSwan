@@ -78,7 +78,8 @@ export class PlaygroundRenderPanel extends MobxLitElement {
       { displayMode: DisplayMode.FLAME, caption: "Flame"},
       { displayMode: DisplayMode.POSITION_ITER, caption: "Position iteration"},
       { displayMode: DisplayMode.COLOR_ITER, caption: "Color iteration"},
-      { displayMode: DisplayMode.GRADIENT, caption: "Gradient"}]
+      { displayMode: DisplayMode.GRADIENT, caption: "Gradient"},
+      { displayMode: DisplayMode.MOTION_BLUR_TIME, caption: "Motion-blur time"}]
 
   @state()
   displayMode: DisplayMode = DisplayMode.FLAME

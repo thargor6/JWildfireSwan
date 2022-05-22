@@ -21,7 +21,8 @@ export enum DisplayMode {
     FLAME= 1,
     POSITION_ITER = 2,
     COLOR_ITER = 3,
-    GRADIENT = 4
+    GRADIENT = 4,
+    MOTION_BLUR_TIME = 5
 }
 
 export class FlameRenderSettings {

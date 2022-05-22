@@ -173,6 +173,9 @@ export class FlameRenderer implements CloseableBuffers {
             case DisplayMode.GRADIENT:
                 this.display.displayGradient();
                 break;
+            case DisplayMode.MOTION_BLUR_TIME:
+                this.display.displayMotionBlurTime();
+                break;
             case DisplayMode.FLAME:
             default:
                 this.display.displayFlame();
