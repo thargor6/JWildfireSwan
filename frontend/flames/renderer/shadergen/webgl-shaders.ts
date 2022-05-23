@@ -24,6 +24,9 @@ import {shader_show_raw_fs} from '../shaders/shader-show-raw-fs'
 import {RenderFlame} from "Frontend/flames/model/render-flame";
 import {CompPointsFragmentShaderGenerator} from "Frontend/flames/renderer/shadergen/comp-points-fs-gen";
 import {ProgPointsVertexShaderGenerator} from "Frontend/flames/renderer/shadergen/prog-points-vs.gen";
+import {DenoiserType} from "Frontend/flames/model/flame";
+import {shader_show_with_denoiser_fs} from "Frontend/flames/renderer/shaders/shader-show-denoise-fs";
+import {Parameters} from "Frontend/flames/model/parameters";
 
 interface ComputePointsProgram extends WebGLProgram {
     vertexPositionAttribute: GLint;
@@ -139,8 +142,23 @@ export class WebglShaders implements CloseableBuffers{
                 VIBRANCY: this.flame.vibrancy,
                 WHITE_LEVEL: this.flame.whiteLevel,
                 RESOLUTION: canvas.width}
+            if(this.flame.dnType === DenoiserType.OFF) {
+                this.prog_show = compileShaderDirect(gl, shader_direct_vs, shader_show_fs, params) as ShowHistogramProgram;
+            }
+            else {
+                const extParams = {
+                  ...params,
+                  DN_TYPE: this.flame.dnType,
+                  DN_SPLITTER: this.flame.dnSplitter,
+                  DN_SIGMA: this.flame.dnSigma,
+                  DN_KSIGMA: this.flame.dnKSigma,
+                  DN_THRESHOLD: this.flame.dnThreshold,
+                  DN_MIX: this.flame.dnMix,
+                  DN_INV_GAMMA: 1.0 / this.flame.dnGamma
+                }
+                this.prog_show = compileShaderDirect(gl, shader_direct_vs, shader_show_with_denoiser_fs, extParams) as ShowHistogramProgram;
+            }
 
-            this.prog_show = compileShaderDirect(gl, shader_direct_vs, shader_show_fs, params) as ShowHistogramProgram;
             this.prog_show.uTexSamp = gl.getUniformLocation(this.prog_show, "uTexSamp")!;
             this.prog_show.frames = gl.getUniformLocation(this.prog_show, "frames")!;
             this.prog_show.brightness = gl.getUniformLocation(this.prog_show, "brightness")!;

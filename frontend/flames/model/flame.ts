@@ -19,6 +19,15 @@ import {FlameParameter, FlameResource, Parameters} from "Frontend/flames/model/p
 
 export const GRADIENT_SIZE = 256
 
+export enum DenoiserType {
+    OFF,
+    SMART_DENOISE,
+    SMART_DENOISE_SRGB,
+    SMART_DENOISE_HSL,
+    SMART_DENOISE_LUM,
+    SMART_DENOISE_LUM_LINEAR
+}
+
 export class Color {
     constructor(public r: number, public g: number, public b: number) {
        //
@@ -177,6 +186,14 @@ export class Flame {
     public frame = Parameters.intParam(1);
     public frameCount = Parameters.intParam(100);
     public fps = Parameters.intParam(25);
+
+    public dnType = DenoiserType.SMART_DENOISE;
+    public dnSplitter = Parameters.floatParam(-1.0);
+    public dnSigma = Parameters.floatParam(1.15);
+    public dnKSigma  = Parameters.floatParam(1.05);
+    public dnThreshold = Parameters.floatParam(0.015);
+    public dnMix = Parameters.floatParam(0.0);
+    public dnGamma = Parameters.floatParam(2.2);
 
     private _layers = new Array<Layer>();
 

@@ -27,32 +27,6 @@ uniform sampler2D uTexSamp;
 uniform float frames;
 uniform float brightness;
 
-/*
-void main(void) {
-  vec3 colorTexel = texture2D(uTexSamp, gl_FragCoord.xy / <%= RESOLUTION %>).rgb;
-  float x = texture2D(uTexSamp, gl_FragCoord.xy / <%= RESOLUTION %>).a;
-  float swarmSizeScl = float(256 * 256) / (<%= SWARM_SIZE %> * <%= SWARM_SIZE %>);
-  float resolutionScl = float(512 * 512) / (<%= RESOLUTION %> * <%= RESOLUTION %>);
-  
-  float _brightness = <%= BRIGHTNESS %>;
-  float _contrast =  <%= CONTRAST %> * 0.5;
-  
-  float _gamma = <%= GAMMA %>;
-  float _gammaThreshold = <%= GAMMA_THRESHOLD %> * 4.0;
-  
-  float gammaInv = 1.0 / _gamma;
-   
-  float logScale = 6.0 * swarmSizeScl / resolutionScl * _brightness * _contrast * log(x * _contrast) / (log(x) * frames);
-
-  float r = (pow(colorTexel.r, gammaInv)+colorTexel.r * _gammaThreshold) * logScale * <%= BALANCE_RED %>;
-  float g = (pow(colorTexel.g, gammaInv)+colorTexel.g * _gammaThreshold) * logScale * <%= BALANCE_GREEN %>;
-  float b = (pow(colorTexel.b, gammaInv)+colorTexel.b * _gammaThreshold) * logScale * <%= BALANCE_BLUE %>;
-
-  vec3 col = vec3(r, g, b);  
-  gl_FragColor = vec4(col, 1.0);  
-}
-*/
-
 float log10(float val) {
    return log(val) / 2.30258509299; // log(10)
 }

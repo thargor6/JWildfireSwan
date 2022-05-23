@@ -29,7 +29,7 @@ import {default as SourceXForm} from '../../../generated/org/jwildfire/swan/flam
 import {default as SourceLayer} from '../../../generated/org/jwildfire/swan/flames/model/flame/Layer'
 import {default as SourceFlame} from '../../../generated/org/jwildfire/swan/flames/model/flame/Flame'
 import {default as SourceVariation} from '../../../generated/org/jwildfire/swan/flames/model/flame/Variation'
-import {Color, Flame, Layer, Variation, XForm} from "../flame";
+import {Color, DenoiserType, Flame, Layer, Variation, XForm} from "../flame";
 import {
     FlameParameter,
     FlameResource,
@@ -760,6 +760,15 @@ export class FlameMapper {
         res.motionBlurLength = source.motionBlurLength.value
         res.motionBlurTimeStep = source.motionBlurTimeStep.value
         res.motionBlurDecay = source.motionBlurDecay.value
+
+        res.dnType = source.dnType
+        res.dnSplitter  = source.dnSplitter.value
+        res.dnSigma = source.dnSigma.value
+        res.dnKSigma = source.dnKSigma.value
+        res.dnThreshold = source.dnThreshold.value
+        res.dnMix = source.dnMix.value
+        res.dnGamma = source.dnGamma.value
+
         source.layers.map(layer => {
             res.layers.push(LayerMapper.mapForRendering(ctx, layer))
         })

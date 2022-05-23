@@ -15,7 +15,8 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 */
 
-import {RenderParameter, RenderParameters, RenderResource} from "Frontend/flames/model/parameters";
+import {Parameters, RenderParameter, RenderParameters, RenderResource} from "Frontend/flames/model/parameters";
+import {DenoiserType} from "Frontend/flames/model/flame";
 
 export class RenderMappingContext {
    constructor(private _frame: number, private _motionBlurLength: number,
@@ -202,6 +203,13 @@ export class RenderFlame {
     public focusY = 0.0
     public focusZ = 0.0
     public camDOFExponent = 0.0
+    public dnType = DenoiserType.OFF;
+    public dnSplitter = 0.0;
+    public dnSigma = 0.0;
+    public dnKSigma  = 0.0;
+    public dnThreshold = 0.0;
+    public dnMix = 0.0;
+    public dnGamma = 0.0;
 
     private _layers = new Array<RenderLayer>()
 
