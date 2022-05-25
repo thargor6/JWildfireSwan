@@ -93,6 +93,6 @@ void main(void) {
   bool _withAlpha = <%= WITH_ALPHA %>;
 
   vec3 col = vec3(r, g, b);  
-  gl_FragColor = vec4(col, _withAlpha ? alpha : 1.0) * 255.0;  
+  gl_FragColor = vec4(col, _withAlpha ? alpha : 1.0) * 256.0;  
 }
 `;
