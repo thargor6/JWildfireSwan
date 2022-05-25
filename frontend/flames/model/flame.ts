@@ -188,7 +188,7 @@ export class Flame {
     public fps = Parameters.intParam(25);
 
     public dnType = DenoiserType.SMART_DENOISE_SRGB;
-    public dnSplitter = Parameters.floatParam(0.0);
+    public dnSplitter = Parameters.floatParam(-1.0);
     public dnSigma = Parameters.floatParam(2.1);
     public dnKSigma  = Parameters.floatParam(1.15);
     public dnThreshold = Parameters.floatParam(0.165);
