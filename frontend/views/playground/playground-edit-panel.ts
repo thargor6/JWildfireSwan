@@ -33,8 +33,10 @@ import {FlameParameter} from "Frontend/flames/model/parameters";
 import './playground-edit-camera-panel'
 import './playground-edit-coloring-panel'
 import './playground-edit-motion-panel'
+import './playground-edit-denoiser-panel'
 import {OnPropertyChange} from "Frontend/components/property-edit";
 import {EPSILON} from "Frontend/flames/renderer/mathlib";
+import {DenoiserType} from "Frontend/flames/model/flame";
 
 @customElement('playground-edit-panel')
 export class PlaygroundEditPanel extends MobxLitElement {
@@ -66,10 +68,15 @@ export class PlaygroundEditPanel extends MobxLitElement {
               <vaadin-icon icon="vaadin:eye"></vaadin-icon>
               <span>Motion</span>
           </vaadin-tab>
+            <vaadin-tab theme="icon-on-top">
+                <vaadin-icon icon="vaadin:eye"></vaadin-icon>
+                <span>Denoiser</span>
+            </vaadin-tab>
         </vaadin-tabs>
         <playground-edit-camera-panel .visible=${this.selectedTab===0} .onPropertyChange=${this.onPropertyChange} ></playground-edit-camera-panel>
         <playground-edit-coloring-panel .visible=${this.selectedTab===1} .onPropertyChange=${this.onPropertyChange} ></playground-edit-coloring-panel>
         <playground-edit-motion-panel .visible=${this.selectedTab===2} .onPropertyChange=${this.onPropertyChange} ></playground-edit-motion-panel>
+        <playground-edit-denoiser-panel .visible=${this.selectedTab===3} .onPropertyChange=${this.onPropertyChange} ></playground-edit-denoiser-panel>
 
         <vaadin-button theme="primary" @click="${this.onExportParams}">Export flame as xml</vaadin-button>
           
@@ -77,16 +84,26 @@ export class PlaygroundEditPanel extends MobxLitElement {
 `;
   }
 
-  onPropertyChange: OnPropertyChange = (propertyPath: string, changing: boolean, value: number) => {
+  onPropertyChange: OnPropertyChange = (propertyPath: string, changing: boolean, value: any) => {
     if(!playgroundStore.refreshing) {
       const param: FlameParameter = (playgroundStore.flame as any)[propertyPath]
-      if (param && Math.abs(param.value - value) > EPSILON) {
+      if (param && typeof param.value === 'number' && Math.abs(param.value - value) > EPSILON) {
         param.value = value
         console.log('CHANGE ', propertyPath, changing, value);
         // if(!changing) {
         this.onRefresh()
         //  }
       }
+      // enum
+      else if (typeof param === 'number') {
+        (playgroundStore.flame as any)[propertyPath] = value
+        console.log('CHANGE ', propertyPath, changing, value, param);
+        // if(!changing) {
+        this.onRefresh()
+        //  }
+      }
+
+
     }
   }
 
