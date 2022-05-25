@@ -42,25 +42,25 @@ void main(void) {
   // log scale
   float _r, _g, _b, _intensity;
   { 
-    float _k1 = <%= K1 %>;
-    float _k2 = <%= K2 %>;
-    float _bgGlow = <%= BG_GLOW %>;
+    float _k1 = float( <%= K1 %> );
+    float _k2 = float( <%= K2 %> );
+    float _bgGlow = float( <%= BG_GLOW %> );
     float _logScale = swarmSizeScl * (_k1 * log10(1.0 + x * _k2) + _bgGlow / (x + 1.0)) / (_whiteLevel * x) / resolutionScl;
-    _r = _logScale * colorTexel.r * <%= BALANCE_RED %>;
-    _g = _logScale * colorTexel.g * <%= BALANCE_GREEN %>;
-    _b = _logScale * colorTexel.b * <%= BALANCE_BLUE %>;
+    _r = _logScale * colorTexel.r * float( <%= BALANCE_RED %> );
+    _g = _logScale * colorTexel.g * float( <%= BALANCE_GREEN %> );
+    _b = _logScale * colorTexel.b * float( <%= BALANCE_BLUE %> );
     _intensity = _logScale * x * _whiteLevel;
   }
   
   float r, g, b, alpha;
   // gamma correction
   {
-    float _gammaParam = <%= GAMMA %>;
-    float _gammaThreshold = <%= GAMMA_THRESHOLD %>;
-    float _alphaAdjust = <%= ALPHA_ADJUST %>;
+    float _gammaParam = float( <%= GAMMA %> );
+    float _gammaThreshold = float( <%= GAMMA_THRESHOLD %> );
+    float _alphaAdjust = float( <%= ALPHA_ADJUST %> );
     
     float _gamma = (_gammaParam == 0.0) ? 0.0 : 1.0 / _gammaParam;
-    float _vibrancy = <%= VIBRANCY %>;
+    float _vibrancy = float( <%= VIBRANCY %> );
     float _inverseVib = (1.0 - _vibrancy);
   
     float _sclGamma = 0.0;
@@ -93,6 +93,6 @@ void main(void) {
   bool _withAlpha = <%= WITH_ALPHA %>;
 
   vec3 col = vec3(r, g, b);  
-  gl_FragColor = vec4(col, _withAlpha ? alpha : 1.0) * 256.0;  
+  gl_FragColor = vec4(col, _withAlpha ? alpha : 1.0) * 255.0;  
 }
 `;

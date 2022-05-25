@@ -46,25 +46,25 @@ vec4 getColor(vec2 uv) {
   // log scale
   float _r, _g, _b, _intensity;
   { 
-    float _k1 = <%= K1 %>;
-    float _k2 = <%= K2 %>;
-    float _bgGlow = <%= BG_GLOW %>;
+    float _k1 = float( <%= K1 %> );
+    float _k2 = float( <%= K2 %> );
+    float _bgGlow = float( <%= BG_GLOW %> );
     float _logScale = swarmSizeScl * (_k1 * log10(1.0 + x * _k2) + _bgGlow / (x + 1.0)) / (_whiteLevel * x) / resolutionScl;
-    _r = _logScale * colorTexel.r * <%= BALANCE_RED %>;
-    _g = _logScale * colorTexel.g * <%= BALANCE_GREEN %>;
-    _b = _logScale * colorTexel.b * <%= BALANCE_BLUE %>;
+    _r = _logScale * colorTexel.r * float( <%= BALANCE_RED %> );
+    _g = _logScale * colorTexel.g * float( <%= BALANCE_GREEN %> );
+    _b = _logScale * colorTexel.b * float( <%= BALANCE_BLUE %> );
     _intensity = _logScale * x * _whiteLevel;
   }
   
   float r, g, b, alpha;
   // gamma correction
   {
-    float _gammaParam = <%= GAMMA %>;
-    float _gammaThreshold = <%= GAMMA_THRESHOLD %>;
-    float _alphaAdjust = <%= ALPHA_ADJUST %>;
+    float _gammaParam = float( <%= GAMMA %> );
+    float _gammaThreshold = float( <%= GAMMA_THRESHOLD %> );
+    float _alphaAdjust = float( <%= ALPHA_ADJUST %> );
     
     float _gamma = (_gammaParam == 0.0) ? 0.0 : 1.0 / _gammaParam;
-    float _vibrancy = <%= VIBRANCY %>;
+    float _vibrancy = float( <%= VIBRANCY %> );
     float _inverseVib = (1.0 - _vibrancy);
   
     float _sclGamma = 0.0;
@@ -93,6 +93,11 @@ vec4 getColor(vec2 uv) {
     }
     alpha = _alphaScl;
   }
+  r = min(max(r, 0.0), 1.0);
+  g = min(max(g, 0.0), 1.0);
+  b = min(max(b, 0.0), 1.0);
+  alpha = min(max(alpha, 0.0), 1.0);
+    
   vec3 col = vec3(r, g, b);  
     
   bool _withAlpha = <%= WITH_ALPHA %>;
@@ -112,9 +117,6 @@ float round(float v) {
 // https://github.com/BrutPitt/glslSmartDeNoise/blob/master/Shaders/frag.glsl               
 vec4 smartDeNoise(vec2 uv, float sigma, float kSigma, float threshold, vec4 centrPx) {
   float radius = round(kSigma*sigma);
-  if(radius>float(MAX_LOOP)) {
-    radius = float(MAX_LOOP);
-  }
   float radQ = radius * radius;
 
   float invSigmaQx2 = .5 / (sigma * sigma);      // 1.0 / (sigma^2 * 2.0)
@@ -135,7 +137,7 @@ vec4 smartDeNoise(vec2 uv, float sigma, float kSigma, float threshold, vec4 cent
       for(int y=0;y<MAX_LOOP;y++) { 
         if(d.y <= pt) {
           float blurFactor = exp( -dot(d , d) * invSigmaQx2 ) * invSigmaQx2PI;
-          vec4 walkPx = getColor(uv+d/ <%= RESOLUTION %>);  
+          vec4 walkPx = getColor(uv + d/float(<%= RESOLUTION %>));  
           vec4 dC = walkPx-centrPx;
           float deltaFactor = exp( -dot(dC.rgb, dC.rgb) * invThresholdSqx2) * invThresholdSqrt2PI * blurFactor; 
           zBuff += deltaFactor;
@@ -157,9 +159,6 @@ vec4 smartDeNoise(vec2 uv, float sigma, float kSigma, float threshold, vec4 cent
 
 vec4 smartDeNoise_sRGB(vec2 uv, float sigma, float kSigma, float threshold, float invGamma, vec4 rawCentrPx) {
   float radius = round(kSigma*sigma);
-  if(radius>float(MAX_LOOP)) {
-    radius = float(MAX_LOOP);
-  }
   float radQ = radius * radius;
 
   float invSigmaQx2 = .5 / (sigma * sigma);      // 1.0 / (sigma^2 * 2.0)
@@ -181,7 +180,7 @@ vec4 smartDeNoise_sRGB(vec2 uv, float sigma, float kSigma, float threshold, floa
       for(int y=0;y<MAX_LOOP;y++) { 
         if(d.y <= pt) {         
           float blurFactor = exp( -dot(d , d) * invSigmaQx2 ) * invSigmaQx2PI;
-          vec4 rawWalkPx = getColor(uv+d/ <%= RESOLUTION %>); 
+          vec4 rawWalkPx = getColor(uv + d/float(<%= RESOLUTION %>)); 
           vec3 walkPx = vec3(rawWalkPx.x, rawWalkPx.y, rawWalkPx.z); 
           vec3 dC = pow(walkPx, vec3(invGamma))-centrPx;
           float deltaFactor = exp( -dot(dC, dC) * invThresholdSqx2) * invThresholdSqrt2PI * blurFactor;
@@ -237,9 +236,6 @@ vec3 rgb2hsl( in vec3 c ){
 
 vec4 smartDeNoise_HSL(vec2 uv, float sigma, float kSigma, float threshold, vec4 rawCentrPx) {
   float radius = round(kSigma*sigma);
-  if(radius>float(MAX_LOOP)) {
-    radius = float(MAX_LOOP);
-  }
   float radQ = radius * radius;
 
   float invSigmaQx2 = .5 / (sigma * sigma);      // 1.0 / (sigma^2 * 2.0)
@@ -260,7 +256,7 @@ vec4 smartDeNoise_HSL(vec2 uv, float sigma, float kSigma, float threshold, vec4 
       for(int y=0;y<MAX_LOOP;y++) { 
         if(d.y <= pt) {         
           float blurFactor = exp( -dot(d , d) * invSigmaQx2 ) * invSigmaQx2PI;
-          vec4 rawWalkPx = getColor(uv+d/ <%= RESOLUTION %>); 
+          vec4 rawWalkPx = getColor(uv + d/float(<%= RESOLUTION %>)); 
           vec3 walkPx = vec3(rawWalkPx.x, rawWalkPx.y, rawWalkPx.z);
           vec3 walkPxHSL = rgb2hsl(walkPx);
           vec3 dC = walkPxHSL - centrHSL;
@@ -288,9 +284,6 @@ float luminance(vec3 col) {
 
 vec4 smartDeNoise_lum(vec2 uv, float sigma, float kSigma, float threshold, vec4 rawCentrPx) {
   float radius = round(kSigma*sigma);
-  if(radius>float(MAX_LOOP)) {
-    radius = float(MAX_LOOP);
-  }
   float radQ = radius * radius;
 
   float invSigmaQx2 = .5 / (sigma * sigma);      // 1.0 / (sigma^2 * 2.0)
@@ -311,7 +304,7 @@ vec4 smartDeNoise_lum(vec2 uv, float sigma, float kSigma, float threshold, vec4 
       for(int y=0;y<MAX_LOOP;y++) { 
         if(d.y <= pt) {         
           float blurFactor = exp( -dot(d , d) * invSigmaQx2 ) * invSigmaQx2PI;
-          vec4 rawWalkPx = getColor(uv+d/ <%= RESOLUTION %>); 
+          vec4 rawWalkPx = getColor(uv + d/float(<%= RESOLUTION %>)); 
           vec3 walkPx = vec3(rawWalkPx.x, rawWalkPx.y, rawWalkPx.z);
           float dC = luminance(walkPx) - centrLum;
           float deltaFactor = exp( -(dC * dC) * invThresholdSqx2) * invThresholdSqrt2PI * blurFactor;
@@ -338,9 +331,7 @@ float linearLuminance(vec3 col) {
 
 vec4 smartDeNoise_linearLum(vec2 uv, float sigma, float kSigma, float threshold, vec4 rawCentrPx) {
   float radius = round(kSigma*sigma);
-  if(radius>float(MAX_LOOP)) {
-    radius = float(MAX_LOOP);
-  }
+ 
   float radQ = radius * radius;
 
   float invSigmaQx2 = .5 / (sigma * sigma);      // 1.0 / (sigma^2 * 2.0)
@@ -351,7 +342,7 @@ vec4 smartDeNoise_linearLum(vec2 uv, float sigma, float kSigma, float threshold,
 
   float zBuff = 0.0;
   vec3 aBuff = vec3(0.0);
-  float centrLum = linearLuminance(vec3(rawCentrPx.x, rawCentrPx.y, rawCentrPx.z));
+  float centrLum = linearLuminance(vec3(rawCentrPx.r, rawCentrPx.g, rawCentrPx.b));
   vec2 d;  
   d.x=-radius;
   for(int x=0;x<MAX_LOOP;x++) {
@@ -361,8 +352,8 @@ vec4 smartDeNoise_linearLum(vec2 uv, float sigma, float kSigma, float threshold,
       for(int y=0;y<MAX_LOOP;y++) { 
         if(d.y <= pt) {         
           float blurFactor = exp( -dot(d , d) * invSigmaQx2 ) * invSigmaQx2PI;
-          vec4 rawWalkPx = getColor(uv+d/ <%= RESOLUTION %>); 
-          vec3 walkPx = vec3(rawWalkPx.x, rawWalkPx.y, rawWalkPx.z);
+          vec4 rawWalkPx = getColor(uv + d/float(<%= RESOLUTION %>)); 
+          vec3 walkPx = vec3(rawWalkPx.r, rawWalkPx.g, rawWalkPx.b);
           float dC = linearLuminance(walkPx) - centrLum;
           float deltaFactor = exp( -(dC * dC) * invThresholdSqx2) * invThresholdSqrt2PI * blurFactor;
           zBuff += deltaFactor;
@@ -389,17 +380,17 @@ vec4 smartDeNoise_linearLum(vec2 uv, float sigma, float kSigma, float threshold,
 #define SMART_DENOISE_LUM_LINEAR 5
 
 void main(void) {
-  float uSlider = <%= DN_SPLITTER %>;
-  float uSigma = <%= DN_SIGMA %>;
-  float uKSigma = <%= DN_KSIGMA %>;
-  float uThreshold = <%= DN_THRESHOLD %>;
-  float uMix = <%= DN_MIX %>;
-  float uInvGamma = <%= DN_INV_GAMMA %>;
+  float uSlider = float( <%= DN_SPLITTER %> );
+  float uSigma = float( <%= DN_SIGMA %> );
+  float uKSigma = float( <%= DN_KSIGMA %> );
+  float uThreshold = float( <%= DN_THRESHOLD %> );
+  float uMix = float( <%= DN_MIX %> );
+  float uInvGamma = float( <%= DN_INV_GAMMA %> );
   int dnType = int(<%= DN_TYPE %>);
   
   float slide = uSlider <= -1.0 ? -1.0 : uSlider *.5 + .5;
-  float szSlide = 0.005;
-  vec2 uv = gl_FragCoord.xy / <%= RESOLUTION %>;
+  float szSlide = 0.0025;
+  vec2 uv = gl_FragCoord.xy / float(<%= RESOLUTION %>);
   
   vec4 centrPx = getColor(uv);
    
@@ -428,6 +419,6 @@ void main(void) {
   if(!  <%= WITH_ALPHA %> ) {
     c.w = 1.0;
   }
-  gl_FragColor = ( uv.x < slide-szSlide ? centrPx : (uv.x > slide+szSlide ? c : vec4(1.0)) ) * 256.0;        
+  gl_FragColor = ( uv.x < slide-szSlide ? centrPx : (uv.x > slide+szSlide ? c : vec4(1.0)) ) * 255.0;        
 }
 `;

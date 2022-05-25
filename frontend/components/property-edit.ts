@@ -20,14 +20,23 @@ import {playgroundStore} from "Frontend/stores/playground-store";
 import {FlameParameter, Parameters} from "Frontend/flames/model/parameters";
 import '../components/swan-slider'
 import '@vaadin/vaadin-checkbox'
+import '@vaadin/vaadin-combo-box'
+import {HasValue} from "@hilla/form";
+import {DenoiserType} from "Frontend/flames/model/flame";
+
+export interface ComoboBoxItem {
+    key: number,
+    caption: string
+}
 
 export interface PropertyDescriptor {
-    controlType: 'slider' | 'checkbox';
+    controlType: 'slider' | 'checkbox' | 'listbox';
     propName: string;
     label: string;
     minValue?: number;
     maxValue?: number;
     step?: number;
+    items?:Array<ComoboBoxItem>
 }
 
 export type OnPropertyChange = (propertyPath: string, changing: boolean, value: number) => void;
@@ -38,6 +47,16 @@ export function renderControl(ctrl: PropertyDescriptor, onPropertyChange: OnProp
         if(ctrl.controlType==='checkbox') {
             return html `
                 <vaadin-checkbox ?checked=${param.value} @change=${(e: Event)=>onPropertyChange(ctrl.propName, false, (e.target as any).checked ? 1: 0)} label=${ctrl.label}></vaadin-checkbox>
+            `
+        }
+        else if(ctrl.controlType==='listbox') {
+            return html `
+                <vaadin-combo-box style="width:23em;" .items="${ctrl.items}" item-value-path="key" item-label-path="caption"
+                                  .value=${param.value}
+                  @change=${(e: Event)=>{
+                   const key = (e.target as HasValue<number>).value
+                    onPropertyChange(ctrl.propName, false, key as any)
+                  }} label=${ctrl.label}></vaadin-combo-box>
             `
         }
         else {
@@ -57,6 +76,13 @@ export function getFlameParam(propertyPath: string): FlameParameter | undefined 
         return undefined
     }
     // TODO - subProperties
-    const param: FlameParameter = (playgroundStore.flame as any)[propertyPath]
-    return param  ? param : undefined
+    let val = (playgroundStore.flame as any)[propertyPath]
+    // enums
+    if(typeof val==='number') {
+        return Parameters.intParam(val)
+    }
+    else {
+        const param: FlameParameter = (playgroundStore.flame as any)[propertyPath]
+        return param  ? param : undefined
+    }
 }
