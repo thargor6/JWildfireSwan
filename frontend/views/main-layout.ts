@@ -44,6 +44,8 @@ export class MainLayout extends Layout {
       <vaadin-app-layout primary-section="drawer">
         <header class="bg-base border-b border-contrast-10 box-border flex h-xl items-center w-full" slot="navbar">
           <vaadin-drawer-toggle aria-label="Menu toggle" class="text-secondary" theme="contrast"></vaadin-drawer-toggle>
+
+            <img style="margin-right: 1em; width: 2.5rem;" alt="JWildfire Swan" src="./icons/swan_logo_05.svg" />
           <h1 class="m-0 text-l">${appStore.currentViewTitle}</h1>
         </header>
         <section class="flex flex-col items-stretch max-h-full min-h-full" slot="drawer">

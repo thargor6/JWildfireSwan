@@ -58,6 +58,16 @@ export const views: ViewRoute[] = [
     title: 'Playground',
   },
   {
+    path: 'editor',
+    component: 'editor-view',
+    icon: 'la la-file',
+    title: 'Editor',
+    action: async (_context, _command) => {
+      await import('./views/editor/editor-view');
+      return;
+    },
+  },
+  {
     path: 'randomizer',
     component: 'randomizer-view',
     icon: 'la la-th-list',
