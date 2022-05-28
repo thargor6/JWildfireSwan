@@ -15,7 +15,24 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 */
 
-export function getTimeStamp() {
-    // @ts-ignore
-    return window.performance && window.performance.now && window.performance.timing && window.performance.timing.navigationStart ? window.performance.now() + window.performance.timing.navigationStart : Date.now()
+import {html} from 'lit';
+import {customElement} from 'lit/decorators.js';
+import {MobxLitElement} from "@adobe/lit-mobx";
+import '@polymer/paper-slider/paper-slider'
+import '@vaadin/vaadin-button'
+import '@vaadin/vaadin-combo-box';
+import '@vaadin/vaadin-ordered-layout/vaadin-vertical-layout'
+import '@vaadin/vaadin-ordered-layout/vaadin-horizontal-layout'
+
+
+@customElement('editor-toolbar-panel')
+export class EditorToolbarPanel extends MobxLitElement {
+
+  render() {
+    return html`
+      toolbar
+      
+`;
+  }
+
 }
