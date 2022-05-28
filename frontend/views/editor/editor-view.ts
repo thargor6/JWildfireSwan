@@ -16,7 +16,7 @@
 */
 
 import {html, PropertyValues, render} from 'lit'
-import {customElement, state} from 'lit/decorators.js'
+import {customElement, query, state} from 'lit/decorators.js'
 import { View } from '../../views/view'
 import { guard } from 'lit/directives/guard.js';
 
@@ -46,9 +46,14 @@ import {PlaygroundFlamePanel} from "Frontend/views/playground/playground-flame-p
 import '../../components/swan-loading-indicator'
 import '../../components/swan-error-panel'
 import '../../components/render-panel'
+import '../../components/swan-notification-panel'
 import {BeforeEnterObserver, PreventAndRedirectCommands, Router, RouterLocation} from "@vaadin/router";
 import {RenderPanel} from "Frontend/components/render-panel";
 import {RenderResolutions} from "Frontend/flames/renderer/render-resolution";
+
+import './editor-toolbar-panel'
+import {editorStore} from "Frontend/stores/editor-store";
+import {SwanNotificationPanel} from "Frontend/components/swan-notification-panel";
 
 @customElement('editor-view')
 export class EditorView extends View implements BeforeEnterObserver {
@@ -61,16 +66,28 @@ export class EditorView extends View implements BeforeEnterObserver {
     @state()
     notificationMessage = ''
 
+    @query('swan-notification-panel')
+    notificationPnl!: SwanNotificationPanel
 
     render() {
         return html`
-            ${this.renderNotification()}
+            <swan-notification-panel></swan-notification-panel>
             <vertical-layout theme="spacing">
-              <swan-error-panel .errorMessage=${playgroundStore.lastError}></swan-error-panel>
-              <div class="gap-m grid list-none m-0 p-0" style="grid-template-columns: repeat(auto-fill, minmax(30em, 1fr));">
-                <render-panel .onCreateFlameRenderer=${this.createFlameRenderer}></render-panel> 
+              <editor-toolbar-panel></editor-toolbar-panel>
+              <swan-error-panel .errorMessage=${editorStore.lastError}></swan-error-panel>
+              <vertical-layout>
+                  
+                  <vaadin-button @click="${()=>{console.log("Hello");
+                      this.notificationPnl.showNotifivation("Jo")
+                  }}">Test</vaadin-button>
+
+
+                <div class="gap-m grid list-none m-0 p-0" style="grid-template-columns: repeat(auto-fill, minmax(30em, 1fr));">
+                  <render-panel .onCreateFlameRenderer=${this.createFlameRenderer}></render-panel> 
                 ${this.renderMainTabs()}
-              </div>  
+              </div>
+
+              </vertical-layout>
             </vertical-layout>
         `;
     }
@@ -116,13 +133,11 @@ export class EditorView extends View implements BeforeEnterObserver {
         })
     }
 
-
     exportParamsToClipboard = (): void => {
         FlamesEndpoint.convertFlameToXml(FlameMapper.mapToBackend(playgroundStore.flame)).then(flameXml => {
             this.getFlamePanel().flameXml = flameXml
             this.getFlamePanel().transferFlameToClipbord()
-            this.notificationMessage = 'Parameters were copied to the Clipboard'
-            this.openNotification(1)
+            this.notificationPnl.showNotifivation('Parameters were copied to the Clipboard')
         })
           .catch(err=> {
               playgroundStore.lastError = err
@@ -202,56 +217,12 @@ export class EditorView extends View implements BeforeEnterObserver {
            </div>`
     }
 
-    private renderNotification() {
-        return html `<vaadin-notification
-          .renderer="${guard([], () => (root: HTMLElement) => {
-              render(
-                html`
-        <vaadin-horizontal-layout theme="spacing" style="align-items: center">
-          <vaadin-icon
-            icon="vaadin:check-circle"
-            style="color: var(--lumo-success-color)"
-          ></vaadin-icon>
-          <div>
-            <b style="color: var(--lumo-success-text-color);">Export successful</b>
-            <div
-              style="font-size: var(--lumo-font-size-s); color: var(--lumo-secondary-text-color)"
-            >
-              ${this.notificationMessage}
-            </div>
-          </div>
-          <vaadin-button
-            theme="tertiary-inline"
-            @click="${this.closeNotification.bind(this, 1)}"
-            aria-label="Close"
-          >
-            <vaadin-icon icon="lumo:cross"></vaadin-icon>
-          </vaadin-button>
-        </vaadin-horizontal-layout>
-      `,
-                root
-              );
-          })}"
-          position="middle" duration="600"
-        ></vaadin-notification>`
-    }
-
-    openNotification(which: number) {
-        const notification = this.querySelector(
-          `vaadin-notification:nth-child(${which})`
-        ) as Notification;
-        notification?.open();
-    }
-
-    closeNotification(which: number) {
-        const notification = this.querySelector(
-          `vaadin-notification:nth-child(${which})`
-        ) as Notification;
-        notification?.close();
-    }
-
     getRenderPanel = (): RenderPanel =>  {
         return document.querySelector('render-panel')!
+    }
+
+    protected firstUpdated(_changedProperties: PropertyValues) {
+        super.firstUpdated(_changedProperties);
     }
 
 }
