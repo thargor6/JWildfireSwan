@@ -79,6 +79,7 @@ export class Textures implements CloseableBuffers {
           gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST)
         }
 
+
         let texture0 = gl.createTexture()!
         gl.bindTexture(gl.TEXTURE_2D, texture0)
         var pixels = [], tSize = swarm_size

@@ -53,10 +53,10 @@ export class FlameIterator {
 
         gl.activeTexture(gl.TEXTURE0);
         if(this.flag) {
-            gl.bindFramebuffer(gl.FRAMEBUFFER, this.ctx.framebuffers.FBO1);
+            gl.bindFramebuffer(gl.FRAMEBUFFER, this.ctx.framebuffers.FBO1_array[0]);
             gl.bindTexture(gl.TEXTURE_2D, this.ctx.textures.texture0_array[0]);
         } else {
-            gl.bindFramebuffer(gl.FRAMEBUFFER, this.ctx.framebuffers.FBO0);
+            gl.bindFramebuffer(gl.FRAMEBUFFER, this.ctx.framebuffers.FBO0_array[0]);
             gl.bindTexture(gl.TEXTURE_2D, this.ctx.textures.texture1_array[0]);
         }
 
@@ -78,13 +78,13 @@ export class FlameIterator {
         gl.uniform1i(this.ctx.shaders.prog_comp_col!.motionBlurTimeSamp, 3);
 
         if(this.flag) {
-            gl.bindFramebuffer(gl.FRAMEBUFFER, this.ctx.framebuffers._FBO1);
+            gl.bindFramebuffer(gl.FRAMEBUFFER, this.ctx.framebuffers._FBO1_array[0]);
             gl.activeTexture(gl.TEXTURE0);
             gl.bindTexture(gl.TEXTURE_2D, this.ctx.textures._texture0_array[0]);
             gl.activeTexture(gl.TEXTURE1);
             gl.bindTexture(gl.TEXTURE_2D, this.ctx.textures.texture0_array[0]);
         } else {
-            gl.bindFramebuffer(gl.FRAMEBUFFER, this.ctx.framebuffers._FBO0);
+            gl.bindFramebuffer(gl.FRAMEBUFFER, this.ctx.framebuffers._FBO0_array[0]);
             gl.activeTexture(gl.TEXTURE0);
             gl.bindTexture(gl.TEXTURE_2D, this.ctx.textures._texture1_array[0]);
             gl.activeTexture(gl.TEXTURE1);

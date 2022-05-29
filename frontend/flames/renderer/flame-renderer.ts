@@ -96,7 +96,7 @@ export class FlameRenderer implements CloseableBuffers {
         this.shaders = new WebglShaders(gl, canvas, this.canvas_size, this.swarm_size, renderFlame)
         this.buffers = new Buffers(gl, this.shaders, this.swarm_size, renderFlame)
         this.textures = new Textures(gl, this.swarm_size, this.canvas_size, renderFlame)
-        this.framebuffers = new Framebuffers(gl, this.textures)
+        this.framebuffers = new Framebuffers(gl, this.textures, renderFlame)
         this.ctx = new FlameRenderContext(gl, this.shaders, this.buffers, this.textures, this.framebuffers)
         this.settings = new FlameRenderSettings(1.2, this.canvas_size, this.swarm_size, cropRegion,
           1, 0.0, displayMode)
