@@ -60,10 +60,10 @@ export class FlameIterator {
             gl.bindTexture(gl.TEXTURE_2D, this.ctx.textures.texture1);
         }
 
-        gl.bindBuffer(gl.ARRAY_BUFFER, this.ctx.buffers.quadVertexPositionBuffer);
-        gl.vertexAttribPointer(this.ctx.shaders.prog_comp_array[0].vertexPositionAttribute, this.ctx.buffers.quadVertexPositionBuffer!.itemSize, gl.FLOAT, false, 0, 0);
+        gl.bindBuffer(gl.ARRAY_BUFFER, this.ctx.buffers.quadVertexPositionBuffer_array[0]);
+        gl.vertexAttribPointer(this.ctx.shaders.prog_comp_array[0].vertexPositionAttribute, this.ctx.buffers.quadVertexPositionBuffer_array[0].itemSize, gl.FLOAT, false, 0, 0);
 
-        gl.drawArrays(gl.TRIANGLE_STRIP, 0, this.ctx.buffers.quadVertexPositionBuffer!.numItems);
+        gl.drawArrays(gl.TRIANGLE_STRIP, 0, this.ctx.buffers.quadVertexPositionBuffer_array[0].numItems);
 
         // C += Ci
         gl.useProgram(this.ctx.shaders.prog_comp_col);
@@ -95,10 +95,10 @@ export class FlameIterator {
         gl.activeTexture(gl.TEXTURE3);
         gl.bindTexture(gl.TEXTURE_2D, this.ctx.textures.motionBlurTime);
 
-        gl.bindBuffer(gl.ARRAY_BUFFER, this.ctx.buffers.quadVertexPositionBuffer);
-        gl.vertexAttribPointer(this.ctx.shaders.prog_comp_col!.vertexPositionAttribute, this.ctx.buffers.quadVertexPositionBuffer!.itemSize, gl.FLOAT, false, 0, 0);
+        gl.bindBuffer(gl.ARRAY_BUFFER, this.ctx.buffers.quadVertexPositionBuffer_array[0]);
+        gl.vertexAttribPointer(this.ctx.shaders.prog_comp_col!.vertexPositionAttribute, this.ctx.buffers.quadVertexPositionBuffer_array[0].itemSize, gl.FLOAT, false, 0, 0);
 
-        gl.drawArrays(gl.TRIANGLE_STRIP, 0, this.ctx.buffers.quadVertexPositionBuffer!.numItems);
+        gl.drawArrays(gl.TRIANGLE_STRIP, 0, this.ctx.buffers.quadVertexPositionBuffer_array[0].numItems);
 
         this.flag = !this.flag
     }
@@ -138,15 +138,15 @@ export class FlameIterator {
             gl.bindTexture(gl.TEXTURE_2D, this.ctx.textures._texture0);
         }
 
-        gl.bindBuffer(gl.ARRAY_BUFFER, this.ctx.buffers.pointsVertexPositionBuffer);
-        gl.vertexAttribPointer(this.ctx.shaders.prog_points_array[0].vertexPositionAttribute, this.ctx.buffers.pointsVertexPositionBuffer!.itemSize, gl.FLOAT, false, 0, 0);
+        gl.bindBuffer(gl.ARRAY_BUFFER, this.ctx.buffers.pointsVertexPositionBuffer_array[0]);
+        gl.vertexAttribPointer(this.ctx.shaders.prog_points_array[0].vertexPositionAttribute, this.ctx.buffers.pointsVertexPositionBuffer_array[0].itemSize, gl.FLOAT, false, 0, 0);
 
         gl.enable(gl.BLEND);
         gl.blendFunc(gl.ONE, gl.ONE);
 
         gl.bindFramebuffer(gl.FRAMEBUFFER, this.ctx.framebuffers.FBO2);
 
-        gl.drawArrays(gl.POINTS, 0, this.ctx.buffers.pointsVertexPositionBuffer!.numItems);
+        gl.drawArrays(gl.POINTS, 0, this.ctx.buffers.pointsVertexPositionBuffer_array[0].numItems);
 
         gl.disable(gl.BLEND);
     }

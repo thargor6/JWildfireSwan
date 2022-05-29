@@ -24,46 +24,54 @@ interface PositionBuffer extends WebGLBuffer {
 }
 
 export class Buffers implements CloseableBuffers {
-    pointsVertexPositionBuffer: PositionBuffer | null;
-    quadVertexPositionBuffer: PositionBuffer | null;
+    pointsVertexPositionBuffer_array: Array<PositionBuffer> = []
+    quadVertexPositionBuffer_array: Array<PositionBuffer> = []
 
     constructor(private gl: WebGLRenderingContext, shaders: WebglShaders, swarm_size: number) {
-        this.pointsVertexPositionBuffer = gl.createBuffer() as PositionBuffer;
-        gl.bindBuffer(gl.ARRAY_BUFFER, this.pointsVertexPositionBuffer);
-        var vertices = [];
-        var N = swarm_size;
+        let pointsVertexPositionBuffer = gl.createBuffer() as PositionBuffer
+        gl.bindBuffer(gl.ARRAY_BUFFER, pointsVertexPositionBuffer)
+        var vertices = []
+        var N = swarm_size
         for(var x = 0; x < N; x++) {
             for(var y = 0; y < N; y++) {
-                vertices.push(x / N, y / N, 0.0);
+                vertices.push(x / N, y / N, 0.0)
             }
         }
-        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
-        this.pointsVertexPositionBuffer!.itemSize = 3;
-        this.pointsVertexPositionBuffer!.numItems = N * N;
-        gl.vertexAttribPointer(shaders.prog_points_array[0].vertexPositionAttribute, this.pointsVertexPositionBuffer.itemSize, gl.FLOAT, false, 0, 0);
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW)
+        pointsVertexPositionBuffer!.itemSize = 3
+        pointsVertexPositionBuffer!.numItems = N * N
+        gl.vertexAttribPointer(shaders.prog_points_array[0].vertexPositionAttribute, pointsVertexPositionBuffer.itemSize, gl.FLOAT, false, 0, 0)
+        this.pointsVertexPositionBuffer_array[0] = pointsVertexPositionBuffer
 
-        this.quadVertexPositionBuffer = gl.createBuffer() as PositionBuffer;
-        gl.bindBuffer(gl.ARRAY_BUFFER, this.quadVertexPositionBuffer);
+        let quadVertexPositionBuffer = gl.createBuffer() as PositionBuffer
+        gl.bindBuffer(gl.ARRAY_BUFFER, quadVertexPositionBuffer)
         var squareData = new Float32Array([
             -1, -1,
             1, -1,
             -1, 1,
             1, 1
-        ]);
-        this.quadVertexPositionBuffer!.itemSize = 2;
-        this.quadVertexPositionBuffer!.numItems = 4;
-        gl.bufferData(gl.ARRAY_BUFFER, squareData, gl.STATIC_DRAW);
-        gl.vertexAttribPointer(shaders.prog_comp_array[0].vertexPositionAttribute, this.quadVertexPositionBuffer.itemSize, gl.FLOAT, false, 0, 0);
+        ])
+        quadVertexPositionBuffer!.itemSize = 2
+        quadVertexPositionBuffer!.numItems = 4
+        gl.bufferData(gl.ARRAY_BUFFER, squareData, gl.STATIC_DRAW)
+        gl.vertexAttribPointer(shaders.prog_comp_array[0].vertexPositionAttribute, quadVertexPositionBuffer.itemSize, gl.FLOAT, false, 0, 0)
+        this.quadVertexPositionBuffer_array[0] = quadVertexPositionBuffer
     }
 
     closeBuffers = ()=> {
-        if(this.pointsVertexPositionBuffer) {
-            this.gl.deleteBuffer(this.pointsVertexPositionBuffer)
-            this.pointsVertexPositionBuffer = null
+        for(let i=0;i<this.pointsVertexPositionBuffer_array.length;i++) {
+            if(this.pointsVertexPositionBuffer_array[0]) {
+                this.gl.deleteBuffer(this.pointsVertexPositionBuffer_array[i])
+
+            }
         }
-        if(this.quadVertexPositionBuffer) {
-            this.gl.deleteBuffer(this.quadVertexPositionBuffer)
-            this.quadVertexPositionBuffer = null
+        this.pointsVertexPositionBuffer_array = []
+
+        for(let i=0;i<this.quadVertexPositionBuffer_array.length;i++) {
+            if(this.quadVertexPositionBuffer_array[i]) {
+                this.gl.deleteBuffer(this.quadVertexPositionBuffer_array[i])
+            }
         }
+        this.quadVertexPositionBuffer_array = []
     }
 }
