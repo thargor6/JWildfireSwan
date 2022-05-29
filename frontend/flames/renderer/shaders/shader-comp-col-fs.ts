@@ -27,24 +27,15 @@ precision highp float;
 uniform sampler2D uTexSamp;
 uniform sampler2D pTexSamp;
 uniform sampler2D gradTexSamp;
-uniform sampler2D motionBlurTimeSamp;
-uniform float seed;
-uniform float seed2;
-uniform float seed3;
-
-// Rand
-/*
-float rand(vec2 co) {
-return fract(sin(dot(co.xy, vec2(12.9898 * seed, 78.233 * seed))) * 43758.5453);
-}
-*/
+uniform sampler2D motionBlurTimeStamp;
+uniform float layerCoord;
 
 void main(void) {
   vec2 tex = gl_FragCoord.xy / <%= RESOLUTION %>;
   vec3 col = texture2D(uTexSamp, tex).rgb;
   float color = fract(texture2D(pTexSamp, tex).w);
-  float lDiminish = texture2D(motionBlurTimeSamp, tex).y;  
-  vec2 gradPos = vec2(color, 0.5);
+  float lDiminish = texture2D(motionBlurTimeStamp, tex).y;  
+  vec2 gradPos = vec2(color, layerCoord);
   vec3 clr = texture2D(gradTexSamp, gradPos).rgb * lDiminish;
   gl_FragColor = vec4(clr, 1.0);
 }

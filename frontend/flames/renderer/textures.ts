@@ -33,18 +33,11 @@ export class Textures implements CloseableBuffers {
           gl.bindTexture(gl.TEXTURE_2D, this.gradient)
           let grad = [], gradSize = 256
           for (let i = 0; i < gradSize; i++) {
+            let layerIdx = Math.trunc( i / (gradSize / flame.layers.length))
             for (let j = 0; j < gradSize; j++) {
-              let r,g,b;
-              if(i<flame.layers.length) {
-                r = flame.layers[i].gradient[j].r
-                g = flame.layers[i].gradient[j].g
-                b = flame.layers[i].gradient[j].b
-              }
-              else {
-                r = flame.layers[flame.layers.length-1].gradient[j].r
-                g = flame.layers[flame.layers.length-1].gradient[j].g
-                b = flame.layers[flame.layers.length-1].gradient[j].b
-              }
+              let r = flame.layers[layerIdx].gradient[j].r
+              let g = flame.layers[layerIdx].gradient[j].g
+              let b = flame.layers[layerIdx].gradient[j].b
               grad.push(r, g, b, 0)
             }
           }

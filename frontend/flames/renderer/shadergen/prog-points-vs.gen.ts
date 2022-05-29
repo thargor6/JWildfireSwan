@@ -32,7 +32,7 @@ export class ProgPointsVertexShaderGenerator {
         
         uniform sampler2D uTexSamp_Points;
         uniform sampler2D uTexSamp_Colors;
-        uniform sampler2D motionBlurTimeSamp;
+        uniform sampler2D motionBlurTimeStamp;
         
         uniform float seed;            
         uniform float time;
@@ -49,7 +49,7 @@ export class ProgPointsVertexShaderGenerator {
         
             vec3 point = texture2D(uTexSamp_Points, tex).rgb;
             vec4 color = texture2D(uTexSamp_Colors, tex);
-            float lTime = texture2D(motionBlurTimeSamp, tex).x;
+            float lTime = texture2D(motionBlurTimeStamp, tex).x;
             
             fragColor = color;
             RNGState rngState = RNGState(rand0(tex));

@@ -46,7 +46,7 @@ export class FlameIterator {
             gl.uniform1f(this.ctx.shaders.prog_comp_array[layerIdx].seed3, seed3);
             gl.uniform1f(this.ctx.shaders.prog_comp_array[layerIdx].time, this.settings.time);
             gl.uniform1i(this.ctx.shaders.prog_comp_array[layerIdx].uTexSamp, 0);
-            gl.uniform1i(this.ctx.shaders.prog_comp_array[layerIdx].motionBlurTimeSamp, 1);
+            gl.uniform1i(this.ctx.shaders.prog_comp_array[layerIdx].motionBlurTimeStamp, 1);
 
             gl.activeTexture(gl.TEXTURE1);
             gl.bindTexture(gl.TEXTURE_2D, this.ctx.textures.motionBlurTime);
@@ -68,14 +68,12 @@ export class FlameIterator {
             // C += Ci
             gl.useProgram(this.ctx.shaders.prog_comp_col);
 
-            // TODO remove seed
-            gl.uniform1f(this.ctx.shaders.prog_comp_col!.seed, seed);
-            gl.uniform1f(this.ctx.shaders.prog_comp_col!.seed2, seed2);
-            gl.uniform1f(this.ctx.shaders.prog_comp_col!.seed3, seed3);
+
+            gl.uniform1f(this.ctx.shaders.prog_comp_col!.layerCoord, (layerIdx + 0.5) / this.flame.layers.length);
             gl.uniform1i(this.ctx.shaders.prog_comp_col!.uTexSamp, 0);
             gl.uniform1i(this.ctx.shaders.prog_comp_col!.pTexSamp, 1);
             gl.uniform1i(this.ctx.shaders.prog_comp_col!.gradTexSamp, 2);
-            gl.uniform1i(this.ctx.shaders.prog_comp_col!.motionBlurTimeSamp, 3);
+            gl.uniform1i(this.ctx.shaders.prog_comp_col!.motionBlurTimeStamp, 3);
 
             if (this.flag) {
                 gl.bindFramebuffer(gl.FRAMEBUFFER, this.ctx.framebuffers._FBO1_array[layerIdx]);
@@ -114,7 +112,7 @@ export class FlameIterator {
 
             gl.uniform1i(this.ctx.shaders.prog_points_array[layerIdx].uTexSamp_Points, 0);
             gl.uniform1i(this.ctx.shaders.prog_points_array[layerIdx].uTexSamp_Colors, 1);
-            gl.uniform1i(this.ctx.shaders.prog_points_array[layerIdx].motionBlurTimeSamp, 2);
+            gl.uniform1i(this.ctx.shaders.prog_points_array[layerIdx].motionBlurTimeStamp, 2);
             gl.uniform1f(this.ctx.shaders.prog_points_array[layerIdx].time, this.settings.time);
             gl.uniform1f(this.ctx.shaders.prog_points_array[layerIdx].seed, Math.random());
 
