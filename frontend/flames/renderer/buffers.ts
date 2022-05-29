@@ -40,7 +40,7 @@ export class Buffers implements CloseableBuffers {
         gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
         this.pointsVertexPositionBuffer!.itemSize = 3;
         this.pointsVertexPositionBuffer!.numItems = N * N;
-        gl.vertexAttribPointer(shaders.prog_points!.vertexPositionAttribute, this.pointsVertexPositionBuffer.itemSize, gl.FLOAT, false, 0, 0);
+        gl.vertexAttribPointer(shaders.prog_points_array[0].vertexPositionAttribute, this.pointsVertexPositionBuffer.itemSize, gl.FLOAT, false, 0, 0);
 
         this.quadVertexPositionBuffer = gl.createBuffer() as PositionBuffer;
         gl.bindBuffer(gl.ARRAY_BUFFER, this.quadVertexPositionBuffer);
@@ -53,7 +53,7 @@ export class Buffers implements CloseableBuffers {
         this.quadVertexPositionBuffer!.itemSize = 2;
         this.quadVertexPositionBuffer!.numItems = 4;
         gl.bufferData(gl.ARRAY_BUFFER, squareData, gl.STATIC_DRAW);
-        gl.vertexAttribPointer(shaders.prog_comp!.vertexPositionAttribute, this.quadVertexPositionBuffer.itemSize, gl.FLOAT, false, 0, 0);
+        gl.vertexAttribPointer(shaders.prog_comp_array[0].vertexPositionAttribute, this.quadVertexPositionBuffer.itemSize, gl.FLOAT, false, 0, 0);
     }
 
     closeBuffers = ()=> {

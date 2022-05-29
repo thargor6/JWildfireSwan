@@ -26,7 +26,6 @@ import {CompPointsFragmentShaderGenerator} from "Frontend/flames/renderer/shader
 import {ProgPointsVertexShaderGenerator} from "Frontend/flames/renderer/shadergen/prog-points-vs.gen";
 import {DenoiserType} from "Frontend/flames/model/flame";
 import {shader_show_with_denoiser_fs} from "Frontend/flames/renderer/shaders/shader-show-denoise-fs";
-import {Parameters} from "Frontend/flames/model/parameters";
 
 interface ComputePointsProgram extends WebGLProgram {
     vertexPositionAttribute: GLint;
@@ -74,38 +73,44 @@ interface ShowRawBufferProgram extends WebGLProgram {
 }
 
 export class WebglShaders implements CloseableBuffers{
-    prog_points: ComputePointsProgram | null
-    prog_comp: IteratePointsProgram | null
+    prog_points_array: Array<ComputePointsProgram> = []
+    prog_comp_array: Array<IteratePointsProgram> = []
     prog_comp_col: ComputeColorsProgram | null
     prog_show: ShowHistogramProgram | null
     prog_show_raw: ShowRawBufferProgram | null
-    progPointsVertexShader: string
-    compPointsFragmentShader: string
+    progPointsVertexShader_array: string[] = []
+    compPointsFragmentShader_array: string[] = []
 
     constructor(private gl: WebGLRenderingContext, canvas: HTMLCanvasElement, canvas_size: number, swarm_size: number, private flame: RenderFlame) {
-        this.progPointsVertexShader = new ProgPointsVertexShaderGenerator().createShader(flame, flame.layers[0], canvas_size);
-        this.prog_points = compileShaderDirect(gl, this.progPointsVertexShader, shader_points_fs, {}) as ComputePointsProgram;
-        this.prog_points.vertexPositionAttribute = gl.getAttribLocation(this.prog_points, "aVertexPosition");
-        gl.enableVertexAttribArray(this.prog_points.vertexPositionAttribute);
-        this.prog_points.color = gl.getUniformLocation(this.prog_points, "color")!;
-        this.prog_points.uTexSamp_Points = gl.getUniformLocation(this.prog_points, "uTexSamp_Points")!;
-        this.prog_points.uTexSamp_Colors = gl.getUniformLocation(this.prog_points, "uTexSamp_Colors")!;
-        this.prog_points.motionBlurTimeSamp = gl.getUniformLocation(this.prog_points, "motionBlurTimeSamp")!;
-        this.prog_points.time = gl.getUniformLocation(this.prog_points, "time")!;
-        this.prog_points.seed = gl.getUniformLocation(this.prog_points, "seed")!;
+        for(let layerIdx=0;layerIdx<flame.layers.length;layerIdx++) {
+            const progPointsVertexShader = new ProgPointsVertexShaderGenerator().createShader(flame, flame.layers[layerIdx], canvas_size);
+            let prog_points = compileShaderDirect(gl, progPointsVertexShader, shader_points_fs, {}) as ComputePointsProgram;
+            prog_points.vertexPositionAttribute = gl.getAttribLocation(prog_points, "aVertexPosition");
+            gl.enableVertexAttribArray(prog_points.vertexPositionAttribute);
+            prog_points.color = gl.getUniformLocation(prog_points, "color")!;
+            prog_points.uTexSamp_Points = gl.getUniformLocation(prog_points, "uTexSamp_Points")!;
+            prog_points.uTexSamp_Colors = gl.getUniformLocation(prog_points, "uTexSamp_Colors")!;
+            prog_points.motionBlurTimeSamp = gl.getUniformLocation(prog_points, "motionBlurTimeSamp")!;
+            prog_points.time = gl.getUniformLocation(prog_points, "time")!;
+            prog_points.seed = gl.getUniformLocation(prog_points, "seed")!;
+            this.prog_points_array[layerIdx] = prog_points
+            this.compPointsFragmentShader_array[layerIdx] = progPointsVertexShader
 
-        this.compPointsFragmentShader = new CompPointsFragmentShaderGenerator().createShader(flame, flame.layers[0]);
-        // console.log('FLAME', flame)
-        // console.log(this.compPointsFragmentShader)
-        this.prog_comp = compileShaderDirect(gl, shader_direct_vs, this.compPointsFragmentShader, {RESOLUTION: swarm_size}) as IteratePointsProgram;
-        this.prog_comp.vertexPositionAttribute = gl.getAttribLocation(this.prog_comp, "aVertexPosition");
-        gl.enableVertexAttribArray(this.prog_comp.vertexPositionAttribute);
-        this.prog_comp.uTexSamp = gl.getUniformLocation(this.prog_comp, "uTexSamp")!;
-        this.prog_comp.motionBlurTimeSamp = gl.getUniformLocation(this.prog_comp, "motionBlurTimeSamp")!;
-        this.prog_comp.seed = gl.getUniformLocation(this.prog_comp, "seed")!;
-        this.prog_comp.seed2 = gl.getUniformLocation(this.prog_comp, "seed2")!;
-        this.prog_comp.seed3 = gl.getUniformLocation(this.prog_comp, "seed3")!;
-        this.prog_comp.time = gl.getUniformLocation(this.prog_comp, "time")!;
+            const compPointsFragmentShader = new CompPointsFragmentShaderGenerator().createShader(flame, flame.layers[layerIdx]);
+            // console.log('FLAME', flame)
+            // console.log(this.compPointsFragmentShader)
+            let prog_comp = compileShaderDirect(gl, shader_direct_vs, compPointsFragmentShader, {RESOLUTION: swarm_size}) as IteratePointsProgram;
+            prog_comp.vertexPositionAttribute = gl.getAttribLocation(prog_comp, "aVertexPosition");
+            gl.enableVertexAttribArray(prog_comp.vertexPositionAttribute);
+            prog_comp.uTexSamp = gl.getUniformLocation(prog_comp, "uTexSamp")!;
+            prog_comp.motionBlurTimeSamp = gl.getUniformLocation(prog_comp, "motionBlurTimeSamp")!;
+            prog_comp.seed = gl.getUniformLocation(prog_comp, "seed")!;
+            prog_comp.seed2 = gl.getUniformLocation(prog_comp, "seed2")!;
+            prog_comp.seed3 = gl.getUniformLocation(prog_comp, "seed3")!;
+            prog_comp.time = gl.getUniformLocation(prog_comp, "time")!;
+            this.compPointsFragmentShader_array[layerIdx] = compPointsFragmentShader
+            this.prog_comp_array[layerIdx] = prog_comp
+        }
 
         this.prog_comp_col = compileShaderDirect(gl, shader_direct_vs, shader_comp_col_fs, {RESOLUTION: swarm_size}) as ComputeColorsProgram;
         this.prog_comp_col.vertexPositionAttribute = gl.getAttribLocation(this.prog_comp_col, "aVertexPosition");
@@ -172,14 +177,22 @@ export class WebglShaders implements CloseableBuffers{
     }
 
     closeBuffers = ()=> {
-        if(this.prog_points) {
-            this.gl.deleteProgram(this.prog_points)
-            this.prog_points = null
+        for(let i=0;i<this.prog_points_array.length;i++) {
+            if(this.prog_points_array[i]) {
+                this.gl.deleteProgram(this.prog_points_array[i])
+            }
         }
-        if(this.prog_comp) {
-            this.gl.deleteProgram(this.prog_comp)
-            this.prog_comp = null
+        this.prog_points_array = []
+        this.compPointsFragmentShader_array = []
+
+        for(let i=0;i<this.compPointsFragmentShader_array.length;i++) {
+            if(this.prog_comp_array[0]) {
+                this.gl.deleteProgram(this.prog_comp_array[i])
+            }
         }
+        this.compPointsFragmentShader_array = []
+        this.progPointsVertexShader_array = []
+
         if(this.prog_comp_col) {
             this.gl.deleteProgram(this.prog_comp_col)
             this.prog_comp_col = null

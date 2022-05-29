@@ -59,7 +59,6 @@ export class FlameRenderer implements CloseableBuffers {
     framebuffers: Framebuffers | null
     textures: Textures | null
 
-
     onRenderCancelledCallback: OnRenderCancelledCallback | undefined = undefined
     isFinished = true
 

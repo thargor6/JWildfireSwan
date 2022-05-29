@@ -40,7 +40,7 @@ export class FlameRendererDisplay {
         gl.uniform1f(this.ctx.shaders.prog_show!.brightness, this.settings.brightness);
         gl.bindFramebuffer(gl.FRAMEBUFFER, null);
         gl.bindBuffer(gl.ARRAY_BUFFER, this.ctx.buffers.quadVertexPositionBuffer);
-        gl.vertexAttribPointer(this.ctx.shaders.prog_comp!.vertexPositionAttribute, this.ctx.buffers.quadVertexPositionBuffer!.itemSize, gl.FLOAT, false, 0, 0);
+        gl.vertexAttribPointer(this.ctx.shaders.prog_comp_array[0].vertexPositionAttribute, this.ctx.buffers.quadVertexPositionBuffer!.itemSize, gl.FLOAT, false, 0, 0);
         gl.drawArrays(gl.TRIANGLE_STRIP, 0, this.ctx.buffers.quadVertexPositionBuffer!.numItems);
         gl.disable(gl.SCISSOR_TEST);
     }
@@ -60,7 +60,7 @@ export class FlameRendererDisplay {
         gl.uniform1i(this.ctx.shaders.prog_show_raw!.displayMode, 0);
         gl.bindFramebuffer(gl.FRAMEBUFFER, null);
         gl.bindBuffer(gl.ARRAY_BUFFER, this.ctx.buffers.quadVertexPositionBuffer);
-        gl.vertexAttribPointer(this.ctx.shaders.prog_comp!.vertexPositionAttribute, this.ctx.buffers.quadVertexPositionBuffer!.itemSize, gl.FLOAT, false, 0, 0);
+        gl.vertexAttribPointer(this.ctx.shaders.prog_comp_array[0].vertexPositionAttribute, this.ctx.buffers.quadVertexPositionBuffer!.itemSize, gl.FLOAT, false, 0, 0);
         gl.drawArrays(gl.TRIANGLE_STRIP, 0, this.ctx.buffers.quadVertexPositionBuffer!.numItems);
     }
 
@@ -79,7 +79,7 @@ export class FlameRendererDisplay {
         gl.uniform1i(this.ctx.shaders.prog_show_raw!.displayMode, 0);
         gl.bindFramebuffer(gl.FRAMEBUFFER, null);
         gl.bindBuffer(gl.ARRAY_BUFFER, this.ctx.buffers.quadVertexPositionBuffer);
-        gl.vertexAttribPointer(this.ctx.shaders.prog_comp!.vertexPositionAttribute, this.ctx.buffers.quadVertexPositionBuffer!.itemSize, gl.FLOAT, false, 0, 0);
+        gl.vertexAttribPointer(this.ctx.shaders.prog_comp_array[0].vertexPositionAttribute, this.ctx.buffers.quadVertexPositionBuffer!.itemSize, gl.FLOAT, false, 0, 0);
         gl.drawArrays(gl.TRIANGLE_STRIP, 0, this.ctx.buffers.quadVertexPositionBuffer!.numItems);
     }
 
@@ -98,7 +98,7 @@ export class FlameRendererDisplay {
         gl.uniform1i(this.ctx.shaders.prog_show_raw!.displayMode, 1);
         gl.bindFramebuffer(gl.FRAMEBUFFER, null);
         gl.bindBuffer(gl.ARRAY_BUFFER, this.ctx.buffers.quadVertexPositionBuffer);
-        gl.vertexAttribPointer(this.ctx.shaders.prog_comp!.vertexPositionAttribute, this.ctx.buffers.quadVertexPositionBuffer!.itemSize, gl.FLOAT, false, 0, 0);
+        gl.vertexAttribPointer(this.ctx.shaders.prog_comp_array[0].vertexPositionAttribute, this.ctx.buffers.quadVertexPositionBuffer!.itemSize, gl.FLOAT, false, 0, 0);
         gl.drawArrays(gl.TRIANGLE_STRIP, 0, this.ctx.buffers.quadVertexPositionBuffer!.numItems);
     }
 
@@ -117,7 +117,7 @@ export class FlameRendererDisplay {
         gl.uniform1i(this.ctx.shaders.prog_show_raw!.displayMode, 2);
         gl.bindFramebuffer(gl.FRAMEBUFFER, null);
         gl.bindBuffer(gl.ARRAY_BUFFER, this.ctx.buffers.quadVertexPositionBuffer);
-        gl.vertexAttribPointer(this.ctx.shaders.prog_comp!.vertexPositionAttribute, this.ctx.buffers.quadVertexPositionBuffer!.itemSize, gl.FLOAT, false, 0, 0);
+        gl.vertexAttribPointer(this.ctx.shaders.prog_comp_array[0].vertexPositionAttribute, this.ctx.buffers.quadVertexPositionBuffer!.itemSize, gl.FLOAT, false, 0, 0);
         gl.drawArrays(gl.TRIANGLE_STRIP, 0, this.ctx.buffers.quadVertexPositionBuffer!.numItems);
     }
 
