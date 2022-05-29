@@ -17,6 +17,7 @@
 
 import {WebglShaders} from "./shadergen/webgl-shaders";
 import {CloseableBuffers} from "Frontend/flames/renderer/shadergen/webgl-shader-utils";
+import {RenderFlame} from "Frontend/flames/model/render-flame";
 
 interface PositionBuffer extends WebGLBuffer {
     itemSize: number;
@@ -27,40 +28,42 @@ export class Buffers implements CloseableBuffers {
     pointsVertexPositionBuffer_array: Array<PositionBuffer> = []
     quadVertexPositionBuffer_array: Array<PositionBuffer> = []
 
-    constructor(private gl: WebGLRenderingContext, shaders: WebglShaders, swarm_size: number) {
-        let pointsVertexPositionBuffer = gl.createBuffer() as PositionBuffer
-        gl.bindBuffer(gl.ARRAY_BUFFER, pointsVertexPositionBuffer)
-        var vertices = []
-        var N = swarm_size
-        for(var x = 0; x < N; x++) {
-            for(var y = 0; y < N; y++) {
-                vertices.push(x / N, y / N, 0.0)
+    constructor(private gl: WebGLRenderingContext, shaders: WebglShaders, swarm_size: number, private flame: RenderFlame) {
+        for(let layerIdx=0;layerIdx<flame.layers.length;layerIdx++) {
+            let pointsVertexPositionBuffer = gl.createBuffer() as PositionBuffer
+            gl.bindBuffer(gl.ARRAY_BUFFER, pointsVertexPositionBuffer)
+            var vertices = []
+            var N = swarm_size
+            for (var x = 0; x < N; x++) {
+                for (var y = 0; y < N; y++) {
+                    vertices.push(x / N, y / N, 0.0)
+                }
             }
-        }
-        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW)
-        pointsVertexPositionBuffer!.itemSize = 3
-        pointsVertexPositionBuffer!.numItems = N * N
-        gl.vertexAttribPointer(shaders.prog_points_array[0].vertexPositionAttribute, pointsVertexPositionBuffer.itemSize, gl.FLOAT, false, 0, 0)
-        this.pointsVertexPositionBuffer_array[0] = pointsVertexPositionBuffer
+            gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW)
+            pointsVertexPositionBuffer!.itemSize = 3
+            pointsVertexPositionBuffer!.numItems = N * N
+            gl.vertexAttribPointer(shaders.prog_points_array[layerIdx].vertexPositionAttribute, pointsVertexPositionBuffer.itemSize, gl.FLOAT, false, 0, 0)
+            this.pointsVertexPositionBuffer_array[layerIdx] = pointsVertexPositionBuffer
 
-        let quadVertexPositionBuffer = gl.createBuffer() as PositionBuffer
-        gl.bindBuffer(gl.ARRAY_BUFFER, quadVertexPositionBuffer)
-        var squareData = new Float32Array([
-            -1, -1,
-            1, -1,
-            -1, 1,
-            1, 1
-        ])
-        quadVertexPositionBuffer!.itemSize = 2
-        quadVertexPositionBuffer!.numItems = 4
-        gl.bufferData(gl.ARRAY_BUFFER, squareData, gl.STATIC_DRAW)
-        gl.vertexAttribPointer(shaders.prog_comp_array[0].vertexPositionAttribute, quadVertexPositionBuffer.itemSize, gl.FLOAT, false, 0, 0)
-        this.quadVertexPositionBuffer_array[0] = quadVertexPositionBuffer
+            let quadVertexPositionBuffer = gl.createBuffer() as PositionBuffer
+            gl.bindBuffer(gl.ARRAY_BUFFER, quadVertexPositionBuffer)
+            var squareData = new Float32Array([
+                -1, -1,
+                1, -1,
+                -1, 1,
+                1, 1
+            ])
+            quadVertexPositionBuffer!.itemSize = 2
+            quadVertexPositionBuffer!.numItems = 4
+            gl.bufferData(gl.ARRAY_BUFFER, squareData, gl.STATIC_DRAW)
+            gl.vertexAttribPointer(shaders.prog_comp_array[layerIdx].vertexPositionAttribute, quadVertexPositionBuffer.itemSize, gl.FLOAT, false, 0, 0)
+            this.quadVertexPositionBuffer_array[layerIdx] = quadVertexPositionBuffer
+        }
     }
 
     closeBuffers = ()=> {
         for(let i=0;i<this.pointsVertexPositionBuffer_array.length;i++) {
-            if(this.pointsVertexPositionBuffer_array[0]) {
+            if(this.pointsVertexPositionBuffer_array[i]) {
                 this.gl.deleteBuffer(this.pointsVertexPositionBuffer_array[i])
 
             }

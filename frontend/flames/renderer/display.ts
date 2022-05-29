@@ -52,7 +52,7 @@ export class FlameRendererDisplay {
         gl.viewport(0, 0, canvas_size, canvas_size);
         gl.useProgram(this.ctx.shaders.prog_show_raw);
         gl.activeTexture(gl.TEXTURE0);
-        gl.bindTexture(gl.TEXTURE_2D, this.ctx.textures.texture1);
+        gl.bindTexture(gl.TEXTURE_2D, this.ctx.textures.texture1_array[0]);
         gl.uniform1i(this.ctx.shaders.prog_show_raw!.uTexSamp, 0);
         gl.uniform1i(this.ctx.shaders.prog_show_raw!.pTexSamp, 1);
         gl.uniform1i(this.ctx.shaders.prog_show_raw!.gradTexSamp,2);
@@ -71,7 +71,7 @@ export class FlameRendererDisplay {
         gl.viewport(0, 0, canvas_size, canvas_size);
         gl.useProgram(this.ctx.shaders.prog_show_raw);
         gl.activeTexture(gl.TEXTURE0);
-        gl.bindTexture(gl.TEXTURE_2D, this.ctx.textures._texture1);
+        gl.bindTexture(gl.TEXTURE_2D, this.ctx.textures._texture1_array[0]);
         gl.uniform1i(this.ctx.shaders.prog_show_raw!.uTexSamp, 0);
         gl.uniform1i(this.ctx.shaders.prog_show_raw!.pTexSamp, 1);
         gl.uniform1i(this.ctx.shaders.prog_show_raw!.gradTexSamp, 2);
@@ -90,7 +90,7 @@ export class FlameRendererDisplay {
         gl.viewport(0, 0, canvas_size, canvas_size);
         gl.useProgram(this.ctx.shaders.prog_show_raw);
         gl.activeTexture(gl.TEXTURE0);
-        gl.bindTexture(gl.TEXTURE_2D, this.ctx.textures._texture1);
+        gl.bindTexture(gl.TEXTURE_2D, this.ctx.textures._texture1_array[0]);
         gl.uniform1i(this.ctx.shaders.prog_show_raw!.uTexSamp, 0);
         gl.uniform1i(this.ctx.shaders.prog_show_raw!.pTexSamp, 1);
         gl.uniform1i(this.ctx.shaders.prog_show_raw!.gradTexSamp, 2);
@@ -109,7 +109,7 @@ export class FlameRendererDisplay {
         gl.viewport(0, 0, canvas_size, canvas_size);
         gl.useProgram(this.ctx.shaders.prog_show_raw);
         gl.activeTexture(gl.TEXTURE0);
-        gl.bindTexture(gl.TEXTURE_2D, this.ctx.textures._texture1);
+        gl.bindTexture(gl.TEXTURE_2D, this.ctx.textures._texture1_array[0]);
         gl.uniform1i(this.ctx.shaders.prog_show_raw!.uTexSamp, 0);
         gl.uniform1i(this.ctx.shaders.prog_show_raw!.pTexSamp, 1);
         gl.uniform1i(this.ctx.shaders.prog_show_raw!.gradTexSamp, 2);
