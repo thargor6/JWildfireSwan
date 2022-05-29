@@ -100,8 +100,8 @@ export class FlameRenderer implements CloseableBuffers {
         this.ctx = new FlameRenderContext(gl, this.shaders, this.buffers, this.textures, this.framebuffers)
         this.settings = new FlameRenderSettings(1.2, this.canvas_size, this.swarm_size, cropRegion,
           1, 0.0, displayMode)
-        this.display = new FlameRendererDisplay(this.ctx, this.settings)
-        this.iterator = new FlameIterator(this.ctx, this.settings)
+        this.display = new FlameRendererDisplay(this.ctx, this.settings, renderFlame)
+        this.iterator = new FlameIterator(this.ctx, this.settings, renderFlame)
 
         this.startTimeStampInMs = getTimeStamp()
         this.currTimeStampInMs = this.startTimeStampInMs

@@ -17,9 +17,10 @@
 
 import {FlameRenderContext} from "./render-context";
 import {FlameRenderSettings} from "./render-settings";
+import {RenderFlame} from "Frontend/flames/model/render-flame";
 
 export class FlameRendererDisplay {
-    constructor(public ctx: FlameRenderContext, public settings: FlameRenderSettings) {}
+    constructor(public ctx: FlameRenderContext, public settings: FlameRenderSettings, private flame: RenderFlame) {}
 
     public displayFlame() {
         const gl = this.ctx.gl

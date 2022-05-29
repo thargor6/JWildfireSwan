@@ -17,10 +17,11 @@
 
 import {FlameRenderContext} from "./render-context";
 import {FlameRenderSettings} from "./render-settings";
+import {RenderFlame} from "Frontend/flames/model/render-flame";
 
 export class FlameIterator {
 
-    constructor(public ctx: FlameRenderContext, public settings: FlameRenderSettings) {
+    constructor(public ctx: FlameRenderContext, public settings: FlameRenderSettings, private flame: RenderFlame) {
     }
 
     private flag = true;
@@ -38,68 +39,67 @@ export class FlameIterator {
         var seed3 = Math.random();
 
         // P = fi(P)
-        gl.useProgram(this.ctx.shaders.prog_comp_array[0]);
+        for(let layerIdx=0;layerIdx<this.flame.layers.length;layerIdx++) {
+            gl.useProgram(this.ctx.shaders.prog_comp_array[layerIdx]);
+            gl.uniform1f(this.ctx.shaders.prog_comp_array[layerIdx].seed, seed);
+            gl.uniform1f(this.ctx.shaders.prog_comp_array[layerIdx].seed2, seed2);
+            gl.uniform1f(this.ctx.shaders.prog_comp_array[layerIdx].seed3, seed3);
+            gl.uniform1f(this.ctx.shaders.prog_comp_array[layerIdx].time, this.settings.time);
+            gl.uniform1i(this.ctx.shaders.prog_comp_array[layerIdx].uTexSamp, 0);
+            gl.uniform1i(this.ctx.shaders.prog_comp_array[layerIdx].motionBlurTimeSamp, 1);
 
-
-        gl.uniform1f(this.ctx.shaders.prog_comp_array[0].seed, seed);
-        gl.uniform1f(this.ctx.shaders.prog_comp_array[0].seed2, seed2);
-        gl.uniform1f(this.ctx.shaders.prog_comp_array[0].seed3, seed3);
-        gl.uniform1f(this.ctx.shaders.prog_comp_array[0].time, this.settings.time );
-        gl.uniform1i(this.ctx.shaders.prog_comp_array[0].uTexSamp, 0);
-        gl.uniform1i(this.ctx.shaders.prog_comp_array[0].motionBlurTimeSamp, 1);
-
-        gl.activeTexture(gl.TEXTURE1);
-        gl.bindTexture(gl.TEXTURE_2D, this.ctx.textures.motionBlurTime);
-
-        gl.activeTexture(gl.TEXTURE0);
-        if(this.flag) {
-            gl.bindFramebuffer(gl.FRAMEBUFFER, this.ctx.framebuffers.FBO1_array[0]);
-            gl.bindTexture(gl.TEXTURE_2D, this.ctx.textures.texture0_array[0]);
-        } else {
-            gl.bindFramebuffer(gl.FRAMEBUFFER, this.ctx.framebuffers.FBO0_array[0]);
-            gl.bindTexture(gl.TEXTURE_2D, this.ctx.textures.texture1_array[0]);
-        }
-
-        gl.bindBuffer(gl.ARRAY_BUFFER, this.ctx.buffers.quadVertexPositionBuffer_array[0]);
-        gl.vertexAttribPointer(this.ctx.shaders.prog_comp_array[0].vertexPositionAttribute, this.ctx.buffers.quadVertexPositionBuffer_array[0].itemSize, gl.FLOAT, false, 0, 0);
-
-        gl.drawArrays(gl.TRIANGLE_STRIP, 0, this.ctx.buffers.quadVertexPositionBuffer_array[0].numItems);
-
-        // C += Ci
-        gl.useProgram(this.ctx.shaders.prog_comp_col);
-
-        // TODO remove seed
-        gl.uniform1f(this.ctx.shaders.prog_comp_col!.seed, seed);
-        gl.uniform1f(this.ctx.shaders.prog_comp_col!.seed2, seed2);
-        gl.uniform1f(this.ctx.shaders.prog_comp_col!.seed3, seed3);
-        gl.uniform1i(this.ctx.shaders.prog_comp_col!.uTexSamp, 0);
-        gl.uniform1i(this.ctx.shaders.prog_comp_col!.pTexSamp, 1);
-        gl.uniform1i(this.ctx.shaders.prog_comp_col!.gradTexSamp, 2);
-        gl.uniform1i(this.ctx.shaders.prog_comp_col!.motionBlurTimeSamp, 3);
-
-        if(this.flag) {
-            gl.bindFramebuffer(gl.FRAMEBUFFER, this.ctx.framebuffers._FBO1_array[0]);
-            gl.activeTexture(gl.TEXTURE0);
-            gl.bindTexture(gl.TEXTURE_2D, this.ctx.textures._texture0_array[0]);
             gl.activeTexture(gl.TEXTURE1);
-            gl.bindTexture(gl.TEXTURE_2D, this.ctx.textures.texture0_array[0]);
-        } else {
-            gl.bindFramebuffer(gl.FRAMEBUFFER, this.ctx.framebuffers._FBO0_array[0]);
+            gl.bindTexture(gl.TEXTURE_2D, this.ctx.textures.motionBlurTime);
+
             gl.activeTexture(gl.TEXTURE0);
-            gl.bindTexture(gl.TEXTURE_2D, this.ctx.textures._texture1_array[0]);
-            gl.activeTexture(gl.TEXTURE1);
-            gl.bindTexture(gl.TEXTURE_2D, this.ctx.textures.texture1_array[0]);
+            if (this.flag) {
+                gl.bindFramebuffer(gl.FRAMEBUFFER, this.ctx.framebuffers.FBO1_array[layerIdx]);
+                gl.bindTexture(gl.TEXTURE_2D, this.ctx.textures.texture0_array[layerIdx]);
+            } else {
+                gl.bindFramebuffer(gl.FRAMEBUFFER, this.ctx.framebuffers.FBO0_array[layerIdx]);
+                gl.bindTexture(gl.TEXTURE_2D, this.ctx.textures.texture1_array[layerIdx]);
+            }
+
+            gl.bindBuffer(gl.ARRAY_BUFFER, this.ctx.buffers.quadVertexPositionBuffer_array[layerIdx]);
+            gl.vertexAttribPointer(this.ctx.shaders.prog_comp_array[layerIdx].vertexPositionAttribute, this.ctx.buffers.quadVertexPositionBuffer_array[layerIdx].itemSize, gl.FLOAT, false, 0, 0);
+
+            gl.drawArrays(gl.TRIANGLE_STRIP, 0, this.ctx.buffers.quadVertexPositionBuffer_array[layerIdx].numItems);
+
+            // C += Ci
+            gl.useProgram(this.ctx.shaders.prog_comp_col);
+
+            // TODO remove seed
+            gl.uniform1f(this.ctx.shaders.prog_comp_col!.seed, seed);
+            gl.uniform1f(this.ctx.shaders.prog_comp_col!.seed2, seed2);
+            gl.uniform1f(this.ctx.shaders.prog_comp_col!.seed3, seed3);
+            gl.uniform1i(this.ctx.shaders.prog_comp_col!.uTexSamp, 0);
+            gl.uniform1i(this.ctx.shaders.prog_comp_col!.pTexSamp, 1);
+            gl.uniform1i(this.ctx.shaders.prog_comp_col!.gradTexSamp, 2);
+            gl.uniform1i(this.ctx.shaders.prog_comp_col!.motionBlurTimeSamp, 3);
+
+            if (this.flag) {
+                gl.bindFramebuffer(gl.FRAMEBUFFER, this.ctx.framebuffers._FBO1_array[layerIdx]);
+                gl.activeTexture(gl.TEXTURE0);
+                gl.bindTexture(gl.TEXTURE_2D, this.ctx.textures._texture0_array[layerIdx]);
+                gl.activeTexture(gl.TEXTURE1);
+                gl.bindTexture(gl.TEXTURE_2D, this.ctx.textures.texture0_array[layerIdx]);
+            } else {
+                gl.bindFramebuffer(gl.FRAMEBUFFER, this.ctx.framebuffers._FBO0_array[layerIdx]);
+                gl.activeTexture(gl.TEXTURE0);
+                gl.bindTexture(gl.TEXTURE_2D, this.ctx.textures._texture1_array[layerIdx]);
+                gl.activeTexture(gl.TEXTURE1);
+                gl.bindTexture(gl.TEXTURE_2D, this.ctx.textures.texture1_array[layerIdx]);
+            }
+            gl.activeTexture(gl.TEXTURE2);
+            gl.bindTexture(gl.TEXTURE_2D, this.ctx.textures.gradient);
+            gl.activeTexture(gl.TEXTURE3);
+            gl.bindTexture(gl.TEXTURE_2D, this.ctx.textures.motionBlurTime);
+
+            gl.bindBuffer(gl.ARRAY_BUFFER, this.ctx.buffers.quadVertexPositionBuffer_array[layerIdx]);
+            gl.vertexAttribPointer(this.ctx.shaders.prog_comp_col!.vertexPositionAttribute, this.ctx.buffers.quadVertexPositionBuffer_array[layerIdx].itemSize, gl.FLOAT, false, 0, 0);
+
+            gl.drawArrays(gl.TRIANGLE_STRIP, 0, this.ctx.buffers.quadVertexPositionBuffer_array[layerIdx].numItems);
         }
-        gl.activeTexture(gl.TEXTURE2);
-        gl.bindTexture(gl.TEXTURE_2D, this.ctx.textures.gradient);
-        gl.activeTexture(gl.TEXTURE3);
-        gl.bindTexture(gl.TEXTURE_2D, this.ctx.textures.motionBlurTime);
-
-        gl.bindBuffer(gl.ARRAY_BUFFER, this.ctx.buffers.quadVertexPositionBuffer_array[0]);
-        gl.vertexAttribPointer(this.ctx.shaders.prog_comp_col!.vertexPositionAttribute, this.ctx.buffers.quadVertexPositionBuffer_array[0].itemSize, gl.FLOAT, false, 0, 0);
-
-        gl.drawArrays(gl.TRIANGLE_STRIP, 0, this.ctx.buffers.quadVertexPositionBuffer_array[0].numItems);
-
         this.flag = !this.flag
     }
 
@@ -109,45 +109,45 @@ export class FlameIterator {
 
         // Plot points into "histogram"
         gl.viewport(0, 0, canvas_size, canvas_size);
+        for(let layerIdx=0;layerIdx<this.flame.layers.length;layerIdx++) {
+            gl.useProgram(this.ctx.shaders.prog_points_array[layerIdx]);
 
-        gl.useProgram(this.ctx.shaders.prog_points_array[0]);
+            gl.uniform1i(this.ctx.shaders.prog_points_array[layerIdx].uTexSamp_Points, 0);
+            gl.uniform1i(this.ctx.shaders.prog_points_array[layerIdx].uTexSamp_Colors, 1);
+            gl.uniform1i(this.ctx.shaders.prog_points_array[layerIdx].motionBlurTimeSamp, 2);
+            gl.uniform1f(this.ctx.shaders.prog_points_array[layerIdx].time, this.settings.time);
+            gl.uniform1f(this.ctx.shaders.prog_points_array[layerIdx].seed, Math.random());
 
-        gl.uniform1i(this.ctx.shaders.prog_points_array[0].uTexSamp_Points, 0);
-        gl.uniform1i(this.ctx.shaders.prog_points_array[0].uTexSamp_Colors, 1);
-        gl.uniform1i(this.ctx.shaders.prog_points_array[0].motionBlurTimeSamp, 2);
-        gl.uniform1f(this.ctx.shaders.prog_points_array[0].time, this.settings.time );
-        gl.uniform1f(this.ctx.shaders.prog_points_array[0].seed, Math.random());
+            gl.activeTexture(gl.TEXTURE2);
+            gl.bindTexture(gl.TEXTURE_2D, this.ctx.textures.gradient);
 
-        gl.activeTexture(gl.TEXTURE2);
-        gl.bindTexture(gl.TEXTURE_2D, this.ctx.textures.gradient);
+            gl.activeTexture(gl.TEXTURE3);
+            gl.bindTexture(gl.TEXTURE_2D, this.ctx.textures.motionBlurTime);
 
-        gl.activeTexture(gl.TEXTURE3);
-        gl.bindTexture(gl.TEXTURE_2D, this.ctx.textures.motionBlurTime);
+            if (this.flag) {
+                gl.activeTexture(gl.TEXTURE0);
+                gl.bindTexture(gl.TEXTURE_2D, this.ctx.textures.texture1_array[layerIdx]);
 
-        if(this.flag) {
-            gl.activeTexture(gl.TEXTURE0);
-            gl.bindTexture(gl.TEXTURE_2D, this.ctx.textures.texture1_array[0]);
+                gl.activeTexture(gl.TEXTURE1);
+                gl.bindTexture(gl.TEXTURE_2D, this.ctx.textures._texture1_array[layerIdx]);
+            } else {
+                gl.activeTexture(gl.TEXTURE0);
+                gl.bindTexture(gl.TEXTURE_2D, this.ctx.textures.texture0_array[layerIdx]);
 
-            gl.activeTexture(gl.TEXTURE1);
-            gl.bindTexture(gl.TEXTURE_2D, this.ctx.textures._texture1_array[0]);
-        } else {
-            gl.activeTexture(gl.TEXTURE0);
-            gl.bindTexture(gl.TEXTURE_2D, this.ctx.textures.texture0_array[0]);
+                gl.activeTexture(gl.TEXTURE1);
+                gl.bindTexture(gl.TEXTURE_2D, this.ctx.textures._texture0_array[layerIdx]);
+            }
 
-            gl.activeTexture(gl.TEXTURE1);
-            gl.bindTexture(gl.TEXTURE_2D, this.ctx.textures._texture0_array[0]);
+            gl.bindBuffer(gl.ARRAY_BUFFER, this.ctx.buffers.pointsVertexPositionBuffer_array[layerIdx]);
+            gl.vertexAttribPointer(this.ctx.shaders.prog_points_array[layerIdx].vertexPositionAttribute, this.ctx.buffers.pointsVertexPositionBuffer_array[0].itemSize, gl.FLOAT, false, 0, 0);
+
+            gl.enable(gl.BLEND);
+            gl.blendFunc(gl.ONE, gl.ONE);
+
+            gl.bindFramebuffer(gl.FRAMEBUFFER, this.ctx.framebuffers.FBO2);
+
+            gl.drawArrays(gl.POINTS, 0, this.ctx.buffers.pointsVertexPositionBuffer_array[layerIdx].numItems);
         }
-
-        gl.bindBuffer(gl.ARRAY_BUFFER, this.ctx.buffers.pointsVertexPositionBuffer_array[0]);
-        gl.vertexAttribPointer(this.ctx.shaders.prog_points_array[0].vertexPositionAttribute, this.ctx.buffers.pointsVertexPositionBuffer_array[0].itemSize, gl.FLOAT, false, 0, 0);
-
-        gl.enable(gl.BLEND);
-        gl.blendFunc(gl.ONE, gl.ONE);
-
-        gl.bindFramebuffer(gl.FRAMEBUFFER, this.ctx.framebuffers.FBO2);
-
-        gl.drawArrays(gl.POINTS, 0, this.ctx.buffers.pointsVertexPositionBuffer_array[0].numItems);
-
         gl.disable(gl.BLEND);
     }
 

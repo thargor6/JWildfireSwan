@@ -32,8 +32,8 @@ export class Textures implements CloseableBuffers {
           this.gradient = gl.createTexture()!
           gl.bindTexture(gl.TEXTURE_2D, this.gradient)
           let grad = [], gradSize = 256
-          for (var i = 0; i < gradSize; i++) {
-            for (var j = 0; j < gradSize; j++) {
+          for (let i = 0; i < gradSize; i++) {
+            for (let j = 0; j < gradSize; j++) {
               let r,g,b;
               if(i<flame.layers.length) {
                 r = flame.layers[i].gradient[j].r
@@ -55,10 +55,10 @@ export class Textures implements CloseableBuffers {
         {
           this.motionBlurTime = gl.createTexture()!
           gl.bindTexture(gl.TEXTURE_2D, this.motionBlurTime)
-          var pixels = [], tSize = swarm_size
+          let pixels = [], tSize = swarm_size
           const maxBlurAmount = flame.motionBlurLength * flame.motionBlurTimeStep
-          for(var i = 0; i < tSize; i++) {
-            for(var j = 0; j < tSize; j++) {
+          for(let i = 0; i < tSize; i++) {
+            for(let j = 0; j < tSize; j++) {
               const rnd = (0.5 - (Math.random()+Math.random()+Math.random()+Math.random())*0.25)
               const blurLength = rnd * maxBlurAmount
               let blurFade = (1.0 - blurLength * blurLength * flame.motionBlurDecay * flame.motionBlurLength * 0.07  / maxBlurAmount);
@@ -79,56 +79,57 @@ export class Textures implements CloseableBuffers {
           gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST)
         }
 
-
-        let texture0 = gl.createTexture()!
-        gl.bindTexture(gl.TEXTURE_2D, texture0)
-        var pixels = [], tSize = swarm_size
-        for(var i = 0; i < tSize; i++) {
-            for(var j = 0; j < tSize; j++) {
-                pixels.push(
-                    -1 + 2 * Math.random(),
-                    -1 + 2 * Math.random(),
-                    -1 + 2 * Math.random(),
-                    0
-                )
+        for(let layerIdx=0;layerIdx<flame.layers.length;layerIdx++) {
+          let texture0 = gl.createTexture()!
+          gl.bindTexture(gl.TEXTURE_2D, texture0)
+          var pixels = [], tSize = swarm_size
+          for (let i = 0; i < tSize; i++) {
+            for (let j = 0; j < tSize; j++) {
+              pixels.push(
+                -1 + 2 * Math.random(),
+                -1 + 2 * Math.random(),
+                -1 + 2 * Math.random(),
+                0
+              )
             }
-        }
-        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, tSize, tSize, 0, gl.RGBA, gl.FLOAT, new Float32Array(pixels))
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST)
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST)
-        this.texture0_array[0] = texture0
-        //
-        let texture1 = gl.createTexture()!
-        gl.bindTexture(gl.TEXTURE_2D, texture1)
-        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, tSize, tSize, 0, gl.RGBA, gl.FLOAT, null)
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST)
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST)
-        this.texture1_array[0] = texture1
-        //
-        let _texture0 = gl.createTexture()!
-        gl.bindTexture(gl.TEXTURE_2D, _texture0)
-        pixels = []
-        for(var i = 0; i < tSize; i++) {
-            for(var j = 0; j < tSize; j++) {
-                pixels.push(
-                    -1 + 2 * Math.random(),
-                    -1 + 2 * Math.random(),
-                    -1 + 2 * Math.random(),
-                    0
-                )
+          }
+          gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, tSize, tSize, 0, gl.RGBA, gl.FLOAT, new Float32Array(pixels))
+          gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST)
+          gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST)
+          this.texture0_array[layerIdx] = texture0
+          //
+          let texture1 = gl.createTexture()!
+          gl.bindTexture(gl.TEXTURE_2D, texture1)
+          gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, tSize, tSize, 0, gl.RGBA, gl.FLOAT, null)
+          gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST)
+          gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST)
+          this.texture1_array[layerIdx] = texture1
+          //
+          let _texture0 = gl.createTexture()!
+          gl.bindTexture(gl.TEXTURE_2D, _texture0)
+          pixels = []
+          for (var i = 0; i < tSize; i++) {
+            for (var j = 0; j < tSize; j++) {
+              pixels.push(
+                -1 + 2 * Math.random(),
+                -1 + 2 * Math.random(),
+                -1 + 2 * Math.random(),
+                0
+              )
             }
+          }
+          gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, tSize, tSize, 0, gl.RGBA, gl.FLOAT, new Float32Array(pixels))
+          gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST)
+          gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST)
+          this._texture0_array[layerIdx] = _texture0
+          //
+          let _texture1 = gl.createTexture()!
+          gl.bindTexture(gl.TEXTURE_2D, _texture1)
+          gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, tSize, tSize, 0, gl.RGBA, gl.FLOAT, null)
+          gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST)
+          gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST)
+          this._texture1_array[layerIdx] = _texture1
         }
-        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, tSize, tSize, 0, gl.RGBA, gl.FLOAT, new Float32Array(pixels))
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST)
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST)
-        this._texture0_array[0] = _texture0
-        //
-        let _texture1 = gl.createTexture()!
-        gl.bindTexture(gl.TEXTURE_2D, _texture1)
-        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, tSize, tSize, 0, gl.RGBA, gl.FLOAT, null)
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST)
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST)
-        this._texture1_array[0] = _texture1
         //
         this.texture2 = gl.createTexture()!
         gl.activeTexture(gl.TEXTURE2)
@@ -150,7 +151,7 @@ export class Textures implements CloseableBuffers {
       }
 
       for(let i=0;i<this.texture0_array.length;i++) {
-        if(this.texture0_array[0]) {
+        if(this.texture0_array[i]) {
           this.gl.deleteTexture(this.texture0_array[i])
         }
       }
