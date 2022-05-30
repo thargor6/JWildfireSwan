@@ -360,6 +360,63 @@ class BarycentroidFunc extends VariationShaderFunc2D {
     }
 }
 
+class BCollideFunc extends VariationShaderFunc2D {
+    PARAM_NUM = 'num'
+    PARAM_A = 'a'
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_NUM, type: VariationParamType.VP_NUMBER, initialValue: 1 },
+            { name: this.PARAM_A, type: VariationParamType.VP_NUMBER, initialValue: 0.0 }]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        // bCollide by Michael Faber, http://michaelfaber.deviantart.com/art/bSeries-320574477
+        return `{
+          float amount = ${variation.amount.toWebGl()};
+          int num = ${variation.params.get(this.PARAM_NUM)!.toWebGl()};
+          float a = ${variation.params.get(this.PARAM_A)!.toWebGl()};
+          float _bCa, _bCn_pi, _bCa_bCn, _pi_bCn;
+          _bCn_pi = float(num) * (1.0 / M_PI);
+          _pi_bCn = M_PI / float(num);
+          _bCa = M_PI * a;
+          _bCa_bCn = _bCa / float(num);
+          float tau, sigma;
+          float temp;
+          float cosht, sinht;
+          float sins, coss;
+          int alt;
+        
+          tau = 0.5 * (log(sqr(_tx + 1.0) + sqr(_ty)) - log(sqr(_tx - 1.0) + sqr(_ty)));
+          sigma = M_PI - atan2(_ty, _tx + 1.0) - atan2(_ty, 1.0 - _tx);
+        
+          alt = int(sigma * _bCn_pi);         
+          if (modulo(alt, 2) == 0)
+            sigma = float(alt) * _pi_bCn + mod(sigma + _bCa_bCn, _pi_bCn);
+          else
+            sigma = float(alt) * _pi_bCn + mod(sigma - _bCa_bCn, _pi_bCn);
+          sinht = sinh(tau);
+          cosht = cosh(tau);
+          sins = sin(sigma);
+          coss = cos(sigma);
+          temp = cosht - coss;
+          _vx += amount * sinht / temp;
+          _vy += amount * sins / temp;
+        }`;
+    }
+
+    get name(): string {
+        return 'bCollide';
+    }
+
+    get funcDependencies(): string[] {
+        return [FUNC_MODULO, FUNC_SINH, FUNC_COSH];
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
 class BentFunc extends VariationShaderFunc2D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         return `{
@@ -474,6 +531,76 @@ class BipolarFunc extends VariationShaderFunc2D {
 
     get name(): string {
         return 'bipolar';
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
+class Bipolar2Func extends VariationShaderFunc2D {
+    PARAM_SHIFT = 'shift'
+    PARAM_A = 'a'
+    PARAM_B = 'b'
+    PARAM_C = 'c'
+    PARAM_D = 'd'
+    PARAM_E = 'e'
+    PARAM_F1 = 'f1'
+    PARAM_G1 = 'g1'
+    PARAM_H = 'h'
+
+    get params(): VariationParam[] {
+        return [
+          { name: this.PARAM_SHIFT, type: VariationParamType.VP_NUMBER, initialValue: 0.0 },
+          { name: this.PARAM_A, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
+          { name: this.PARAM_B, type: VariationParamType.VP_NUMBER, initialValue: 2.0 },
+          { name: this.PARAM_C, type: VariationParamType.VP_NUMBER, initialValue: 0.5 },
+          { name: this.PARAM_D, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
+          { name: this.PARAM_E, type: VariationParamType.VP_NUMBER, initialValue: 2.0 },
+          { name: this.PARAM_F1, type: VariationParamType.VP_NUMBER, initialValue: 0.25 },
+          { name: this.PARAM_G1, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
+          { name: this.PARAM_H, type: VariationParamType.VP_NUMBER, initialValue: 1.0 }
+        ]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        /* Bipolar in the Apophysis Plugin Pack with variables added by Brad Stefanov */
+        return `{
+          float amount = ${variation.amount.toWebGl()};
+          float shift = ${variation.params.get(this.PARAM_SHIFT)!.toWebGl()};
+          float a = ${variation.params.get(this.PARAM_A)!.toWebGl()};
+          float b = ${variation.params.get(this.PARAM_B)!.toWebGl()};
+          float c = ${variation.params.get(this.PARAM_C)!.toWebGl()};
+          float d = ${variation.params.get(this.PARAM_D)!.toWebGl()};
+          float e = ${variation.params.get(this.PARAM_E)!.toWebGl()};
+          float f1 = ${variation.params.get(this.PARAM_F1)!.toWebGl()};
+          float g1 = ${variation.params.get(this.PARAM_G1)!.toWebGl()};
+          float h = ${variation.params.get(this.PARAM_H)!.toWebGl()};
+             
+          float x2y2 = (_tx * _tx + _ty * _ty) * g1;
+          float t = x2y2 + a;
+          float x2 = b * _tx;
+          float ps = -(M_PI*0.5) * shift;
+          float y = c * atan2(e * _ty, x2y2 - d) + ps;
+        
+          if (y > (M_PI*0.5)) {
+            y = -(M_PI*0.5) + mod(y + (M_PI*0.5), M_PI);
+          } else if (y < -(M_PI*0.5)) {
+            y = (M_PI*0.5) - mod((M_PI*0.5) - y, M_PI);
+          }
+        
+          float f = t + x2;
+          float g = t - x2;
+        
+          if ((g != 0.0) && (f / g > 0.0)) {
+            _vx += amount * f1 * (2.0 / M_PI) * log((t + x2) / (t - x2));
+            _vy += amount * (2.0 / M_PI) * y * h;
+          }
+        }`;
+    }
+
+    get name(): string {
+        return 'bipolar2';
     }
 
     get variationTypes(): VariationTypes[] {
@@ -3790,10 +3917,12 @@ export function registerVars_2D_PartA() {
     VariationShaders.registerVar(new AtanFunc())
     VariationShaders.registerVar(new AugerFunc())
     VariationShaders.registerVar(new BarycentroidFunc())
+    VariationShaders.registerVar(new BCollideFunc())
     VariationShaders.registerVar(new BentFunc())
     VariationShaders.registerVar(new Bent2Func())
     VariationShaders.registerVar(new BiLinearFunc())
     VariationShaders.registerVar(new BipolarFunc())
+    VariationShaders.registerVar(new Bipolar2Func())
     VariationShaders.registerVar(new BladeFunc())
     VariationShaders.registerVar(new BlobFunc())
     VariationShaders.registerVar(new BlockYFunc())

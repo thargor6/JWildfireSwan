@@ -2826,6 +2826,127 @@ class Square3DFunc extends VariationShaderFunc3D {
     }
 }
 
+class SuperShape3DFunc extends VariationShaderFunc3D {
+    PARAM_RHO = 'rho'
+    PARAM_PHI = 'phi'
+    PARAM_M1 = 'm1'
+    PARAM_M2 = 'm2'
+    PARAM_A1 = 'a1'
+    PARAM_A2 = 'a2'
+    PARAM_B1 = 'b1'
+    PARAM_B2 = 'b2'
+    PARAM_N1_1 = 'n1_1'
+    PARAM_N1_2 = 'n1_2'
+    PARAM_N2_1 = 'n2_1'
+    PARAM_N2_2 = 'n2_2'
+    PARAM_N3_1 = 'n3_1'
+    PARAM_N3_2 = 'n3_2'
+    PARAM_SPIRAL = 'spiral'
+    PARAM_TOROIDMAP = 'toroidmap'
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_RHO, type: VariationParamType.VP_NUMBER, initialValue: 9.9 },
+            { name: this.PARAM_PHI, type: VariationParamType.VP_NUMBER, initialValue: 2.5 },
+            { name: this.PARAM_M1, type: VariationParamType.VP_NUMBER, initialValue: 6.0 },
+            { name: this.PARAM_M2, type: VariationParamType.VP_NUMBER, initialValue: 3.0 },
+            { name: this.PARAM_A1, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
+            { name: this.PARAM_A2, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
+            { name: this.PARAM_B1, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
+            { name: this.PARAM_B2, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
+            { name: this.PARAM_N1_1, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
+            { name: this.PARAM_N1_2, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
+            { name: this.PARAM_N2_1, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
+            { name: this.PARAM_N2_2, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
+            { name: this.PARAM_N3_1, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
+            { name: this.PARAM_N3_2, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
+            { name: this.PARAM_SPIRAL, type: VariationParamType.VP_NUMBER, initialValue: 0.0 },
+            { name: this.PARAM_TOROIDMAP, type: VariationParamType.VP_NUMBER, initialValue: 0 }
+        ]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        // SuperShape3d by David Young, http://fractal-resources.deviantart.com/gallery/24660058#/d1o8z8x
+        return `{
+          float amount = ${variation.amount.toWebGl()};
+          float rho = ${variation.params.get(this.PARAM_RHO)!.toWebGl()};
+          float phi = ${variation.params.get(this.PARAM_PHI)!.toWebGl()};
+          float m1 = ${variation.params.get(this.PARAM_M1)!.toWebGl()};
+          float m2 = ${variation.params.get(this.PARAM_M2)!.toWebGl()};
+          float a1 = ${variation.params.get(this.PARAM_A1)!.toWebGl()};
+          float a2 = ${variation.params.get(this.PARAM_A2)!.toWebGl()};
+          float b1 = ${variation.params.get(this.PARAM_B1)!.toWebGl()};
+          float b2 = ${variation.params.get(this.PARAM_B2)!.toWebGl()};
+          float n1_1 = ${variation.params.get(this.PARAM_N1_1)!.toWebGl()};
+          float n1_2 = ${variation.params.get(this.PARAM_N1_2)!.toWebGl()};
+          float n2_1 = ${variation.params.get(this.PARAM_N2_1)!.toWebGl()};
+          float n2_2 = ${variation.params.get(this.PARAM_N2_2)!.toWebGl()};
+          float n3_1 = ${variation.params.get(this.PARAM_N3_1)!.toWebGl()};
+          float n3_2 = ${variation.params.get(this.PARAM_N3_2)!.toWebGl()};
+          float spiral = ${variation.params.get(this.PARAM_SPIRAL)!.toWebGl()};
+          int toroidmap = ${variation.params.get(this.PARAM_TOROIDMAP)!.toWebGl()};
+          
+          float n1n_1, n1n_2, m4_1, m4_2;
+          float an2_1, an2_2, bn3_1, bn3_2;
+          float rho_pi, phi_pi;  
+          n1n_1 = (-1.0 / n1_1);
+          n1n_2 = (-1.0 / n1_2);
+          an2_1 = pow(abs(1.0 / a1), n2_1);
+          an2_2 = pow(abs(1.0 / a2), n2_2);
+          bn3_1 = pow(abs(1.0 / b1), n3_1);
+          bn3_2 = pow(abs(1.0 / b2), n3_2);
+          m4_1 = m1 / 4.0;
+          m4_2 = m2 / 4.0;
+          rho_pi = rho * (2.0 / M_PI);
+          phi_pi = phi * (2.0 / M_PI); 
+          float rho1 = rand8(tex, rngState) * rho_pi;
+          float phi1 = rand8(tex, rngState) * phi_pi;
+          if (rand8(tex, rngState) < 0.5) {
+            phi1 = (-phi1);
+          }
+          float sinr = sin(rho1);
+          float cosr = cos(rho1);
+          float sinp = sin(phi1);
+          float cosp = cos(phi1);
+        
+          float msinr, mcosr;
+          {
+            float a = m4_1 * rho1;
+            msinr = sin(a);
+            mcosr = cos(a);
+          }
+          float msinp, mcosp;
+          {
+            float a = m4_2 * phi1;
+            msinp = sin(a);
+            mcosp = cos(a);
+          }
+          float pr1 = an2_1 * pow(abs(mcosr), n2_1) + bn3_1 * pow(abs(msinr), n3_1);
+          float pr2 = an2_2 * pow(abs(mcosp), n2_2) + bn3_2 * pow(abs(msinp), n3_2);
+          float r1 = pow(pr1, n1n_1) + spiral * rho1;
+          float r2 = pow(pr2, n1n_2);
+        
+          if (toroidmap == 1) {
+            _vx += amount * cosr * (r1 + r2 * cosp);
+            _vy += amount * sinr * (r1 + r2 * cosp);
+            _vz += amount * r2 * sinp;
+          } else {
+            _vx += amount * r1 * cosr * r2 * cosp;
+            _vy += amount * r1 * sinr * r2 * cosp;
+            _vz += amount * r2 * sinp;
+          }
+
+        }`;
+    }
+
+    get name(): string {
+        return 'superShape3d';
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_3D];
+    }
+}
+
 class SVFFunc extends VariationShaderFunc3D {
     PARAM_N = 'n'
 
@@ -3090,6 +3211,7 @@ export function registerVars_3D() {
     VariationShaders.registerVar(new Spirograph3DFunc())
     VariationShaders.registerVar(new Splits3DFunc())
     VariationShaders.registerVar(new Square3DFunc())
+    VariationShaders.registerVar(new SuperShape3DFunc())
     VariationShaders.registerVar(new SVFFunc())
     VariationShaders.registerVar(new Swirl3DWFFunc())
     VariationShaders.registerVar(new Tangent3DFunc())
