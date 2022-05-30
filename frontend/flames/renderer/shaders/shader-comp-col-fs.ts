@@ -29,6 +29,7 @@ uniform sampler2D pTexSamp;
 uniform sampler2D gradTexSamp;
 uniform sampler2D motionBlurTimeStamp;
 uniform float layerCoord;
+uniform float layerBrightness;
 
 void main(void) {
   vec2 tex = gl_FragCoord.xy / <%= RESOLUTION %>;
@@ -36,7 +37,7 @@ void main(void) {
   float color = fract(texture2D(pTexSamp, tex).w);
   float lDiminish = texture2D(motionBlurTimeStamp, tex).y;  
   vec2 gradPos = vec2(color, layerCoord);
-  vec3 clr = texture2D(gradTexSamp, gradPos).rgb * lDiminish;
+  vec3 clr = texture2D(gradTexSamp, gradPos).rgb * lDiminish * layerBrightness;
   gl_FragColor = vec4(clr, 1.0);
 }
 `;

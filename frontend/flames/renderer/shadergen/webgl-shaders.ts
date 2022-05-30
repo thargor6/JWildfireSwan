@@ -54,6 +54,7 @@ interface ComputeColorsProgram extends WebGLProgram {
     gradTexSamp: WebGLUniformLocation;
     motionBlurTimeStamp: WebGLUniformLocation;
     layerCoord: WebGLUniformLocation;
+    layerBrightness: WebGLUniformLocation;
 }
 
 interface ShowHistogramProgram extends WebGLProgram {
@@ -118,6 +119,7 @@ export class WebglShaders implements CloseableBuffers{
         this.prog_comp_col.gradTexSamp = gl.getUniformLocation(this.prog_comp_col, "gradTexSamp")!;
         this.prog_comp_col.motionBlurTimeStamp = gl.getUniformLocation(this.prog_comp_col, "motionBlurTimeStamp")!;
         this.prog_comp_col.layerCoord = gl.getUniformLocation(this.prog_comp_col, "layerCoord")!;
+        this.prog_comp_col.layerBrightness = gl.getUniformLocation(this.prog_comp_col, "layerBrightness")!;
         {
             const k1 =  this.flame.contrast * this.flame.brightness * 1.5
             const pixelsPerUnit =  this.flame.pixelsPerUnit *  this.flame.camZoom

@@ -70,6 +70,7 @@ export class FlameIterator {
 
 
             gl.uniform1f(this.ctx.shaders.prog_comp_col!.layerCoord, (layerIdx + 0.5) / this.flame.layers.length);
+            gl.uniform1f(this.ctx.shaders.prog_comp_col!.layerBrightness, this.flame.layers[layerIdx].weight * this.flame.layers[layerIdx].density);
             gl.uniform1i(this.ctx.shaders.prog_comp_col!.uTexSamp, 0);
             gl.uniform1i(this.ctx.shaders.prog_comp_col!.pTexSamp, 1);
             gl.uniform1i(this.ctx.shaders.prog_comp_col!.gradTexSamp, 2);
