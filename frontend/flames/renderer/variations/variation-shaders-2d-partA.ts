@@ -710,6 +710,108 @@ class BlockYFunc extends VariationShaderFunc2D {
     }
 }
 
+class BlurCircleFunc extends VariationShaderFunc2D {
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        return `{
+          float amount = ${variation.amount.toWebGl()};
+          float x = 2.0 * rand8(tex, rngState) - 1.0;
+          float y = 2.0 * rand8(tex, rngState) - 1.0;
+        
+          float absx = x;
+          if (absx < 0.0)
+            absx = absx * -1.0;
+          float absy = y;
+          if (absy < 0.0)
+            absy = absy * -1.0;
+        
+          float perimeter, side;
+          if (absx >= absy) {
+            if (x >= absy) {
+              perimeter = absx + y;
+            } else {
+              perimeter = 5.0 * absx - y;
+            }
+            side = absx;
+          } else {
+            if (y >= absx) {
+              perimeter = 3.0 * absy - x;
+            } else {
+              perimeter = 7.0 * absy + x;
+            }
+            side = absy;
+          }
+        
+          float r = amount * side;
+          float a = (0.25*M_PI) * perimeter / side - (0.25*M_PI);
+          float sina = sin(a);
+          float cosa = cos(a);
+          _vx += r * cosa;
+          _vy += r * sina;
+        }`;
+    }
+
+    get name(): string {
+        return 'blur_circle';
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D, VariationTypes.VARTYPE_BASE_SHAPE];
+    }
+}
+
+class BModFunc extends VariationShaderFunc2D {
+    PARAM_RADIUS = 'radius'
+    PARAM_DISTANCE = 'distance'
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_RADIUS, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
+            { name: this.PARAM_DISTANCE, type: VariationParamType.VP_NUMBER, initialValue: 0.0 }]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        // bMod by Michael Faber, http://michaelfaber.deviantart.com/art/bSeries-320574477
+        return `{
+          float amount = ${variation.amount.toWebGl()};
+          float radius = ${variation.params.get(this.PARAM_RADIUS)!.toWebGl()};
+          float distance = ${variation.params.get(this.PARAM_DISTANCE)!.toWebGl()};
+          float tau, sigma;
+          float temp;
+          float cosht, sinht;
+          float sins, coss;
+        
+          tau = 0.5 * (log(sqr(_tx + 1.0) + sqr(_ty)) - log(sqr(_tx - 1.0) + sqr(_ty)));
+          sigma = M_PI - atan2(_ty, _tx + 1.0) - atan2(_ty, 1.0 - _tx);
+        
+          if (tau < radius && -tau < radius) {
+            tau = mod(tau + radius + distance * radius, 2.0 * radius) - radius;
+          }
+        
+          sinht = sinh(tau);
+          cosht = cosh(tau);
+          sins = sin(sigma);
+          coss = cos(sigma);
+          temp = cosht - coss;
+          if (temp != 0.0) {
+            _vx += amount * sinht / temp;
+            _vy += amount * sins / temp; 
+          }
+        }`;
+    }
+
+    get name(): string {
+        return 'bMod';
+    }
+
+    get funcDependencies(): string[] {
+        return [FUNC_SINH, FUNC_COSH];
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
 class BoardersFunc extends VariationShaderFunc2D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         /* Boarders in the Apophysis Plugin Pack */
@@ -812,6 +914,40 @@ class Boarders2Func extends VariationShaderFunc2D {
 
     get name(): string {
         return 'boarders2';
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
+class BSplitFunc extends VariationShaderFunc2D {
+    PARAM_X = 'x'
+    PARAM_Y = 'y'
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_X, type: VariationParamType.VP_NUMBER, initialValue: 0.0 },
+            { name: this.PARAM_Y, type: VariationParamType.VP_NUMBER, initialValue: 0.0 }]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+         // author Raykoid666, transcribed and modded by Nic Anderson, chronologicaldot, date July 19, 2014 (transcribe)
+        return `{
+          float amount = ${variation.amount.toWebGl()};
+          float x = ${variation.params.get(this.PARAM_X)!.toWebGl()};
+          float y = ${variation.params.get(this.PARAM_Y)!.toWebGl()};
+          if (_tx + x == 0.0 || _tx + x == M_PI) {
+            _vx += 10000.0;
+            _vy += 10000.0;
+          } else {
+            _vx += amount / tan(_tx + x) * cos(_ty + y);
+            _vy += amount / sin(_tx + x) * (-1.0 * _ty + y);
+          }
+        }`;
+    }
+
+    get name(): string {
+        return 'bsplit';
     }
 
     get variationTypes(): VariationTypes[] {
@@ -3926,8 +4062,11 @@ export function registerVars_2D_PartA() {
     VariationShaders.registerVar(new BladeFunc())
     VariationShaders.registerVar(new BlobFunc())
     VariationShaders.registerVar(new BlockYFunc())
+    VariationShaders.registerVar(new BlurCircleFunc())
+    VariationShaders.registerVar(new BModFunc())
     VariationShaders.registerVar(new BoardersFunc())
     VariationShaders.registerVar(new Boarders2Func())
+    VariationShaders.registerVar(new BSplitFunc())
     VariationShaders.registerVar(new ButterflyFunc())
     VariationShaders.registerVar(new BWraps7Func())
     VariationShaders.registerVar(new CannabisCurveWFFunc())
