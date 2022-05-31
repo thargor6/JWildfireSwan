@@ -955,6 +955,114 @@ class BSplitFunc extends VariationShaderFunc2D {
     }
 }
 
+class BSwirlFunc extends VariationShaderFunc2D {
+    PARAM_IN = 'in'
+    PARAM_OUT = 'out'
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_IN, type: VariationParamType.VP_NUMBER, initialValue: 0.0 },
+            { name: this.PARAM_OUT, type: VariationParamType.VP_NUMBER, initialValue: 0.0 }]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        // bSwirl by Michael Faber, http://michaelfaber.deviantart.com/art/bSeries-320574477
+        return `{
+          float amount = ${variation.amount.toWebGl()};
+          float _in = ${variation.params.get(this.PARAM_IN)!.toWebGl()};
+          float _out = ${variation.params.get(this.PARAM_OUT)!.toWebGl()};
+          float tau, sigma;
+          float temp;
+          float cosht, sinht;
+          float sins, coss;
+        
+          tau = 0.5 * (log(sqr(_tx + 1.0) + sqr(_ty)) - log(sqr(_tx - 1.0) + sqr(_ty)));
+          sigma = M_PI - atan2(_ty, _tx + 1.0) - atan2(_ty, 1.0 - _tx);
+        
+          sigma = sigma + tau * _out + _in / tau;
+        
+          sinht = sinh(tau);
+          cosht = cosh(tau);
+          sins = sin(sigma);
+          coss = cos(sigma);
+          temp = cosht - coss;
+          if (temp != 0.0) {
+            _vx += amount * sinht / temp;
+            _vy += amount * sins / temp;            
+          }
+        }`;
+    }
+
+    get name(): string {
+        return 'bSwirl';
+    }
+
+    get funcDependencies(): string[] {
+        return [FUNC_SINH, FUNC_COSH];
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
+class BTransformFunc extends VariationShaderFunc2D {
+    PARAM_ROTATE = 'rotate'
+    PARAM_POWER = 'power'
+    PARAM_MOVE = 'move'
+    PARAM_SPLIT = 'split'
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_ROTATE, type: VariationParamType.VP_NUMBER, initialValue: 0.0 },
+                { name: this.PARAM_POWER, type: VariationParamType.VP_NUMBER, initialValue: 1 },
+                { name: this.PARAM_MOVE, type: VariationParamType.VP_NUMBER, initialValue: 0.0 },
+                { name: this.PARAM_SPLIT, type: VariationParamType.VP_NUMBER, initialValue: 0.0 }]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        // bTransform by Michael Faber, http://michaelfaber.deviantart.com/art/bSeries-320574477
+        return `{
+          float amount = ${variation.amount.toWebGl()};
+          float rotate = ${variation.params.get(this.PARAM_ROTATE)!.toWebGl()};
+          int power = ${variation.params.get(this.PARAM_POWER)!.toWebGl()};
+          float move = ${variation.params.get(this.PARAM_MOVE)!.toWebGl()};
+          float split = ${variation.params.get(this.PARAM_SPLIT)!.toWebGl()};
+       
+          float tau, sigma;
+          float temp;
+          float cosht, sinht;
+          float sins, coss;
+        
+          tau = 0.5 * (log(sqr(_tx + 1.0) + sqr(_ty)) - log(sqr(_tx - 1.0) + sqr(_ty))) / float(power) + move;
+          sigma = M_PI - atan2(_ty, _tx + 1.0) - atan2(_ty, 1.0 - _tx) + rotate;
+          sigma = sigma / float(power) + (2.0*M_PI) / float(power) * floor(rand8(tex, rngState) * float(power));
+        
+          if (_tx >= 0.0)
+            tau += split;
+          else
+            tau -= split;
+          sinht = sinh(tau);
+          cosht = cosh(tau);
+          sins = sin(sigma);
+          coss = cos(sigma);
+          temp = cosht - coss;
+          _vx += amount * sinht / temp;
+          _vy += amount * sins / temp;
+        }`;
+    }
+
+    get name(): string {
+        return 'bTransform';
+    }
+
+    get funcDependencies(): string[] {
+        return [FUNC_SINH, FUNC_COSH];
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
 class ButterflyFunc extends VariationShaderFunc2D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         /* wx is weight*4/sqrt(3*pi) */
@@ -970,6 +1078,193 @@ class ButterflyFunc extends VariationShaderFunc2D {
 
     get name(): string {
         return 'butterfly';
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
+class ButterflyFayFunc extends VariationShaderFunc2D {
+    PARAM_CYCLES = 'cycles'
+    PARAM_OFFSET = 'offset'
+    PARAM_INIFIED_INNER_OUTER = 'unified_inner_outer'
+    PARAM_OUTER_MODE = 'outer_mode'
+    PARAM_INNER_MODE = 'inner_mode'
+    PARAM_OUTER_SPREAD = 'outer_spread'
+    PARAM_INNER_SPREAD = 'inner_spread'
+    PARAM_OUTER_SPREAD_RATIO = 'outer_spread_ratio'
+    PARAM_INNER_SPREAD_RATIO = 'inner_spread_ratio'
+    PARAM_SPREAD_SPLIT = 'spread_split'
+    PARAM_FILL = 'fill'
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_CYCLES, type: VariationParamType.VP_NUMBER, initialValue: 0.0 },
+            { name: this.PARAM_OFFSET, type: VariationParamType.VP_NUMBER, initialValue: 0.0 },
+            { name: this.PARAM_INIFIED_INNER_OUTER, type: VariationParamType.VP_NUMBER, initialValue: 1 },
+            { name: this.PARAM_OUTER_MODE, type: VariationParamType.VP_NUMBER, initialValue: 1 },
+            { name: this.PARAM_INNER_MODE, type: VariationParamType.VP_NUMBER, initialValue: 1 },
+            { name: this.PARAM_OUTER_SPREAD, type: VariationParamType.VP_NUMBER, initialValue: 0.0 },
+            { name: this.PARAM_INNER_SPREAD, type: VariationParamType.VP_NUMBER, initialValue: 0.0 },
+            { name: this.PARAM_OUTER_SPREAD_RATIO, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
+            { name: this.PARAM_INNER_SPREAD_RATIO, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
+            { name: this.PARAM_SPREAD_SPLIT, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
+            { name: this.PARAM_FILL, type: VariationParamType.VP_NUMBER, initialValue: 0.0 }
+        ]
+    }
+
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        // Bubble Wrap - WIP Plugin by slobo777
+        // http://slobo777.deviantart.com/art/Bubble-Wrap-WIP-Plugin-112370125
+        return `{
+          float amount = ${variation.amount.toWebGl()};
+          float cycles = ${variation.params.get(this.PARAM_CYCLES)!.toWebGl()};
+          float offset = ${variation.params.get(this.PARAM_OFFSET)!.toWebGl()};
+          int unified_inner_outer = ${variation.params.get(this.PARAM_INIFIED_INNER_OUTER)!.toWebGl()};
+          int outer_mode = ${variation.params.get(this.PARAM_OUTER_MODE)!.toWebGl()};
+          int inner_mode = ${variation.params.get(this.PARAM_INNER_MODE)!.toWebGl()};
+          float outer_spread = ${variation.params.get(this.PARAM_OUTER_SPREAD)!.toWebGl()};
+          float inner_spread = ${variation.params.get(this.PARAM_INNER_SPREAD)!.toWebGl()};
+          float outer_spread_ratio = ${variation.params.get(this.PARAM_OUTER_SPREAD_RATIO)!.toWebGl()};
+          float inner_spread_ratio = ${variation.params.get(this.PARAM_INNER_SPREAD_RATIO)!.toWebGl()};
+          float spread_split  = ${variation.params.get(this.PARAM_SPREAD_SPLIT)!.toWebGl()};
+          float fill  = ${variation.params.get(this.PARAM_FILL)!.toWebGl()};
+          
+          float cycle_length = 2.0 * M_PI;
+          float radians_to_close = 2.0 * M_PI * M_PI * M_PI; 
+          float cycles_to_close = radians_to_close / cycle_length; 
+          float number_of_cycles;
+          if (cycles == 0.0) {
+            number_of_cycles = cycles_to_close;
+          } else {
+            number_of_cycles = cycles;
+          }
+          if (outer_mode > 5 || outer_mode < 0) {
+            outer_mode = 0;
+          }
+          if (inner_mode > 5 || inner_mode < 0) {
+            inner_mode = 0;
+          }
+          
+          float theta = atan2(_ty, _tx); 
+          float t = number_of_cycles * theta;       
+          float rin = spread_split * sqrt((_tx * _tx) + (_ty * _ty));
+          float r = 0.5 * (exp(cos(t)) - (2.0 * cos(4.0 * t)) - pow(abs(sin(t / 12.0)), 5.0) + offset);
+         
+          if (fill != 0.0) {
+            r = r + (fill * (rand8(tex, rngState) - 0.5));
+          }
+        
+          float x = r * sin(t);
+          float y = -1.0 * r * cos(t); 
+          float xin, yin;
+          float rinx, riny;
+          
+          if ((abs(rin) > abs(r)) || (unified_inner_outer == 1)) { 
+            if(outer_mode==0) { 
+              _vx += amount * x;
+              _vy += amount * y;
+            }
+            else if(outer_mode==1) {
+              rinx = (rin * outer_spread * outer_spread_ratio) - (outer_spread * outer_spread_ratio) + 1.0;
+              riny = (rin * outer_spread) - outer_spread + 1.0;
+              _vx += amount * rinx * x;
+              _vy += amount * riny * y;
+            }
+            else if(outer_mode==2) {
+              xin = abs(_tx);
+              yin = abs(_ty);
+              if (x < 0.0) {
+                xin = xin * -1.0;
+              }
+              if (y < 0.0) {
+                yin = yin * -1.0;
+              }
+              _vx += amount * (x + (outer_spread * outer_spread_ratio * (xin - x)));
+              _vy += amount * (y + (outer_spread * (yin - y)));
+            }
+            else if(outer_mode==3) {
+              xin = abs(_tx);
+              yin = abs(_ty);
+              if (x < 0.0) {
+                xin = xin * -1.0;
+              }
+              if (y < 0.0) {
+                yin = yin * -1.0;
+              }
+              _vx += amount * (x + (outer_spread * outer_spread_ratio * xin));
+              _vy += amount * (y + (outer_spread * yin));
+            }
+            else if(outer_mode==4) {
+              rinx = (0.5 * rin) + (outer_spread * outer_spread_ratio);
+              riny = (0.5 * rin) + outer_spread;
+              _vx += amount * rinx * x;
+              _vy += amount * riny * y;
+            }
+            else if(outer_mode==5) { 
+              _vx += amount * (x + (outer_spread * outer_spread_ratio * _tx));
+              _vy += amount * (y + (outer_spread * _ty));
+            }
+            else {
+              _vx += amount * x;
+              _vy += amount * y;
+            }
+          } else {        
+            if(inner_mode==0) { 
+              _vx += amount * x;
+              _vy += amount * y;
+            }
+            else if(inner_mode==1) {
+              rinx = (rin * inner_spread * inner_spread_ratio) - (inner_spread * inner_spread_ratio) + 1.0;
+              riny = (rin * inner_spread) - inner_spread + 1.0;
+              _vx += amount * rinx * x;
+              _vy += amount * riny * y;
+            }
+            else if(inner_mode==2) {
+              xin = abs(_tx);
+              yin = abs(_ty);
+              if (x < 0.0) {
+                xin = xin * -1.0;
+              }
+              if (y < 0.0) {
+                yin = yin * -1.0;
+              }
+              _vx += amount * (x - (inner_spread * inner_spread_ratio * (x - xin)));
+              _vy += amount * (y - (inner_spread * (y - yin)));
+            }
+            else if(inner_mode==3) {
+              xin = abs(_tx);
+              yin = abs(_ty);
+              if (x < 0.0) {
+                xin = xin * -1.0;
+              }
+              if (y < 0.0) {
+                yin = yin * -1.0;
+              }
+              _vx += amount * (x - (inner_spread * inner_spread_ratio * xin));
+              _vy += amount * (y - (inner_spread * yin));
+            }
+            else if(inner_mode==4) {
+              rinx = (0.5 * rin) + (inner_spread * inner_spread_ratio);
+              riny = (0.5 * rin) + inner_spread;
+              _vx += amount * rinx * x;
+              _vy += amount * riny * y;
+            }
+            else if(inner_mode==5) { 
+              _vx += amount * (x + (inner_spread * inner_spread_ratio * _tx));
+              _vy += amount * (y + (inner_spread * _ty));
+            }
+            else {
+              _vx += amount * x;
+              _vy += amount * y;
+            }
+          }
+        }`;
+    }
+
+    get name(): string {
+        return 'butterfly_fay';
     }
 
     get variationTypes(): VariationTypes[] {
@@ -4067,7 +4362,10 @@ export function registerVars_2D_PartA() {
     VariationShaders.registerVar(new BoardersFunc())
     VariationShaders.registerVar(new Boarders2Func())
     VariationShaders.registerVar(new BSplitFunc())
+    VariationShaders.registerVar(new BSwirlFunc())
+    VariationShaders.registerVar(new BTransformFunc())
     VariationShaders.registerVar(new ButterflyFunc())
+    VariationShaders.registerVar(new ButterflyFayFunc())
     VariationShaders.registerVar(new BWraps7Func())
     VariationShaders.registerVar(new CannabisCurveWFFunc())
     VariationShaders.registerVar(new ChecksFunc())
