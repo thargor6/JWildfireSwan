@@ -760,6 +760,71 @@ class BlurCircleFunc extends VariationShaderFunc2D {
     }
 }
 
+class BlurLinearFunc extends VariationShaderFunc2D {
+    PARAM_LENGTH = 'length'
+    PARAM_ANGLE = 'angle'
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_LENGTH, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
+            { name: this.PARAM_ANGLE, type: VariationParamType.VP_NUMBER, initialValue: 0.5 }]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        // made in 2009 by Joel Faber - transcribed by DarkBeam 2017
+        return `{
+          float amount = ${variation.amount.toWebGl()};
+          float length = ${variation.params.get(this.PARAM_LENGTH)!.toWebGl()};
+          float angle = ${variation.params.get(this.PARAM_ANGLE)!.toWebGl()};
+          float s = sin(angle);
+          float c = cos(angle); 
+          float r = length * rand8(tex, rngState);
+          _vx += amount * (_tx + r * c);
+          _vy += amount * (_ty + r * s);
+        }`;
+    }
+
+    get name(): string {
+        return 'blur_linear';
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
+class BlurPixelizeFunc extends VariationShaderFunc2D {
+    PARAM_SIZE = 'size'
+    PARAM_SCALE = 'scale'
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_SIZE, type: VariationParamType.VP_NUMBER, initialValue: 0.1 },
+            { name: this.PARAM_SCALE, type: VariationParamType.VP_NUMBER, initialValue: 1.0 }]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        /* blur_pixelize from Apo7X15C */
+        return `{
+          float amount = ${variation.amount.toWebGl()};
+          float size = ${variation.params.get(this.PARAM_SIZE)!.toWebGl()};
+          float scale = ${variation.params.get(this.PARAM_SCALE)!.toWebGl()};
+          float _inv_size = 1.0 / size;
+          float _v = amount * size;   
+          float x = floor(_tx * (_inv_size));
+          float y = floor(_ty * (_inv_size));
+          _vx += _v * (x + (scale) * (rand8(tex, rngState) - 0.5) + 0.5);
+          _vy += _v * (y + (scale) * (rand8(tex, rngState) - 0.5) + 0.5);
+        }`;
+    }
+
+    get name(): string {
+        return 'blur_pixelize';
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
 class BModFunc extends VariationShaderFunc2D {
     PARAM_RADIUS = 'radius'
     PARAM_DISTANCE = 'distance'
@@ -4358,6 +4423,8 @@ export function registerVars_2D_PartA() {
     VariationShaders.registerVar(new BlobFunc())
     VariationShaders.registerVar(new BlockYFunc())
     VariationShaders.registerVar(new BlurCircleFunc())
+    VariationShaders.registerVar(new BlurLinearFunc())
+    VariationShaders.registerVar(new BlurPixelizeFunc())
     VariationShaders.registerVar(new BModFunc())
     VariationShaders.registerVar(new BoardersFunc())
     VariationShaders.registerVar(new Boarders2Func())

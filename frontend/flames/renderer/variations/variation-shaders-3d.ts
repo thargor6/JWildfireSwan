@@ -581,6 +581,54 @@ class CylinderApoFunc extends VariationShaderFunc3D {
     }
 }
 
+class DCZTranslFunc extends VariationShaderFunc3D {
+    PARAM_X0 = 'x0'
+    PARAM_X1 = 'x1'
+    PARAM_FACTOR = 'factor'
+    PARAM_OVERWRITE = 'overwrite'
+    PARAM_CLAMP = 'clamp'
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_X0, type: VariationParamType.VP_NUMBER, initialValue: 0.0 },
+            { name: this.PARAM_X1, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
+            { name: this.PARAM_FACTOR, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
+            { name: this.PARAM_OVERWRITE, type: VariationParamType.VP_NUMBER, initialValue: 1 },
+            { name: this.PARAM_CLAMP, type: VariationParamType.VP_NUMBER, initialValue: 0 }]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        /* dc_ztransl by Xyrus02, http://xyrus02.deviantart.com/art/DC-ZTransl-plugins-for-Apo7X-210719008?q=gallery%3Afractal-resources%2F24660058&qo=32 */
+        return `{
+          float amount = ${variation.amount.toWebGl()};
+          float x0 = ${variation.params.get(this.PARAM_X0)!.toWebGl()};
+          float x1 = ${variation.params.get(this.PARAM_X1)!.toWebGl()};
+          float factor = ${variation.params.get(this.PARAM_FACTOR)!.toWebGl()};
+          int overwrite = ${variation.params.get(this.PARAM_OVERWRITE)!.toWebGl()};
+          int clamp = ${variation.params.get(this.PARAM_CLAMP)!.toWebGl()};
+          float _x0 = x0 < x1 ? x0 : x1;
+          float _x1 = x0 > x1 ? x0 : x1;
+          float _x1_m_x0 = _x1 - _x0 == 0.0 ? EPSILON : _x1 - _x0;
+          float zf = factor * (_color - _x0) / _x1_m_x0;
+          if (clamp != 0)
+            zf = zf < 0.0 ? 0.0 : zf > 1.0 ? 1.0 : zf;
+          _vx += amount * _tx;
+          _vy += amount * _ty; 
+          if (overwrite == 0)
+            _vz += amount * _tz * zf;
+          else
+            _vz += amount * zf;
+        }`;
+    }
+
+    get name(): string {
+        return 'dc_ztransl';
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_3D, VariationTypes.VARTYPE_ZTRANSFORM];
+    }
+}
+
 class DinisSurfaceWFFunc extends VariationShaderFunc3D {
     PARAM_A = 'a'
     PARAM_B = 'b'
@@ -3174,6 +3222,7 @@ export function registerVars_3D() {
     VariationShaders.registerVar(new Cubic_3DFunc())
     VariationShaders.registerVar(new Curl3DFunc())
     VariationShaders.registerVar(new CylinderApoFunc())
+    VariationShaders.registerVar(new DCZTranslFunc())
     VariationShaders.registerVar(new DinisSurfaceWFFunc())
     VariationShaders.registerVar(new Foci3DFunc())
     VariationShaders.registerVar(new HelicoidFunc())
