@@ -296,7 +296,7 @@ class BubbleWFFunc extends VariationShaderFunc3D {
     }
 }
 
-class CoshqFunc extends VariationShaderFunc2D {
+class CoshqFunc extends VariationShaderFunc3D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         /* Coshq by zephyrtronium http://zephyrtronium.deviantart.com/art/Quaternion-Apo-Plugin-Pack-165451482 */
         return `{
@@ -322,11 +322,11 @@ class CoshqFunc extends VariationShaderFunc2D {
     }
 
     get variationTypes(): VariationTypes[] {
-        return [VariationTypes.VARTYPE_2D];
+        return [VariationTypes.VARTYPE_3D];
     }
 }
 
-class CosqFunc extends VariationShaderFunc2D {
+class CosqFunc extends VariationShaderFunc3D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         /* Cosq by zephyrtronium http://zephyrtronium.deviantart.com/art/Quaternion-Apo-Plugin-Pack-165451482 */
         return `{
@@ -352,7 +352,43 @@ class CosqFunc extends VariationShaderFunc2D {
     }
 
     get variationTypes(): VariationTypes[] {
-        return [VariationTypes.VARTYPE_2D];
+        return [VariationTypes.VARTYPE_3D];
+    }
+}
+
+class CothqFunc extends VariationShaderFunc3D {
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        /* Cothq by zephyrtronium http://zephyrtronium.deviantart.com/art/Quaternion-Apo-Plugin-Pack-165451482 */
+        return `{
+                  float amount = ${variation.amount.toWebGl()};
+                  float abs_v = hypot(_ty, _tz);
+                  float s = sin(abs_v);
+                  float c = cos(abs_v);
+                  float sh = sinh(_tx);
+                  float ch = cosh(_tx);
+                  float sysz = sqr(_ty) + sqr(_tz);
+                  float ni = amount / (sqr(_tx) + sysz);
+                  float C = ch * s / abs_v;
+                  float B = sh * s / abs_v;
+                  float stcv = sh * c;
+                  float nstcv = -stcv;
+                  float ctcv = ch * c;
+                  _vx += (stcv * ctcv + C * B * sysz) * ni;
+                  _vy += (nstcv * B * _ty + C * _ty * ctcv) * ni;
+                  _vz += (nstcv * B * _tz + C * _tz * ctcv) * ni;
+                }`;
+    }
+
+    get name(): string {
+        return 'cothq';
+    }
+
+    get funcDependencies(): string[] {
+        return [FUNC_SINH, FUNC_COSH, FUNC_HYPOT];
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_3D];
     }
 }
 
@@ -3287,6 +3323,7 @@ export function registerVars_3D() {
     VariationShaders.registerVar(new ConeFunc())
     VariationShaders.registerVar(new CoshqFunc())
     VariationShaders.registerVar(new CosqFunc())
+    VariationShaders.registerVar(new CothqFunc())
     VariationShaders.registerVar(new Cubic_3DFunc())
     VariationShaders.registerVar(new Curl3DFunc())
     VariationShaders.registerVar(new CylinderApoFunc())

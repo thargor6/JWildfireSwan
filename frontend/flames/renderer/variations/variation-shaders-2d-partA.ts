@@ -1455,6 +1455,36 @@ class CannabisCurveWFFunc extends VariationShaderFunc2D {
     }
 }
 
+class CardioidFunc extends VariationShaderFunc2D {
+    PARAM_A = 'a'
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_A, type: VariationParamType.VP_NUMBER, initialValue: 1.0 }]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        // cardioid by Michael Faber
+         return `{
+          float amount = ${variation.amount.toWebGl()};
+          float a = ${variation.params.get(this.PARAM_A)!.toWebGl()};
+          float angle = atan2(_ty, _tx);
+          float r = amount * sqrt(sqr(_tx) + sqr(_ty) + sin(a * a) + 1.0);
+          float c = cos(angle);
+          float s = sin(angle);       
+          _vx += r * c;
+          _vy += r * s;
+        }`;
+    }
+
+    get name(): string {
+        return 'cardioid';
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
 class ChecksFunc extends VariationShaderFunc2D {
     PARAM_LEFT = 'x'
     PARAM_TOP = 'y'
@@ -1707,6 +1737,49 @@ class CloverLeafWFFunc extends VariationShaderFunc2D {
 
     get variationTypes(): VariationTypes[] {
         return [VariationTypes.VARTYPE_2D, VariationTypes.VARTYPE_BASE_SHAPE];
+    }
+}
+
+class CliffordFunc extends VariationShaderFunc2D {
+    PARAM_A = 'a'
+    PARAM_B = 'b'
+    PARAM_C = 'c'
+    PARAM_D = 'd'
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_A, type: VariationParamType.VP_NUMBER, initialValue: -1.4 },
+            { name: this.PARAM_B, type: VariationParamType.VP_NUMBER, initialValue: 1.6 },
+            { name: this.PARAM_C, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
+            { name: this.PARAM_D, type: VariationParamType.VP_NUMBER, initialValue: 0.7 }]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        // Reference:
+        //		  http://paulbourke.net/fractals/clifford/
+        //		  xn+1 = sin(a yn) + c cos(a xn)
+        //		  yn+1 = sin(b xn) + d cos(b yn)    // Reference:
+        //     //		  http://paulbourke.net/fractals/clifford/
+        //     //		  xn+1 = sin(a yn) + c cos(a xn)
+        //     //		  yn+1 = sin(b xn) + d cos(b yn)
+        return `{
+          float amount = ${variation.amount.toWebGl()};
+          float a = ${variation.params.get(this.PARAM_A)!.toWebGl()};
+          float b = ${variation.params.get(this.PARAM_B)!.toWebGl()};
+          float c = ${variation.params.get(this.PARAM_C)!.toWebGl()};
+          float d = ${variation.params.get(this.PARAM_D)!.toWebGl()};
+          float x = sin(a * _ty) + c * cos(a * _tx);
+          float y = sin(b * _tx) + d * cos(b * _ty);
+          _vx += x * amount;
+          _vy += y * amount;
+        }`;
+    }
+
+    get name(): string {
+        return 'clifford_js';
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D, VariationTypes.VARTYPE_CROP];
     }
 }
 
@@ -4463,12 +4536,14 @@ export function registerVars_2D_PartA() {
     VariationShaders.registerVar(new ButterflyFayFunc())
     VariationShaders.registerVar(new BWraps7Func())
     VariationShaders.registerVar(new CannabisCurveWFFunc())
+    VariationShaders.registerVar(new CardioidFunc())
     VariationShaders.registerVar(new ChecksFunc())
     VariationShaders.registerVar(new CellFunc())
     VariationShaders.registerVar(new ChrysanthemumFunc())
     VariationShaders.registerVar(new CirclizeFunc())
     VariationShaders.registerVar(new CircusFunc())
     VariationShaders.registerVar(new CloverLeafWFFunc())
+    VariationShaders.registerVar(new CliffordFunc())
     VariationShaders.registerVar(new CollideoscopeFunc())
     VariationShaders.registerVar(new ConicFunc())
     VariationShaders.registerVar(new CosFunc())
