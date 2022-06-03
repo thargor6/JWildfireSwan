@@ -22,7 +22,8 @@ import {
     FUNC_ACOSH,
     FUNC_COSH,
     FUNC_MODULO,
-    FUNC_RINT, FUNC_ROUND,
+    FUNC_RINT,
+    FUNC_ROUND,
     FUNC_SGN,
     FUNC_SINH,
     FUNC_SQRT1PM1
@@ -1559,6 +1560,33 @@ class CellFunc extends VariationShaderFunc2D {
 
     get variationTypes(): VariationTypes[] {
         return [VariationTypes.VARTYPE_2D];
+    }
+}
+
+class ChrysanthemumFunc extends VariationShaderFunc2D {
+    // Autor: Jesus Sosa
+    // Date: 01/feb/2018
+    // Reference:
+    // http://paulbourke.net/geometry/chrysanthemum/
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        return `{
+          float amount = ${variation.amount.toWebGl()};
+          float u = 21.0 * M_PI * rand8(tex, rngState);
+          float p4 = sin(17.0 * u / 3.0);
+          float p8 = sin(2.0 * cos(3.0 * u) - 28.0 * u);
+          float r = 5.0 * (1.0 + sin(11.0 * u / 5.0)) - 4.0 * p4 * p4 * p4 * p4 * p8 * p8 * p8 * p8 * p8 * p8 * p8 * p8;
+          r *= amount / 10.0;
+          _vx += r * cos(u);
+          _vy += r * sin(u);
+        }`;
+    }
+
+    get name(): string {
+        return 'chrysanthemum';
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D, VariationTypes.VARTYPE_BASE_SHAPE];
     }
 }
 
@@ -4437,6 +4465,7 @@ export function registerVars_2D_PartA() {
     VariationShaders.registerVar(new CannabisCurveWFFunc())
     VariationShaders.registerVar(new ChecksFunc())
     VariationShaders.registerVar(new CellFunc())
+    VariationShaders.registerVar(new ChrysanthemumFunc())
     VariationShaders.registerVar(new CirclizeFunc())
     VariationShaders.registerVar(new CircusFunc())
     VariationShaders.registerVar(new CloverLeafWFFunc())

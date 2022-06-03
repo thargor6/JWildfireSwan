@@ -15,7 +15,13 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 */
 
-import {VariationParam, VariationParamType, VariationShaderFunc3D, VariationTypes} from './variation-shader-func';
+import {
+    VariationParam,
+    VariationParamType,
+    VariationShaderFunc2D,
+    VariationShaderFunc3D,
+    VariationTypes
+} from './variation-shader-func';
 import {VariationShaders} from 'Frontend/flames/renderer/variations/variation-shaders';
 import {RenderVariation, RenderXForm} from 'Frontend/flames/model/render-flame';
 import {
@@ -287,6 +293,66 @@ class BubbleWFFunc extends VariationShaderFunc3D {
 
     get variationTypes(): VariationTypes[] {
         return [VariationTypes.VARTYPE_3D];
+    }
+}
+
+class CoshqFunc extends VariationShaderFunc2D {
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        /* Coshq by zephyrtronium http://zephyrtronium.deviantart.com/art/Quaternion-Apo-Plugin-Pack-165451482 */
+        return `{
+                  float amount = ${variation.amount.toWebGl()};
+                  float abs_v = hypot(_ty, _tz);
+                  float s = sin(abs_v);
+                  float c = cos(abs_v);
+                  float sh = sinh(_tx);
+                  float ch = cosh(_tx);
+                  float C = amount * sh * s / abs_v;
+                  _vx += amount * ch * c;
+                  _vy += C * _ty;
+                  _vz += C * _tz;
+                }`;
+    }
+
+    get name(): string {
+        return 'coshq';
+    }
+
+    get funcDependencies(): string[] {
+        return [FUNC_SINH, FUNC_COSH, FUNC_HYPOT];
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
+class CosqFunc extends VariationShaderFunc2D {
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        /* Cosq by zephyrtronium http://zephyrtronium.deviantart.com/art/Quaternion-Apo-Plugin-Pack-165451482 */
+        return `{
+                  float amount = ${variation.amount.toWebGl()};
+                  float abs_v = hypot(_ty, _tz);
+                  float s = sin(_tx);
+                  float c = cos(_tx);
+                  float sh = sinh(abs_v);
+                  float ch = cosh(abs_v);
+                  float C = -amount * s * sh / abs_v;
+                  _vx += amount * c * ch;
+                  _vy += C * _ty;
+                  _vz += C * _tz;
+                }`;
+    }
+
+    get name(): string {
+        return 'cosq';
+    }
+
+    get funcDependencies(): string[] {
+        return [FUNC_SINH, FUNC_COSH, FUNC_HYPOT];
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
     }
 }
 
@@ -3219,6 +3285,8 @@ export function registerVars_3D() {
     VariationShaders.registerVar(new Butterfly3DFunc())
     VariationShaders.registerVar(new ColorscaleWFFunc())
     VariationShaders.registerVar(new ConeFunc())
+    VariationShaders.registerVar(new CoshqFunc())
+    VariationShaders.registerVar(new CosqFunc())
     VariationShaders.registerVar(new Cubic_3DFunc())
     VariationShaders.registerVar(new Curl3DFunc())
     VariationShaders.registerVar(new CylinderApoFunc())
