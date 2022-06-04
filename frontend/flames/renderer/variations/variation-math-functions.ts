@@ -32,6 +32,7 @@ export const FUNC_SQRT1PM1 = 'sqrt1pm1'
 export const FUNC_TANH = 'tanh'
 export const FUNC_TRUNC = 'trunc'
 export const LIB_COMPLEX = 'lib_complex'
+export const LIB_FAST_NOISE = 'lib_fast_noise'
 
 // https://www.shaderific.com/glsl-functions
 
@@ -359,6 +360,163 @@ export class VariationMathFunctions {
             float hypot(float x, float y) {
               return sqrt(x * x + y * y);
 			}`);
+
+      this.registerFunction(LIB_FAST_NOISE, `
+        int X_PRIME = 1619;
+        int Y_PRIME = 31337;
+        int Z_PRIME = 6971;
+        int W_PRIME = 1013;
+      
+        int fastFloor(float f) {
+          return f >= 0.0 ? int(f) : int(f - 1.0);
+        }
+        
+        int fastRound(float f) {
+          return (f >= 0.0) ? int(f + 0.5) : int(f - 0.5);
+        }
+
+        float interpHermiteFunc(float t) {
+          return t * t * (3.0 - 2.0 * t);
+        }
+
+        float interpQuinticFunc(float t) {
+          return t * t * t * (t * (t * 6.0 - 15.0) + 10.0);
+        }
+
+        float cubicLerp(float a, float b, float c, float d, float t) {
+          float p = (d - c) - (a - b);
+          return t * t * t * p + t * t * ((a - b) - p) + t * (c - a) + b;
+        }
+        
+        // bitwise operators implementation based on https://gist.github.com/EliCDavis/f35a9e4afb8e1c9ae94cce8f3c2c9b9a
+/*
+        int OR(int n1, int n2) {
+          float v1 = float(n1);
+          float v2 = float(n2);
+          int byteVal = 1;
+          int result = 0;
+          for(int i = 0; i < 32; i++){
+              bool keepGoing = v1>0.0 || v2 > 0.0;
+              if(keepGoing){
+                  bool addOn = mod(v1, 2.0) > 0.0 || mod(v2, 2.0) > 0.0;
+                  if(addOn){
+                      result += byteVal;
+                  }
+                  v1 = floor(v1 / 2.0);
+                  v2 = floor(v2 / 2.0);
+                  byteVal *= 2;
+              } else {
+                  return result;
+              }
+          }
+          return result;
+        }
+*/
+        int XOR(int n1, int n2) {
+          float v1 = float(n1);
+          float v2 = float(n2);
+          int byteVal = 1;
+          int result = 0;
+          for(int i = 0; i < 32; i++){
+              bool keepGoing = v1>0.0 || v2 > 0.0;
+              if(keepGoing){
+                  bool a = mod(v1, 2.0) > 0.0;
+                  bool b = mod(v2, 2.0) > 0.0;
+                  bool addOn = (a || b) && (a!=b);
+                  if(addOn){
+                      result += byteVal;
+                  }
+                  v1 = floor(v1 / 2.0);
+                  v2 = floor(v2 / 2.0);
+                  byteVal *= 2;
+              } else {
+                  return result;
+              }
+          }
+          return result;
+        }
+/*        
+        int AND(int n1, int n2){ 
+          float v1 = float(n1);
+          float v2 = float(n2);
+          int byteVal = 1;
+          int result = 0;
+          for(int i = 0; i < 32; i++){
+              bool keepGoing = v1>0.0 || v2 > 0.0;
+              if(keepGoing){
+                  bool addOn = mod(v1, 2.0) > 0.0 && mod(v2, 2.0) > 0.0;
+                  if(addOn){
+                      result += byteVal;
+                  }
+                  v1 = floor(v1 / 2.0);
+                  v2 = floor(v2 / 2.0);
+                  byteVal *= 2;
+              } else {
+                  return result;
+              }
+          }
+          return result;
+        }
+*/   
+       int RSHIFT(int num, int shifts){
+          return int(floor(float(num) / pow(2.0, float(shifts))));
+       }
+      
+       int hash2D(int seed, int x, int y) {
+          int hash = seed;
+          hash = XOR(hash, X_PRIME * x);
+          hash = XOR(hash, Y_PRIME * y);
+          hash = hash * hash * hash * 60493;
+          hash = XOR(RSHIFT(hash, 13), hash);
+          return hash;
+        }
+        
+        int hash3D(int seed, int x, int y, int z) {
+          int hash = seed;
+          hash = XOR(hash, X_PRIME * x);
+          hash = XOR(hash, Y_PRIME * y);
+          hash = XOR(hash, Z_PRIME * z);
+          hash = hash * hash * hash * 60493;
+          hash = XOR(RSHIFT(hash, 13), hash);
+          return hash;
+        }
+
+        int hash4D(int seed, int x, int y, int z, int w) {
+          int hash = seed;
+          hash = XOR(hash, X_PRIME * x);
+          hash = XOR(hash, Y_PRIME * y);
+          hash = XOR(hash, Z_PRIME * z);
+          hash = XOR(hash, W_PRIME * w);
+          hash = hash * hash * hash * 60493;
+          hash = XOR(RSHIFT(hash, 13),hash);
+          return hash;
+        }
+       
+        float valCoord2D(int seed, int x, int y) {
+          int n = seed;
+          n = XOR(n, X_PRIME * x);
+          n = XOR(n, Y_PRIME * y);
+          return float(n * n * n * 60493) / 2147483648.0;
+        }
+
+        float valCoord3D(int seed, int x, int y, int z) {
+          int n = seed;
+          n = XOR(n, X_PRIME * x);
+          n = XOR(n, Y_PRIME * y);
+          n = XOR(n, Z_PRIME * z);
+          return float(n * n * n * 60493) / 2147483648.0;
+        }
+        
+        float valCoord4D(int seed, int x, int y, int z, int w) {
+          int n = seed;
+          n = XOR(n, X_PRIME * x);
+          n = XOR(n, Y_PRIME * y);
+          n = XOR(n, Z_PRIME * z);
+          n = XOR(n, W_PRIME * w);
+          return float(n * n * n * 60493) / 2147483648.0;
+        }
+        
+      `);
 
 
       this.registerFunction(FUNC_ERF,

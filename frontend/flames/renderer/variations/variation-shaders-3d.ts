@@ -29,7 +29,7 @@ import {
     FUNC_HYPOT, FUNC_MODULO,
     FUNC_ROUND,
     FUNC_SGN,
-    FUNC_SINH
+    FUNC_SINH, LIB_FAST_NOISE
 } from 'Frontend/flames/renderer/variations/variation-math-functions';
 
 /*
@@ -1410,6 +1410,11 @@ class Linear3DFunc extends VariationShaderFunc3D {
 
     get name(): string {
         return 'linear3D';
+    }
+
+    // TODO remove
+    get funcDependencies(): string[] {
+        return [LIB_FAST_NOISE];
     }
 
     get variationTypes(): VariationTypes[] {
