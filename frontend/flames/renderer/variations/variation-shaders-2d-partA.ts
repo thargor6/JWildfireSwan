@@ -1871,6 +1871,106 @@ class ConicFunc extends VariationShaderFunc2D {
     }
 }
 
+class Cot2_BSFunc extends VariationShaderFunc2D {
+    PARAM_X1 = 'x1'
+    PARAM_X2 = 'x2'
+    PARAM_Y1 = 'y1'
+    PARAM_Y2 = 'y2'
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_X1, type: VariationParamType.VP_NUMBER, initialValue: 2.0 },
+            { name: this.PARAM_X2, type: VariationParamType.VP_NUMBER, initialValue: 2.0 },
+            { name: this.PARAM_Y1, type: VariationParamType.VP_NUMBER, initialValue: 2.0 },
+            { name: this.PARAM_Y2, type: VariationParamType.VP_NUMBER, initialValue: 2.0 }
+        ]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        /* complex vars by cothe */
+        /* exp log sin cos tan sec csc cot sinh cosh tanh sech csch coth */
+        /* Variables added by Brad Stefanov */
+        //Cotangent COT
+        return `{
+                  float amount = ${variation.amount.toWebGl()};
+                  float x1 = ${variation.params.get(this.PARAM_X1)!.toWebGl()};
+                  float x2 = ${variation.params.get(this.PARAM_X2)!.toWebGl()};
+                  float y1 = ${variation.params.get(this.PARAM_Y1)!.toWebGl()};
+                  float y2 = ${variation.params.get(this.PARAM_Y2)!.toWebGl()};
+                  float cotsin = sin(x1 * _tx);
+                  float cotcos = cos(x2 * _tx);
+                  float cotsinh = sinh(y1 * _ty);
+                  float cotcosh = cosh(y2 * _ty);
+                  float cotden = 1.0 / (cotcosh - cotcos);
+                  _vx += amount * cotden * cotsin;
+                  _vy += amount * cotden * -1.0 * cotsinh;
+                }`;
+    }
+
+
+    get name(): string {
+        return 'cot2_bs';
+    }
+
+    get funcDependencies(): string[] {
+        return [FUNC_SINH, FUNC_COSH];
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
+class Coth2_BSFunc extends VariationShaderFunc2D {
+    PARAM_X1 = 'x1'
+    PARAM_X2 = 'x2'
+    PARAM_Y1 = 'y1'
+    PARAM_Y2 = 'y2'
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_X1, type: VariationParamType.VP_NUMBER, initialValue: 2.0 },
+            { name: this.PARAM_X2, type: VariationParamType.VP_NUMBER, initialValue: 2.0 },
+            { name: this.PARAM_Y1, type: VariationParamType.VP_NUMBER, initialValue: 2.0 },
+            { name: this.PARAM_Y2, type: VariationParamType.VP_NUMBER, initialValue: 2.0 }
+        ]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        /* complex vars by cothe */
+        /* exp log sin cos tan sec csc cot sinh cosh tanh sech csch coth */
+        /* Variables added by Brad Stefanov */
+        //Hyperbolic Cotangent COTH
+        return `{
+                  float amount = ${variation.amount.toWebGl()};
+                  float x1 = ${variation.params.get(this.PARAM_X1)!.toWebGl()};
+                  float x2 = ${variation.params.get(this.PARAM_X2)!.toWebGl()};
+                  float y1 = ${variation.params.get(this.PARAM_Y1)!.toWebGl()};
+                  float y2 = ${variation.params.get(this.PARAM_Y2)!.toWebGl()};
+                  float cothsin = sin(y1 * _ty);
+                  float cothcos = cos(y2 * _ty);
+                  float cothsinh = sinh(x1 * _tx);
+                  float cothcosh = cosh(x2 * _tx);
+                  float d = (cothcosh - cothcos);
+                  if (d != 0.0) {
+                    float cothden = 1.0 / d;
+                    _vx += amount * cothden * cothsinh;
+                    _vy += amount * cothden * cothsin;
+                  } 
+                }`;
+    }
+
+    get name(): string {
+        return 'coth2_bs';
+    }
+
+    get funcDependencies(): string[] {
+        return [FUNC_SINH, FUNC_COSH];
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
 class CPowFunc extends VariationShaderFunc2D {
     PARAM_R = 'r'
     PARAM_I = 'i'
@@ -2110,6 +2210,53 @@ class CoshFunc extends VariationShaderFunc2D {
 
     get name(): string {
         return 'cosh';
+    }
+
+    get funcDependencies(): string[] {
+        return [FUNC_SINH, FUNC_COSH];
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
+class Cosh2_BSFunc extends VariationShaderFunc2D {
+    PARAM_X1 = 'x1'
+    PARAM_X2 = 'x2'
+    PARAM_Y1 = 'y1'
+    PARAM_Y2 = 'y2'
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_X1, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
+            { name: this.PARAM_X2, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
+            { name: this.PARAM_Y1, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
+            { name: this.PARAM_Y2, type: VariationParamType.VP_NUMBER, initialValue: 1.0 }
+        ]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        /* complex vars by cothe */
+        /* exp log sin cos tan sec csc cot sinh cosh tanh sech csch coth */
+        /* Variables added by Brad Stefanov */
+        //Hyperbolic Cosine COSH
+        return `{
+                  float amount = ${variation.amount.toWebGl()};
+                  float x1 = ${variation.params.get(this.PARAM_X1)!.toWebGl()};
+                  float x2 = ${variation.params.get(this.PARAM_X2)!.toWebGl()};
+                  float y1 = ${variation.params.get(this.PARAM_Y1)!.toWebGl()};
+                  float y2 = ${variation.params.get(this.PARAM_Y2)!.toWebGl()};
+                  float coshsin = sin(_ty * y1);
+                  float coshcos = cos(_ty * y2);
+                  float coshsinh = sinh(_tx * x1);
+                  float coshcosh = cosh(_tx * x2);
+                  _vx += amount * coshcosh * coshcos;
+                  _vy += amount * coshsinh * coshsin;
+                }`;
+    }
+
+    get name(): string {
+        return 'cosh2_bs';
     }
 
     get funcDependencies(): string[] {
@@ -4548,9 +4695,12 @@ export function registerVars_2D_PartA() {
     VariationShaders.registerVar(new ConicFunc())
     VariationShaders.registerVar(new CosFunc())
     VariationShaders.registerVar(new CoshFunc())
+    VariationShaders.registerVar(new Cosh2_BSFunc())
     VariationShaders.registerVar(new CosineFunc())
     VariationShaders.registerVar(new CotFunc())
     VariationShaders.registerVar(new CothFunc())
+    VariationShaders.registerVar(new Cot2_BSFunc())
+    VariationShaders.registerVar(new Coth2_BSFunc())
     VariationShaders.registerVar(new CPowFunc())
     VariationShaders.registerVar(new CropFunc())
     VariationShaders.registerVar(new CrossFunc())
