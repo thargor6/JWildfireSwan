@@ -2976,6 +2976,56 @@ class EpispiralWFFunc extends VariationShaderFunc2D {
     }
 }
 
+class ERotateFunc extends VariationShaderFunc2D {
+    PARAM_ROTATE = 'rotate'
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_ROTATE, type: VariationParamType.VP_NUMBER, initialValue: 1.0 }]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        // eRotate by Michael Faber, http://michaelfaber.deviantart.com/art/eSeries-306044892
+        return `{
+          float amount = ${variation.amount.toWebGl()};
+          float rotate = ${variation.params.get(this.PARAM_ROTATE)!.toWebGl()};
+          float tmp = _ty * _ty + _tx * _tx + 1.0;
+          float tmp2 = 2.0 * _tx;
+          float xmax = (sqrt_safe(tmp + tmp2) + sqrt_safe(tmp - tmp2)) * 0.5;
+          float sinnu, cosnu;
+          if (xmax < 1.0)
+            xmax = 1.0;
+        
+          float t = _tx / xmax;
+          if (t > 1.0)
+            t = 1.0;
+          else if (t < -1.0)
+            t = -1.0;
+          float nu = acos(t); 
+          if (_ty < 0.0)
+            nu *= -1.0;
+        
+          nu = mod(nu + rotate + M_PI, (2.0*M_PI)) - M_PI;
+        
+          sinnu = sin(nu);
+          cosnu = cos(nu);
+          _vx += amount * xmax * cosnu;
+          _vy += amount * sqrt(xmax - 1.0) * sqrt(xmax + 1.0) * sinnu;
+        }`;
+    }
+
+    get name(): string {
+        return 'eRotate';
+    }
+
+    get funcDependencies(): string[] {
+        return [FUNC_SINH, FUNC_COSH, FUNC_ACOSH];
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
 class EscherFunc extends VariationShaderFunc2D {
     PARAM_BETA = 'beta'
 
@@ -3011,6 +3061,126 @@ class EscherFunc extends VariationShaderFunc2D {
 
     get name(): string {
         return 'escher';
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
+class EScaleFunc extends VariationShaderFunc2D {
+    PARAM_SCALE = 'scale'
+    PARAM_ANGLE = 'angle'
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_SCALE, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
+            { name: this.PARAM_ANGLE, type: VariationParamType.VP_NUMBER, initialValue: 0.0 }]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        // eScale by Michael Faber, http://michaelfaber.deviantart.com/art/eSeries-306044892
+        return `{
+          float amount = ${variation.amount.toWebGl()};
+          float scale = ${variation.params.get(this.PARAM_SCALE)!.toWebGl()};
+          float angle = ${variation.params.get(this.PARAM_ANGLE)!.toWebGl()};
+          float tmp = _ty * _ty + _tx * _tx + 1.0;
+          float tmp2 = 2.0 * _tx;
+          float xmax = (sqrt_safe(tmp + tmp2) + sqrt_safe(tmp - tmp2)) * 0.5;
+          if (xmax < 1.0)
+            xmax = 1.0;
+          float sinhmu, coshmu;
+        
+          float mu = acosh(xmax); 
+          float t = _tx / xmax;
+        
+          if (t > 1.0)
+            t = 1.0;
+          else if (t < -1.0)
+            t = -1.0;
+        
+          float nu = acos(t); 
+          if (_ty < 0.0)
+            nu *= -1.0;
+        
+          mu *= scale;
+        
+          nu = mod(mod(scale * (nu + M_PI + angle), (2.0*M_PI) * scale) - angle - scale * M_PI, (2.0*M_PI));
+        
+          if (nu > M_PI)
+            nu -= (2.0*M_PI);
+          if (nu < -M_PI)
+            nu += (2.0*M_PI);
+        
+          sinhmu = sinh(mu);
+          coshmu = cosh(mu);
+          _vx += amount * coshmu * cos(nu);
+          _vy += amount * sinhmu * sin(nu);
+        }`;
+    }
+
+    get name(): string {
+        return 'eScale';
+    }
+
+    get funcDependencies(): string[] {
+        return [FUNC_SINH, FUNC_COSH, FUNC_ACOSH];
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
+class ESwirlFunc extends VariationShaderFunc2D {
+    PARAM_IN = 'in'
+    PARAM_OUT = 'out'
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_IN, type: VariationParamType.VP_NUMBER, initialValue: 1.2 },
+            { name: this.PARAM_OUT, type: VariationParamType.VP_NUMBER, initialValue: 0.2 }]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        // eSwirl by Michael Faber, http://michaelfaber.deviantart.com/art/eSeries-306044892
+        return `{
+          float amount = ${variation.amount.toWebGl()};
+          float _in = ${variation.params.get(this.PARAM_IN)!.toWebGl()};
+          float _out = ${variation.params.get(this.PARAM_OUT)!.toWebGl()};
+          float tmp = _ty * _ty + _tx * _tx + 1.0;
+          float tmp2 = 2.0 * _tx;
+          float xmax = (sqrt_safe(tmp + tmp2) + sqrt_safe(tmp - tmp2)) * 0.5;
+          if (xmax < 1.0)
+            xmax = 1.0;
+          float sinhmu, coshmu, sinnu, cosnu;
+        
+          float mu = acosh(xmax); 
+          float t = _tx / xmax;
+          if (t > 1.0)
+            t = 1.0;
+          else if (t < -1.0)
+            t = -1.0;
+        
+          float nu = acos(t); 
+          if (_ty < 0.0)
+            nu *= -1.0;
+        
+          nu = nu + mu * _out + _in / mu;
+        
+          sinhmu = sinh(mu);
+          coshmu = cosh(mu);
+          sinnu = sin(nu);
+          cosnu = cos(nu);
+          _vx += amount * coshmu * cosnu;
+          _vy += amount * sinhmu * sinnu;
+        }`;
+    }
+
+    get name(): string {
+        return 'eSwirl';
+    }
+
+    get funcDependencies(): string[] {
+        return [FUNC_SINH, FUNC_COSH, FUNC_ACOSH];
     }
 
     get variationTypes(): VariationTypes[] {
@@ -4740,7 +4910,10 @@ export function registerVars_2D_PartA() {
     VariationShaders.registerVar(new EllipticFunc())
     VariationShaders.registerVar(new EpispiralFunc())
     VariationShaders.registerVar(new EpispiralWFFunc())
+    VariationShaders.registerVar(new ERotateFunc())
     VariationShaders.registerVar(new EscherFunc())
+    VariationShaders.registerVar(new EScaleFunc())
+    VariationShaders.registerVar(new ESwirlFunc())
     VariationShaders.registerVar(new Ex())
     VariationShaders.registerVar(new ExpFunc())
     VariationShaders.registerVar(new ExponentialFunc())
