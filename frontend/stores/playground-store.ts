@@ -30,6 +30,11 @@ import {registerVars_Blur} from "Frontend/flames/renderer/variations/variation-s
 import {registerVars_2D_PartS} from "Frontend/flames/renderer/variations/variation-shaders-2d-partS";
 import {ExampleFlame, parseExampleFlame, sortExamples, SortOrder} from "Frontend/stores/example-flames";
 import {registerVars_Plot} from "Frontend/flames/renderer/variations/variation-shaders-plot";
+import {registerVars_2D_PartC} from "Frontend/flames/renderer/variations/variation-shaders-2d-partC";
+import {registerVars_2D_PartD} from "Frontend/flames/renderer/variations/variation-shaders-2d-partD";
+import {registerVars_2D_PartG} from "Frontend/flames/renderer/variations/variation-shaders-2d-partG";
+import {registerVars_2D_PartP} from "Frontend/flames/renderer/variations/variation-shaders-2d-partP";
+import {registerVars_2D_PartT} from "Frontend/flames/renderer/variations/variation-shaders-2d-partT";
 
 type OnInitCallback = () => void
 
@@ -96,8 +101,13 @@ export class PlaygroundStore {
 
 
 registerVars_2D_PartA()
+registerVars_2D_PartC()
+registerVars_2D_PartD()
+registerVars_2D_PartG()
 registerVars_2D_PartK()
+registerVars_2D_PartP()
 registerVars_2D_PartS()
+registerVars_2D_PartT()
 registerVars_Blur()
 registerVars_Complex()
 registerVars_Waves()
