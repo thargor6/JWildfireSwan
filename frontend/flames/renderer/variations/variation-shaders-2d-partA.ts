@@ -2433,13 +2433,31 @@ class CylinderFunc extends VariationShaderFunc2D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         return `{
                   float amount = ${variation.amount.toWebGl()};
-                   _vx += amount * sin(_tx);
-                   _vy += amount * _ty;
+                  _vx += amount * sin(_tx);
+                  _vy += amount * _ty;
                 }`;
     }
 
     get name(): string {
         return 'cylinder';
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
+class Cylinder2Func extends VariationShaderFunc2D {
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        return `{
+                  float amount = ${variation.amount.toWebGl()};
+                  _vx += amount * _tx / sqrt(sqr(_tx) + 1.0);
+                  _vy += amount * _ty;
+                }`;
+    }
+
+    get name(): string {
+        return 'cylinder2';
     }
 
     get variationTypes(): VariationTypes[] {
@@ -4709,6 +4727,7 @@ export function registerVars_2D_PartA() {
     VariationShaders.registerVar(new CurlFunc())
     VariationShaders.registerVar(new CurveFunc())
     VariationShaders.registerVar(new CylinderFunc())
+    VariationShaders.registerVar(new Cylinder2Func())
     VariationShaders.registerVar(new DCLinearFunc())
     VariationShaders.registerVar(new DevilWarpFunc())
     VariationShaders.registerVar(new DiamondFunc())

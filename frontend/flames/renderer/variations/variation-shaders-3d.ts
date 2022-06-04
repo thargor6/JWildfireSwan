@@ -356,6 +356,68 @@ class CosqFunc extends VariationShaderFunc3D {
     }
 }
 
+class CschqFunc extends VariationShaderFunc3D {
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        /* Cschq by zephyrtronium http://zephyrtronium.deviantart.com/art/Quaternion-Apo-Plugin-Pack-165451482 */
+        return `{
+                  float amount = ${variation.amount.toWebGl()};
+                  float abs_v = hypot(_ty, _tz);
+                  float s = sin(abs_v);
+                  float c = cos(abs_v);
+                  float sh = sinh(_tx);
+                  float ch = cosh(_tx);
+                  float ni = amount / (sqr(_tx) + sqr(_ty) + sqr(_tz));
+                  float C = ni * ch * s / abs_v;
+                  _vx += sh * c * ni;
+                  _vy -= C * _ty;
+                  _vz -= C * _tz;
+                 }`;
+    }
+
+    get name(): string {
+        return 'cschq';
+    }
+
+    get funcDependencies(): string[] {
+        return [FUNC_SINH, FUNC_COSH, FUNC_HYPOT];
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_3D];
+    }
+}
+
+class CscqFunc extends VariationShaderFunc3D {
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        /* Cscq by zephyrtronium http://zephyrtronium.deviantart.com/art/Quaternion-Apo-Plugin-Pack-165451482 */
+        return `{
+                  float amount = ${variation.amount.toWebGl()};
+                  float abs_v = hypot(_ty, _tz);
+                  float s = sin(_tx);
+                  float c = cos(_tx);
+                  float sh = sinh(abs_v);
+                  float ch = cosh(abs_v);
+                  float ni = amount / (sqr(_tx) + sqr(_ty) + sqr(_tz));
+                  float C = ni * c * sh / abs_v;
+                  _vx += s * ch * ni;
+                  _vy -= C * _ty;
+                  _vz -= C * _tz;
+                }`;
+    }
+
+    get name(): string {
+        return 'cscq';
+    }
+
+    get funcDependencies(): string[] {
+        return [FUNC_SINH, FUNC_COSH, FUNC_HYPOT];
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_3D];
+    }
+}
+
 class CothqFunc extends VariationShaderFunc3D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         /* Cothq by zephyrtronium http://zephyrtronium.deviantart.com/art/Quaternion-Apo-Plugin-Pack-165451482 */
@@ -3323,6 +3385,8 @@ export function registerVars_3D() {
     VariationShaders.registerVar(new ConeFunc())
     VariationShaders.registerVar(new CoshqFunc())
     VariationShaders.registerVar(new CosqFunc())
+    VariationShaders.registerVar(new CschqFunc())
+    VariationShaders.registerVar(new CscqFunc())
     VariationShaders.registerVar(new CothqFunc())
     VariationShaders.registerVar(new Cubic_3DFunc())
     VariationShaders.registerVar(new Curl3DFunc())
