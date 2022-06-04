@@ -17,7 +17,7 @@
 
 export const FUNC_ACOSH = 'acosh'
 export const FUNC_COSH = 'cosh'
-export const FUNC_SAFEDIV = 'safediv'
+export const FUNC_ERF = 'erf'
 export const FUNC_HYPOT = 'hypot'
 export const FUNC_J1 = 'j1'
 export const FUNC_JACOBI_ELLIPTIC = 'jacobi_elliptic'
@@ -25,6 +25,7 @@ export const FUNC_LOG10 = 'log10'
 export const FUNC_MODULO = 'modulo'
 export const FUNC_RINT = 'rint'
 export const FUNC_ROUND = 'round'
+export const FUNC_SAFEDIV = 'safediv'
 export const FUNC_SGN = 'sgn'
 export const FUNC_SINH = 'sinh'
 export const FUNC_SQRT1PM1 = 'sqrt1pm1'
@@ -358,6 +359,33 @@ export class VariationMathFunctions {
             float hypot(float x, float y) {
               return sqrt(x * x + y * y);
 			}`);
+
+
+      this.registerFunction(FUNC_ERF,
+        // Quick erf code taken from http://introcs.cs.princeton.edu/java/21function/ErrorFunction.java.html
+        // Copyright (C) 2000-2010, Robert Sedgewick and Kevin Wayne.
+        //fractional error in math formula less than 1.2 * 10 ^ -7.
+        // although subject to catastrophic cancellation when z in very close to 0
+        // from Chebyshev fitting formula for erf(z) from Numerical Recipes, 6.2
+        `
+            float erf(float z) {
+              float t = 1.0 / (1.0 + 0.5 * abs(z));
+              // use Horner's method
+              float ans = 1.0 - t * exp(-z * z - 1.26551223 +
+                  t * (1.00002368 +
+                  t * (0.37409196 +
+                      t * (0.09678418 +
+                          t * (-0.18628806 +
+                              t * (0.27886807 +
+                                  t * (-1.13520398 +
+                                      t * (1.48851587 +
+                                          t * (-0.82215223 +
+                                              t * (0.17087277))))))))));
+              if (z >= 0.0)
+                return ans;
+              else
+                return -ans;
+            }`);
 
       this.registerFunction(FUNC_J1,
         // Bessel-Function from cern.jet.math.Bessel.j1

@@ -20,7 +20,7 @@ import {VariationShaders} from 'Frontend/flames/renderer/variations/variation-sh
 import {RenderVariation, RenderXForm} from 'Frontend/flames/model/render-flame';
 import {
     FUNC_ACOSH,
-    FUNC_COSH,
+    FUNC_COSH, FUNC_ERF,
     FUNC_MODULO,
     FUNC_RINT,
     FUNC_ROUND,
@@ -2976,6 +2976,67 @@ class EpispiralWFFunc extends VariationShaderFunc2D {
     }
 }
 
+class EPushFunc extends VariationShaderFunc2D {
+    PARAM_PUSH = 'push'
+    PARAM_DIST = 'dist'
+    PARAM_ROTATE = 'rotate'
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_PUSH, type: VariationParamType.VP_NUMBER, initialValue: 0.0 },
+                { name: this.PARAM_DIST, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
+                { name: this.PARAM_ROTATE, type: VariationParamType.VP_NUMBER, initialValue: 0.0 }]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        // ePush by Michael Faber, http://michaelfaber.deviantart.com/art/eSeries-306044892
+        return `{
+          float amount = ${variation.amount.toWebGl()};
+          float push = ${variation.params.get(this.PARAM_PUSH)!.toWebGl()};
+          float dist = ${variation.params.get(this.PARAM_DIST)!.toWebGl()};
+          float rotate = ${variation.params.get(this.PARAM_ROTATE)!.toWebGl()};
+          float tmp = _ty * _ty + _tx * _tx + 1.0;
+          float tmp2 = 2.0 * _tx;
+          float xmax = (sqrt_safe(tmp + tmp2) + sqrt_safe(tmp - tmp2)) * 0.5;
+          if (xmax < 1.0)
+            xmax = 1.0;
+          float sinhmu, coshmu;
+        
+          float mu = acosh(xmax); 
+          float t = _tx / xmax;
+          if (t > 1.0)
+            t = 1.0;
+          else if (t < -1.0)
+            t = -1.0;
+        
+          float nu = acos(t); 
+          if (_ty < 0.0)
+            nu *= -1.0;
+          nu += rotate;
+        
+          mu *= dist;
+          mu += push;
+        
+          sinhmu = sinh(mu);
+          coshmu = cosh(mu);
+        
+          _vx += amount * coshmu * cos(nu);
+          _vy += amount * sinhmu * sin(nu);
+        }`;
+    }
+
+    get name(): string {
+        return 'ePush';
+    }
+
+    get funcDependencies(): string[] {
+        return [FUNC_SINH, FUNC_COSH, FUNC_ACOSH];
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
 class ERotateFunc extends VariationShaderFunc2D {
     PARAM_ROTATE = 'rotate'
 
@@ -3019,6 +3080,29 @@ class ERotateFunc extends VariationShaderFunc2D {
 
     get funcDependencies(): string[] {
         return [FUNC_SINH, FUNC_COSH, FUNC_ACOSH];
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
+class ErfFunc extends VariationShaderFunc2D {
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        // "erf" variation created by zephyrtronium implemented into JWildfire by darkbeam
+        return `{
+          float amount = ${variation.amount.toWebGl()};
+          _vx += erf(_tx) * amount;
+          _vy += erf(_ty) * amount;
+        }`;
+    }
+
+    get name(): string {
+        return 'erf';
+    }
+
+    get funcDependencies(): string[] {
+        return [FUNC_ERF];
     }
 
     get variationTypes(): VariationTypes[] {
@@ -4910,6 +4994,8 @@ export function registerVars_2D_PartA() {
     VariationShaders.registerVar(new EllipticFunc())
     VariationShaders.registerVar(new EpispiralFunc())
     VariationShaders.registerVar(new EpispiralWFFunc())
+    VariationShaders.registerVar(new EPushFunc())
+    VariationShaders.registerVar(new ErfFunc())
     VariationShaders.registerVar(new ERotateFunc())
     VariationShaders.registerVar(new EscherFunc())
     VariationShaders.registerVar(new EScaleFunc())

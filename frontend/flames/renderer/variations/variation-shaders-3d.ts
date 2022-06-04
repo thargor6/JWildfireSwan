@@ -25,7 +25,7 @@ import {
 import {VariationShaders} from 'Frontend/flames/renderer/variations/variation-shaders';
 import {RenderVariation, RenderXForm} from 'Frontend/flames/model/render-flame';
 import {
-    FUNC_COSH,
+    FUNC_COSH, FUNC_ERF,
     FUNC_HYPOT, FUNC_MODULO,
     FUNC_ROUND,
     FUNC_SGN,
@@ -821,6 +821,30 @@ class DinisSurfaceWFFunc extends VariationShaderFunc3D {
 
     get name(): string {
         return 'dinis_surface_wf';
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_3D];
+    }
+}
+
+class Erf3DFunc extends VariationShaderFunc3D {
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        // "erf3D" variation created by zephyrtronium implemented into JWildfire by darkbeam
+        return `{
+          float amount = ${variation.amount.toWebGl()};
+          _vx += erf(_tx) * amount;
+          _vy += erf(_ty) * amount;
+          _vz += erf(_tz) * amount;
+        }`;
+    }
+
+    get name(): string {
+        return 'erf3D';
+    }
+
+    get funcDependencies(): string[] {
+        return [FUNC_ERF];
     }
 
     get variationTypes(): VariationTypes[] {
@@ -3392,6 +3416,7 @@ export function registerVars_3D() {
     VariationShaders.registerVar(new Curl3DFunc())
     VariationShaders.registerVar(new CylinderApoFunc())
     VariationShaders.registerVar(new DCZTranslFunc())
+    VariationShaders.registerVar(new Erf3DFunc())
     VariationShaders.registerVar(new DinisSurfaceWFFunc())
     VariationShaders.registerVar(new Foci3DFunc())
     VariationShaders.registerVar(new HelicoidFunc())
