@@ -828,6 +828,43 @@ class DinisSurfaceWFFunc extends VariationShaderFunc3D {
     }
 }
 
+class Ennepers2Func extends VariationShaderFunc3D {
+    PARAM_A = 'a'
+    PARAM_B = 'b'
+    PARAM_C = 'c'
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_A, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
+            { name: this.PARAM_B, type: VariationParamType.VP_NUMBER, initialValue: 0.3333 },
+            { name: this.PARAM_C, type: VariationParamType.VP_NUMBER, initialValue: 0.075 }]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        /* ennepers2 by dark-beam */
+        return `{
+          float amount = ${variation.amount.toWebGl()};
+          float a = ${variation.params.get(this.PARAM_A)!.toWebGl()};
+          float b = ${variation.params.get(this.PARAM_B)!.toWebGl()};
+          float c = ${variation.params.get(this.PARAM_C)!.toWebGl()};
+          float xx = _tx;
+          float yy = _ty;
+          float r2 = 1.0 / (sqr(xx) + sqr(yy));
+          float dxy = (sqr(a * xx) - sqr(b * yy));
+          _vx += amount * xx * (sqr(a) - dxy * r2 - c * sqrt(abs(xx)));
+          _vy += amount * yy * (sqr(b) - dxy * r2 - c * sqrt(abs(yy)));
+          _vz += amount * dxy * 0.5 * sqrt(r2);
+        }`;
+    }
+
+    get name(): string {
+        return 'ennepers2';
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_3D];
+    }
+}
+
 class Erf3DFunc extends VariationShaderFunc3D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         // "erf3D" variation created by zephyrtronium implemented into JWildfire by darkbeam
@@ -845,6 +882,35 @@ class Erf3DFunc extends VariationShaderFunc3D {
 
     get funcDependencies(): string[] {
         return [FUNC_ERF];
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_3D];
+    }
+}
+
+class EstiqFunc extends VariationShaderFunc3D {
+    /* Estiq by zephyrtronium http://zephyrtronium.deviantart.com/art/Quaternion-Apo-Plugin-Pack-165451482 */
+     getCode(xform: RenderXForm, variation: RenderVariation): string {
+        return `{
+          float amount = ${variation.amount.toWebGl()};
+           float e = exp(_tx);
+           float abs_v = hypot(_ty, _tz);
+            float s = sin(abs_v);
+            float c = cos(abs_v);
+            float a = e * s / abs_v;
+            _vx += amount * e * c;
+            _vy += amount * a * _ty;
+            _vz += amount * a * _tz;
+        }`;
+    }
+
+    get name(): string {
+        return 'estiq';
+    }
+
+    get funcDependencies(): string[] {
+        return [FUNC_HYPOT];
     }
 
     get variationTypes(): VariationTypes[] {
@@ -3416,8 +3482,10 @@ export function registerVars_3D() {
     VariationShaders.registerVar(new Curl3DFunc())
     VariationShaders.registerVar(new CylinderApoFunc())
     VariationShaders.registerVar(new DCZTranslFunc())
-    VariationShaders.registerVar(new Erf3DFunc())
     VariationShaders.registerVar(new DinisSurfaceWFFunc())
+    VariationShaders.registerVar(new Ennepers2Func())
+    VariationShaders.registerVar(new Erf3DFunc())
+    VariationShaders.registerVar(new EstiqFunc())
     VariationShaders.registerVar(new Foci3DFunc())
     VariationShaders.registerVar(new HelicoidFunc())
     VariationShaders.registerVar(new HemisphereFunc())

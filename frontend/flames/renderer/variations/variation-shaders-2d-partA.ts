@@ -2896,6 +2896,25 @@ class EllipticFunc extends VariationShaderFunc2D {
     }
 }
 
+class EnnepersFunc extends VariationShaderFunc2D {
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        // ennepers by Raykoid666, http://raykoid666.deviantart.com/art/re-pack-1-new-plugins-100092186
+        return `{
+          float amount = ${variation.amount.toWebGl()};
+          _vx = amount * (_tx - ((sqr(_tx) * _tx) / 3.0)) + _tx * sqr(_ty);
+          _vy = amount * (_ty - ((sqr(_ty) * _ty) / 3.0)) + _ty * sqr(_tx);
+        }`;
+    }
+
+    get name(): string {
+        return 'ennepers';
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
 class EpispiralFunc extends VariationShaderFunc2D {
     PARAM_N = 'n'
     PARAM_THICKNESS = 'thickness'
@@ -4992,6 +5011,7 @@ export function registerVars_2D_PartA() {
     VariationShaders.registerVar(new EDiscFunc())
     VariationShaders.registerVar(new EJuliaFunc())
     VariationShaders.registerVar(new EllipticFunc())
+    VariationShaders.registerVar(new EnnepersFunc())
     VariationShaders.registerVar(new EpispiralFunc())
     VariationShaders.registerVar(new EpispiralWFFunc())
     VariationShaders.registerVar(new EPushFunc())
