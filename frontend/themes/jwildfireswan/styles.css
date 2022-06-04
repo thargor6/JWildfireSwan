@@ -30,7 +30,7 @@ html {
 
 [theme~="dark"] {
 
-      --lumo-base-color: #101010;
+      --lumo-base-color: #202020;
       --lumo-primary-color: hsl(34, 96%, 47%);
       --lumo-primary-text-color: hsl(36, 96%, 47%);
 
