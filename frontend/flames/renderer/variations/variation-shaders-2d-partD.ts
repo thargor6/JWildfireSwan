@@ -580,6 +580,73 @@ class EModFunc extends VariationShaderFunc2D {
     }
 }
 
+class EMotionFunc extends VariationShaderFunc2D {
+    PARAM_MOVE = 'move'
+    PARAM_ROTATE = 'rotate'
+
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_MOVE, type: VariationParamType.VP_NUMBER, initialValue: 0.0 },
+            { name: this.PARAM_ROTATE, type: VariationParamType.VP_NUMBER, initialValue: 0.0 }]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        // eMotion by Michael Faber, http://michaelfaber.deviantart.com/art/eSeries-306044892
+        return `{
+          float amount = ${variation.amount.toWebGl()};
+          float move = ${variation.params.get(this.PARAM_MOVE)!.toWebGl()};
+          float rotate = ${variation.params.get(this.PARAM_ROTATE)!.toWebGl()};
+          float tmp = _ty * _ty + _tx * _tx + 1.0;
+          float tmp2 = 2.0 * _tx;
+          float xmax = (sqrt_safe(tmp + tmp2) + sqrt_safe(tmp - tmp2)) * 0.5;
+          if (xmax < 1.0)
+            xmax = 1.0;
+          float sinhmu, coshmu;
+        
+          float mu = acosh(xmax); 
+          float t = _tx / xmax;
+        
+          if (t > 1.0)
+            t = 1.0;
+          else if (t < -1.0)
+            t = -1.0;
+        
+          float nu = acos(t); 
+          if (_ty < 0.0)
+            nu *= -1.0;
+        
+          if (nu < 0.0) {
+            mu += move;
+          } else {
+            mu -= move;
+          }
+          if (mu <= 0.0) {
+            mu *= -1.0;
+            nu *= -1.0;
+          }
+        
+          nu += rotate;
+        
+          sinhmu = sinh(mu);
+          coshmu = cosh(mu);
+          _vx += amount * coshmu * cos(nu);
+          _vy += amount * sinhmu * sin(nu);
+        }`;
+    }
+
+    get name(): string {
+        return 'eMotion';
+    }
+
+    get funcDependencies(): string[] {
+        return [FUNC_SINH, FUNC_COSH, FUNC_ACOSH];
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
 class EnnepersFunc extends VariationShaderFunc2D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         // ennepers by Raykoid666, http://raykoid666.deviantart.com/art/re-pack-1-new-plugins-100092186
@@ -1023,6 +1090,45 @@ class ExpFunc extends VariationShaderFunc2D {
     }
 }
 
+class Exp2_BSFunc extends VariationShaderFunc2D {
+    PARAM_X1 = 'x1'
+    PARAM_Y1 = 'y1'
+    PARAM_Y2 = 'y2'
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_X1, type: VariationParamType.VP_NUMBER, initialValue: 1.0},
+            { name: this.PARAM_Y1, type: VariationParamType.VP_NUMBER, initialValue: 1.0},
+            { name: this.PARAM_Y2, type: VariationParamType.VP_NUMBER, initialValue: 1.0}
+        ]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        /* complex vars by cothe */
+        /* exp log sin cos tan sec csc cot sinh cosh tanh sech csch coth */
+        /* Variables added by Brad Stefanov */
+        //Exponential EXP
+        return `{
+          float amount = ${variation.amount.toWebGl()};
+          float x1 = ${variation.params.get(this.PARAM_X1)!.toWebGl()};
+          float y1 = ${variation.params.get(this.PARAM_Y1)!.toWebGl()};
+          float y2 = ${variation.params.get(this.PARAM_Y2)!.toWebGl()};
+          float expe = exp(_tx * x1);
+          float expsin = sin(_ty * y1);
+          float expcos = cos(_ty * y2);
+          _vx += amount * expe * expcos;
+          _vy += amount * expe * expsin;
+        }`;
+    }
+
+    get name(): string {
+        return 'exp2_bs';
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
 class ExponentialFunc extends VariationShaderFunc2D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         return `{
@@ -1453,6 +1559,7 @@ export function registerVars_2D_PartD() {
     VariationShaders.registerVar(new EJuliaFunc())
     VariationShaders.registerVar(new EllipticFunc())
     VariationShaders.registerVar(new EModFunc())
+    VariationShaders.registerVar(new EMotionFunc())
     VariationShaders.registerVar(new EnnepersFunc())
     VariationShaders.registerVar(new EpispiralFunc())
     VariationShaders.registerVar(new EpispiralWFFunc())
@@ -1464,6 +1571,7 @@ export function registerVars_2D_PartD() {
     VariationShaders.registerVar(new ESwirlFunc())
     VariationShaders.registerVar(new Ex())
     VariationShaders.registerVar(new ExpFunc())
+    VariationShaders.registerVar(new Exp2_BSFunc())
     VariationShaders.registerVar(new ExponentialFunc())
     VariationShaders.registerVar(new EyefishFunc())
     VariationShaders.registerVar(new FanFunc())

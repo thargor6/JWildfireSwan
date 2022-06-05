@@ -19,7 +19,7 @@ import {makeAutoObservable} from 'mobx';
 import {VariationShaders} from "Frontend/flames/renderer/variations/variation-shaders";
 import {registerVars_2D_PartA} from "Frontend/flames/renderer/variations/variation-shaders-2d-partA";
 import {registerVars_2D_PartK} from "Frontend/flames/renderer/variations/variation-shaders-2d-partK";
-import {registerVars_3D} from "Frontend/flames/renderer/variations/variation-shaders-3d";
+import {registerVars_3D_PartA} from "Frontend/flames/renderer/variations/variation-shaders-3d-partA";
 import {registerVars_ZTransforms} from "Frontend/flames/renderer/variations/variation-shaders-ztransform";
 import {Flame} from "Frontend/flames/model/flame";
 import {GalleryEndpoint} from "Frontend/generated/endpoints";
