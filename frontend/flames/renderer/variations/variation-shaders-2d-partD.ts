@@ -217,6 +217,60 @@ class Disc2Func extends VariationShaderFunc2D {
     }
 }
 
+class Disc3Func extends VariationShaderFunc2D {
+    PARAM_A = 'a'
+    PARAM_B = 'b'
+    PARAM_C = 'c'
+    PARAM_D = 'd'
+    PARAM_E = 'e'
+    PARAM_F = 'f'
+    PARAM_G = 'g'
+    PARAM_H = 'h'
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_A, type: VariationParamType.VP_NUMBER, initialValue: 1.0},
+                { name: this.PARAM_B, type: VariationParamType.VP_NUMBER, initialValue: 1.0},
+                { name: this.PARAM_C, type: VariationParamType.VP_NUMBER, initialValue: 1.0},
+                { name: this.PARAM_D, type: VariationParamType.VP_NUMBER, initialValue: 1.0},
+                { name: this.PARAM_E, type: VariationParamType.VP_NUMBER, initialValue: 1.0},
+                { name: this.PARAM_F, type: VariationParamType.VP_NUMBER, initialValue: 1.0},
+                { name: this.PARAM_G, type: VariationParamType.VP_NUMBER, initialValue: 1.0},
+                { name: this.PARAM_H, type: VariationParamType.VP_NUMBER, initialValue: 1.0}
+        ]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        /*
+        * Added variables to original disc by Brad Stefanov
+        */
+        return `{
+          float amount = ${variation.amount.toWebGl()};
+          float a = ${variation.params.get(this.PARAM_A)!.toWebGl()};
+          float b = ${variation.params.get(this.PARAM_B)!.toWebGl()};
+          float c = ${variation.params.get(this.PARAM_C)!.toWebGl()};
+          float d = ${variation.params.get(this.PARAM_D)!.toWebGl()};
+          float e = ${variation.params.get(this.PARAM_E)!.toWebGl()};
+          float f = ${variation.params.get(this.PARAM_F)!.toWebGl()};
+          float g = ${variation.params.get(this.PARAM_G)!.toWebGl()};
+          float h = ${variation.params.get(this.PARAM_H)!.toWebGl()};
+          float rPI = M_PI * sqrt(_tx * d * _tx * e + _ty * f * _ty * g);
+          float sinr = sin(rPI) * a;
+          float cosr = cos(rPI) * b;
+          float r = amount * _phi / M_PI * c;
+          _vx += sinr * h * r;
+          _vy += cosr * h * r;
+        }`;
+    }
+
+    get name(): string {
+        return 'disc3';
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
 class DustPointFunc extends VariationShaderFunc2D {
 
     getCode(xform: RenderXForm, variation: RenderVariation): string {
@@ -457,6 +511,68 @@ class EllipticFunc extends VariationShaderFunc2D {
 
     get name(): string {
         return 'elliptic';
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
+class EModFunc extends VariationShaderFunc2D {
+    PARAM_RADIUS = 'radius'
+    PARAM_DISTANCE = 'distance'
+
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_RADIUS, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
+            { name: this.PARAM_DISTANCE, type: VariationParamType.VP_NUMBER, initialValue: 0.0 }]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        // eMod by Michael Faber, http://michaelfaber.deviantart.com/art/eSeries-306044892
+        return `{
+          float amount = ${variation.amount.toWebGl()};
+          float radius = ${variation.params.get(this.PARAM_RADIUS)!.toWebGl()};
+          float distance = ${variation.params.get(this.PARAM_DISTANCE)!.toWebGl()};
+          float tmp = _ty * _ty + _tx * _tx + 1.0;
+          float tmp2 = 2.0 * _tx;
+          float xmax = (sqrt_safe(tmp + tmp2) + sqrt_safe(tmp - tmp2)) * 0.5;
+          if (xmax < 1.0)
+            xmax = 1.0;
+          float sinhmu, coshmu;
+        
+          float mu = acosh(xmax); 
+          float t = _tx / xmax;
+          if (t > 1.0)
+            t = 1.0;
+          else if (t < -1.0)
+            t = -1.0;
+        
+          float nu = acos(t); 
+          if (_ty < 0.0)
+            nu *= -1.0;
+        
+          if (mu < radius && -mu < radius) {
+            if (nu > 0.0)
+              mu = mod(mu + radius + distance * radius, 2.0 * radius) - radius;
+            else
+              mu = mod(mu - radius - distance * radius, 2.0 * radius) + radius;
+          }
+        
+          sinhmu = sinh(mu);
+          coshmu = cosh(mu);
+        
+          _vx += amount * coshmu * cos(nu);
+          _vy += amount * sinhmu * sin(nu);
+        }`;
+    }
+
+    get name(): string {
+        return 'eMod';
+    }
+
+    get funcDependencies(): string[] {
+        return [FUNC_SINH, FUNC_COSH, FUNC_ACOSH];
     }
 
     get variationTypes(): VariationTypes[] {
@@ -1330,11 +1446,13 @@ export function registerVars_2D_PartD() {
     VariationShaders.registerVar(new DiamondFunc())
     VariationShaders.registerVar(new DiscFunc())
     VariationShaders.registerVar(new Disc2Func())
+    VariationShaders.registerVar(new Disc3Func())
     VariationShaders.registerVar(new DustPointFunc())
     VariationShaders.registerVar(new EclipseFunc())
     VariationShaders.registerVar(new EDiscFunc())
     VariationShaders.registerVar(new EJuliaFunc())
     VariationShaders.registerVar(new EllipticFunc())
+    VariationShaders.registerVar(new EModFunc())
     VariationShaders.registerVar(new EnnepersFunc())
     VariationShaders.registerVar(new EpispiralFunc())
     VariationShaders.registerVar(new EpispiralWFFunc())

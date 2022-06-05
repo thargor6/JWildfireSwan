@@ -26,7 +26,8 @@ import {
     FUNC_ROUND,
     FUNC_SGN,
     FUNC_SINH,
-    LIB_FAST_NOISE_BASE, LIB_FAST_NOISE_VALUE_NOISE
+    LIB_FAST_NOISE_BASE,
+    LIB_FAST_NOISE_VALUE_NOISE
 } from 'Frontend/flames/renderer/variations/variation-math-functions';
 
 /*
@@ -742,6 +743,90 @@ class CylinderApoFunc extends VariationShaderFunc3D {
     }
 }
 
+class DCCubeFunc extends VariationShaderFunc3D {
+    PARAM_C1 = 'c1'
+    PARAM_C2 = 'c2'
+    PARAM_C3 = 'c3'
+    PARAM_C4 = 'c4'
+    PARAM_C5 = 'c5'
+    PARAM_C6 = 'c6'
+    PARAM_X = 'x'
+    PARAM_Y = 'y'
+    PARAM_Z = 'z'
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_C1, type: VariationParamType.VP_NUMBER, initialValue: 0.1 },
+            { name: this.PARAM_C2, type: VariationParamType.VP_NUMBER, initialValue: 0.2 },
+            { name: this.PARAM_C3, type: VariationParamType.VP_NUMBER, initialValue: 0.3 },
+            { name: this.PARAM_C4, type: VariationParamType.VP_NUMBER, initialValue: 0.4 },
+            { name: this.PARAM_C5, type: VariationParamType.VP_NUMBER, initialValue: 0.5 },
+            { name: this.PARAM_C6, type: VariationParamType.VP_NUMBER, initialValue: 0.6 },
+            { name: this.PARAM_X, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
+            { name: this.PARAM_Y, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
+            { name: this.PARAM_Z, type: VariationParamType.VP_NUMBER, initialValue: 1.0 }
+        ]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+         /* dc_cube by Xyrus02, http://xyrus02.deviantart.com/art/DC-Cube-plugin-update-170465423 */
+         return `{
+          float amount = ${variation.amount.toWebGl()};
+          float c1 = ${variation.params.get(this.PARAM_C1)!.toWebGl()};
+          float c2 = ${variation.params.get(this.PARAM_C2)!.toWebGl()};
+          float c3 = ${variation.params.get(this.PARAM_C3)!.toWebGl()};
+          float c4 = ${variation.params.get(this.PARAM_C4)!.toWebGl()};
+          float c5 = ${variation.params.get(this.PARAM_C5)!.toWebGl()};
+          float c6 = ${variation.params.get(this.PARAM_C6)!.toWebGl()};
+          float x = ${variation.params.get(this.PARAM_X)!.toWebGl()};
+          float y = ${variation.params.get(this.PARAM_Y)!.toWebGl()};
+          float z = ${variation.params.get(this.PARAM_Z)!.toWebGl()};
+          float p = 2.0 * rand8(tex, rngState) - 1.0;
+          float q = 2.0 * rand8(tex, rngState) - 1.0;
+          int i = iRand8(tex, 4, rngState) ;
+          bool j = rand8(tex, rngState) < 0.5;
+          float cx = 0.0, cy = 0.0, cz = 0.0;
+          if(i==0) {
+            cx = amount * (j ? -1.0 : 1.0);
+            cy = amount * p;
+            cz = amount * q;
+            if (j)
+              _color = c1;
+            else
+              _color = c2;
+          }
+          else if(i==1) {
+            cx = amount * p;
+            cy = amount * (j ? -1.0 : 1.0);
+            cz = amount * q;
+            if (j)
+              _color = c3;
+            else
+              _color = c4;
+          }
+          else {  // if(i==2) 
+            cx = amount * p;
+            cy = amount * q;
+            cz = amount * (j ? -1.0 : 1.0);
+            if (j)
+              _color = c5;
+            else
+              _color = c6;
+          }
+          _vx += cx * x;
+          _vy += cy * y;
+          _vz += cz * z;
+        }`;
+    }
+
+    get name(): string {
+        return 'dc_cube';
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_3D, VariationTypes.VARTYPE_BASE_SHAPE, VariationTypes.VARTYPE_DC];
+    }
+}
+
 class DCZTranslFunc extends VariationShaderFunc3D {
     PARAM_X0 = 'x0'
     PARAM_X1 = 'x1'
@@ -1399,10 +1484,10 @@ class Linear3DFunc extends VariationShaderFunc3D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         return `{
           float amount = ${variation.amount.toWebGl()};
-          initGRAD_3D();
-          _vx += amount * _tx + singleValue(INTERP_LINEAR, 12345, _tx, _ty, _tz)*0.1; 
-          _vy += amount * _ty + singleValue(INTERP_LINEAR, 123456, _tx, _ty, _tz)*0.1;
-          _vz += amount * _tz + singleValue(INTERP_LINEAR, 1234567, _tx, _ty, _tz)*0.1;
+       //   initGRAD_3D();
+          _vx += amount * _tx; // + singleValue(INTERP_LINEAR, 12345, _tx, _ty, _tz)*0.1; 
+          _vy += amount * _ty; // + singleValue(INTERP_LINEAR, 123456, _tx, _ty, _tz)*0.1;
+          _vz += amount * _tz; // + singleValue(INTERP_LINEAR, 1234567, _tx, _ty, _tz)*0.1;
         }`;
     }
 
@@ -3484,6 +3569,7 @@ export function registerVars_3D() {
     VariationShaders.registerVar(new Cubic_3DFunc())
     VariationShaders.registerVar(new Curl3DFunc())
     VariationShaders.registerVar(new CylinderApoFunc())
+    VariationShaders.registerVar(new DCCubeFunc())
     VariationShaders.registerVar(new DCZTranslFunc())
     VariationShaders.registerVar(new DinisSurfaceWFFunc())
     VariationShaders.registerVar(new Ennepers2Func())
