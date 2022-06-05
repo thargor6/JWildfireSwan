@@ -15,21 +15,18 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 */
 
-import {
-    VariationParam,
-    VariationParamType,
-    VariationShaderFunc2D,
-    VariationShaderFunc3D,
-    VariationTypes
-} from './variation-shader-func';
+import {VariationParam, VariationParamType, VariationShaderFunc3D, VariationTypes} from './variation-shader-func';
 import {VariationShaders} from 'Frontend/flames/renderer/variations/variation-shaders';
 import {RenderVariation, RenderXForm} from 'Frontend/flames/model/render-flame';
 import {
-    FUNC_COSH, FUNC_ERF,
-    FUNC_HYPOT, FUNC_MODULO,
+    FUNC_COSH,
+    FUNC_ERF,
+    FUNC_HYPOT,
+    FUNC_MODULO,
     FUNC_ROUND,
     FUNC_SGN,
-    FUNC_SINH, LIB_FAST_NOISE
+    FUNC_SINH,
+    LIB_FAST_NOISE_BASE, LIB_FAST_NOISE_VALUE_NOISE
 } from 'Frontend/flames/renderer/variations/variation-math-functions';
 
 /*
@@ -1402,9 +1399,10 @@ class Linear3DFunc extends VariationShaderFunc3D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         return `{
           float amount = ${variation.amount.toWebGl()};
-          _vx += amount * _tx; 
-          _vy += amount * _ty;
-          _vz += amount * _tz;
+          initGRAD_3D();
+          _vx += amount * _tx + singleValue(INTERP_LINEAR, 12345, _tx, _ty, _tz)*0.1; 
+          _vy += amount * _ty + singleValue(INTERP_LINEAR, 123456, _tx, _ty, _tz)*0.1;
+          _vz += amount * _tz + singleValue(INTERP_LINEAR, 1234567, _tx, _ty, _tz)*0.1;
         }`;
     }
 
@@ -1414,7 +1412,7 @@ class Linear3DFunc extends VariationShaderFunc3D {
 
     // TODO remove
     get funcDependencies(): string[] {
-        return [LIB_FAST_NOISE];
+        return [LIB_FAST_NOISE_BASE, LIB_FAST_NOISE_VALUE_NOISE];
     }
 
     get variationTypes(): VariationTypes[] {

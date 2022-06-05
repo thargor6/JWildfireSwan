@@ -32,7 +32,8 @@ export const FUNC_SQRT1PM1 = 'sqrt1pm1'
 export const FUNC_TANH = 'tanh'
 export const FUNC_TRUNC = 'trunc'
 export const LIB_COMPLEX = 'lib_complex'
-export const LIB_FAST_NOISE = 'lib_fast_noise'
+export const LIB_FAST_NOISE_BASE = 'lib_fast_noise_base'
+export const LIB_FAST_NOISE_VALUE_NOISE = 'lib_fast_noise_value_noise'
 
 // https://www.shaderific.com/glsl-functions
 
@@ -361,12 +362,31 @@ export class VariationMathFunctions {
               return sqrt(x * x + y * y);
 			}`);
 
-      this.registerFunction(LIB_FAST_NOISE, `
+      this.registerFunction(LIB_FAST_NOISE_BASE, `
         int X_PRIME = 1619;
         int Y_PRIME = 31337;
         int Z_PRIME = 6971;
         int W_PRIME = 1013;
-      
+        
+        #define NOISETYPE_VALUE 0
+        #define NOISETYPE_VALUE_FRACTAL 1
+        #define NOISETYPE_PERLIN 2
+        #define NOISETYPE_PERLIN_FRACTAL 3
+        #define NOISETYPE_SIMPLEX 4
+        #define NOISETYPE_SIMPLEX_FRACTAL 5
+        #define NOISETYPE_CELLULAR 6
+        #define NOISETYPE_WHITE_NOISE 7
+        #define NOISETYPE_CUBIC 8
+        #define NOISETYPE_CUBIC_FRACTAL 9
+        
+        #define INTERP_LINEAR 0
+        #define INTERP_HERMITE 1
+        #define INTERP_QUINTIC 2
+        
+        #define FRACTALTYPE_FBM 0
+        #define FRACTALTYPE_BILLOW 1
+        #define FRACTALTYPE_RIGID_MULTI 2
+
         int fastFloor(float f) {
           return f >= 0.0 ? int(f) : int(f - 1.0);
         }
@@ -435,7 +455,7 @@ export class VariationMathFunctions {
           }
           return result;
         }
-/*        
+
         int AND(int n1, int n2){ 
           float v1 = float(n1);
           float v2 = float(n2);
@@ -454,6 +474,34 @@ export class VariationMathFunctions {
               } else {
                   return result;
               }
+          }
+          return result;
+        }
+        
+/*        
+        int AND_16(int n1, int n2) {
+          float v1 = float(n1);
+          float v2 = float(n2);
+        
+          int byte_val = 1;
+          int result = 0;
+        
+          for (int i = 0; i < 16; i++){
+              if (v1 == 0.0 || v2 == 0.0) {
+                  return result;
+              }
+        
+              int both_bytes_1 = int(min(
+               mod(v1, 2.0),
+               mod(v2, 2.0)
+              ));
+        
+              result += both_bytes_1 * byte_val;
+        
+              v1 = floor(v1 / 2.0);
+              v2 = floor(v2 / 2.0);
+        
+              byte_val *= 2;
           }
           return result;
         }
@@ -516,7 +564,119 @@ export class VariationMathFunctions {
           return float(n * n * n * 60493) / 2147483648.0;
         }
         
+        float GRAD_3D_x[16];
+        float GRAD_3D_y[16];
+        float GRAD_3D_z[16];
+        
+        void initGRAD_3D() {
+          GRAD_3D_x[0] = 1.0; GRAD_3D_x[1] = -1.0; GRAD_3D_x[2] = 1.0; GRAD_3D_x[3] = -1.0;
+          GRAD_3D_x[4] = 1.0; GRAD_3D_x[5] = -1.0; GRAD_3D_x[6] = 1.0; GRAD_3D_x[7] = -1.0;
+          GRAD_3D_x[8] = 0.0; GRAD_3D_x[9] = 0.0; GRAD_3D_x[10] = 0.0; GRAD_3D_x[11] = 0.0;
+          GRAD_3D_x[12] = 1.0; GRAD_3D_x[13] = 0.0; GRAD_3D_x[14] = -1.0; GRAD_3D_x[15] = 0.0;
+          
+          GRAD_3D_y[0] = 1.0; GRAD_3D_y[1] = 1.0; GRAD_3D_y[2] = -1.0; GRAD_3D_y[3] = -1.0;
+          GRAD_3D_y[4] = 0.0; GRAD_3D_y[5] = 0.0; GRAD_3D_y[6] = 0.0; GRAD_3D_y[7] = 0.0;
+          GRAD_3D_y[8] = 1.0; GRAD_3D_y[9] = -1.0; GRAD_3D_y[10] = 1.0; GRAD_3D_y[11] = -1.0;
+          GRAD_3D_y[12] = 1.0; GRAD_3D_y[13] = -1.0; GRAD_3D_y[14] = 1.0; GRAD_3D_y[15] = -1.0;
+          
+          GRAD_3D_z[0] = 0.0; GRAD_3D_z[1] = 0.0; GRAD_3D_z[2] = 0.0; GRAD_3D_z[3] = 0.0;
+          GRAD_3D_z[4] = 1.0; GRAD_3D_z[5] = 1.0; GRAD_3D_z[6] = -1.0; GRAD_3D_z[7] = -1.0;
+          GRAD_3D_z[8] = 1.0; GRAD_3D_z[9] = 1.0; GRAD_3D_z[10] = -1.0; GRAD_3D_z[11] = -1.0;
+          GRAD_3D_z[12] = 0.0; GRAD_3D_z[13] = 1.0; GRAD_3D_z[14] = 0.0; GRAD_3D_z[15] = -1.0;
+        }
+
+
+        float gradCoord3D(int seed, int x, int y, int z, float xd, float yd, float zd) {
+          int hash = seed;
+          hash = XOR(hash, X_PRIME * x);
+          hash = XOR(hash, Y_PRIME * y);
+          hash = XOR(hash, Z_PRIME * z);
+      
+          hash = hash * hash * hash * 60493;
+          hash = XOR(RSHIFT(hash, 13), hash);
+      
+          int idx = AND(hash, 15);
+          for(int i=0;i<15;i++) {     
+            if(i==idx) {
+              return xd * GRAD_3D_x[i] + yd * GRAD_3D_y[i] + zd * GRAD_3D_z[i];
+            }  
+          }
+          return xd * GRAD_3D_x[15] + yd * GRAD_3D_y[15] + zd * GRAD_3D_z[15];
+      }
+
+      float gradCoord4D(int seed, int x, int y, int z, int w, float xd, float yd, float zd, float wd) {
+          int hash = seed;
+          hash = XOR(hash, X_PRIME * x);
+          hash = XOR(hash, Y_PRIME * y);
+          hash = XOR(hash, Z_PRIME * z);
+          hash = XOR(hash, W_PRIME * w);
+      
+          hash = hash * hash * hash * 60493;
+          hash = XOR(RSHIFT(hash, 13), hash);
+      
+          hash = AND(hash, 31);
+          float a = yd, b = zd, c = wd;            // X,Y,Z
+          int sw = RSHIFT(hash, 3); // OR, DEPENDING ON HIGH ORDER 2 BITS:
+          if(sw==1) {  // W,X,Y
+            a = wd;
+            b = xd;
+            c = yd;
+          }
+          else if(sw==2) {  // Z,W,X
+            a = zd;
+            b = wd;
+            c = xd;
+          }
+          else { // if(sw==3) // Y,Z,W     
+            a = yd;
+            b = zd;
+            c = wd;   
+          }
+          return (AND(hash, 4) == 0 ? -a : a) + (AND(hash, 2) == 0 ? -b : b) + (AND(hash, 1) == 0 ? -c : c);
+      }
+
       `);
+
+
+      this.registerFunction(LIB_FAST_NOISE_VALUE_NOISE, `     
+       
+        float singleValue(int interp, int seed, float x, float y, float z) {
+            int x0 = fastFloor(x);
+            int y0 = fastFloor(y);
+            int z0 = fastFloor(z);
+            int x1 = x0 + 1;
+            int y1 = y0 + 1;
+            int z1 = z0 + 1;
+        
+            float xs, ys, zs;
+            if(interp==INTERP_HERMITE) {
+              xs = interpHermiteFunc(x - float(x0));
+              ys = interpHermiteFunc(y - float(y0));
+              zs = interpHermiteFunc(z - float(z0));
+            }
+            else if(interp==INTERP_QUINTIC) {  
+              xs = interpQuinticFunc(x - float(x0));
+              ys = interpQuinticFunc(y - float(y0));
+              zs = interpQuinticFunc(z - float(z0));
+            }
+            else { // INTERP_LINEAR
+              xs = x - float(x0);
+              ys = y - float(y0);
+              zs = z - float(z0);             
+            }
+        
+            float xf00 = lerp(valCoord3D(seed, x0, y0, z0), valCoord3D(seed, x1, y0, z0), xs);
+            float xf10 = lerp(valCoord3D(seed, x0, y1, z0), valCoord3D(seed, x1, y1, z0), xs);
+            float xf01 = lerp(valCoord3D(seed, x0, y0, z1), valCoord3D(seed, x1, y0, z1), xs);
+            float xf11 = lerp(valCoord3D(seed, x0, y1, z1), valCoord3D(seed, x1, y1, z1), xs);
+        
+            float yf0 = lerp(xf00, xf10, ys);
+            float yf1 = lerp(xf01, xf11, ys);
+        
+            return lerp(yf0, yf1, zs);
+        }       
+       
+       `);
 
 
       this.registerFunction(FUNC_ERF,
