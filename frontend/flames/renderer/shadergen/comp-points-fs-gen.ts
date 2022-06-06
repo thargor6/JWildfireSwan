@@ -112,6 +112,9 @@ export class CompPointsFragmentShaderGenerator {
 			  float _tx, _ty, _tz;
         float _vx = 0.0, _vy = 0.0, _vz = 0.0;
         _tz = point.z;
+        
+        ${this.depFuncGen.addDepFunctionsInit(layer.xforms)}
+        
 				${this.addXForms(layer)}
 			  // must ensure that color is already in the range [0..1)		
 				xFormIdxAndColor = float(xFormIdx) + _color;

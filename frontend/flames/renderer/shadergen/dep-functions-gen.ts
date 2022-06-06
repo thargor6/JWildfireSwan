@@ -21,11 +21,7 @@ import {VariationShaders} from "Frontend/flames/renderer/variations/variation-sh
 
 export class DepFunctionsPartShaderGenerator {
 
-  addDepFunction(func: string) {
-    return VariationMathFunctions.getCode(func);
-  }
-
-  addDepFunctions(xforms: Array<RenderXForm>) {
+  collectFunctions(xforms: Array<RenderXForm>) {
     let functions = new Array<string>()
     xforms.forEach(xform => {
       xform.variations.forEach(variation => {
@@ -36,7 +32,15 @@ export class DepFunctionsPartShaderGenerator {
         })
       })
     })
-    return functions.map(func => this.addDepFunction(func)).join('')
+    return functions
+  }
+
+  addDepFunctions(xforms: Array<RenderXForm>) {
+    return this.collectFunctions(xforms).map(func => VariationMathFunctions.getCode(func)).join('')
+  }
+
+  addDepFunctionsInit(xforms: Array<RenderXForm>) {
+    return this.collectFunctions(xforms).map(func => VariationMathFunctions.getInitCode(func)).join('')
   }
 
   addStandardFunctions() {

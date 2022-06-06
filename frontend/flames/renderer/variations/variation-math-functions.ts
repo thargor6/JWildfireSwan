@@ -48,6 +48,16 @@ export class VariationMathFunctions {
         return this.functions.get(name)!
     }
 
+    static initFunctions = new Map<string, string>()
+
+    static registerInitFunction(name: string, code: string) {
+      this.initFunctions.set(name, code)
+    }
+
+    static getInitCode(name: string): string {
+      return this.initFunctions.get(name)!
+    }
+
     static init() {
         this.registerFunction(LIB_COMPLEX,
             `
@@ -636,6 +646,10 @@ export class VariationMathFunctions {
       }
 
       `);
+
+      this.registerInitFunction(LIB_FAST_NOISE_BASE,
+        `initGRAD_3D();
+        `);
 
 
       this.registerFunction(LIB_FAST_NOISE_VALUE_NOISE, `     
