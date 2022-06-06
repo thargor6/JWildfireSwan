@@ -541,9 +541,10 @@ class Linear3DFunc extends VariationShaderFunc3D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         return `{
           float amount = ${variation.amount.toWebGl()};
-          _vx += amount * _tx + singleValue(INTERP_LINEAR, 12345, _tx, _ty, _tz)*0.5; 
-          _vy += amount * _ty + singleValue(INTERP_LINEAR, 123456, _tx, _ty, _tz)*0.5;
-          _vz += amount * _tz + singleValue(INTERP_LINEAR, 1234567, _tx, _ty, _tz)*0.5;
+          FastNoise n = initFastNoiseStruct();
+          _vx += amount * _tx + singleValue(n, 123, _tx, _ty, _tz)*0.5; 
+          _vy += amount * _ty + singleValue(n, 1234, _tx, _ty, _tz)*0.5;
+          _vz += amount * _tz + singleValue(n, 12345, _tx, _ty, _tz)*0.5;
         }`;
     }
 
