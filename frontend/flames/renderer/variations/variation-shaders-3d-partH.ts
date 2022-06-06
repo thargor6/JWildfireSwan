@@ -141,6 +141,63 @@ class HOFunc extends VariationShaderFunc3D {
     }
 }
 
+class Hypershift2Func extends VariationShaderFunc3D {
+    PARAM_P = 'p'
+    PARAM_Q = 'q'
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_P, type: VariationParamType.VP_NUMBER, initialValue: 3 },
+            { name: this.PARAM_Q, type: VariationParamType.VP_NUMBER, initialValue: 7 }
+        ]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        // "Hypershift2" variation created by tatasz implemented into JWildfire by Brad Stefanov https://www.deviantart.com/tatasz/art/Hyperstuff-721510796
+        return `{
+            float amount = ${variation.amount.toWebGl()};
+            int p = ${variation.params.get(this.PARAM_P)!.toWebGl()};
+            int q = ${variation.params.get(this.PARAM_Q)!.toWebGl()};
+            float pq = M_PI / float(q);
+            float pp = M_PI / float(p);
+            float spq = sin(pq);
+            float spp = sin(pp);
+            float shift = sin(M_PI * 0.5 - pq - pp);
+            shift = shift / sqrt(1.0 - sqr(spq) - sqr(spp));
+            float scale2 = (1.0 / sqrt(sqr(sin(M_PI / 2.0 + pp)) / sqr(spq) - 1.0));
+            scale2 = scale2 * (sin(M_PI / 2.0 + pp) / spq - 1.0);
+            float scale = 1.0 - shift * shift;
+        
+            float FX = _tx * scale2;
+            float FY = _ty * scale2;
+        
+            float rad = 1.0 / (FX * FX + FY * FY);
+            float x = rad * FX + shift;
+            float y = rad * FY;
+            rad = amount * scale / (x * x + y * y);
+            float angle = (float(modulo(iRand8(tex, 32768, rngState), p)) * 2.0 + 1.0) * M_PI / float(p);
+            float X = rad * x + shift;
+            float Y = rad * y;
+            float cosa = cos(angle);
+            float sina = sin(angle);
+            _vx = cosa * X - sina * Y;
+            _vy = sina * X + cosa * Y;
+            _vz = _tz * rad;
+          }`;
+    }
+
+    get name(): string {
+        return 'hypershift2';
+    }
+
+    get funcDependencies(): string[] {
+        return [FUNC_MODULO];
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_3D];
+    }
+}
+
 class Hypertile3DFunc extends VariationShaderFunc3D {
     PARAM_P = 'p'
     PARAM_Q = 'q'
@@ -1266,6 +1323,7 @@ export function registerVars_3D_PartH() {
     VariationShaders.registerVar(new HelicoidFunc())
     VariationShaders.registerVar(new HemisphereFunc())
     VariationShaders.registerVar(new HOFunc())
+    VariationShaders.registerVar(new Hypershift2Func())
     VariationShaders.registerVar(new Hypertile3DFunc())
     VariationShaders.registerVar(new Hypertile3D1Func())
     VariationShaders.registerVar(new Hypertile3D2Func())

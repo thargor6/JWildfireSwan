@@ -591,6 +591,41 @@ class HyperbolicFunc extends VariationShaderFunc2D {
     }
 }
 
+class HypershiftFunc extends VariationShaderFunc2D {
+    PARAM_SHIFT = 'shift'
+    PARAM_STRETCH = 'stretch'
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_SHIFT, type: VariationParamType.VP_NUMBER, initialValue: 2.0 },
+            { name: this.PARAM_STRETCH, type: VariationParamType.VP_NUMBER, initialValue: 1.0 }
+        ]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        // "Hypershift" variation created by Zy0rg implemented into JWildfire by Brad Stefanov
+        return `{
+            float amount = ${variation.amount.toWebGl()};
+            float shift = ${variation.params.get(this.PARAM_SHIFT)!.toWebGl()};
+            float stretch = ${variation.params.get(this.PARAM_STRETCH)!.toWebGl()};
+            float scale = 1.0 - shift * shift;
+            float rad = 1.0 / (_tx * _tx + _ty * _ty);
+            float x = rad * _tx + shift;
+            float y = rad * _ty;
+            rad = amount * scale / (x * x + y * y);
+            _vx += rad * x + shift;
+            _vy += rad * y * stretch;
+          }`;
+    }
+
+    get name(): string {
+        return 'hypershift';
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
 class HypertileFunc extends VariationShaderFunc2D {
     PARAM_P = 'p'
     PARAM_Q = 'q'
@@ -1235,6 +1270,7 @@ export function registerVars_2D_PartG() {
     VariationShaders.registerVar(new Hole2Func())
     VariationShaders.registerVar(new HorseshoeFunc())
     VariationShaders.registerVar(new HyperbolicFunc())
+    VariationShaders.registerVar(new HypershiftFunc())
     VariationShaders.registerVar(new HypertileFunc())
     VariationShaders.registerVar(new Hypertile1Func())
     VariationShaders.registerVar(new Hypertile2Func())

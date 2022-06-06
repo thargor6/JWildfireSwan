@@ -26,7 +26,7 @@ import {
     FUNC_ROUND,
     FUNC_SGN,
     FUNC_SINH,
-    FUNC_SQRT1PM1
+    FUNC_SQRT1PM1, FUNC_TANH
 } from 'Frontend/flames/renderer/variations/variation-math-functions';
 import {M_PI} from "Frontend/flames/renderer/mathlib";
 
@@ -1605,6 +1605,35 @@ class FourthFunc extends VariationShaderFunc2D {
     }
 }
 
+class FunnelFunc extends VariationShaderFunc2D {
+    PARAM_EFFECT = 'effect'
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_EFFECT, type: VariationParamType.VP_NUMBER, initialValue: 8 }]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        // funnel by Raykoid666, http://raykoid666.deviantart.com/art/re-pack-1-new-plugins-100092186
+        return `{
+          float amount = ${variation.amount.toWebGl()};
+          int effect = ${variation.params.get(this.PARAM_EFFECT)!.toWebGl()};
+         _vx += amount * tanh(_tx) * (1.0 / cos(_tx) + float(effect) * M_PI);
+         _vy += amount * tanh(_ty) * (1.0 / cos(_ty) + float(effect) * M_PI);
+        }`;
+    }
+
+    get name(): string {
+        return 'funnel';
+    }
+
+    get funcDependencies(): string[] {
+        return [FUNC_TANH];
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
 
 export function registerVars_2D_PartD() {
     VariationShaders.registerVar(new DCLinearFunc())
@@ -1645,4 +1674,5 @@ export function registerVars_2D_PartD() {
     VariationShaders.registerVar(new FluxFunc())
     VariationShaders.registerVar(new FociFunc())
     VariationShaders.registerVar(new FourthFunc())
+    VariationShaders.registerVar(new FunnelFunc())
 }
