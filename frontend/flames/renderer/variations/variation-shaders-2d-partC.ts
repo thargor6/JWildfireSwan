@@ -746,6 +746,57 @@ class CscFunc extends VariationShaderFunc2D {
     }
 }
 
+class Csc2_BSFunc extends VariationShaderFunc2D {
+    PARAM_X1 = 'x1'
+    PARAM_Y1 = 'y1'
+    PARAM_X2 = 'x2'
+    PARAM_Y2 = 'y2'
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_X1, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
+            { name: this.PARAM_Y1, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
+            { name: this.PARAM_X2, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
+            { name: this.PARAM_Y2, type: VariationParamType.VP_NUMBER, initialValue: 1.0 }
+        ]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        /* complex vars by cothe */
+        /* exp log sin cos tan sec csc cot sinh cosh tanh sech csch coth */
+        /* Variables added by Brad Stefanov */
+        //Cosecant CSC
+        return `{
+          float amount = ${variation.amount.toWebGl()};
+          float x1 = ${variation.params.get(this.PARAM_X1)!.toWebGl()};
+          float y1 = ${variation.params.get(this.PARAM_Y1)!.toWebGl()};
+          float x2 = ${variation.params.get(this.PARAM_X2)!.toWebGl()};
+          float y2 = ${variation.params.get(this.PARAM_Y2)!.toWebGl()};
+          float cscsin = sin(_tx * x1);
+          float csccos = cos(_tx * x2);
+          float cscsinh = sinh(_ty * y1);
+          float csccosh = cosh(_ty * y2);
+          float d = (cosh(2.0 * _ty) - cos(2.0 * _tx));
+          if (d != 0.0) {
+            float cscden = 2.0 / d;
+            _vx += amount * cscden * cscsin * csccosh;
+            _vy -= amount * cscden * csccos * cscsinh;           
+          }
+        }`;
+    }
+
+    get name(): string {
+        return 'csc2_bs';
+    }
+
+    get funcDependencies(): string[] {
+        return [FUNC_SINH, FUNC_COSH];
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
 class CscSquaredFunc extends VariationShaderFunc2D {
     PARAM_CSC_DIV = 'csc_div'
     PARAM_COS_DIV = 'cos_div'
@@ -762,7 +813,7 @@ class CscSquaredFunc extends VariationShaderFunc2D {
             { name: this.PARAM_CSC_POW, type: VariationParamType.VP_NUMBER, initialValue: 0.5 },
             { name: this.PARAM_PI_MULT, type: VariationParamType.VP_NUMBER, initialValue: 0.5 },
             { name: this.PARAM_CSC_ADD, type: VariationParamType.VP_NUMBER, initialValue: 0.25 },
-            { name: this.PARAM_SCALE_Y, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
+            { name: this.PARAM_SCALE_Y, type: VariationParamType.VP_NUMBER, initialValue: 1.0 }
         ]
     }
 
@@ -1209,6 +1260,7 @@ export function registerVars_2D_PartC() {
     VariationShaders.registerVar(new CropFunc())
     VariationShaders.registerVar(new CrossFunc())
     VariationShaders.registerVar(new CscFunc())
+    VariationShaders.registerVar(new Csc2_BSFunc())
     VariationShaders.registerVar(new CscSquaredFunc())
     VariationShaders.registerVar(new CschFunc())
     VariationShaders.registerVar(new Csch2_BSFunc())

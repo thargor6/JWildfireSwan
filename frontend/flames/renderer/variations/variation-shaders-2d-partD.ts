@@ -356,6 +356,66 @@ class EclipseFunc extends VariationShaderFunc2D {
     }
 }
 
+class ECollideFunc extends VariationShaderFunc2D {
+    PARAM_NUM = 'num'
+    PARAM_A = 'a'
+
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_NUM, type: VariationParamType.VP_NUMBER, initialValue: 1 },
+            { name: this.PARAM_A, type: VariationParamType.VP_NUMBER, initialValue: 0.0 }]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        // eCollide by Michael Faber, http://michaelfaber.deviantart.com/art/eSeries-306044892
+        return `{
+          float amount = ${variation.amount.toWebGl()};
+          int num = ${variation.params.get(this.PARAM_NUM)!.toWebGl()};
+          float a = ${variation.params.get(this.PARAM_A)!.toWebGl()};
+          float _eCn_pi = float(num) * (1.0 / M_PI);
+          float _pi_eCn = M_PI / float(num);
+          float _eCa = M_PI * a;
+          float _eCa_eCn = _eCa / float(num);
+          float tmp = _ty * _ty + _tx * _tx + 1.0;
+          float tmp2 = 2.0 * _tx;
+          float xmax = (sqrt_safe(tmp + tmp2) + sqrt_safe(tmp - tmp2)) * 0.5;
+          float sinnu, cosnu;
+          int alt;
+          if (xmax < 1.0)
+            xmax = 1.0;
+          float t = _tx / xmax;
+          if (t > 1.0)
+            t = 1.0;
+          else if (t < -1.0)
+            t = -1.0;
+          float nu = acos(t); 
+          alt = int(nu * _eCn_pi);
+          if (modulo(alt,2) == 0)
+            nu = float(alt) * _pi_eCn + mod(nu + _eCa_eCn, _pi_eCn);
+          else
+            nu = float(alt) * _pi_eCn + mod(nu - _eCa_eCn, _pi_eCn);
+          if (_ty <= 0.0)
+            nu *= -1.0;
+          sinnu = sin(nu);
+          cosnu = cos(nu);
+          _vx += amount * xmax * cosnu;
+          _vy += amount * sqrt(xmax - 1.0) * sqrt(xmax + 1.0) * sinnu;
+        }`;
+    }
+
+    get name(): string {
+        return 'eCollide';
+    }
+
+    get funcDependencies(): string[] {
+        return [FUNC_SINH, FUNC_COSH, FUNC_ACOSH, FUNC_MODULO];
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
 class EDiscFunc extends VariationShaderFunc2D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         /* Edisc in the Apophysis Plugin Pack */
@@ -1555,6 +1615,7 @@ export function registerVars_2D_PartD() {
     VariationShaders.registerVar(new Disc3Func())
     VariationShaders.registerVar(new DustPointFunc())
     VariationShaders.registerVar(new EclipseFunc())
+    VariationShaders.registerVar(new ECollideFunc())
     VariationShaders.registerVar(new EDiscFunc())
     VariationShaders.registerVar(new EJuliaFunc())
     VariationShaders.registerVar(new EllipticFunc())

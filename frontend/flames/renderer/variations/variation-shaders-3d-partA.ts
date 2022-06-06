@@ -386,6 +386,42 @@ class CschqFunc extends VariationShaderFunc3D {
     }
 }
 
+class CotqFunc extends VariationShaderFunc3D {
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        /* Cotq by zephyrtronium http://zephyrtronium.deviantart.com/art/Quaternion-Apo-Plugin-Pack-165451482 */
+        return `{
+                  float amount = ${variation.amount.toWebGl()};
+                  float abs_v = hypot(_ty, _tz);
+                  float s = sin(_tx);
+                  float c = cos(_tx);
+                  float sh = sinh(abs_v);
+                  float ch = cosh(abs_v);
+                  float sysz = sqr(_ty) + sqr(_tz);
+                  float ni = amount / (sqr(_tx) + sysz);
+                  float C = c * sh / abs_v;
+                  float B = -s * sh / abs_v;
+                  float stcv = s * ch;
+                  float nstcv = -stcv;
+                  float ctcv = c * ch;
+                  _vx += (stcv * ctcv + C * B * sysz) * ni;
+                  _vy -= (nstcv * B * _ty + C * _ty * ctcv) * ni;
+                  _vz -= (nstcv * B * _tz + C * _tz * ctcv) * ni;
+                 }`;
+    }
+
+    get name(): string {
+        return 'cotq';
+    }
+
+    get funcDependencies(): string[] {
+        return [FUNC_SINH, FUNC_COSH, FUNC_HYPOT];
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_3D];
+    }
+}
+
 class CscqFunc extends VariationShaderFunc3D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         /* Cscq by zephyrtronium http://zephyrtronium.deviantart.com/art/Quaternion-Apo-Plugin-Pack-165451482 */
@@ -1079,6 +1115,7 @@ export function registerVars_3D_PartA() {
     VariationShaders.registerVar(new ConeFunc())
     VariationShaders.registerVar(new CoshqFunc())
     VariationShaders.registerVar(new CosqFunc())
+    VariationShaders.registerVar(new CotqFunc())
     VariationShaders.registerVar(new CschqFunc())
     VariationShaders.registerVar(new CscqFunc())
     VariationShaders.registerVar(new CothqFunc())

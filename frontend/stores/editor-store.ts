@@ -19,7 +19,7 @@ import {makeAutoObservable} from 'mobx';
 import {VariationShaders} from "Frontend/flames/renderer/variations/variation-shaders";
 import {registerVars_2D_PartA} from "Frontend/flames/renderer/variations/variation-shaders-2d-partA";
 import {registerVars_2D_PartK} from "Frontend/flames/renderer/variations/variation-shaders-2d-partK";
-import {registerVars_3D} from "Frontend/flames/renderer/variations/variation-shaders-3d";
+import {registerVars_3D_PartA} from "Frontend/flames/renderer/variations/variation-shaders-3d-partA";
 import {registerVars_ZTransforms} from "Frontend/flames/renderer/variations/variation-shaders-ztransform";
 import {Flame} from "Frontend/flames/model/flame";
 import {registerVars_Complex} from "Frontend/flames/renderer/variations/variation-shaders-2d-complex";
@@ -33,6 +33,8 @@ import {registerVars_2D_PartD} from "Frontend/flames/renderer/variations/variati
 import {registerVars_2D_PartG} from "Frontend/flames/renderer/variations/variation-shaders-2d-partG";
 import {registerVars_2D_PartP} from "Frontend/flames/renderer/variations/variation-shaders-2d-partP";
 import {registerVars_2D_PartT} from "Frontend/flames/renderer/variations/variation-shaders-2d-partT";
+import {registerVars_3D_PartH} from "Frontend/flames/renderer/variations/variation-shaders-3d-partH";
+import {registerVars_3D_PartQ} from "Frontend/flames/renderer/variations/variation-shaders-3d-partQ";
 
 export class EditorStore {
   initFlag = false
@@ -70,7 +72,9 @@ registerVars_Blur()
 registerVars_Complex()
 registerVars_Waves()
 registerVar_Synth()
-registerVars_3D()
+registerVars_3D_PartA()
+registerVars_3D_PartH()
+registerVars_3D_PartQ()
 registerVars_ZTransforms()
 registerVars_Plot()
 
