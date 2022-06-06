@@ -1365,6 +1365,64 @@ class FDiscFunc extends VariationShaderFunc2D {
     }
 }
 
+class Fibonacci2Func extends VariationShaderFunc2D {
+    PARAM_SC = 'sc'
+    PARAM_SC2 = 'sc2'
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_SC, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
+                { name: this.PARAM_SC2, type: VariationParamType.VP_NUMBER, initialValue: 1.0 }]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        // fibonacci2 by Larry Berlin, http://aporev.deviantart.com/gallery/#/d2blmhg
+        //  p^z - (-p)^(-z)
+        //z' = -----------------
+        //      sqrt(5)
+        //
+        //Where p is the Golden Ratio.
+        //This function generates the fibonacci sequence
+        //for real integer values.
+        //1 2 3 4 5 6  7  8  9 10 11  12  13  14  15 < Real Value
+        //1 1 2 3 5 8 13 21 34 55 89 144 233 377 610 < Fib Value
+        //
+        //Negative real integers produce the negative fibonacci sequence,
+        //which is the same as the normal one, except every
+        //other number is negative.
+        //1 0 -1 -2 -3 -4 -5 -6 -7  -8 < Real Value
+        //1 0  1 -1  3 -3  5 -8 13 -21 < Fib Value
+        return `{
+            float amount = ${variation.amount.toWebGl()};
+            float sc = ${variation.params.get(this.PARAM_SC)!.toWebGl()};
+            float sc2 = ${variation.params.get(this.PARAM_SC2)!.toWebGl()};
+            float M_SQRT5 = 2.2360679774997898;
+            float M_PHI = 1.61803398874989484820; 
+            float ffive = 1.0 / M_SQRT5;
+            float fnatlog = log(M_PHI);   
+            float a = _ty * fnatlog;
+            float snum1 = sin(a);
+            float cnum1 = cos(a);
+            float b = (_tx * M_PI + _ty * fnatlog) * -1.0;
+            float snum2 = sin(b);
+            float cnum2 = cos(b);
+        
+            float eradius1 = sc * exp(sc2 * (_tx * fnatlog));
+            float eradius2 = sc * exp(sc2 * ((_tx * fnatlog - _ty * M_PI) * -1.0));
+        
+            _vx += amount * (eradius1 * cnum1 - eradius2 * cnum2) * ffive;
+            _vy += amount * (eradius1 * snum1 - eradius2 * snum2) * ffive;
+        }`;
+    }
+
+    get name(): string {
+        return 'fibonacci2';
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
 class FisheyeFunc extends VariationShaderFunc2D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         return `{
@@ -1667,6 +1725,7 @@ export function registerVars_2D_PartD() {
     VariationShaders.registerVar(new FanFunc())
     VariationShaders.registerVar(new Fan2Func())
     VariationShaders.registerVar(new FDiscFunc())
+    VariationShaders.registerVar(new Fibonacci2Func())
     VariationShaders.registerVar(new FisheyeFunc())
     VariationShaders.registerVar(new FlipCircleFunc())
     VariationShaders.registerVar(new FlipYFunc())

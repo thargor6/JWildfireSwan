@@ -63,6 +63,38 @@ class HelicoidFunc extends VariationShaderFunc3D {
     }
 }
 
+class HelixFunc extends VariationShaderFunc3D {
+    PARAM_FREQUENCY = 'frequency'
+    PARAM_WIDTH = 'width'
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_FREQUENCY, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
+                { name: this.PARAM_WIDTH, type: VariationParamType.VP_NUMBER, initialValue: 0.5 }]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+         /* Helix by zy0rg, http://zy0rg.deviantart.com/art/Helix-Helicoid-687956099 converted by Brad Stefanov */
+         return `{
+            float amount = ${variation.amount.toWebGl()};
+            float frequency = ${variation.params.get(this.PARAM_FREQUENCY)!.toWebGl()};
+            float width = ${variation.params.get(this.PARAM_WIDTH)!.toWebGl()}; 
+            float s = sin(_tz * (2.0*M_PI) * frequency);
+            float c = cos(_tz * (2.0*M_PI) * frequency);
+            _vx += amount * (_tx + c * width);
+            _vy += amount * (_ty + s * width);
+            _vz += amount * _tz;
+        }`;
+    }
+
+    get name(): string {
+        return 'helix';
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_3D];
+    }
+}
+
 class HemisphereFunc extends VariationShaderFunc3D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         return `{
@@ -541,10 +573,10 @@ class Linear3DFunc extends VariationShaderFunc3D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         return `{
           float amount = ${variation.amount.toWebGl()};
-          FastNoise n = initFastNoiseStruct();
-          _vx += amount * _tx + singleValue(n, 123, _tx, _ty, _tz)*0.5; 
-          _vy += amount * _ty + singleValue(n, 1234, _tx, _ty, _tz)*0.5;
-          _vz += amount * _tz + singleValue(n, 12345, _tx, _ty, _tz)*0.5;
+          // FastNoise n = initFastNoiseStruct();
+          _vx += amount * _tx; // + singleValue(n, 123, _tx, _ty, _tz)*0.5; 
+          _vy += amount * _ty; // + singleValue(n, 1234, _tx, _ty, _tz)*0.5;
+          _vz += amount * _tz; // + singleValue(n, 12345, _tx, _ty, _tz)*0.5;
         }`;
     }
 
@@ -1321,6 +1353,7 @@ class PostMirrorWFFunc extends VariationShaderFunc3D {
 
 export function registerVars_3D_PartH() {
     VariationShaders.registerVar(new HelicoidFunc())
+    VariationShaders.registerVar(new HelixFunc())
     VariationShaders.registerVar(new HemisphereFunc())
     VariationShaders.registerVar(new HOFunc())
     VariationShaders.registerVar(new Hypershift2Func())

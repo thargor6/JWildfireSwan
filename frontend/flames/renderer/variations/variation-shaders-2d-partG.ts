@@ -295,6 +295,43 @@ class GlynnSim3Func extends VariationShaderFunc2D {
     }
 }
 
+class HadamardFunc extends VariationShaderFunc2D {
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        /**
+         * Hadamard IFS
+         *
+         * @author Jesus Sosa
+         * @date November 4, 2017
+         * based on a work of:
+         * http://paulbourke.net/fractals/pascaltriangle/roger9.c
+         */
+        return `{
+            float amount = ${variation.amount.toWebGl()};
+            float x, y;
+            if (rand8(tex, rngState) < 0.333) {
+              x = _tx / 2.0;
+              y = _ty / 2.0;
+            } else if (rand8(tex, rngState) < 0.666) {
+              x = _ty / 2.0;
+              y = -_tx / 2.0 - 0.5;
+            } else {
+              x = -_ty / 2.0 - 0.5;
+              y = _tx / 2.0;
+            }
+            _vx += x * amount;
+            _vy += y * amount;
+        }`;
+    }
+
+    get name(): string {
+        return 'hadamard_js';
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
 class HeartFunc extends VariationShaderFunc2D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         return `{
@@ -1263,6 +1300,7 @@ export function registerVars_2D_PartG() {
     VariationShaders.registerVar(new GlynnSim1Func())
     VariationShaders.registerVar(new GlynnSim2Func())
     VariationShaders.registerVar(new GlynnSim3Func())
+    VariationShaders.registerVar(new HadamardFunc())
     VariationShaders.registerVar(new HeartFunc())
     VariationShaders.registerVar(new HeartWFFunc())
     VariationShaders.registerVar(new HenonFunc())
