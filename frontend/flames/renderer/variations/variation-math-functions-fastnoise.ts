@@ -17,7 +17,7 @@
 
 
 import {
-  LIB_FAST_NOISE_BASE, LIB_FAST_NOISE_PERLIN_NOISE, LIB_FAST_NOISE_VALUE_NOISE,
+  LIB_FAST_NOISE_BASE, LIB_FAST_NOISE_PERLIN_NOISE, LIB_FAST_NOISE_SIMPLEX_NOISE, LIB_FAST_NOISE_VALUE_NOISE,
   VariationMathFunctions
 } from "Frontend/flames/renderer/variations/variation-math-functions";
 
@@ -189,6 +189,8 @@ export class FastNoise {
           return int(floor(float(num) / pow(2.0, float(shifts))));
        }
       
+       // FastNoise implementation for WebGL, based on the original FastNoise library: https://github.com/Auburn/FastNoiseLite/tree/FastNoise-Legacy
+      
        int hash2D(int seed, int x, int y) {
           int hash = seed;
           hash = XOR(hash, X_PRIME * x);
@@ -317,7 +319,7 @@ export class FastNoise {
       float calculateFractalBounding(FastNoise n) {
         float amp = n.m_gain;
         float ampFractal = 1.0;
-        for (int i = 1; i < NOISE_MAX_OCTAVES; i++) {
+        for (int i = 1; i <= NOISE_MAX_OCTAVES; i++) {
           ampFractal += amp;
           amp *= n.m_gain;
           if(i >= n.m_octaves) {
@@ -395,7 +397,7 @@ export class FastNoise {
           float sum = singleValue(n, seed, x, y, z);
           float amp = 1.0;
       
-          for (int i = 1; i < NOISE_MAX_OCTAVES; i++) {
+          for (int i = 1; i <= NOISE_MAX_OCTAVES; i++) {
               x *= n.m_lacunarity;
               y *= n.m_lacunarity;
               z *= n.m_lacunarity;
@@ -415,7 +417,7 @@ export class FastNoise {
           int seed = n.m_seed;
           float sum = abs(singleValue(n, seed, x, y, z)) * 2.0 - 1.0;
           float amp = 1.0;
-          for (int i = 1; i < NOISE_MAX_OCTAVES; i++) {
+          for (int i = 1; i <= NOISE_MAX_OCTAVES; i++) {
               x *= n.m_lacunarity;
               y *= n.m_lacunarity;
               z *= n.m_lacunarity;
@@ -432,7 +434,7 @@ export class FastNoise {
           int seed = n.m_seed;
           float sum = 1.0 - abs(singleValue(n, seed, x, y, z));
           float amp = 1.0;
-          for (int i = 1; i < NOISE_MAX_OCTAVES; i++) {
+          for (int i = 1; i <= NOISE_MAX_OCTAVES; i++) {
             x *= n.m_lacunarity;
             y *= n.m_lacunarity;
             z *= n.m_lacunarity;
@@ -473,7 +475,6 @@ export class FastNoise {
           int x1 = x0 + 1;
           int y1 = y0 + 1;
           int z1 = z0 + 1;
-      
           float xs, ys, zs;
           if(n.m_interp==INTERP_HERMITE) {
             xs = interpHermiteFunc(x - float(x0));
@@ -490,22 +491,18 @@ export class FastNoise {
             ys = y - float(y0);
             zs = z - float(z0);
           }
-      
           float xd0 = x - float(x0);
           float yd0 = y - float(y0);
           float zd0 = z - float(z0);
           float xd1 = xd0 - 1.0;
           float yd1 = yd0 - 1.0;
           float zd1 = zd0 - 1.0;
-      
           float xf00 = lerp(gradCoord3D(seed, x0, y0, z0, xd0, yd0, zd0), gradCoord3D(seed, x1, y0, z0, xd1, yd0, zd0), xs);
           float xf10 = lerp(gradCoord3D(seed, x0, y1, z0, xd0, yd1, zd0), gradCoord3D(seed, x1, y1, z0, xd1, yd1, zd0), xs);
           float xf01 = lerp(gradCoord3D(seed, x0, y0, z1, xd0, yd0, zd1), gradCoord3D(seed, x1, y0, z1, xd1, yd0, zd1), xs);
           float xf11 = lerp(gradCoord3D(seed, x0, y1, z1, xd0, yd1, zd1), gradCoord3D(seed, x1, y1, z1, xd1, yd1, zd1), xs);
-      
           float yf0 = lerp(xf00, xf10, ys);
           float yf1 = lerp(xf01, xf11, ys);
-      
           return lerp(yf0, yf1, zs);
         }
       
@@ -517,7 +514,7 @@ export class FastNoise {
           int seed = n.m_seed;
           float sum = singlePerlin(n, seed, x, y, z);
           float amp = 1.0;
-          for (int i = 1; i < NOISE_MAX_OCTAVES; i++) {
+          for (int i = 1; i <= NOISE_MAX_OCTAVES; i++) {
             x *= n.m_lacunarity;
             y *= n.m_lacunarity;
             z *= n.m_lacunarity;
@@ -534,7 +531,7 @@ export class FastNoise {
           int seed = n.m_seed;
           float sum = abs(singlePerlin(n, seed, x, y, z)) * 2.0 - 1.0;
           float amp = 1.0;
-          for (int i = 1; i < NOISE_MAX_OCTAVES; i++) {
+          for (int i = 1; i <= NOISE_MAX_OCTAVES; i++) {
             x *= n.m_lacunarity;
             y *= n.m_lacunarity;
             z *= n.m_lacunarity;
@@ -544,7 +541,6 @@ export class FastNoise {
               break;
             }
           }
-      
           return sum * n.m_fractalBounding;
         }
       
@@ -552,7 +548,7 @@ export class FastNoise {
           int seed = n.m_seed;
           float sum = 1.0 - abs(singlePerlin(n, seed, x, y, z));
           float amp = 1.0;
-          for (int i = 1; i < NOISE_MAX_OCTAVES; i++) {
+          for (int i = 1; i <= NOISE_MAX_OCTAVES; i++) {
             x *= n.m_lacunarity;
             y *= n.m_lacunarity;
             z *= n.m_lacunarity;
@@ -578,200 +574,192 @@ export class FastNoise {
           else { // FRACTALTYPE_RIGID_MULTI:  
             return singlePerlinFractalRigidMulti(n, lx, ly, lz);
           }
-      }
+        }
         
       `)
 
-      /*
-
-// Simplex Noise
-#ifdef ADD_FEATURE_SIMPLEX_NOISE
-__device__ __constant__ float F3 = (float) (1.0 / 3.0);
-__device__ __constant__ float G3 = (float) (1.0 / 6.0);
-__device__ __constant__ float G33 =(float) ((1.0 / 6.0) * 3 - 1);
-#endif // ADD_FEATURE_SIMPLEX_NOISE
-
-#ifdef ADD_FEATURE_SIMPLEX_NOISE
-__device__ float singleSimplex(int seed, float x, float y, float z) {
-    float t = (x + y + z) * F3;
-    int i = fastFloor(x + t);
-    int j = fastFloor(y + t);
-    int k = fastFloor(z + t);
-
-    t = (i + j + k) * G3;
-    float x0 = x - (i - t);
-    float y0 = y - (j - t);
-    float z0 = z - (k - t);
-
-    int i1, j1, k1;
-    int i2, j2, k2;
-
-    if (x0 >= y0) {
-        if (y0 >= z0) {
-            i1 = 1;
-            j1 = 0;
-            k1 = 0;
-            i2 = 1;
-            j2 = 1;
-            k2 = 0;
-        } else if (x0 >= z0) {
-            i1 = 1;
-            j1 = 0;
-            k1 = 0;
-            i2 = 1;
-            j2 = 0;
-            k2 = 1;
-        } else // x0 < z0
-        {
-            i1 = 0;
-            j1 = 0;
-            k1 = 1;
-            i2 = 1;
-            j2 = 0;
-            k2 = 1;
+      VariationMathFunctions.registerFunction(LIB_FAST_NOISE_SIMPLEX_NOISE, `
+        float F3 = (1.0 / 3.0);
+        float G3 = (1.0 / 6.0);
+        float G33 = ((1.0 / 6.0) * 3.0 - 1.0);
+        
+        float singleSimplex(FastNoise n, int seed, float x, float y, float z) {
+          float t = (x + y + z) * F3;
+          int i = fastFloor(x + t);
+          int j = fastFloor(y + t);
+          int k = fastFloor(z + t);
+          t = float(i + j + k) * G3;
+          float x0 = x - (float(i) - t);
+          float y0 = y - (float(j) - t);
+          float z0 = z - (float(k) - t);
+          int i1, j1, k1;
+          int i2, j2, k2;
+          if (x0 >= y0) {
+              if (y0 >= z0) {
+                  i1 = 1;
+                  j1 = 0;
+                  k1 = 0;
+                  i2 = 1;
+                  j2 = 1;
+                  k2 = 0;
+              } else if (x0 >= z0) {
+                  i1 = 1;
+                  j1 = 0;
+                  k1 = 0;
+                  i2 = 1;
+                  j2 = 0;
+                  k2 = 1;
+              } else // x0 < z0
+              {
+                  i1 = 0;
+                  j1 = 0;
+                  k1 = 1;
+                  i2 = 1;
+                  j2 = 0;
+                  k2 = 1;
+              }
+          } else // x0 < y0
+          {
+              if (y0 < z0) {
+                  i1 = 0;
+                  j1 = 0;
+                  k1 = 1;
+                  i2 = 0;
+                  j2 = 1;
+                  k2 = 1;
+              } else if (x0 < z0) {
+                  i1 = 0;
+                  j1 = 1;
+                  k1 = 0;
+                  i2 = 0;
+                  j2 = 1;
+                  k2 = 1;
+              } else // x0 >= z0
+              {
+                  i1 = 0;
+                  j1 = 1;
+                  k1 = 0;
+                  i2 = 1;
+                  j2 = 1;
+                  k2 = 0;
+              }
+          }
+          float x1 = x0 - float(i1) + G3;
+          float y1 = y0 - float(j1) + G3;
+          float z1 = z0 - float(k1) + G3;
+          float x2 = x0 - float(i2) + F3;
+          float y2 = y0 - float(j2) + F3;
+          float z2 = z0 - float(k2) + F3;
+          float x3 = x0 + G33;
+          float y3 = y0 + G33;
+          float z3 = z0 + G33;
+      
+          float n0, n1, n2, n3;
+      
+          t = 0.6 - x0 * x0 - y0 * y0 - z0 * z0;
+          if (t < 0.0) n0 = 0.0;
+          else {
+              t *= t;
+              n0 = t * t * gradCoord3D(seed, i, j, k, x0, y0, z0);
+          }
+      
+          t = 0.6 - x1 * x1 - y1 * y1 - z1 * z1;
+          if (t < 0.0) n1 = 0.0;
+          else {
+              t *= t;
+              n1 = t * t * gradCoord3D(seed, i + i1, j + j1, k + k1, x1, y1, z1);
+          }
+      
+          t = 0.6 - x2 * x2 - y2 * y2 - z2 * z2;
+          if (t < 0.0) n2 = 0.0;
+          else {
+              t *= t;
+              n2 = t * t * gradCoord3D(seed, i + i2, j + j2, k + k2, x2, y2, z2);
+          }
+      
+          t = 0.6 - x3 * x3 - y3 * y3 - z3 * z3;
+          if (t < 0.0) n3 = 0.0;
+          else {
+              t *= t;
+              n3 = t * t * gradCoord3D(seed, i + 1, j + 1, k + 1, x3, y3, z3);
+          }
+      
+          return 32.0 * (n0 + n1 + n2 + n3);
         }
-    } else // x0 < y0
-    {
-        if (y0 < z0) {
-            i1 = 0;
-            j1 = 0;
-            k1 = 1;
-            i2 = 0;
-            j2 = 1;
-            k2 = 1;
-        } else if (x0 < z0) {
-            i1 = 0;
-            j1 = 1;
-            k1 = 0;
-            i2 = 0;
-            j2 = 1;
-            k2 = 1;
-        } else // x0 >= z0
-        {
-            i1 = 0;
-            j1 = 1;
-            k1 = 0;
-            i2 = 1;
-            j2 = 1;
-            k2 = 0;
+        
+        float getSimplex(FastNoise n, float x, float y, float z) {
+          return singleSimplex(n, n.m_seed, x * n.m_frequency, y * n.m_frequency, z * n.m_frequency);
         }
-    }
+        
+        float singleSimplexFractalFBM(FastNoise n, float x, float y, float z) {
+          int seed = n.m_seed;
+          float sum = singleSimplex(n, seed, x, y, z);
+          float amp = 1.0;
+          for (int i = 1; i <= NOISE_MAX_OCTAVES; i++) {
+            x *= n.m_lacunarity;
+            y *= n.m_lacunarity;
+            z *= n.m_lacunarity;
+            amp *= n.m_gain;
+            sum += singleSimplex(n, ++seed, x, y, z) * amp;
+            if(i>=n.m_octaves) {
+              break;
+            }              
+          }
+          return sum * n.m_fractalBounding;
+        }
 
-    float x1 = x0 - i1 + G3;
-    float y1 = y0 - j1 + G3;
-    float z1 = z0 - k1 + G3;
-    float x2 = x0 - i2 + F3;
-    float y2 = y0 - j2 + F3;
-    float z2 = z0 - k2 + F3;
-    float x3 = x0 + G33;
-    float y3 = y0 + G33;
-    float z3 = z0 + G33;
-
-    float n0, n1, n2, n3;
-
-    t = (float) 0.6 - x0 * x0 - y0 * y0 - z0 * z0;
-    if (t < 0) n0 = 0;
-    else {
-        t *= t;
-        n0 = t * t * gradCoord3D(seed, i, j, k, x0, y0, z0);
-    }
-
-    t = (float) 0.6 - x1 * x1 - y1 * y1 - z1 * z1;
-    if (t < 0) n1 = 0;
-    else {
-        t *= t;
-        n1 = t * t * gradCoord3D(seed, i + i1, j + j1, k + k1, x1, y1, z1);
-    }
-
-    t = (float) 0.6 - x2 * x2 - y2 * y2 - z2 * z2;
-    if (t < 0) n2 = 0;
-    else {
-        t *= t;
-        n2 = t * t * gradCoord3D(seed, i + i2, j + j2, k + k2, x2, y2, z2);
-    }
-
-    t = (float) 0.6 - x3 * x3 - y3 * y3 - z3 * z3;
-    if (t < 0) n3 = 0;
-    else {
-        t *= t;
-        n3 = t * t * gradCoord3D(seed, i + 1, j + 1, k + 1, x3, y3, z3);
-    }
-
-    return 32 * (n0 + n1 + n2 + n3);
-}
-
-__device__ float getSimplex(FastNoise* n, float x, float y, float z) {
-    return singleSimplex(n.m_seed, x * n.m_frequency, y * n.m_frequency, z * n.m_frequency);
-}
-
-__device__ float singleSimplexFractalFBM(FastNoise* n, float x, float y, float z) {
-    int seed = n.m_seed;
-    float sum = singleSimplex(seed, x, y, z);
-    float amp = 1;
-
-    for (int i = 1; i < n.m_octaves; i++) {
-        x *= n.m_lacunarity;
-        y *= n.m_lacunarity;
-        z *= n.m_lacunarity;
-
-        amp *= n.m_gain;
-        sum += singleSimplex(++seed, x, y, z) * amp;
-    }
-
-    return sum * n.m_fractalBounding;
-}
-
-__device__ float singleSimplexFractalBillow(FastNoise* n, float x, float y, float z) {
-    int seed = n.m_seed;
-    float sum = abs(singleSimplex(seed, x, y, z)) * 2 - 1;
-    float amp = 1;
-
-    for (int i = 1; i < n.m_octaves; i++) {
-        x *= n.m_lacunarity;
-        y *= n.m_lacunarity;
-        z *= n.m_lacunarity;
-
-        amp *= n.m_gain;
-        sum += (abs(singleSimplex(++seed, x, y, z)) * 2 - 1) * amp;
-    }
-
-    return sum * n.m_fractalBounding;
-}
-
-__device__ float singleSimplexFractalRigidMulti(FastNoise* n, float x, float y, float z) {
-    int seed = n.m_seed;
-    float sum = 1 - abs(singleSimplex(seed, x, y, z));
-    float amp = 1;
-
-    for (int i = 1; i < n.m_octaves; i++) {
-        x *= n.m_lacunarity;
-        y *= n.m_lacunarity;
-        z *= n.m_lacunarity;
-
-        amp *= n.m_gain;
-        sum -= (1 - abs(singleSimplex(++seed, x, y, z))) * amp;
-    }
-
-    return sum;
-}
-
-__device__ float getSimplexFractal(FastNoise* n, float x, float y, float z) {
-    x *= n.m_frequency;
-    y *= n.m_frequency;
-    z *= n.m_frequency;
-
-    switch (n.m_fractalType) {
-        case FBM:
+        float singleSimplexFractalBillow(FastNoise n, float x, float y, float z) {
+          int seed = n.m_seed;
+          float sum = abs(singleSimplex(n, seed, x, y, z)) * 2.0 - 1.0;
+          float amp = 1.0;
+          for (int i = 1; i <= NOISE_MAX_OCTAVES; i++) {
+            x *= n.m_lacunarity;
+            y *= n.m_lacunarity;
+            z *= n.m_lacunarity;
+            amp *= n.m_gain;
+            sum += (abs(singleSimplex(n, ++seed, x, y, z)) * 2.0 - 1.0) * amp;
+            if(i>=n.m_octaves) {
+              break;
+            }                            
+          }
+          return sum * n.m_fractalBounding;
+        }
+        
+        float singleSimplexFractalRigidMulti(FastNoise n, float x, float y, float z) {
+          int seed = n.m_seed;
+          float sum = 1.0 - abs(singleSimplex(n, seed, x, y, z));
+          float amp = 1.0;
+          for (int i = 1; i <= NOISE_MAX_OCTAVES; i++) {
+            x *= n.m_lacunarity;
+            y *= n.m_lacunarity;
+            z *= n.m_lacunarity;
+            amp *= n.m_gain;
+            sum -= (1.0 - abs(singleSimplex(n, ++seed, x, y, z))) * amp;
+            if(i>=n.m_octaves) {
+              break;
+            }              
+          }
+          return sum;  
+        }
+        
+        float getSimplexFractal(FastNoise n, float x, float y, float z) {
+          float lx = x * n.m_frequency;
+          float ly = y * n.m_frequency;
+          float lz = z * n.m_frequency;
+          if(n.m_fractalType==FRACTALTYPE_FBM) {
             return singleSimplexFractalFBM(n, x, y, z);
-        case Billow:
+          }
+          else if(n.m_fractalType==FRACTALTYPE_BILLOW) {  
             return singleSimplexFractalBillow(n, x, y, z);
-        case RigidMulti:
+          }
+          else { // FRACTALTYPE_RIGID_MULTI:  
             return singleSimplexFractalRigidMulti(n, x, y, z);
-        default:
-            return 0;
-    }
-}
-#endif // ADD_FEATURE_SIMPLEX_NOISE
+          }
+        }
+                
+      `)
+
+      /*
 
 #ifdef ADD_FEATURE_SIMPLEX_NOISE
 __device__ __constant__ float F2 = (float) (1.0 / 2.0);
