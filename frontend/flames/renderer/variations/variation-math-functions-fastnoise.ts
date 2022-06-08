@@ -17,7 +17,7 @@
 
 
 import {
-  LIB_FAST_NOISE_BASE, LIB_FAST_NOISE_VALUE_NOISE,
+  LIB_FAST_NOISE_BASE, LIB_FAST_NOISE_PERLIN_NOISE, LIB_FAST_NOISE_VALUE_NOISE,
   VariationMathFunctions
 } from "Frontend/flames/renderer/variations/variation-math-functions";
 
@@ -453,7 +453,6 @@ export class FastNoise {
           float lx = x * n.m_frequency;
           float ly = y * n.m_frequency;
           float lz = z * n.m_frequency;
-      
           if(n.m_fractalType==FRACTALTYPE_FBM) {
             return singleValueFractalFBM(n, lx, ly, lz);
           }
@@ -464,129 +463,126 @@ export class FastNoise {
             return singleValueFractalRigidMulti(n, lx, ly, lz);
           }
         }
-       `);
+      `)
+
+      VariationMathFunctions.registerFunction(LIB_FAST_NOISE_PERLIN_NOISE, `
+        float singlePerlin(FastNoise n, int seed, float x, float y, float z) {
+          int x0 = fastFloor(x);
+          int y0 = fastFloor(y);
+          int z0 = fastFloor(z);
+          int x1 = x0 + 1;
+          int y1 = y0 + 1;
+          int z1 = z0 + 1;
+      
+          float xs, ys, zs;
+          if(n.m_interp==INTERP_HERMITE) {
+            xs = interpHermiteFunc(x - float(x0));
+            ys = interpHermiteFunc(y - float(y0));
+            zs = interpHermiteFunc(z - float(z0));
+          }
+          else if(n.m_interp==INTERP_QUINTIC) {  
+            xs = interpQuinticFunc(x - float(x0));
+            ys = interpQuinticFunc(y - float(y0));
+            zs = interpQuinticFunc(z - float(z0));          
+          }
+          else { // // INTERP_LINEAR
+            xs = x - float(x0);
+            ys = y - float(y0);
+            zs = z - float(z0);
+          }
+      
+          float xd0 = x - float(x0);
+          float yd0 = y - float(y0);
+          float zd0 = z - float(z0);
+          float xd1 = xd0 - 1.0;
+          float yd1 = yd0 - 1.0;
+          float zd1 = zd0 - 1.0;
+      
+          float xf00 = lerp(gradCoord3D(seed, x0, y0, z0, xd0, yd0, zd0), gradCoord3D(seed, x1, y0, z0, xd1, yd0, zd0), xs);
+          float xf10 = lerp(gradCoord3D(seed, x0, y1, z0, xd0, yd1, zd0), gradCoord3D(seed, x1, y1, z0, xd1, yd1, zd0), xs);
+          float xf01 = lerp(gradCoord3D(seed, x0, y0, z1, xd0, yd0, zd1), gradCoord3D(seed, x1, y0, z1, xd1, yd0, zd1), xs);
+          float xf11 = lerp(gradCoord3D(seed, x0, y1, z1, xd0, yd1, zd1), gradCoord3D(seed, x1, y1, z1, xd1, yd1, zd1), xs);
+      
+          float yf0 = lerp(xf00, xf10, ys);
+          float yf1 = lerp(xf01, xf11, ys);
+      
+          return lerp(yf0, yf1, zs);
+        }
+      
+        float getPerlin(FastNoise n, float x, float y, float z) {
+          return singlePerlin(n, n.m_seed, x * n.m_frequency, y * n.m_frequency, z * n.m_frequency);
+        }
+        
+        float singlePerlinFractalFBM(FastNoise n, float x, float y, float z) {
+          int seed = n.m_seed;
+          float sum = singlePerlin(n, seed, x, y, z);
+          float amp = 1.0;
+          for (int i = 1; i < NOISE_MAX_OCTAVES; i++) {
+            x *= n.m_lacunarity;
+            y *= n.m_lacunarity;
+            z *= n.m_lacunarity;
+            amp *= n.m_gain;
+            sum += singlePerlin(n, ++seed, x, y, z) * amp;
+            if(i>=n.m_octaves) {
+              break;
+            }
+          }
+          return sum * n.m_fractalBounding;
+        }
+        
+        float singlePerlinFractalBillow(FastNoise n, float x, float y, float z) {
+          int seed = n.m_seed;
+          float sum = abs(singlePerlin(n, seed, x, y, z)) * 2.0 - 1.0;
+          float amp = 1.0;
+          for (int i = 1; i < NOISE_MAX_OCTAVES; i++) {
+            x *= n.m_lacunarity;
+            y *= n.m_lacunarity;
+            z *= n.m_lacunarity;
+            amp *= n.m_gain;
+            sum += (abs(singlePerlin(n, ++seed, x, y, z)) * 2.0 - 1.0) * amp;
+            if(i>=n.m_octaves) {
+              break;
+            }
+          }
+      
+          return sum * n.m_fractalBounding;
+        }
+      
+        float singlePerlinFractalRigidMulti(FastNoise n, float x, float y, float z) {
+          int seed = n.m_seed;
+          float sum = 1.0 - abs(singlePerlin(n, seed, x, y, z));
+          float amp = 1.0;
+          for (int i = 1; i < NOISE_MAX_OCTAVES; i++) {
+            x *= n.m_lacunarity;
+            y *= n.m_lacunarity;
+            z *= n.m_lacunarity;
+            amp *= n.m_gain;
+            sum -= (1.0 - abs(singlePerlin(n, ++seed, x, y, z))) * amp;
+            if(i>=n.m_octaves) {
+              break;
+            }
+          }
+          return sum;
+        }
+        
+        float getPerlinFractal(FastNoise n, float x, float y, float z) {
+          float lx = x * n.m_frequency;
+          float ly = y * n.m_frequency;
+          float lz = z * n.m_frequency;
+          if(n.m_fractalType==FRACTALTYPE_FBM) {
+            return singlePerlinFractalFBM(n, lx, ly, lz);
+          }
+          else if(n.m_fractalType==FRACTALTYPE_BILLOW) {  
+            return singlePerlinFractalBillow(n, lx, ly, lz);
+          }
+          else { // FRACTALTYPE_RIGID_MULTI:  
+            return singlePerlinFractalRigidMulti(n, lx, ly, lz);
+          }
+      }
+        
+      `)
 
       /*
-#ifdef ADD_FEATURE_PERLIN_NOISE
-// Perlin Noise
-__device__ float singlePerlin(FastNoise* n, int seed, float x, float y, float z) {
-    int x0 = fastFloor(x);
-    int y0 = fastFloor(y);
-    int z0 = fastFloor(z);
-    int x1 = x0 + 1;
-    int y1 = y0 + 1;
-    int z1 = z0 + 1;
-
-    float xs, ys, zs;
-    switch (n.m_interp) {
-        default:
-        case Linear:
-            xs = x - x0;
-            ys = y - y0;
-            zs = z - z0;
-            break;
-        case Hermite:
-            xs = interpHermiteFunc(x - x0);
-            ys = interpHermiteFunc(y - y0);
-            zs = interpHermiteFunc(z - z0);
-            break;
-        case Quintic:
-            xs = interpQuinticFunc(x - x0);
-            ys = interpQuinticFunc(y - y0);
-            zs = interpQuinticFunc(z - z0);
-            break;
-    }
-
-    float xd0 = x - x0;
-    float yd0 = y - y0;
-    float zd0 = z - z0;
-    float xd1 = xd0 - 1;
-    float yd1 = yd0 - 1;
-    float zd1 = zd0 - 1;
-
-    float xf00 = lerp(gradCoord3D(seed, x0, y0, z0, xd0, yd0, zd0), gradCoord3D(seed, x1, y0, z0, xd1, yd0, zd0), xs);
-    float xf10 = lerp(gradCoord3D(seed, x0, y1, z0, xd0, yd1, zd0), gradCoord3D(seed, x1, y1, z0, xd1, yd1, zd0), xs);
-    float xf01 = lerp(gradCoord3D(seed, x0, y0, z1, xd0, yd0, zd1), gradCoord3D(seed, x1, y0, z1, xd1, yd0, zd1), xs);
-    float xf11 = lerp(gradCoord3D(seed, x0, y1, z1, xd0, yd1, zd1), gradCoord3D(seed, x1, y1, z1, xd1, yd1, zd1), xs);
-
-    float yf0 = lerp(xf00, xf10, ys);
-    float yf1 = lerp(xf01, xf11, ys);
-
-    return lerp(yf0, yf1, zs);
-}
-
-__device__ float getPerlin(FastNoise* n, float x, float y, float z) {
-    return singlePerlin(n, n.m_seed, x * n.m_frequency, y * n.m_frequency, z * n.m_frequency);
-}
-
-__device__ float singlePerlinFractalFBM(FastNoise* n, float x, float y, float z) {
-    int seed = n.m_seed;
-    float sum = singlePerlin(n, seed, x, y, z);
-    float amp = 1;
-
-    for (int i = 1; i < n.m_octaves; i++) {
-        x *= n.m_lacunarity;
-        y *= n.m_lacunarity;
-        z *= n.m_lacunarity;
-
-        amp *= n.m_gain;
-        sum += singlePerlin(n, ++seed, x, y, z) * amp;
-    }
-
-    return sum * n.m_fractalBounding;
-}
-
-__device__ float singlePerlinFractalBillow(FastNoise* n, float x, float y, float z) {
-    int seed = n.m_seed;
-    float sum = abs(singlePerlin(n, seed, x, y, z)) * 2 - 1;
-    float amp = 1;
-
-    for (int i = 1; i < n.m_octaves; i++) {
-        x *= n.m_lacunarity;
-        y *= n.m_lacunarity;
-        z *= n.m_lacunarity;
-
-        amp *= n.m_gain;
-        sum += (abs(singlePerlin(n, ++seed, x, y, z)) * 2 - 1) * amp;
-    }
-
-    return sum * n.m_fractalBounding;
-}
-
-__device__ float singlePerlinFractalRigidMulti(FastNoise* n, float x, float y, float z) {
-    int seed = n.m_seed;
-    float sum = 1 - abs(singlePerlin(n, seed, x, y, z));
-    float amp = 1;
-
-    for (int i = 1; i < n.m_octaves; i++) {
-        x *= n.m_lacunarity;
-        y *= n.m_lacunarity;
-        z *= n.m_lacunarity;
-
-        amp *= n.m_gain;
-        sum -= (1 - abs(singlePerlin(n, ++seed, x, y, z))) * amp;
-    }
-
-    return sum;
-}
-
-__device__ float getPerlinFractal(FastNoise* n, float x, float y, float z) {
-    x *= n.m_frequency;
-    y *= n.m_frequency;
-    z *= n.m_frequency;
-
-    switch (n.m_fractalType) {
-        case FBM:
-            return singlePerlinFractalFBM(n, x, y, z);
-        case Billow:
-            return singlePerlinFractalBillow(n, x, y, z);
-        case RigidMulti:
-            return singlePerlinFractalRigidMulti(n, x, y, z);
-        default:
-            return 0;
-    }
-}
-#endif // ADD_FEATURE_PERLIN_NOISE
 
 // Simplex Noise
 #ifdef ADD_FEATURE_SIMPLEX_NOISE
