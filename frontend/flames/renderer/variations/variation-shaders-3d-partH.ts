@@ -26,7 +26,7 @@ import {
     FUNC_ROUND,
     FUNC_SGN,
     FUNC_SINH,
-    LIB_FAST_NOISE_BASE,
+    LIB_FAST_NOISE_BASE, LIB_FAST_NOISE_CUBIC_NOISE, LIB_FAST_NOISE_PERLIN_NOISE, LIB_FAST_NOISE_SIMPLEX_NOISE,
     LIB_FAST_NOISE_VALUE_NOISE
 } from 'Frontend/flames/renderer/variations/variation-math-functions';
 
@@ -573,20 +573,14 @@ class Linear3DFunc extends VariationShaderFunc3D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         return `{
           float amount = ${variation.amount.toWebGl()};
-          // FastNoise n = initFastNoiseStruct();
-          _vx += amount * _tx; // + singleValue(n, 123, _tx, _ty, _tz)*0.5; 
-          _vy += amount * _ty; // + singleValue(n, 1234, _tx, _ty, _tz)*0.5;
-          _vz += amount * _tz; // + singleValue(n, 12345, _tx, _ty, _tz)*0.5;
+          _vx += amount * _tx;
+          _vy += amount * _ty;
+          _vz += amount * _tz;
         }`;
     }
 
     get name(): string {
         return 'linear3D';
-    }
-
-    // TODO remove
-    get funcDependencies(): string[] {
-        return [LIB_FAST_NOISE_BASE, LIB_FAST_NOISE_VALUE_NOISE];
     }
 
     get variationTypes(): VariationTypes[] {

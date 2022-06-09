@@ -17,7 +17,11 @@
 
 
 import {
-  LIB_FAST_NOISE_BASE, LIB_FAST_NOISE_PERLIN_NOISE, LIB_FAST_NOISE_SIMPLEX_NOISE, LIB_FAST_NOISE_VALUE_NOISE,
+  LIB_FAST_NOISE_BASE,
+  LIB_FAST_NOISE_CUBIC_NOISE,
+  LIB_FAST_NOISE_PERLIN_NOISE,
+  LIB_FAST_NOISE_SIMPLEX_NOISE,
+  LIB_FAST_NOISE_VALUE_NOISE,
   VariationMathFunctions
 } from "Frontend/flames/renderer/variations/variation-math-functions";
 
@@ -49,7 +53,7 @@ export class FastNoise {
         #define FRACTALTYPE_BILLOW 1
         #define FRACTALTYPE_RIGID_MULTI 2
         
-        #define NOISE_MAX_OCTAVES 8
+        #define NOISE_MAX_OCTAVES 5
 
         struct FastNoise {
           int m_seed; // seed used for all noise types, Default: 1337
@@ -759,140 +763,128 @@ export class FastNoise {
                 
       `)
 
-      /*
+      VariationMathFunctions.registerFunction(LIB_FAST_NOISE_CUBIC_NOISE, `
+        float CUBIC_3D_BOUNDING = 1.0 / (1.5 * 1.5 * 1.5);
+      
+        float singleCubic(FastNoise n, int seed, float x, float y, float z) {
+          int x1 = fastFloor(x);
+          int y1 = fastFloor(y);
+          int z1 = fastFloor(z);
+      
+          int x0 = x1 - 1;
+          int y0 = y1 - 1;
+          int z0 = z1 - 1;
+          int x2 = x1 + 1;
+          int y2 = y1 + 1;
+          int z2 = z1 + 1;
+          int x3 = x1 + 2;
+          int y3 = y1 + 2;
+          int z3 = z1 + 2;
+      
+          float xs = x - float(x1);
+          float ys = y - float(y1);
+          float zs = z - float(z1);
+      
+          return cubicLerp(
+              cubicLerp(
+                  cubicLerp(valCoord3D(seed, x0, y0, z0), valCoord3D(seed, x1, y0, z0), valCoord3D(seed, x2, y0, z0), valCoord3D(seed, x3, y0, z0), xs),
+                  cubicLerp(valCoord3D(seed, x0, y1, z0), valCoord3D(seed, x1, y1, z0), valCoord3D(seed, x2, y1, z0), valCoord3D(seed, x3, y1, z0), xs),
+                  cubicLerp(valCoord3D(seed, x0, y2, z0), valCoord3D(seed, x1, y2, z0), valCoord3D(seed, x2, y2, z0), valCoord3D(seed, x3, y2, z0), xs),
+                  cubicLerp(valCoord3D(seed, x0, y3, z0), valCoord3D(seed, x1, y3, z0), valCoord3D(seed, x2, y3, z0), valCoord3D(seed, x3, y3, z0), xs),
+                  ys),
+              cubicLerp(
+                  cubicLerp(valCoord3D(seed, x0, y0, z1), valCoord3D(seed, x1, y0, z1), valCoord3D(seed, x2, y0, z1), valCoord3D(seed, x3, y0, z1), xs),
+                  cubicLerp(valCoord3D(seed, x0, y1, z1), valCoord3D(seed, x1, y1, z1), valCoord3D(seed, x2, y1, z1), valCoord3D(seed, x3, y1, z1), xs),
+                  cubicLerp(valCoord3D(seed, x0, y2, z1), valCoord3D(seed, x1, y2, z1), valCoord3D(seed, x2, y2, z1), valCoord3D(seed, x3, y2, z1), xs),
+                  cubicLerp(valCoord3D(seed, x0, y3, z1), valCoord3D(seed, x1, y3, z1), valCoord3D(seed, x2, y3, z1), valCoord3D(seed, x3, y3, z1), xs),
+                  ys),
+              cubicLerp(
+                  cubicLerp(valCoord3D(seed, x0, y0, z2), valCoord3D(seed, x1, y0, z2), valCoord3D(seed, x2, y0, z2), valCoord3D(seed, x3, y0, z2), xs),
+                  cubicLerp(valCoord3D(seed, x0, y1, z2), valCoord3D(seed, x1, y1, z2), valCoord3D(seed, x2, y1, z2), valCoord3D(seed, x3, y1, z2), xs),
+                  cubicLerp(valCoord3D(seed, x0, y2, z2), valCoord3D(seed, x1, y2, z2), valCoord3D(seed, x2, y2, z2), valCoord3D(seed, x3, y2, z2), xs),
+                  cubicLerp(valCoord3D(seed, x0, y3, z2), valCoord3D(seed, x1, y3, z2), valCoord3D(seed, x2, y3, z2), valCoord3D(seed, x3, y3, z2), xs),
+                  ys),
+              cubicLerp(
+                  cubicLerp(valCoord3D(seed, x0, y0, z3), valCoord3D(seed, x1, y0, z3), valCoord3D(seed, x2, y0, z3), valCoord3D(seed, x3, y0, z3), xs),
+                  cubicLerp(valCoord3D(seed, x0, y1, z3), valCoord3D(seed, x1, y1, z3), valCoord3D(seed, x2, y1, z3), valCoord3D(seed, x3, y1, z3), xs),
+                  cubicLerp(valCoord3D(seed, x0, y2, z3), valCoord3D(seed, x1, y2, z3), valCoord3D(seed, x2, y2, z3), valCoord3D(seed, x3, y2, z3), xs),
+                  cubicLerp(valCoord3D(seed, x0, y3, z3), valCoord3D(seed, x1, y3, z3), valCoord3D(seed, x2, y3, z3), valCoord3D(seed, x3, y3, z3), xs),
+                  ys),
+              zs) * CUBIC_3D_BOUNDING;
+        }
 
-#ifdef ADD_FEATURE_SIMPLEX_NOISE
-__device__ __constant__ float F2 = (float) (1.0 / 2.0);
-__device__ __constant__ float G2 = (float) (1.0 / 4.0);
-#endif
+        float getCubic(FastNoise n, float x, float y, float z) {
+          return singleCubic(n, n.m_seed, x * n.m_frequency, y * n.m_frequency, z * n.m_frequency);
+        }
+      
+        float singleCubicFractalFBM(FastNoise n, float x, float y, float z) {
+          int seed = n.m_seed;
+          float sum = singleCubic(n, seed, x, y, z);
+          float amp = 1.0;
+          for (int i = 1; i <= NOISE_MAX_OCTAVES; i++) {
+            x *= n.m_lacunarity;
+            y *= n.m_lacunarity;
+            z *= n.m_lacunarity;
+            amp *= n.m_gain;
+            sum += singleCubic(n, ++seed, x, y, z) * amp;
+            if(i>=n.m_octaves) {
+              break;
+            }
+          }
+          return sum * n.m_fractalBounding;
+        }
+      
+        float singleCubicFractalBillow(FastNoise n, float x, float y, float z) {
+          int seed = n.m_seed;
+          float sum = abs(singleCubic(n, seed, x, y, z)) * 2.0 - 1.0;
+          float amp = 1.0;
+          for (int i = 1; i <= NOISE_MAX_OCTAVES; i++) {
+            x *= n.m_lacunarity;
+            y *= n.m_lacunarity;
+            z *= n.m_lacunarity;
+            amp *= n.m_gain;
+            sum += (abs(singleCubic(n, ++seed, x, y, z)) * 2.0 - 1.0) * amp;
+            if(i>=n.m_octaves) {
+              break;
+            }
+          }
+          return sum * n.m_fractalBounding;
+        }
+        
+        float singleCubicFractalRigidMulti(FastNoise n, float x, float y, float z) {
+          int seed = n.m_seed;
+          float sum = 1.0 - abs(singleCubic(n, seed, x, y, z));
+          float amp = 1.0;
+          for (int i = 1; i <= NOISE_MAX_OCTAVES; i++) {
+            x *= n.m_lacunarity;
+            y *= n.m_lacunarity;
+            z *= n.m_lacunarity;
+            amp *= n.m_gain;
+            sum -= (1.0 - abs(singleCubic(n, ++seed, x, y, z))) * amp;
+            if(i>=n.m_octaves) {
+              break;
+            }
+          }
+          return sum;
+        }
 
-// Cubic Noise
-#ifdef ADD_FEATURE_CUBIC_NOISE
-__device__ __constant__ float CUBIC_3D_BOUNDING = 1 / (float) (1.5 * 1.5 * 1.5);
-
-__device__ float singleCubic(FastNoise* n, int seed, float x, float y, float z) {
-    int x1 = fastFloor(x);
-    int y1 = fastFloor(y);
-    int z1 = fastFloor(z);
-
-    int x0 = x1 - 1;
-    int y0 = y1 - 1;
-    int z0 = z1 - 1;
-    int x2 = x1 + 1;
-    int y2 = y1 + 1;
-    int z2 = z1 + 1;
-    int x3 = x1 + 2;
-    int y3 = y1 + 2;
-    int z3 = z1 + 2;
-
-    float xs = x - (float) x1;
-    float ys = y - (float) y1;
-    float zs = z - (float) z1;
-
-    return cubicLerp(
-        cubicLerp(
-            cubicLerp(valCoord3D(seed, x0, y0, z0), valCoord3D(seed, x1, y0, z0), valCoord3D(seed, x2, y0, z0), valCoord3D(seed, x3, y0, z0), xs),
-            cubicLerp(valCoord3D(seed, x0, y1, z0), valCoord3D(seed, x1, y1, z0), valCoord3D(seed, x2, y1, z0), valCoord3D(seed, x3, y1, z0), xs),
-            cubicLerp(valCoord3D(seed, x0, y2, z0), valCoord3D(seed, x1, y2, z0), valCoord3D(seed, x2, y2, z0), valCoord3D(seed, x3, y2, z0), xs),
-            cubicLerp(valCoord3D(seed, x0, y3, z0), valCoord3D(seed, x1, y3, z0), valCoord3D(seed, x2, y3, z0), valCoord3D(seed, x3, y3, z0), xs),
-            ys),
-        cubicLerp(
-            cubicLerp(valCoord3D(seed, x0, y0, z1), valCoord3D(seed, x1, y0, z1), valCoord3D(seed, x2, y0, z1), valCoord3D(seed, x3, y0, z1), xs),
-            cubicLerp(valCoord3D(seed, x0, y1, z1), valCoord3D(seed, x1, y1, z1), valCoord3D(seed, x2, y1, z1), valCoord3D(seed, x3, y1, z1), xs),
-            cubicLerp(valCoord3D(seed, x0, y2, z1), valCoord3D(seed, x1, y2, z1), valCoord3D(seed, x2, y2, z1), valCoord3D(seed, x3, y2, z1), xs),
-            cubicLerp(valCoord3D(seed, x0, y3, z1), valCoord3D(seed, x1, y3, z1), valCoord3D(seed, x2, y3, z1), valCoord3D(seed, x3, y3, z1), xs),
-            ys),
-        cubicLerp(
-            cubicLerp(valCoord3D(seed, x0, y0, z2), valCoord3D(seed, x1, y0, z2), valCoord3D(seed, x2, y0, z2), valCoord3D(seed, x3, y0, z2), xs),
-            cubicLerp(valCoord3D(seed, x0, y1, z2), valCoord3D(seed, x1, y1, z2), valCoord3D(seed, x2, y1, z2), valCoord3D(seed, x3, y1, z2), xs),
-            cubicLerp(valCoord3D(seed, x0, y2, z2), valCoord3D(seed, x1, y2, z2), valCoord3D(seed, x2, y2, z2), valCoord3D(seed, x3, y2, z2), xs),
-            cubicLerp(valCoord3D(seed, x0, y3, z2), valCoord3D(seed, x1, y3, z2), valCoord3D(seed, x2, y3, z2), valCoord3D(seed, x3, y3, z2), xs),
-            ys),
-        cubicLerp(
-            cubicLerp(valCoord3D(seed, x0, y0, z3), valCoord3D(seed, x1, y0, z3), valCoord3D(seed, x2, y0, z3), valCoord3D(seed, x3, y0, z3), xs),
-            cubicLerp(valCoord3D(seed, x0, y1, z3), valCoord3D(seed, x1, y1, z3), valCoord3D(seed, x2, y1, z3), valCoord3D(seed, x3, y1, z3), xs),
-            cubicLerp(valCoord3D(seed, x0, y2, z3), valCoord3D(seed, x1, y2, z3), valCoord3D(seed, x2, y2, z3), valCoord3D(seed, x3, y2, z3), xs),
-            cubicLerp(valCoord3D(seed, x0, y3, z3), valCoord3D(seed, x1, y3, z3), valCoord3D(seed, x2, y3, z3), valCoord3D(seed, x3, y3, z3), xs),
-            ys),
-        zs) * CUBIC_3D_BOUNDING;
-}
-
-
-__device__ float getCubic(FastNoise* n, float x, float y, float z) {
-    return singleCubic(n, n.m_seed, x * n.m_frequency, y * n.m_frequency, z * n.m_frequency);
-}
-
-__device__ float singleCubicFractalFBM(FastNoise* n, float x, float y, float z) {
-    int seed = n.m_seed;
-    float sum = singleCubic(n, seed, x, y, z);
-    float amp = 1;
-    int i = 0;
-
-    while (++i < n.m_octaves) {
-        x *= n.m_lacunarity;
-        y *= n.m_lacunarity;
-        z *= n.m_lacunarity;
-
-        amp *= n.m_gain;
-        sum += singleCubic(n, ++seed, x, y, z) * amp;
-    }
-
-    return sum * n.m_fractalBounding;
-}
-
-__device__ float singleCubicFractalBillow(FastNoise* n, float x, float y, float z) {
-    int seed = n.m_seed;
-    float sum = abs(singleCubic(n, seed, x, y, z)) * 2 - 1;
-    float amp = 1;
-    int i = 0;
-
-    while (++i < n.m_octaves) {
-        x *= n.m_lacunarity;
-        y *= n.m_lacunarity;
-        z *= n.m_lacunarity;
-
-        amp *= n.m_gain;
-        sum += (abs(singleCubic(n, ++seed, x, y, z)) * 2 - 1) * amp;
-    }
-
-    return sum * n.m_fractalBounding;
-}
-
-__device__ float singleCubicFractalRigidMulti(FastNoise* n, float x, float y, float z) {
-    int seed = n.m_seed;
-    float sum = 1 - abs(singleCubic(n, seed, x, y, z));
-    float amp = 1;
-    int i = 0;
-
-    while (++i < n.m_octaves) {
-        x *= n.m_lacunarity;
-        y *= n.m_lacunarity;
-        z *= n.m_lacunarity;
-
-        amp *= n.m_gain;
-        sum -= (1 - abs(singleCubic(n, ++seed, x, y, z))) * amp;
-    }
-
-    return sum;
-}
-
-__device__ float getCubicFractal(FastNoise* n, float x, float y, float z) {
-    x *= n.m_frequency;
-    y *= n.m_frequency;
-    z *= n.m_frequency;
-
-    switch (n.m_fractalType) {
-        case FBM:
+        float getCubicFractal(FastNoise n, float x, float y, float z) {
+          float lx = x * n.m_frequency;
+          float ly = y * n.m_frequency;
+          float lz = z * n.m_frequency;
+          if(n.m_fractalType==FRACTALTYPE_FBM) {
             return singleCubicFractalFBM(n, x, y, z);
-        case Billow:
+          }
+          else if(n.m_fractalType==FRACTALTYPE_BILLOW) {
             return singleCubicFractalBillow(n, x, y, z);
-        case RigidMulti:
+          }
+          else { // FRACTALTYPE_RIGID_MULTI:
             return singleCubicFractalRigidMulti(n, x, y, z);
-        default:
-            return 0;
-    }
-}
-#endif // ADD_FEATURE_CUBIC_NOISE
+          }
+        }
+
+      `)
+      /*
 
 // Cellular Noise
 #ifdef ADD_FEATURE_CELLULAR_NOISE

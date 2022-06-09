@@ -38,6 +38,7 @@ export const LIB_FAST_NOISE_BASE = 'lib_fast_noise_base'
 export const LIB_FAST_NOISE_VALUE_NOISE = 'lib_fast_noise_value_noise'
 export const LIB_FAST_NOISE_PERLIN_NOISE = 'lib_fast_noise_perlin_noise'
 export const LIB_FAST_NOISE_SIMPLEX_NOISE = 'lib_fast_noise_simplex_noise'
+export const LIB_FAST_NOISE_CUBIC_NOISE = 'lib_fast_noise_cubic_noise'
 
 // https://www.shaderific.com/glsl-functions
 
