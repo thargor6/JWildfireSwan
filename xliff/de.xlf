@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
+<file target-language="de" source-language="en" original="lit-localize-inputs" datatype="plaintext">
+<body>
+<trans-unit id="s2aaf1446fd477405">
+  <source>Open file</source>
+  <target>Datei öffnen</target>
+</trans-unit>
+<trans-unit id="s5bb30ee4d0407d0e">
+  <source>Save file</source>
+  <target>Datei speichern</target>
+</trans-unit>
+<trans-unit id="sd1f81284eeb7b503">
+  <source>File</source>
+  <target>Datei</target>
+</trans-unit>
+</body>
+</file>
+</xliff>

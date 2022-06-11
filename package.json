@@ -5,6 +5,7 @@
     "@adobe/lit-mobx": "2.0.0",
     "@hilla/form": "1.0.1",
     "@hilla/frontend": "1.0.1",
+    "@lit/localize": "^0.11.2",
     "@polymer/iron-icon": "3.0.1",
     "@polymer/iron-iconset-svg": "3.0.1",
     "@polymer/iron-list": "3.1.0",
@@ -125,6 +126,7 @@
     "mobx": "^6.3.5"
   },
   "devDependencies": {
+    "@lit/localize-tools": "^0.6.3",
     "chokidar": "^3.5.0",
     "compression-webpack-plugin": "4.0.1",
     "css-loader": "5.2.7",
@@ -267,7 +269,8 @@
     "@hilla/frontend": "$@hilla/frontend",
     "@polymer/paper-slider": "$@polymer/paper-slider",
     "chokidar": "$chokidar",
-    "electron": "$electron"
+    "electron": "$electron",
+    "@lit/localize": "$@lit/localize"
   },
   "vaadin": {
     "dependencies": {
@@ -410,6 +413,6 @@
       "workbox-precaching": "6.5.0",
       "workbox-webpack-plugin": "6.5.0"
     },
-    "hash": "3658498543e85f6c95f765caf29ab2fca394de81123349e3e48578e95b0d4861"
+    "hash": "4ef9538f7a458eaf909c89b736c1d5970e9dcaaf806cc5f872607999ec58e0d0"
   }
 }

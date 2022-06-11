@@ -1,6 +1,7 @@
 import { Router } from '@vaadin/router';
 import { routes } from './routes';
 import { appStore } from './stores/app-store';
+import {configureLocalization} from '@lit/localize';
 
 export const router = new Router(document.querySelector('#outlet'));
 
@@ -15,3 +16,13 @@ window.addEventListener('vaadin-router-location-changed', (e) => {
     document.title = appStore.applicationName;
   }
 });
+
+export const {getLocale, setLocale} = configureLocalization({
+  sourceLocale: 'en',
+  targetLocales: ['de'],
+  loadLocale: (locale: string) => import(`../frontend/locales/${locale}.ts`),
+});
+
+(async () => {
+  await setLocale('de');
+})();
