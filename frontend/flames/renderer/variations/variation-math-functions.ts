@@ -20,6 +20,7 @@ import {FastNoise} from "Frontend/flames/renderer/variations/variation-math-func
 export const FUNC_ACOSH = 'acosh'
 export const FUNC_COSH = 'cosh'
 export const FUNC_ERF = 'erf'
+export const FUNC_LGAMMA = 'gamma'
 export const FUNC_HYPOT = 'hypot'
 export const FUNC_J1 = 'j1'
 export const FUNC_JACOBI_ELLIPTIC = 'jacobi_elliptic'
@@ -370,7 +371,20 @@ export class VariationMathFunctions {
               float cosH = (tmp + 1.0 / tmp) / 2.0;
               return cosH;
             }`);
-        this.registerFunction(FUNC_HYPOT,
+
+      this.registerFunction(FUNC_LGAMMA,
+        //by Robert Sedgewick and Kevin Wayne
+        `
+         float lgamma(float x) {
+           float tmp = (x - 0.5) * log(x + 4.5) - (x + 4.5);
+           float ser = 1.0 + 76.18009173    / (x + 0.0)   - 86.50532033    / (x + 1.0)
+                           + 24.01409822    / (x + 2.0)   -  1.231739516   / (x + 3.0)
+                           +  0.00120858003 / (x + 4.0)   -  0.00000536382 / (x + 5.0);
+           return tmp + log(ser * sqrt(2.0 * M_PI));
+         }
+      `);
+
+      this.registerFunction(FUNC_HYPOT,
             // most simple form for now:
             `
             float hypot(float x, float y) {

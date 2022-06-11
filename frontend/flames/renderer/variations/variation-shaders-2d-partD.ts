@@ -70,6 +70,29 @@ class DCLinearFunc extends VariationShaderFunc2D {
     }
 }
 
+class DeltaAFunc extends VariationShaderFunc2D {
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        // deltaA my Michael Faber, http://michaelfaber.deviantart.com/art/The-Lost-Variations-258913970 */
+        return `{
+            float amount = ${variation.amount.toWebGl()};
+            float avgr = amount * (sqrt(sqr(_ty) + sqr(_tx + 1.0)) / sqrt(sqr(_ty) + sqr(_tx - 1.0)));
+            float avga = (atan2(_ty, _tx - 1.0) - atan2(_ty, _tx + 1.0)) / 2.0;
+            float sina = sin(avga);
+            float cosa = cos(avga);
+            _vx += avgr * cosa;
+            _vy += avgr * sina;
+        }`;
+    }
+
+    get name(): string {
+        return 'deltaA';
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
 class DevilWarpFunc extends VariationShaderFunc2D {
     PARAM_A = 'a'
     PARAM_B = 'b'
@@ -1695,6 +1718,7 @@ class FunnelFunc extends VariationShaderFunc2D {
 
 export function registerVars_2D_PartD() {
     VariationShaders.registerVar(new DCLinearFunc())
+    VariationShaders.registerVar(new DeltaAFunc())
     VariationShaders.registerVar(new DevilWarpFunc())
     VariationShaders.registerVar(new DiamondFunc())
     VariationShaders.registerVar(new DiscFunc())

@@ -20,7 +20,7 @@ import {VariationShaders} from 'Frontend/flames/renderer/variations/variation-sh
 import {RenderVariation, RenderXForm} from 'Frontend/flames/model/render-flame';
 import {
     FUNC_ACOSH,
-    FUNC_COSH, FUNC_ERF,
+    FUNC_COSH, FUNC_ERF, FUNC_LGAMMA, FUNC_HYPOT,
     FUNC_MODULO,
     FUNC_RINT,
     FUNC_ROUND,
@@ -348,6 +348,29 @@ class HeartFunc extends VariationShaderFunc2D {
 
     get name(): string {
         return 'heart';
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
+class GammaFunc extends VariationShaderFunc2D {
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        // "gamma" variation created by zephyrtronium implemented into JWildfire by darkbeam
+        return `{
+          float amount = ${variation.amount.toWebGl()};
+          _vx += lgamma(hypot(_ty, _tx)) * amount;
+          _vy += atan2(_ty, _tx) * amount;;
+        }`;
+    }
+
+    get name(): string {
+        return 'gamma';
+    }
+
+    get funcDependencies(): string[] {
+        return [FUNC_LGAMMA, FUNC_HYPOT];
     }
 
     get variationTypes(): VariationTypes[] {
@@ -1295,6 +1318,7 @@ class JuliascopeFunc extends VariationShaderFunc2D {
 }
 
 export function registerVars_2D_PartG() {
+    VariationShaders.registerVar(new GammaFunc())
     VariationShaders.registerVar(new GaussianBlurFunc())
     VariationShaders.registerVar(new GlynniaFunc())
     VariationShaders.registerVar(new GlynnSim1Func())

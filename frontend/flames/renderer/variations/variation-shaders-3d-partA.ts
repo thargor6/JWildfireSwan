@@ -1069,6 +1069,69 @@ class EstiqFunc extends VariationShaderFunc3D {
     }
 }
 
+class FlowerDbFunc extends VariationShaderFunc3D {
+    PARAM_PETALS = 'petals'
+    PARAM_PETAL_SPLIT = 'petal_split'
+    PARAM_PETAL_SPREAD = 'petal_spread'
+    PARAM_STEM_THICKNESS = 'stem_thickness'
+    PARAM_STEM_LENGTH = 'stem_length'
+    PARAM_PETAL_FOLD_STRENGTH = 'petal_fold_strength'
+    PARAM_PETAL_FOLD_RADIUS = 'petal_fold_radius'
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_PETALS, type: VariationParamType.VP_NUMBER, initialValue: 6.0 },
+            { name: this.PARAM_PETAL_SPLIT, type: VariationParamType.VP_NUMBER, initialValue: 0.0 },
+            { name: this.PARAM_PETAL_SPREAD, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
+            { name: this.PARAM_STEM_THICKNESS, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
+            { name: this.PARAM_STEM_LENGTH, type: VariationParamType.VP_NUMBER, initialValue: 0.0 },
+            { name: this.PARAM_PETAL_FOLD_STRENGTH, type: VariationParamType.VP_NUMBER, initialValue: 0.0 },
+            { name: this.PARAM_PETAL_FOLD_RADIUS, type: VariationParamType.VP_NUMBER, initialValue: 1.0 }]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        /*
+         *  Original author dark-beam
+         *       (see JWildfire forum post: http://jwildfire.org/forum/viewtopic.php?f=18&t=1444&p=3032)
+         *  suggested/requested as full variation by Don Town
+         *  transcribed, extended, and turned into full variation by CozyG
+         *
+         *  WARNING: assumes centered on (0,0,0), can disappear if move too far off in pre-transforms etc.
+         */
+        return `{
+          float amount = ${variation.amount.toWebGl()};
+          float petals = ${variation.params.get(this.PARAM_PETALS)!.toWebGl()};
+          float petal_split = ${variation.params.get(this.PARAM_PETAL_SPLIT)!.toWebGl()};
+          float petal_spread = ${variation.params.get(this.PARAM_PETAL_SPREAD)!.toWebGl()};
+          float stem_thickness = ${variation.params.get(this.PARAM_STEM_THICKNESS)!.toWebGl()};
+          float stem_length = ${variation.params.get(this.PARAM_STEM_LENGTH)!.toWebGl()};
+          float petal_fold_strength = ${variation.params.get(this.PARAM_PETAL_FOLD_STRENGTH)!.toWebGl()};
+          float petal_fold_radius = ${variation.params.get(this.PARAM_PETAL_FOLD_RADIUS)!.toWebGl()};
+          float r = amount * sqrt(_r2);
+          float _theta = atan2(_ty, _tx);
+          float t = _theta;
+          r = r * (abs((petal_spread + sin(petals * t)) * cos(petal_split * petals * t)));
+          _vx += sin(t) * r;
+          _vy += cos(t) * r;
+          _vz -= stem_thickness * ((2.0 / r) - 1.0);
+          float rnew = sqrt((_vx * _vx) + (_vy * _vy));
+          if (rnew > petal_fold_radius) {
+            _vz += (rnew - petal_fold_radius) * petal_fold_strength;
+          }
+          if ((stem_length != 0.0) && (_vz <= (-1.0 * stem_length))) {
+            _vz = (-1.0 * stem_length);
+          };
+        }`;
+    }
+
+    get name(): string {
+        return 'flower_db';
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_3D];
+    }
+}
+
 class Foci3DFunc extends VariationShaderFunc3D {
     /* foci_3D by Larry Berlin, http://aporev.deviantart.com/art/New-3D-Plugins-136484533?q=gallery%3Aaporev%2F8229210&qo=22 */
     getCode(xform: RenderXForm, variation: RenderVariation): string {
@@ -1129,5 +1192,6 @@ export function registerVars_3D_PartA() {
     VariationShaders.registerVar(new Ennepers2Func())
     VariationShaders.registerVar(new Erf3DFunc())
     VariationShaders.registerVar(new EstiqFunc())
+    VariationShaders.registerVar(new FlowerDbFunc())
     VariationShaders.registerVar(new Foci3DFunc())
 }
