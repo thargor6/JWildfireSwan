@@ -83,7 +83,7 @@ export class WebglShaders implements CloseableBuffers{
     constructor(private gl: WebGLRenderingContext, canvas: HTMLCanvasElement, canvas_size: number, swarm_size: number, private flame: RenderFlame) {
         for(let layerIdx=0;layerIdx<flame.layers.length;layerIdx++) {
             const progPointsVertexShader = new ProgPointsVertexShaderGenerator().createShader(flame, flame.layers[layerIdx], canvas_size);
-            // console.log(progPointsVertexShader)
+            //console.log(progPointsVertexShader)
             let prog_points = compileShaderDirect(gl, progPointsVertexShader, shader_points_fs, {}) as ComputePointsProgram;
             prog_points.vertexPositionAttribute = gl.getAttribLocation(prog_points, "aVertexPosition");
             gl.enableVertexAttribArray(prog_points.vertexPositionAttribute);

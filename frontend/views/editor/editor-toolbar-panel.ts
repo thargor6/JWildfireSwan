@@ -16,23 +16,155 @@
 */
 
 import {html} from 'lit';
-import {customElement} from 'lit/decorators.js';
+import {customElement, property, query} from 'lit/decorators.js';
 import {MobxLitElement} from "@adobe/lit-mobx";
-import '@polymer/paper-slider/paper-slider'
-import '@vaadin/vaadin-button'
-import '@vaadin/vaadin-combo-box';
-import '@vaadin/vaadin-ordered-layout/vaadin-vertical-layout'
-import '@vaadin/vaadin-ordered-layout/vaadin-horizontal-layout'
 
+import '@vaadin/vaadin-menu-bar';
+import '@vaadin/icon';
+import '@vaadin/icons';
+import {MenuBarElement} from "@vaadin/vaadin-menu-bar";
+import {Router} from "@vaadin/router";
 
+import {localized, msg} from '@lit/localize';
+
+@localized()
 @customElement('editor-toolbar-panel')
 export class EditorToolbarPanel extends MobxLitElement {
 
+  @query('#main_menu')
+  private mainMenu!: MenuBarElement;
+
+  @query('#file_menu')
+  private fileMenu!: HTMLElement;
+
+  @query('#file_open_itm')
+  private fileOpenItm!: HTMLElement;
+
+  @query('#file_save_itm')
+  private fileSaveItm!: HTMLElement;
+
+  @query('#new_menu')
+  private newMenu!: HTMLElement;
+
+  @query('#new_blank_flame_itm')
+  private newBlankFlameItm!: HTMLElement;
+
+  @query('#new_random_flame_itm')
+  private newRandomFlameItm!: HTMLElement;
+
+  @query('#new_random_gradient_itm')
+  private newRandomGradientItm!: HTMLElement;
+
+  @query('#edit_menu')
+  private editMenu!: HTMLElement;
+
+  @query('#edit_copy_flame_to_clipboard_itm')
+  private editCopyFlameToClipboardItm!: HTMLElement;
+
+  @query('#edit_paste_flame_from_clipboard_itm')
+  private editPasteFlameFromClipboardItm!: HTMLElement;
+
+  @query('#edit_undo_itm')
+  private editUndoItm!: HTMLElement;
+
+  @query('#edit_redo_itm')
+  private editRedoItm!: HTMLElement;
+
+  @property()
+  onOpenFile = ()=> {}
+
+  @property()
+  onSaveFile = ()=> {}
+
+  @property()
+  onNewBlankFlame = ()=> {}
+
+  @property()
+  onNewRandomFlame = ()=> {}
+
+  @property()
+  onNewRandomGradient = ()=> {}
+
+  @property()
+  onEditCopyFlameToClipboard = ()=> {}
+
+  @property()
+  onEditPasteFlameFromClipboard = ()=> {}
+
+  @property()
+  onEditUndo = ()=> {}
+
+  @property()
+  onEditRedo = ()=> {}
+
   render() {
     return html`
-      toolbar
+         <vaadin-menu-bar id="main_menu"></vaadin-menu-bar>
+          <div style="display: none";>
+
+
+            <vaadin-item id="file_menu"><vaadin-icon style="padding-right: 1em;" icon="vaadin:plus-circle"></vaadin-icon>${msg('File')}</vaadin-item>
+            <vaadin-item @click="${this.onOpenFile}" id="file_open_itm"><vaadin-icon style="padding-right: 1em;" icon="vaadin:plus-circle"></vaadin-icon>${msg('Open file')}</vaadin-item>
+            <vaadin-item @click="${this.onSaveFile}" id="file_save_itm"><vaadin-icon style="padding-right: 1em;" icon="vaadin:archive"></vaadin-icon>${msg('Save file')}</vaadin-item>
+
+            <vaadin-item id="new_menu"><vaadin-icon style="padding-right: 1em;" icon="vaadin:plus-circle"></vaadin-icon>${msg('New')}</vaadin-item>
+            <vaadin-item @click="${this.onNewBlankFlame}" id="new_blank_flame_itm"><vaadin-icon style="padding-right: 1em;" icon="vaadin:plus-circle"></vaadin-icon>${msg('New blank flame')}</vaadin-item>
+            <vaadin-item @click="${this.onNewRandomFlame}" id="new_random_flame_itm"><vaadin-icon style="padding-right: 1em;" icon="vaadin:plus-circle"></vaadin-icon>${msg('New random flame')}</vaadin-item>
+            <vaadin-item @click="${this.onNewRandomGradient}" id="new_random_gradient_itm"><vaadin-icon style="padding-right: 1em;" icon="vaadin:plus-circle"></vaadin-icon>${msg('New random gradient')}</vaadin-item>
+
+            <vaadin-item id="edit_menu"><vaadin-icon style="padding-right: 1em;" icon="vaadin:plus-circle"></vaadin-icon>${msg('Edit')}</vaadin-item>
+            <vaadin-item @click="${this.onEditCopyFlameToClipboard}" id="edit_copy_flame_to_clipboard_itm"><vaadin-icon style="padding-right: 1em;" icon="vaadin:plus-circle"></vaadin-icon>${msg('Copy flame to clipboard')}</vaadin-item>
+            <vaadin-item @click="${this.onEditPasteFlameFromClipboard}" id="edit_paste_flame_from_clipboard_itm"><vaadin-icon style="padding-right: 1em;" icon="vaadin:plus-circle"></vaadin-icon>${msg('Paste flame from clipboard')}</vaadin-item>
+            <vaadin-item @click="${this.onEditUndo}" id="edit_undo_itm"><vaadin-icon style="padding-right: 1em;" icon="vaadin:plus-circle"></vaadin-icon>${msg('Undo')}</vaadin-item>
+            <vaadin-item @click="${this.onEditRedo}" id="edit_redo_itm"><vaadin-icon style="padding-right: 1em;" icon="vaadin:plus-circle"></vaadin-icon>${msg('Redo')}</vaadin-item>
+
+          </div>
       
 `;
+  }
+
+
+  async firstUpdated() {
+    let menuItems = [
+
+      {
+        component: this.fileMenu,
+        children: [
+          {component: this.fileOpenItm},
+          {component: this.fileSaveItm},
+        ]
+      },
+      {
+        component: this.newMenu,
+        children: [
+          {component: this.newBlankFlameItm},
+          {component: this.newRandomFlameItm},
+          {component: this.newRandomGradientItm},
+        ]
+      },
+      {
+        component: this.editMenu,
+        children: [
+          {component: this.editCopyFlameToClipboardItm},
+          {component: this.editPasteFlameFromClipboardItm},
+          {component: this.editUndoItm},
+          {component: this.editRedoItm},
+        ]
+      },
+    ];
+    this.mainMenu.items = menuItems;
+  }
+
+  private logout() {
+    Router.go('/logout');
+  }
+
+  private execSavedNewSnippet() {
+    // nothing to do
+  }
+
+  private newSnippet() {
+   // this.newSnippetDialog.showDialog(this.execSavedNewSnippet.bind(this));
   }
 
 }

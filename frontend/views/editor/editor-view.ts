@@ -18,7 +18,6 @@
 import {html, PropertyValues, render} from 'lit'
 import {customElement, query, state} from 'lit/decorators.js'
 import { View } from '../../views/view'
-import { guard } from 'lit/directives/guard.js';
 
 import '@vaadin/vaadin-button'
 import '@vaadin/vaadin-text-field'
@@ -34,14 +33,12 @@ import '@vaadin/vaadin-progress-bar'
 import '@vaadin/scroller'
 import '@vaadin/split-layout';
 import '@vaadin/vaadin-notification'
-import type { Notification } from '@vaadin/notification';
 
 import {FlameRenderer} from '../../flames/renderer/flame-renderer'
-import {FlamesEndpoint, GalleryEndpoint} from "Frontend/generated/endpoints";
+import {FlamesEndpoint} from "Frontend/generated/endpoints";
 import {FlameMapper} from '../../flames/model/mapper/flame-mapper'
 import '@vaadin/vaadin-combo-box';
 import {PlaygroundRenderPanel} from "Frontend/views/playground/playground-render-panel";
-import {playgroundStore} from "Frontend/stores/playground-store";
 import {PlaygroundFlamePanel} from "Frontend/views/playground/playground-flame-panel";
 import '../../components/swan-loading-indicator'
 import '../../components/swan-error-panel'
@@ -54,7 +51,10 @@ import {RenderResolutions} from "Frontend/flames/renderer/render-resolution";
 import './editor-toolbar-panel'
 import {editorStore} from "Frontend/stores/editor-store";
 import {SwanNotificationPanel} from "Frontend/components/swan-notification-panel";
+import {DisplayMode} from "Frontend/flames/renderer/render-settings";
+import {localized, msg} from "@lit/localize";
 
+@localized()
 @customElement('editor-view')
 export class EditorView extends View implements BeforeEnterObserver {
     @state()
@@ -71,35 +71,33 @@ export class EditorView extends View implements BeforeEnterObserver {
 
     render() {
         return html`
-            <swan-notification-panel></swan-notification-panel>
-            <vertical-layout theme="spacing">
-              <editor-toolbar-panel></editor-toolbar-panel>
-              <swan-error-panel .errorMessage=${editorStore.lastError}></swan-error-panel>
-              <vertical-layout>
-                  
-                  <vaadin-button @click="${()=>{console.log("Hello");
+          <swan-notification-panel></swan-notification-panel>
+          <header>
+            <editor-toolbar-panel .onEditPasteFlameFromClipboard="${this.importParamsFromClipboard}"
+              .onEditCopyFlameToClipboard="${this.exportParamsToClipboard}"></editor-toolbar-panel>
+          </header>           
+          <main>
+            <swan-error-panel .errorMessage=${editorStore.lastError}></swan-error-panel>
+            <vertical-layout>
+                  <vaadin-button @click="${()=>{console.log("Show notification");
                       this.notificationPnl.showNotifivation("Jo")
-                  }}">Test</vaadin-button>
-
-
-                <div class="gap-m grid list-none m-0 p-0" style="grid-template-columns: repeat(auto-fill, minmax(30em, 1fr));">
-                  <render-panel .onCreateFlameRenderer=${this.createFlameRenderer}></render-panel> 
+                  }}">Show notification</vaadin-button>
+              <div class="gap-m grid list-none m-0 p-0" style="grid-template-columns: repeat(auto-fill, minmax(30em, 1fr));">
+                <render-panel .onCreateFlameRenderer=${this.createFlameRenderer}></render-panel> 
                 ${this.renderMainTabs()}
               </div>
-
               </vertical-layout>
-            </vertical-layout>
+          </main>
         `;
     }
 
     createFlameRenderer = ()=> {
-        return new FlameRenderer(this.getRenderSettingsPanel().renderSize, this.getRenderSettingsPanel().swarmSize,
-           this.getRenderSettingsPanel().displayMode, this.getRenderPanel().canvas,
-          this.getRenderSettingsPanel().capturedImageContainer, true,
+        return new FlameRenderer(512, 256,
+          DisplayMode.FLAME, this.getRenderPanel().canvas,
+          undefined, false,
           '',
-          RenderResolutions.getCropRegion(this.getRenderSettingsPanel().renderSize,
-            this.getRenderSettingsPanel().cropSize), this.getRenderSettingsPanel().qualityScale,
-          playgroundStore.flame)
+          undefined, 1.5,
+          editorStore.flame)
     }
 
     selectedChanged(e: CustomEvent) {
@@ -114,56 +112,34 @@ export class EditorView extends View implements BeforeEnterObserver {
         return document.querySelector('#viewOptsPnl')!
     }
 
-    importFlameFromXml = () => {
-        playgroundStore.calculating = true
-        playgroundStore.lastError = ''
-        FlamesEndpoint.parseFlame(this.getFlamePanel().flameXml).then(flame => {
-          playgroundStore.refreshing = true
-          try {
-              playgroundStore.flame = FlameMapper.mapFromBackend(flame)
-              this.getRenderPanel().rerenderFlame()
-              playgroundStore.calculating = false
-          }
-          finally {
-              playgroundStore.refreshing = false
-          }
-        }).catch(err=> {
-            playgroundStore.calculating = false
-            playgroundStore.lastError = err
-        })
-    }
-
     exportParamsToClipboard = (): void => {
-        FlamesEndpoint.convertFlameToXml(FlameMapper.mapToBackend(playgroundStore.flame)).then(flameXml => {
-            this.getFlamePanel().flameXml = flameXml
-            this.getFlamePanel().transferFlameToClipbord()
-            this.notificationPnl.showNotifivation('Parameters were copied to the Clipboard')
+        FlamesEndpoint.convertFlameToXml(FlameMapper.mapToBackend(editorStore.flame)).then(flameXml => {
+            navigator.clipboard.writeText(flameXml)
+            this.notificationPnl.showNotifivation(msg('Parameters were copied to the Clipboard'))
         })
           .catch(err=> {
-              playgroundStore.lastError = err
+              editorStore.lastError = err
           })
     }
 
     importParamsFromClipboard = (): void => {
        navigator.clipboard.readText().then(text => {
-           this.getFlamePanel().flameXml = text
-           playgroundStore.calculating = true
-           playgroundStore.lastError = ''
+           editorStore.calculating = true
+           editorStore.lastError = ''
            FlamesEndpoint.parseFlame(text).then(flame => {
-               playgroundStore.refreshing = true
+               editorStore.refreshing = true
                try {
-                   playgroundStore.flame = FlameMapper.mapFromBackend(flame)
+                   editorStore.flame = FlameMapper.mapFromBackend(flame)
                    this.getRenderPanel().rerenderFlame()
-                   playgroundStore.calculating = false
+                   editorStore.calculating = false
                }
                finally {
-                   playgroundStore.refreshing = false
+                   editorStore.refreshing = false
                }
            }).catch(err=> {
-               playgroundStore.calculating = false
-               playgroundStore.lastError = err
+               editorStore.calculating = false
+               editorStore.lastError = err
            })
-
          }
        )
     }

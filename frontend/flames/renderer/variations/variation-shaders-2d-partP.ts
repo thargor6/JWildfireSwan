@@ -135,18 +135,18 @@ class ParallelFunc extends VariationShaderFunc2D {
         /* parallel by Brad Stefanov */
         return `{
           float amount = ${variation.amount.toWebGl()};
-          float x1width = float(${variation.params.get(this.PARAM_X1WIDTH)});
-          float x1tilesize = float(${variation.params.get(this.PARAM_X1TILESIZE)});
-          float x1mod1 = float(${variation.params.get(this.PARAM_X1MOD1)});
-          float x1mod2 = float(${variation.params.get(this.PARAM_X1MOD2)});       
-          float x1height = float(${variation.params.get(this.PARAM_X1HEIGHT)});
-          float x1move = float(${variation.params.get(this.PARAM_X1MOVE)});
-          float x2width = float(${variation.params.get(this.PARAM_X2WIDTH)});
-          float x2tilesize = float(${variation.params.get(this.PARAM_X2TILESIZE)});
-          float x2mod1 = float(${variation.params.get(this.PARAM_X2MOD1)});
-          float x2mod2 = float(${variation.params.get(this.PARAM_X2MOD2)});
-          float x2height = float(${variation.params.get(this.PARAM_X2HEIGHT)});
-          float x2move = float(${variation.params.get(this.PARAM_X2MOVE)});
+          float x1width = ${variation.params.get(this.PARAM_X1WIDTH)!.toWebGl()};
+          float x1tilesize = ${variation.params.get(this.PARAM_X1TILESIZE)!.toWebGl()};
+          float x1mod1 = ${variation.params.get(this.PARAM_X1MOD1)!.toWebGl()};
+          float x1mod2 = ${variation.params.get(this.PARAM_X1MOD2)!.toWebGl()};
+          float x1height = ${variation.params.get(this.PARAM_X1HEIGHT)!.toWebGl()};
+          float x1move = ${variation.params.get(this.PARAM_X1MOVE)!.toWebGl()};
+          float x2width = ${variation.params.get(this.PARAM_X2WIDTH)!.toWebGl()};
+          float x2tilesize = ${variation.params.get(this.PARAM_X2TILESIZE)!.toWebGl()};
+          float x2mod1 = ${variation.params.get(this.PARAM_X2MOD1)!.toWebGl()};
+          float x2mod2 = ${variation.params.get(this.PARAM_X2MOD2)!.toWebGl()};
+          float x2height = ${variation.params.get(this.PARAM_X2HEIGHT)!.toWebGl()};
+          float x2move = ${variation.params.get(this.PARAM_X2MOVE)!.toWebGl()};
           float _xr1 = x1mod2 * x1mod1;
           float _xr2 = x2mod2 * x2mod1; 
           if (rand8(tex, rngState) < 0.5) {
