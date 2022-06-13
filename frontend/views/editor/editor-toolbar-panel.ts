@@ -15,7 +15,7 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 */
 
-import {html} from 'lit';
+import {html, css} from 'lit';
 import {customElement, property, query} from 'lit/decorators.js';
 import {MobxLitElement} from "@adobe/lit-mobx";
 
@@ -101,25 +101,21 @@ export class EditorToolbarPanel extends MobxLitElement {
     return html`
          <vaadin-menu-bar id="main_menu"></vaadin-menu-bar>
           <div style="display: none";>
+            <vaadin-item id="file_menu"><vaadin-icon class="menu_icon" style="padding-right: 0.5em; width: 1.6em;" icon="vaadin:folder-o"></vaadin-icon>${msg('File')}</vaadin-item>
+            <vaadin-item @click="${this.onOpenFile}" id="file_open_itm"><vaadin-icon style="padding-right: 0.5em; width: 1.6em;" icon="vaadin:folder-open-o"></vaadin-icon>${msg('Open file')}</vaadin-item>
+            <vaadin-item @click="${this.onSaveFile}" id="file_save_itm"><vaadin-icon style="padding-right: 0.5em; width: 1.6em;" icon="vaadin:disc"></vaadin-icon>${msg('Save file')}</vaadin-item>
 
+            <vaadin-item id="new_menu"><vaadin-icon style="padding-right: 0.5em; width: 1.6em;" icon="vaadin:plus-circle"></vaadin-icon>${msg('New')}</vaadin-item>
+            <vaadin-item @click="${this.onNewBlankFlame}" id="new_blank_flame_itm"><vaadin-icon style="padding-right: 0.5em; width: 1.6em;" icon="vaadin:thin-square"></vaadin-icon>${msg('New blank flame')}</vaadin-item>
+            <vaadin-item @click="${this.onNewRandomFlame}" id="new_random_flame_itm"><vaadin-icon style="padding-right: 0.5em; width: 1.6em;" icon="vaadin:magic"></vaadin-icon>${msg('New random flame')}</vaadin-item>
+            <vaadin-item @click="${this.onNewRandomGradient}" id="new_random_gradient_itm"><vaadin-icon style="padding-right: 0.5em; width: 1.6em;" icon="vaadin:palette"></vaadin-icon>${msg('New random gradient')}</vaadin-item>
 
-            <vaadin-item id="file_menu"><vaadin-icon style="padding-right: 1em;" icon="vaadin:plus-circle"></vaadin-icon>${msg('File')}</vaadin-item>
-            <vaadin-item @click="${this.onOpenFile}" id="file_open_itm"><vaadin-icon style="padding-right: 1em;" icon="vaadin:plus-circle"></vaadin-icon>${msg('Open file')}</vaadin-item>
-            <vaadin-item @click="${this.onSaveFile}" id="file_save_itm"><vaadin-icon style="padding-right: 1em;" icon="vaadin:archive"></vaadin-icon>${msg('Save file')}</vaadin-item>
-
-            <vaadin-item id="new_menu"><vaadin-icon style="padding-right: 1em;" icon="vaadin:plus-circle"></vaadin-icon>${msg('New')}</vaadin-item>
-            <vaadin-item @click="${this.onNewBlankFlame}" id="new_blank_flame_itm"><vaadin-icon style="padding-right: 1em;" icon="vaadin:plus-circle"></vaadin-icon>${msg('New blank flame')}</vaadin-item>
-            <vaadin-item @click="${this.onNewRandomFlame}" id="new_random_flame_itm"><vaadin-icon style="padding-right: 1em;" icon="vaadin:plus-circle"></vaadin-icon>${msg('New random flame')}</vaadin-item>
-            <vaadin-item @click="${this.onNewRandomGradient}" id="new_random_gradient_itm"><vaadin-icon style="padding-right: 1em;" icon="vaadin:plus-circle"></vaadin-icon>${msg('New random gradient')}</vaadin-item>
-
-            <vaadin-item id="edit_menu"><vaadin-icon style="padding-right: 1em;" icon="vaadin:plus-circle"></vaadin-icon>${msg('Edit')}</vaadin-item>
-            <vaadin-item @click="${this.onEditCopyFlameToClipboard}" id="edit_copy_flame_to_clipboard_itm"><vaadin-icon style="padding-right: 1em;" icon="vaadin:plus-circle"></vaadin-icon>${msg('Copy flame to clipboard')}</vaadin-item>
-            <vaadin-item @click="${this.onEditPasteFlameFromClipboard}" id="edit_paste_flame_from_clipboard_itm"><vaadin-icon style="padding-right: 1em;" icon="vaadin:plus-circle"></vaadin-icon>${msg('Paste flame from clipboard')}</vaadin-item>
-            <vaadin-item @click="${this.onEditUndo}" id="edit_undo_itm"><vaadin-icon style="padding-right: 1em;" icon="vaadin:plus-circle"></vaadin-icon>${msg('Undo')}</vaadin-item>
-            <vaadin-item @click="${this.onEditRedo}" id="edit_redo_itm"><vaadin-icon style="padding-right: 1em;" icon="vaadin:plus-circle"></vaadin-icon>${msg('Redo')}</vaadin-item>
-
+            <vaadin-item id="edit_menu"><vaadin-icon style="padding-right: 0.5em; width: 1.6em;" icon="vaadin:plus-circle"></vaadin-icon>${msg('Edit')}</vaadin-item>
+            <vaadin-item @click="${this.onEditCopyFlameToClipboard}" id="edit_copy_flame_to_clipboard_itm"><vaadin-icon style="padding-right: 0.5em; width: 1.6em;" icon="vaadin:copy-o"></vaadin-icon>${msg('Copy flame to clipboard')}</vaadin-item>
+            <vaadin-item @click="${this.onEditPasteFlameFromClipboard}" id="edit_paste_flame_from_clipboard_itm"><vaadin-icon style="padding-right: 0.5em; width: 1.6em;" icon="vaadin:paste"></vaadin-icon>${msg('Paste flame from clipboard')}</vaadin-item>
+            <vaadin-item @click="${this.onEditUndo}" id="edit_undo_itm"><vaadin-icon style="padding-right: 0.5em; width: 1.6em;" icon="vaadin:arrow-backward"></vaadin-icon>${msg('Undo')}</vaadin-item>
+            <vaadin-item @click="${this.onEditRedo}" id="edit_redo_itm"><vaadin-icon style="padding-right: 0.5em; width: 1.6em;" icon="vaadin:arrow-forward"></vaadin-icon>${msg('Redo')}</vaadin-item>
           </div>
-      
 `;
   }
 

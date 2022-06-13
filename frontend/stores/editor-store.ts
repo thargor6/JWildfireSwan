@@ -17,31 +17,15 @@
 
 import {makeAutoObservable} from 'mobx';
 import {VariationShaders} from "Frontend/flames/renderer/variations/variation-shaders";
-import {registerVars_2D_PartA} from "Frontend/flames/renderer/variations/variation-shaders-2d-partA";
-import {registerVars_2D_PartK} from "Frontend/flames/renderer/variations/variation-shaders-2d-partK";
-import {registerVars_3D_PartA} from "Frontend/flames/renderer/variations/variation-shaders-3d-partA";
-import {registerVars_ZTransforms} from "Frontend/flames/renderer/variations/variation-shaders-ztransform";
 import {Flame} from "Frontend/flames/model/flame";
-import {registerVars_Complex} from "Frontend/flames/renderer/variations/variation-shaders-2d-complex";
-import {registerVars_Waves} from "Frontend/flames/renderer/variations/variation-shaders-waves";
-import {registerVar_Synth} from "Frontend/flames/renderer/variations/variation-shaders-synth";
-import {registerVars_Blur} from "Frontend/flames/renderer/variations/variation-shaders-blur";
-import {registerVars_2D_PartS} from "Frontend/flames/renderer/variations/variation-shaders-2d-partS";
-import {registerVars_Plot} from "Frontend/flames/renderer/variations/variation-shaders-plot";
-import {registerVars_2D_PartC} from "Frontend/flames/renderer/variations/variation-shaders-2d-partC";
-import {registerVars_2D_PartD} from "Frontend/flames/renderer/variations/variation-shaders-2d-partD";
-import {registerVars_2D_PartG} from "Frontend/flames/renderer/variations/variation-shaders-2d-partG";
-import {registerVars_2D_PartP} from "Frontend/flames/renderer/variations/variation-shaders-2d-partP";
-import {registerVars_2D_PartT} from "Frontend/flames/renderer/variations/variation-shaders-2d-partT";
-import {registerVars_3D_PartH} from "Frontend/flames/renderer/variations/variation-shaders-3d-partH";
-import {registerVars_3D_PartQ} from "Frontend/flames/renderer/variations/variation-shaders-3d-partQ";
+import {registerVars_All} from "Frontend/flames/renderer/variations/variation-shaders-all";
 
 export class EditorStore {
   initFlag = false
   refreshing = true
   variations: string[] = []
   calculating = false
-  lastError = 'Last error...'
+  lastError = ''
   flame = new Flame()
 
   constructor() {
@@ -59,23 +43,6 @@ export class EditorStore {
 
 }
 
-
-registerVars_2D_PartA()
-registerVars_2D_PartC()
-registerVars_2D_PartD()
-registerVars_2D_PartG()
-registerVars_2D_PartK()
-registerVars_2D_PartP()
-registerVars_2D_PartS()
-registerVars_2D_PartT()
-registerVars_Blur()
-registerVars_Complex()
-registerVars_Waves()
-registerVar_Synth()
-registerVars_3D_PartA()
-registerVars_3D_PartH()
-registerVars_3D_PartQ()
-registerVars_ZTransforms()
-registerVars_Plot()
+registerVars_All()
 
 export const editorStore = new EditorStore()

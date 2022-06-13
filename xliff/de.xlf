@@ -2,6 +2,10 @@
 <xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
 <file target-language="de" source-language="en" original="lit-localize-inputs" datatype="plaintext">
 <body>
+<trans-unit id="sd1f81284eeb7b503">
+  <source>File</source>
+  <target>Datei</target>
+</trans-unit>
 <trans-unit id="s2aaf1446fd477405">
   <source>Open file</source>
   <target>Datei öffnen</target>
@@ -10,9 +14,44 @@
   <source>Save file</source>
   <target>Datei speichern</target>
 </trans-unit>
-<trans-unit id="sd1f81284eeb7b503">
-  <source>File</source>
-  <target>Datei</target>
+<trans-unit id="s3741f519c32ac391">
+  <source>New</source>
+  <target>Neu</target>
+</trans-unit>
+<trans-unit id="sac13d1cc1d6dcbc8">
+  <source>New blank flame</source>
+  <target>Neue fraktale Flamme</target>
+</trans-unit>
+<trans-unit id="s0f5cf5f5fb7194f7">
+  <source>New random flame</source>
+  <target>Neue zufällige fraktale Flamme</target>
+</trans-unit>
+<trans-unit id="s096657af8f7c09b4">
+  <source>New random gradient</source>
+  <target>Neuer zufällier Gradient</target>
+</trans-unit>
+<trans-unit id="s64ef2a6c2dd1d3d1">
+  <source>Edit</source>
+</trans-unit>
+<trans-unit id="sf3c841d3afb6503a">
+  <source>Copy flame to clipboard</source>
+  <target>Fraktale Flamme in Zwischenablage kopieren</target>
+</trans-unit>
+<trans-unit id="s5206aada60750aa3">
+  <source>Paste flame from clipboard</source>
+  <target>Fraktale Flamme aus Zwischenablage einfügen</target>
+</trans-unit>
+<trans-unit id="s8f4be9f086eb530f">
+  <source>Undo</source>
+  <target>Rückgängig</target>
+</trans-unit>
+<trans-unit id="s7417792bbe720149">
+  <source>Redo</source>
+  <target>Wiederherstellen</target>
+</trans-unit>
+<trans-unit id="sb6fe3cfa16fec3c6">
+  <source>Parameters were copied to the Clipboard</source>
+  <target>Die Flammenparameter wurde in die Zwischenablage kopiert</target>
 </trans-unit>
 </body>
 </file>

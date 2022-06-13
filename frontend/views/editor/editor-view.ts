@@ -79,9 +79,6 @@ export class EditorView extends View implements BeforeEnterObserver {
           <main>
             <swan-error-panel .errorMessage=${editorStore.lastError}></swan-error-panel>
             <vertical-layout>
-                  <vaadin-button @click="${()=>{console.log("Show notification");
-                      this.notificationPnl.showNotifivation("Jo")
-                  }}">Show notification</vaadin-button>
               <div class="gap-m grid list-none m-0 p-0" style="grid-template-columns: repeat(auto-fill, minmax(30em, 1fr));">
                 <render-panel .onCreateFlameRenderer=${this.createFlameRenderer}></render-panel> 
                 ${this.renderMainTabs()}
@@ -195,10 +192,6 @@ export class EditorView extends View implements BeforeEnterObserver {
 
     getRenderPanel = (): RenderPanel =>  {
         return document.querySelector('render-panel')!
-    }
-
-    protected firstUpdated(_changedProperties: PropertyValues) {
-        super.firstUpdated(_changedProperties);
     }
 
 }
