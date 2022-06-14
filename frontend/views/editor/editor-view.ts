@@ -15,7 +15,7 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 */
 
-import {html, PropertyValues, render} from 'lit'
+import {html} from 'lit'
 import {customElement, query, state} from 'lit/decorators.js'
 import { View } from '../../views/view'
 
@@ -46,13 +46,13 @@ import '../../components/render-panel'
 import '../../components/swan-notification-panel'
 import {BeforeEnterObserver, PreventAndRedirectCommands, Router, RouterLocation} from "@vaadin/router";
 import {RenderPanel} from "Frontend/components/render-panel";
-import {RenderResolutions} from "Frontend/flames/renderer/render-resolution";
 
 import './editor-toolbar-panel'
 import {editorStore} from "Frontend/stores/editor-store";
 import {SwanNotificationPanel} from "Frontend/components/swan-notification-panel";
 import {DisplayMode} from "Frontend/flames/renderer/render-settings";
 import {localized, msg} from "@lit/localize";
+import {Flame} from "Frontend/flames/model/flame";
 
 @localized()
 @customElement('editor-view')
@@ -73,8 +73,13 @@ export class EditorView extends View implements BeforeEnterObserver {
         return html`
           <swan-notification-panel></swan-notification-panel>
           <header>
-            <editor-toolbar-panel .onEditPasteFlameFromClipboard="${this.importParamsFromClipboard}"
-              .onEditCopyFlameToClipboard="${this.exportParamsToClipboard}"></editor-toolbar-panel>
+            <editor-toolbar-panel 
+              .onEditPasteFlameFromClipboard="${this.importParamsFromClipboard}"
+              .onEditCopyFlameToClipboard="${this.exportParamsToClipboard}"
+              .onNewBlankFlame="${this.createBlankFlame}"
+              .onNewRandomFlame="${this.createRandomFlame}"
+              .onNewRandomGradient="${this.createRandomGradient}"
+            ></editor-toolbar-panel>
           </header>           
           <main>
             <swan-error-panel .errorMessage=${editorStore.lastError}></swan-error-panel>
@@ -192,6 +197,72 @@ export class EditorView extends View implements BeforeEnterObserver {
 
     getRenderPanel = (): RenderPanel =>  {
         return document.querySelector('render-panel')!
+    }
+
+    createBlankFlame = () => {
+        editorStore.calculating = true
+        editorStore.lastError = ''
+
+        FlamesEndpoint.generateRandomFlame(editorStore.variations).then(
+          randomFlame => {
+              editorStore.refreshing = true
+              try {
+                  editorStore.flame = new Flame()
+                  this.getRenderPanel().rerenderFlame()
+                  editorStore.calculating = false
+              }
+              finally {
+                  editorStore.refreshing = false
+              }
+          }
+        ).catch(err=> {
+            editorStore.calculating = false
+            editorStore.lastError = err
+        })
+    }
+
+    createRandomFlame = () => {
+        editorStore.calculating = true
+        editorStore.lastError = ''
+
+        FlamesEndpoint.generateRandomFlame(editorStore.variations).then(
+          randomFlame => {
+              editorStore.refreshing = true
+              try {
+                  editorStore.flame = FlameMapper.mapFromBackend(randomFlame.flame)
+                  this.getRenderPanel().rerenderFlame()
+                  editorStore.calculating = false
+              }
+              finally {
+                  editorStore.refreshing = false
+              }
+          }
+        ).catch(err=> {
+            editorStore.calculating = false
+            editorStore.lastError = err
+        })
+    }
+
+    createRandomGradient = () => {
+        editorStore.calculating = true
+        editorStore.lastError = ''
+
+        FlamesEndpoint.generateRandomGradientForFlame(FlameMapper.mapToBackend(editorStore.flame)).then(
+          randomFlame => {
+              editorStore.refreshing = true
+              try {
+                  editorStore.flame = FlameMapper.mapFromBackend(randomFlame.flame)
+                  this.getRenderPanel().rerenderFlame()
+                  editorStore.calculating = false
+              }
+              finally {
+                  editorStore.refreshing = false
+              }
+          }
+        ).catch(err=> {
+            editorStore.calculating = false
+            editorStore.lastError = err
+        })
     }
 
 }

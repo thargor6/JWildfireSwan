@@ -26,6 +26,7 @@ import {MenuBarElement} from "@vaadin/vaadin-menu-bar";
 import {Router} from "@vaadin/router";
 
 import {localized, msg} from '@lit/localize';
+import {setLocale} from "Frontend/index";
 
 @localized()
 @customElement('editor-toolbar-panel')
@@ -97,9 +98,20 @@ export class EditorToolbarPanel extends MobxLitElement {
   @property()
   onEditRedo = ()=> {}
 
+  // Icons: https://vaadin.com/docs/latest/ds/foundation/icons/vaadin
   render() {
     return html`
          <vaadin-menu-bar id="main_menu"></vaadin-menu-bar>
+         <vaadin-button @click="${()=>{
+
+
+             (async () => {
+                 await setLocale('en');
+             })();
+
+
+         }}">Switch language</vaadin-button>
+         
           <div style="display: none";>
             <vaadin-item id="file_menu"><vaadin-icon class="menu_icon" style="padding-right: 0.5em; width: 1.6em;" icon="vaadin:folder-o"></vaadin-icon>${msg('File')}</vaadin-item>
             <vaadin-item @click="${this.onOpenFile}" id="file_open_itm"><vaadin-icon style="padding-right: 0.5em; width: 1.6em;" icon="vaadin:folder-open-o"></vaadin-icon>${msg('Open file')}</vaadin-item>
@@ -153,14 +165,6 @@ export class EditorToolbarPanel extends MobxLitElement {
 
   private logout() {
     Router.go('/logout');
-  }
-
-  private execSavedNewSnippet() {
-    // nothing to do
-  }
-
-  private newSnippet() {
-   // this.newSnippetDialog.showDialog(this.execSavedNewSnippet.bind(this));
   }
 
 }
