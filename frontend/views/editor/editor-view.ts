@@ -54,20 +54,29 @@ import {DisplayMode} from "Frontend/flames/renderer/render-settings";
 import {localized, msg} from "@lit/localize";
 import {Flame} from "Frontend/flames/model/flame";
 
+import './flame-camera/editor-edit-camera-panel'
+import {EditorEditCameraPanel} from "Frontend/views/editor/flame-camera/editor-edit-camera-panel";
+
 @localized()
 @customElement('editor-view')
 export class EditorView extends View implements BeforeEnterObserver {
-    @state()
-    selectedTab = 0
+  @state()
+  selectedFlameTab = 0
 
-    @state()
-    renderInfo = ''
+  @state()
+  selectedTransformTab = 0
 
-    @state()
-    notificationMessage = ''
+  @state()
+  renderInfo = ''
 
-    @query('swan-notification-panel')
-    notificationPnl!: SwanNotificationPanel
+  @state()
+  notificationMessage = ''
+
+  @query('swan-notification-panel')
+  notificationPnl!: SwanNotificationPanel
+
+  @query('editor-edit-camera-panel')
+  flameCameraPanel!: EditorEditCameraPanel
 
     render() {
         return html`
@@ -86,8 +95,9 @@ export class EditorView extends View implements BeforeEnterObserver {
             <vertical-layout>
               <div class="gap-m grid list-none m-0 p-0" style="grid-template-columns: repeat(auto-fill, minmax(30em, 1fr));">
                 <render-panel .onCreateFlameRenderer=${this.createFlameRenderer}></render-panel> 
-                ${this.renderMainTabs()}
+                ${this.renderTransformTabs()}
               </div>
+                ${this.renderFlameTabs()}
               </vertical-layout>
           </main>
         `;
@@ -99,12 +109,16 @@ export class EditorView extends View implements BeforeEnterObserver {
           undefined, false,
           '',
           undefined, 1.5,
-          editorStore.flame)
+          this.currFlame)
     }
 
-    selectedChanged(e: CustomEvent) {
-        this.selectedTab = e.detail.value;
+    selectedFlameTabChanged(e: CustomEvent) {
+        this.selectedFlameTab = e.detail.value;
     }
+
+  selectedTransformTabChanged(e: CustomEvent) {
+    this.selectedTransformTab = e.detail.value;
+  }
 
     getFlamePanel = (): PlaygroundFlamePanel => {
         return document.querySelector('#flamePnl')!
@@ -115,7 +129,7 @@ export class EditorView extends View implements BeforeEnterObserver {
     }
 
     exportParamsToClipboard = (): void => {
-        FlamesEndpoint.convertFlameToXml(FlameMapper.mapToBackend(editorStore.flame)).then(flameXml => {
+        FlamesEndpoint.convertFlameToXml(FlameMapper.mapToBackend(this.currFlame)).then(flameXml => {
             navigator.clipboard.writeText(flameXml)
             this.notificationPnl.showNotifivation(msg('Parameters were copied to the Clipboard'))
         })
@@ -131,7 +145,7 @@ export class EditorView extends View implements BeforeEnterObserver {
            FlamesEndpoint.parseFlame(text).then(flame => {
                editorStore.refreshing = true
                try {
-                   editorStore.flame = FlameMapper.mapFromBackend(flame)
+                 this.currFlame = FlameMapper.mapFromBackend(flame)
                    this.getRenderPanel().rerenderFlame()
                    editorStore.calculating = false
                }
@@ -139,6 +153,7 @@ export class EditorView extends View implements BeforeEnterObserver {
                    editorStore.refreshing = false
                }
            }).catch(err=> {
+             console.log('ERROR', err)
                editorStore.calculating = false
                editorStore.lastError = err
            })
@@ -172,32 +187,64 @@ export class EditorView extends View implements BeforeEnterObserver {
          */
     }
 
-    private renderMainTabs = () => {
+    private renderFlameTabs = () => {
         return html `
            <div style="display: flex; flex-direction: column; padding: 1em;">
-                <vaadin-tabs theme="centered" @selected-changed="${this.selectedChanged}">
+                <vaadin-tabs @selected-changed="${this.selectedFlameTabChanged}">
                     <vaadin-tab theme="icon-on-top">
                         <vaadin-icon icon="vaadin:fire"></vaadin-icon>
-                        <span>Flame</span>
+                        <span>Camera</span>
                     </vaadin-tab>
                     <vaadin-tab theme="icon-on-top">
                         <vaadin-icon icon="vaadin:eye"></vaadin-icon>
-                        <span>Render</span>
+                        <span>Coloring</span>
                     </vaadin-tab>
                     <vaadin-tab theme="icon-on-top">
                         <vaadin-icon icon="vaadin:eye"></vaadin-icon>
-                        <span>Edit</span>
+                        <span>Denoiser</span>
+                    </vaadin-tab>
+                    <vaadin-tab theme="icon-on-top">
+                        <vaadin-icon icon="vaadin:eye"></vaadin-icon>
+                        <span>Motion</span>
+                    </vaadin-tab>
+                </vaadin-tabs>
+                <div style="display: flex; flex-direction: column; align-items: center; width: 100%;">
+                    <editor-edit-camera-panel .visible=${this.selectedFlameTab === 0}
+                     .afterPropertyChange=${this.rerender}></editor-edit-camera-panel>
+                 </div>
+           </div>`
+    }
+
+  private renderTransformTabs = () => {
+    return html `
+           <div style="display: flex; flex-direction: row   ; padding: 1em;">
+                <vaadin-tabs theme="centered" orientation="vertical" @selected-changed="${this.selectedTransformTabChanged}">
+                    <vaadin-tab theme="icon-on-top">
+                        <vaadin-icon icon="vaadin:fire"></vaadin-icon>
+                        <span>Camera</span>
+                    </vaadin-tab>
+                    <vaadin-tab theme="icon-on-top">
+                        <vaadin-icon icon="vaadin:eye"></vaadin-icon>
+                        <span>Coloring</span>
+                    </vaadin-tab>
+                    <vaadin-tab theme="icon-on-top">
+                        <vaadin-icon icon="vaadin:eye"></vaadin-icon>
+                        <span>Denoiser</span>
+                    </vaadin-tab>
+                    <vaadin-tab theme="icon-on-top">
+                        <vaadin-icon icon="vaadin:eye"></vaadin-icon>
+                        <span>Motion</span>
                     </vaadin-tab>
                 </vaadin-tabs>
                 <div style="display: flex; flex-direction: column; align-items: center; width: 100%;">
    Panels...
                  </div>
            </div>`
-    }
+  }
 
-    getRenderPanel = (): RenderPanel =>  {
+  getRenderPanel = (): RenderPanel =>  {
         return document.querySelector('render-panel')!
-    }
+  }
 
     createBlankFlame = () => {
         editorStore.calculating = true
@@ -207,7 +254,7 @@ export class EditorView extends View implements BeforeEnterObserver {
           randomFlame => {
               editorStore.refreshing = true
               try {
-                  editorStore.flame = new Flame()
+                this.currFlame = new Flame()
                   this.getRenderPanel().rerenderFlame()
                   editorStore.calculating = false
               }
@@ -229,7 +276,7 @@ export class EditorView extends View implements BeforeEnterObserver {
           randomFlame => {
               editorStore.refreshing = true
               try {
-                  editorStore.flame = FlameMapper.mapFromBackend(randomFlame.flame)
+                this.currFlame = FlameMapper.mapFromBackend(randomFlame.flame)
                   this.getRenderPanel().rerenderFlame()
                   editorStore.calculating = false
               }
@@ -247,11 +294,11 @@ export class EditorView extends View implements BeforeEnterObserver {
         editorStore.calculating = true
         editorStore.lastError = ''
 
-        FlamesEndpoint.generateRandomGradientForFlame(FlameMapper.mapToBackend(editorStore.flame)).then(
+        FlamesEndpoint.generateRandomGradientForFlame(FlameMapper.mapToBackend(this.currFlame)).then(
           randomFlame => {
               editorStore.refreshing = true
               try {
-                  editorStore.flame = FlameMapper.mapFromBackend(randomFlame.flame)
+                this.currFlame = FlameMapper.mapFromBackend(randomFlame.flame)
                   this.getRenderPanel().rerenderFlame()
                   editorStore.calculating = false
               }
@@ -264,5 +311,25 @@ export class EditorView extends View implements BeforeEnterObserver {
             editorStore.lastError = err
         })
     }
+
+    rerender = ()=> {
+      editorStore.refreshing = true
+      try {
+        this.getRenderPanel().rerenderFlame()
+        editorStore.calculating = false
+      }
+      finally {
+        editorStore.refreshing = false
+      }
+    }
+
+  private get currFlame() {
+    return editorStore.currFlame
+  }
+
+  private set currFlame(newFlame) {
+    editorStore.currFlame = newFlame
+    this.flameCameraPanel.refreshForm()
+  }
 
 }

@@ -15,34 +15,14 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 */
 
-import {makeAutoObservable} from 'mobx';
-import {VariationShaders} from "Frontend/flames/renderer/variations/variation-shaders";
-import {Flame} from "Frontend/flames/model/flame";
-import {registerVars_All} from "Frontend/flames/renderer/variations/variation-shaders-all";
-
-export class EditorStore {
-  initFlag = false
-  refreshing = true
-  variations: string[] = []
-  calculating = false
-  lastError = ''
-  currFlame = new Flame()
-
-  constructor() {
-    makeAutoObservable(this);
-  }
-
-  async initialize() {
-    if(!this.initFlag) {
-      let vars = [...VariationShaders.varNameList]
-      vars.sort()
-      this.variations = vars
-      this.initFlag = true
-    }
-  }
-
+export class FlameCameraModel{
+  camRoll = 0.0
+  camPitch = 0.0
+  camYaw = 0.0
+  camBank = 0.0
+  camPerspective = 0.0
+  centreX = 0.0
+  centreY = 0.0
+  camZoom = 0.0
 }
 
-registerVars_All()
-
-export const editorStore = new EditorStore()
