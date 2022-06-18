@@ -22,12 +22,11 @@ import {MobxLitElement} from "@adobe/lit-mobx";
 import '@vaadin/number-field'
 import '@vaadin/vaadin-ordered-layout/vaadin-vertical-layout'
 import '@vaadin/vaadin-ordered-layout/vaadin-horizontal-layout'
-import '../../../components/swan-slider'
-import { Binder } from '@hilla/form';
+import '../../components/swan-slider'
 import {TemplateResult} from "lit-html";
-import {AbstractModel} from "@hilla/form/Models";
+import {editorStore} from "Frontend/stores/editor-store";
 
-export abstract class EditPropertyPanel<ValueType, BinderModelType extends AbstractModel<ValueType>> extends MobxLitElement {
+export abstract class EditPropertyPanel extends MobxLitElement {
   @property({type: Boolean})
   visible = true
 
@@ -35,6 +34,7 @@ export abstract class EditPropertyPanel<ValueType, BinderModelType extends Abstr
   afterPropertyChange = ()=>{}
 
   render() {
+    console.log('RENDER MAIN')
     return html`
       <vertical-layout theme="spacing" style="${this.visible ? `display:block;`: `display:none;`}">
        ${this.renderControls()}
@@ -42,30 +42,22 @@ export abstract class EditPropertyPanel<ValueType, BinderModelType extends Abstr
 `;
   }
 
-  refreshForm = () => {
-    this.mapValueFromFlame(this.value)
-    this.binder.read(this.value)
+  // https://www.nadershamma.dev/blog/2019/how-to-access-object-properties-dynamically-using-bracket-notation-in-typescript/
+  // credit: Typescript documentation, src
+  // https://www.typescriptlang.org/docs/handbook/advanced-types.html#index-types
+  getProperty<T, K extends keyof T>(o: T, propertyName: K): T[K] {
+    return o[propertyName]; // o[propertyName] is of type T[K]
   }
 
-  saveValue = (newValue: ValueType): Promise<ValueType> => {
-    this.mapValueToFlame(newValue)
-    return Promise.resolve(newValue)
+  flamePropertyChange = (key: string, value: number) => {
+    // @ts-ignore
+    const oldVal: any = this.getProperty(editorStore.currFlame,key)
+    if(oldVal && oldVal.type) {
+      oldVal.value = value
+      this.afterPropertyChange()
+    }
+    // console.log('CHANGED', key, value, oldVal)
   }
-
-  saveForm = () => {
-    this.binder.submitTo(this.saveValue).then(
-      value=>{
-        this.afterPropertyChange()
-      }
-    )
-  }
-
-  abstract mapValueToFlame(newValue: ValueType): void
-  abstract mapValueFromFlame(newValue: ValueType): void
-
-  abstract get binder(): Binder<ValueType, BinderModelType>
-
-  abstract get value(): ValueType
 
   abstract renderControls(): TemplateResult
 

@@ -62,7 +62,7 @@ export class SwanNumberSlider extends MobxLitElement {
               label="${this.label}"
               theme="whitespace"
               @change="${(e: CustomFieldValueChangedEvent) => {
-                  console.log(e.detail.value)
+                  // console.log(e.detail.value)
                   const val = e.detail.value
                   e.preventDefault()
                   this.value = parseFloat(val)

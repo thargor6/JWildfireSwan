@@ -102,16 +102,6 @@ export class EditorToolbarPanel extends MobxLitElement {
   render() {
     return html`
          <vaadin-menu-bar id="main_menu"></vaadin-menu-bar>
-         <vaadin-button @click="${()=>{
-
-
-             (async () => {
-                 await setLocale('en');
-             })();
-
-
-         }}">Switch language</vaadin-button>
-         
           <div style="display: none";>
             <vaadin-item id="file_menu"><vaadin-icon class="menu_icon" style="padding-right: 0.5em; width: 1.6em;" icon="vaadin:folder-o"></vaadin-icon>${msg('File')}</vaadin-item>
             <vaadin-item @click="${this.onOpenFile}" id="file_open_itm"><vaadin-icon style="padding-right: 0.5em; width: 1.6em;" icon="vaadin:folder-open-o"></vaadin-icon>${msg('Open file')}</vaadin-item>
@@ -168,3 +158,15 @@ export class EditorToolbarPanel extends MobxLitElement {
   }
 
 }
+
+/*
+         <vaadin-button @click="${()=>{
+
+
+             (async () => {
+                 await setLocale('en');
+             })();
+
+
+         }}">Switch language</vaadin-button>
+ */

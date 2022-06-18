@@ -47,7 +47,7 @@ export class MainLayout extends Layout {
           <h1 class="m-0 text-l">${appStore.currentViewTitle}</h1>
         </header>
         <section class="flex flex-col items-stretch max-h-full min-h-full" slot="drawer">
-            <img style="margin-left: 1em; margin-top: 1em; width: 12.5rem;" alt="JWildfire Swan" src="./icons/swan_logo_05.svg" />
+          <img style="margin-left: 1em; margin-top: 1em; width: 12.5rem;" alt="JWildfire Swan" src="./icons/swan_logo_05.svg" />
           <h2 class="flex items-center h-xl m-0 px-m text-m">${appStore.applicationName}</h2>
           <nav aria-labelledby="views-title" class="border-b border-contrast-10 flex-grow overflow-auto">
             <h3 class="flex items-center h-m mx-m my-0 text-s text-tertiary" id="views-title">Views</h3>
@@ -68,7 +68,7 @@ export class MainLayout extends Layout {
         )}
             </ul>
           </nav>
-          <footer class="flex items-center my-s px-m py-xs"></footer>
+          <footer class="flex items-center my-s px-m py-xs">Footer</footer>
         </section>
         <slot></slot>
       </vaadin-app-layout>

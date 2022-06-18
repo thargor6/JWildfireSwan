@@ -54,8 +54,8 @@ import {DisplayMode} from "Frontend/flames/renderer/render-settings";
 import {localized, msg} from "@lit/localize";
 import {Flame} from "Frontend/flames/model/flame";
 
-import './flame-camera/editor-edit-camera-panel'
-import {EditorEditCameraPanel} from "Frontend/views/editor/flame-camera/editor-edit-camera-panel";
+import './editor-edit-camera-panel'
+import {EditorEditCameraPanel} from "Frontend/views/editor/editor-edit-camera-panel";
 
 @localized()
 @customElement('editor-view')
@@ -81,25 +81,33 @@ export class EditorView extends View implements BeforeEnterObserver {
     render() {
         return html`
           <swan-notification-panel></swan-notification-panel>
-          <header>
-            <editor-toolbar-panel 
+
+            <swan-error-panel .errorMessage=${editorStore.lastError}></swan-error-panel>
+            <vertical-layout>
+    
+ 
+
+     
+              <div class="gap-m grid list-none m-0 p-0" style="grid-template-columns: repeat(auto-fill, minmax(30em, 1fr));">
+                <render-panel .onCreateFlameRenderer=${this.createFlameRenderer}></render-panel>
+
+                  <vertical-layout>
+                  
+                                            <editor-toolbar-panel 
               .onEditPasteFlameFromClipboard="${this.importParamsFromClipboard}"
               .onEditCopyFlameToClipboard="${this.exportParamsToClipboard}"
               .onNewBlankFlame="${this.createBlankFlame}"
               .onNewRandomFlame="${this.createRandomFlame}"
               .onNewRandomGradient="${this.createRandomGradient}"
             ></editor-toolbar-panel>
-          </header>           
-          <main>
-            <swan-error-panel .errorMessage=${editorStore.lastError}></swan-error-panel>
-            <vertical-layout>
-              <div class="gap-m grid list-none m-0 p-0" style="grid-template-columns: repeat(auto-fill, minmax(30em, 1fr));">
-                <render-panel .onCreateFlameRenderer=${this.createFlameRenderer}></render-panel> 
+                  
                 ${this.renderTransformTabs()}
+                  </vertical-layout>
               </div>
-                ${this.renderFlameTabs()}
+                
+              ${this.renderFlameTabs()}
               </vertical-layout>
-          </main>
+
         `;
     }
 
@@ -329,7 +337,7 @@ export class EditorView extends View implements BeforeEnterObserver {
 
   private set currFlame(newFlame) {
     editorStore.currFlame = newFlame
-    this.flameCameraPanel.refreshForm()
+   // this.flameCameraPanel.refreshForm()
   }
 
 }
