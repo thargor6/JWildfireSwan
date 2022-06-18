@@ -16,59 +16,64 @@
 */
 
 import {html} from 'lit';
-import {customElement, property} from 'lit/decorators.js';
-import {MobxLitElement} from "@adobe/lit-mobx";
+import {customElement} from 'lit/decorators.js';
 
 import '@vaadin/number-field'
 import '@vaadin/vaadin-ordered-layout/vaadin-vertical-layout'
 import '@vaadin/vaadin-ordered-layout/vaadin-horizontal-layout'
-import '../../../components/swan-slider'
+import '../../../components/swan-number-slider'
 import {editorStore} from "Frontend/stores/editor-store";
 import { Binder, field } from '@hilla/form';
 import FlameCameraBinderModel from "Frontend/views/editor/flame-camera/FlameCameraBinderModel";
 import {FlameCameraModel} from "Frontend/views/editor/flame-camera/FlameCameraModel";
 import {FlameCameraMapper} from "Frontend/views/editor/flame-camera/FlameCameraMapper";
+import {localized, msg} from "@lit/localize";
+import {EditPropertyPanel} from "Frontend/views/editor/flame-camera/edit-property-panel";
 
+@localized()
 @customElement('editor-edit-camera-panel')
-export class EditorEditCameraPanel extends MobxLitElement {
-  @property({type: Boolean})
-  visible = true
+export class EditorEditCameraPanel extends EditPropertyPanel<FlameCameraModel, FlameCameraBinderModel> {
+  private _value = new FlameCameraModel()
+  private _binder = new Binder(this, FlameCameraBinderModel)
 
-  flameCamera = new FlameCameraModel()
-
-  private binder = new Binder(this, FlameCameraBinderModel)
-
-  @property()
-  afterPropertyChange = ()=>{}
-
-  render() {
+  renderControls() {
     return html`
-      <vertical-layout theme="spacing" style="${this.visible ? `display:block;`: `display:none;`}">
-        
-         <vaadin-number-field @change="${this.saveForm}" label="Roll" ${field(this.binder.model.camRoll)}></vaadin-number-field>
-          
-      </vertical-layout>
-`;
+          <swan-number-slider .onValueChange="${this.flamePropertyChange.bind(this,'camRoll')}" min="${-360}" max="${360}" label="${msg('Roll')}" ${field(this.binder.model.camRoll)}></swan-number-slider>
+
+    `;
   }
 
-  refreshForm() {
-    FlameCameraMapper.mapFromFlame(editorStore.currFlame, this.flameCamera)
-    this.binder.read(this.flameCamera)
+  // credit: Typescript documentation, src
+// https://www.typescriptlang.org/docs/handbook/advanced-types.html#index-types
+  getProperty<T, K extends keyof T>(o: T, propertyName: K): T[K] {
+    return o[propertyName]; // o[propertyName] is of type T[K]
   }
 
-  saveForm() {
-    this.binder.submitTo(this.saveFlameCamera).then(
-      f=>{
-        this.afterPropertyChange()
-      }
-    )
+  flamePropertyChange = (key: string, value: number) => {
+    // @ts-ignore
+    const oldVal: any = this.getProperty(editorStore.currFlame,key)
+    if(oldVal && oldVal.type) {
+      oldVal.value = value
+      this.afterPropertyChange()
+    }
+    console.log('CHANGED', key, value, oldVal)
   }
 
-  saveFlameCamera(flameCamera: FlameCameraModel): Promise<FlameCameraModel> {
-    FlameCameraMapper.mapToFlame(flameCamera, editorStore.currFlame)
-    return Promise.resolve(flameCamera)
+  get binder(): Binder<FlameCameraModel, FlameCameraBinderModel> {
+    return this._binder
   }
 
+  get value(): FlameCameraModel {
+    return this._value
+  }
+
+  mapValueToFlame(newValue: FlameCameraModel): void {
+    FlameCameraMapper.mapToFlame(newValue, editorStore.currFlame)
+  }
+
+  mapValueFromFlame(newValue: FlameCameraModel): void {
+    FlameCameraMapper.mapFromFlame(editorStore.currFlame, this.value)
+  }
 
 }
 
