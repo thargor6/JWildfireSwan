@@ -57,8 +57,12 @@ import {Flame} from "Frontend/flames/model/flame";
 
 import './editor-edit-camera-panel'
 import './editor-edit-coloring-panel'
+import './editor-edit-denoiser-panel'
+import './editor-edit-motion-panel'
 import {EditorEditCameraPanel} from "Frontend/views/editor/editor-edit-camera-panel";
 import {EditorEditColoringPanel} from "Frontend/views/editor/editor-edit-coloring-panel";
+import {EditorEditDenoiserPanel} from "Frontend/views/editor/editor-edit-denoiser-panel";
+import {EditorEditMotionPanel} from "Frontend/views/editor/editor-edit-motion-panel";
 
 @localized()
 @customElement('editor-view')
@@ -83,6 +87,12 @@ export class EditorView extends View implements BeforeEnterObserver {
 
   @query('editor-edit-coloring-panel')
   flameColoringPanel!: EditorEditColoringPanel
+
+  @query('editor-edit-denoiser-panel')
+  flameDenoiserPanel!: EditorEditDenoiserPanel
+
+  @query('editor-edit-motion-panel')
+  flameMotionPanel!: EditorEditMotionPanel
 
     render() {
         return html`
@@ -223,7 +233,11 @@ export class EditorView extends View implements BeforeEnterObserver {
                     <editor-edit-camera-panel .visible=${this.selectedFlameTab === 0}
                      .afterPropertyChange=${this.rerender}></editor-edit-camera-panel>
                     <editor-edit-coloring-panel .visible=${this.selectedFlameTab === 1}
-                                              .afterPropertyChange=${this.rerender}></editor-edit-coloring-panel>
+                      .afterPropertyChange=${this.rerender}></editor-edit-coloring-panel>
+                    <editor-edit-denoiser-panel .visible=${this.selectedFlameTab === 2}
+                      .afterPropertyChange=${this.rerender}></editor-edit-denoiser-panel>
+                    <editor-edit-motion-panel .visible=${this.selectedFlameTab === 3}
+                      .afterPropertyChange=${this.rerender}></editor-edit-motion-panel>
                  </div>
            </div>`
     }
@@ -344,6 +358,8 @@ export class EditorView extends View implements BeforeEnterObserver {
     editorStore.currFlame = newFlame
     this.flameCameraPanel.refreshForm()
     this.flameColoringPanel.refreshForm()
+    this.flameDenoiserPanel.refreshForm()
+    this.flameMotionPanel.refreshForm()
   }
 
 }

@@ -42,7 +42,6 @@ import {FlameMapper} from '../../flames/model/mapper/flame-mapper'
 import '@vaadin/vaadin-combo-box';
 import './playground-render-panel'
 import './playground-flame-panel'
-import './playground-edit-panel'
 import {PlaygroundRenderPanel} from "Frontend/views/playground/playground-render-panel";
 import {playgroundStore} from "Frontend/stores/playground-store";
 import {PlaygroundFlamePanel} from "Frontend/views/playground/playground-flame-panel";
@@ -324,10 +323,6 @@ export class PlaygroundView extends View implements BeforeEnterObserver {
                         <vaadin-icon icon="vaadin:eye"></vaadin-icon>
                         <span>Render</span>
                     </vaadin-tab>
-                    <vaadin-tab theme="icon-on-top">
-                        <vaadin-icon icon="vaadin:eye"></vaadin-icon>
-                        <span>Edit</span>
-                    </vaadin-tab>
                 </vaadin-tabs>
                 <div style="display: flex; flex-direction: column; align-items: center; width: 100%;">
                     <playground-flame-panel id='flamePnl' 
@@ -341,10 +336,6 @@ export class PlaygroundView extends View implements BeforeEnterObserver {
                                              .onCancelRender="${()=>this.getRenderPanel().cancelRender()}"
                                              .onRenderAndSave="${()=>this.getRenderPanel().renderAndSave()}"
                       .visible=${this.selectedTab === 1} .onImageSizeChanged="${()=>this.getRenderPanel().rerenderFlame()}"></playground-render-panel>
-                    <playground-edit-panel id='editPnl' .onRefresh="${()=>this.getRenderPanel().rerenderFlame()}"
-                                           .onExportParams="${this.exportParamsToClipboard}"
-                                             .visible=${this.selectedTab === 2}></playground-edit-panel>
-
                  </div>
            </div>`
     }

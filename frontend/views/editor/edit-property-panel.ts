@@ -20,6 +20,7 @@ import {property} from 'lit/decorators.js';
 import {MobxLitElement} from "@adobe/lit-mobx";
 import {TemplateResult} from "lit-html";
 import {editorStore} from "Frontend/stores/editor-store";
+import {HasValue} from "@hilla/form";
 
 export interface ComoboBoxItem {
   key: number
@@ -37,6 +38,8 @@ export interface ComboBoxDescriptor {
   key: string
   label: string
   items?:Array<ComoboBoxItem>
+  onChange(value: number): void
+  value(): number
 }
 
 export interface NumberFieldDescriptor {
@@ -121,10 +124,39 @@ export abstract class EditPropertyPanel extends MobxLitElement {
     `
   }
 
+  renderComboBox(desc: ComboBoxDescriptor): TemplateResult {
+    return html `
+        <vaadin-combo-box style="width:23em;" .items="${desc.items}" item-value-path="key" item-label-path="caption"
+                          .value=${desc.value}
+                          @change=${(e: Event)=>{
+                              const key = (e.target as HasValue<number>).value
+                              desc.onChange(key as any)
+                          }} label=${desc.label}></vaadin-combo-box>
+    `
+  }
+
   refreshForm() {
    // this.render()
     // TODO
   }
 
+
+  /*
+  export function getFlameParam(propertyPath: string): FlameParameter | undefined {
+    if(!playgroundStore || !playgroundStore.flame) {
+        return undefined
+    }
+    // TODO - subProperties
+    let val = (playgroundStore.flame as any)[propertyPath]
+    // enums
+    if(typeof val==='number') {
+        return Parameters.intParam(val)
+    }
+    else {
+        const param: FlameParameter = (playgroundStore.flame as any)[propertyPath]
+        return param  ? param : undefined
+    }
+}
+   */
 }
 
