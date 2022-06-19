@@ -15,60 +15,74 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 */
 
-import {html, PropertyValues} from 'lit';
+import {html} from 'lit';
 import {customElement} from 'lit/decorators.js';
-
-import '@vaadin/number-field'
-import '@vaadin/vaadin-ordered-layout/vaadin-vertical-layout'
-import '@vaadin/vaadin-ordered-layout/vaadin-horizontal-layout'
-import '../../components/swan-number-slider'
-import {editorStore} from "Frontend/stores/editor-store";
 import {localized, msg} from "@lit/localize";
-import {EditPropertyPanel} from "Frontend/views/editor/edit-property-panel";
+import {EditPropertyPanel, NumberFieldDescriptor} from "Frontend/views/editor/edit-property-panel";
 
 @localized()
 @customElement('editor-edit-camera-panel')
 export class EditorEditCameraPanel extends EditPropertyPanel {
 
-  renderControls() {
-    console.log('RENDER SUB', editorStore.currFlame.camRoll)
-    return html`
- 
-          <swan-number-slider min="${-360.0}" max="${360.0}" step="${3.0}" label="${msg('Roll')}" 
-            value="${editorStore.currFlame.camRoll.value}"
-            .onValueChange="${this.flamePropertyChange.bind(this,'camRoll')}"></swan-number-slider>
-          <swan-number-slider min="${-360.0}" max="${360.0}" step="${3.0}" label="${msg('Pitch')}" 
-            value="${editorStore.currFlame.camPitch.value}"
-            .onValueChange="${this.flamePropertyChange.bind(this,'camPitch')}"></swan-number-slider>
-          <swan-number-slider min="${-360.0}" max="${360.0}" step="${3.0}" label="${msg('Yaw')}" 
-            value="${editorStore.currFlame.camYaw.value}"
-            .onValueChange="${this.flamePropertyChange.bind(this,'camYaw')}"></swan-number-slider>
-          <swan-number-slider min="${-360.0}" max="${360.0}" step="${3.0}" label="${msg('Bank')}" 
-            value="${editorStore.currFlame.camBank.value}"
-            .onValueChange="${this.flamePropertyChange.bind(this,'camBank')}"></swan-number-slider>
-          <swan-number-slider min="${-1.0}" max="${1.0}" step="${0.1}"  label="${msg('Perspective')}" 
-            value="${editorStore.currFlame.camPerspective.value}"
-            .onValueChange="${this.flamePropertyChange.bind(this,'camPerspective')}"></swan-number-slider>
-          <swan-number-slider min="${-3.0}" max="${3.0}" step="${0.1}"  label="${msg('CentreX')}" 
-            value="${editorStore.currFlame.centreX.value}"
-            .onValueChange="${this.flamePropertyChange.bind(this,'centreX')}"></swan-number-slider>
-         <swan-number-slider min="${-3.0}" max="${3.0}" step="${0.1}"  label="${msg('CentreY')}" 
-            value="${editorStore.currFlame.centreY.value}"
-            .onValueChange="${this.flamePropertyChange.bind(this,'centreY')}"></swan-number-slider>
-         <swan-number-slider min="${0.1}" max="${3.0}" step="${0.1}"  label="${msg('Zoom')}" 
-            value="${editorStore.currFlame.camZoom.value}"
-            .onValueChange="${this.flamePropertyChange.bind(this,'camZoom')}"></swan-number-slider>
-
-        
-        
-        
-    `;
+  private camRoll: NumberFieldDescriptor = {
+    key: 'camRoll', label: msg('Roll'), min: -360, max: 360, step: 3,
+    onChange: this.flamePropertyChange.bind(this,'camRoll'),
+    value: this.getFlameValue.bind(this,'camRoll')
   }
 
+  private camPitch: NumberFieldDescriptor = {
+    key: 'camPitch', label: msg('Pitch'), min: -360, max: 360, step: 3,
+    onChange: this.flamePropertyChange.bind(this,'camPitch'),
+    value: this.getFlameValue.bind(this,'camPitch')
+  }
 
-  protected firstUpdated(_changedProperties: PropertyValues) {
-    super.firstUpdated(_changedProperties);
-    console.log('AFTER RENDER')
+  private camYaw: NumberFieldDescriptor = {
+    key: 'camYaw', label: msg('Yaw'), min: -360, max: 360, step: 3,
+    onChange: this.flamePropertyChange.bind(this,'camYaw'),
+    value: this.getFlameValue.bind(this,'camYaw')
+  }
+
+  private camBank: NumberFieldDescriptor = {
+    key: 'camBank', label: msg('Bank'), min: -360, max: 360, step: 3,
+    onChange: this.flamePropertyChange.bind(this,'camBank'),
+    value: this.getFlameValue.bind(this,'camBank')
+  }
+
+  private camPerspective: NumberFieldDescriptor = {
+    key: 'camPerspective', label: msg('Perspective'), min: -1, max: 1, step: 0.1,
+    onChange: this.flamePropertyChange.bind(this,'camPerspective'),
+    value: this.getFlameValue.bind(this,'camPerspective')
+  }
+
+  private centreX: NumberFieldDescriptor = {
+    key: 'centreX', label: msg('CentreX'), min: -3, max: 3, step: 0.1,
+    onChange: this.flamePropertyChange.bind(this,'centreX'),
+    value: this.getFlameValue.bind(this,'centreX')
+  }
+
+  private centreY: NumberFieldDescriptor = {
+    key: 'centreY', label: msg('CentreY'), min: -3, max: 3, step: 0.1,
+    onChange: this.flamePropertyChange.bind(this,'centreY'),
+    value: this.getFlameValue.bind(this,'centreY')
+  }
+
+  private camZoom: NumberFieldDescriptor = {
+    key: 'camZoom', label: msg('Zoom'), min: 0.1, max: 3, step: 0.1,
+    onChange: this.flamePropertyChange.bind(this,'camZoom'),
+    value: this.getFlameValue.bind(this,'camZoom')
+  }
+
+  renderControls() {
+    return html`
+          ${this.renderNumberField(this.camRoll)}
+          ${this.renderNumberField(this.camPitch)}
+          ${this.renderNumberField(this.camYaw)}
+          ${this.renderNumberField(this.camBank)}
+          ${this.renderNumberField(this.camPerspective)}
+          ${this.renderNumberField(this.centreX)}
+          ${this.renderNumberField(this.centreY)}
+          ${this.renderNumberField(this.camZoom)}
+    `;
   }
 
 

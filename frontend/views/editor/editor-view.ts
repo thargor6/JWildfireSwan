@@ -44,6 +44,7 @@ import '../../components/swan-loading-indicator'
 import '../../components/swan-error-panel'
 import '../../components/render-panel'
 import '../../components/swan-notification-panel'
+import '../../components/swan-number-slider'
 import {BeforeEnterObserver, PreventAndRedirectCommands, Router, RouterLocation} from "@vaadin/router";
 import {RenderPanel} from "Frontend/components/render-panel";
 
@@ -55,7 +56,9 @@ import {localized, msg} from "@lit/localize";
 import {Flame} from "Frontend/flames/model/flame";
 
 import './editor-edit-camera-panel'
+import './editor-edit-coloring-panel'
 import {EditorEditCameraPanel} from "Frontend/views/editor/editor-edit-camera-panel";
+import {EditorEditColoringPanel} from "Frontend/views/editor/editor-edit-coloring-panel";
 
 @localized()
 @customElement('editor-view')
@@ -78,15 +81,15 @@ export class EditorView extends View implements BeforeEnterObserver {
   @query('editor-edit-camera-panel')
   flameCameraPanel!: EditorEditCameraPanel
 
+  @query('editor-edit-coloring-panel')
+  flameColoringPanel!: EditorEditColoringPanel
+
     render() {
         return html`
           <swan-notification-panel></swan-notification-panel>
 
             <swan-error-panel .errorMessage=${editorStore.lastError}></swan-error-panel>
             <vertical-layout>
-    
- 
-
      
               <div class="gap-m grid list-none m-0 p-0" style="grid-template-columns: repeat(auto-fill, minmax(30em, 1fr));">
                 <render-panel .onCreateFlameRenderer=${this.createFlameRenderer}></render-panel>
@@ -219,6 +222,8 @@ export class EditorView extends View implements BeforeEnterObserver {
                 <div style="display: flex; flex-direction: column; align-items: center; width: 100%;">
                     <editor-edit-camera-panel .visible=${this.selectedFlameTab === 0}
                      .afterPropertyChange=${this.rerender}></editor-edit-camera-panel>
+                    <editor-edit-coloring-panel .visible=${this.selectedFlameTab === 1}
+                                              .afterPropertyChange=${this.rerender}></editor-edit-coloring-panel>
                  </div>
            </div>`
     }
@@ -337,7 +342,8 @@ export class EditorView extends View implements BeforeEnterObserver {
 
   private set currFlame(newFlame) {
     editorStore.currFlame = newFlame
-   // this.flameCameraPanel.refreshForm()
+    this.flameCameraPanel.refreshForm()
+    this.flameColoringPanel.refreshForm()
   }
 
 }

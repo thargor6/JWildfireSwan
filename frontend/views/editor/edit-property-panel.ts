@@ -18,13 +18,36 @@
 import {html} from 'lit';
 import {property} from 'lit/decorators.js';
 import {MobxLitElement} from "@adobe/lit-mobx";
-
-import '@vaadin/number-field'
-import '@vaadin/vaadin-ordered-layout/vaadin-vertical-layout'
-import '@vaadin/vaadin-ordered-layout/vaadin-horizontal-layout'
-import '../../components/swan-slider'
 import {TemplateResult} from "lit-html";
 import {editorStore} from "Frontend/stores/editor-store";
+
+export interface ComoboBoxItem {
+  key: number
+  caption: string
+}
+
+export interface CheckboxDescriptor {
+  key: string
+  label: string
+  onChange(value: number): void
+  value(): boolean
+}
+
+export interface ComboBoxDescriptor {
+  key: string
+  label: string
+  items?:Array<ComoboBoxItem>
+}
+
+export interface NumberFieldDescriptor {
+  key: string
+  label: string
+  min: number
+  max: number
+  step: number
+  onChange(value: number): void
+  value(): number
+}
 
 export abstract class EditPropertyPanel extends MobxLitElement {
   @property({type: Boolean})
@@ -49,17 +72,59 @@ export abstract class EditPropertyPanel extends MobxLitElement {
     return o[propertyName]; // o[propertyName] is of type T[K]
   }
 
+  getFlameValue(key: string): number {
+    // @ts-ignore
+    const val: any = this.getProperty(editorStore.currFlame, key)
+    if(val && val.type) {
+      return val.value
+    }
+    return 0
+  }
+
+  getFlameBooleanValue(key: string): boolean {
+    // @ts-ignore
+    const val: any = this.getProperty(editorStore.currFlame, key)
+    if(val && val.type && val.value) {
+      return true
+    }
+    return false
+  }
+
   flamePropertyChange = (key: string, value: number) => {
     // @ts-ignore
-    const oldVal: any = this.getProperty(editorStore.currFlame,key)
+    const oldVal: any = this.getProperty(editorStore.currFlame, key)
     if(oldVal && oldVal.type) {
-      oldVal.value = value
-      this.afterPropertyChange()
+      if(oldVal.value !== value) {
+        oldVal.value = value
+        this.afterPropertyChange()
+        // console.log('CHANGED', key, value, oldVal)
+      }
     }
-    // console.log('CHANGED', key, value, oldVal)
   }
 
   abstract renderControls(): TemplateResult
+
+  renderNumberField(desc: NumberFieldDescriptor): TemplateResult {
+    return html `
+      <swan-number-slider min="${desc.min}" max="${desc.max}" step="${desc.step}" 
+        label="${desc.label}" value="${desc.value()}"
+        .onValueChange="${desc.onChange}">
+      </swan-number-slider>
+    `
+  }
+
+  renderCheckbox(desc: CheckboxDescriptor): TemplateResult {
+    return html `
+        <vaadin-checkbox ?checked=${desc.value} label="${desc.label}"
+          @change=${(e: Event)=>desc.onChange((e.target as any).checked ? 1: 0)}>
+        </vaadin-checkbox>
+    `
+  }
+
+  refreshForm() {
+   // this.render()
+    // TODO
+  }
 
 }
 
