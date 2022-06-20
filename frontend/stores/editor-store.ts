@@ -17,7 +17,7 @@
 
 import {makeAutoObservable} from 'mobx';
 import {VariationShaders} from "Frontend/flames/renderer/variations/variation-shaders";
-import {Flame} from "Frontend/flames/model/flame";
+import {Flame, Layer, XForm} from "Frontend/flames/model/flame";
 import {registerVars_All} from "Frontend/flames/renderer/variations/variation-shaders-all";
 
 export class EditorStore {
@@ -27,6 +27,8 @@ export class EditorStore {
   calculating = false
   lastError = ''
   currFlame = new Flame()
+  currLayer: Layer | undefined = undefined
+  currXform: XForm | undefined = undefined
 
   constructor() {
     makeAutoObservable(this);
@@ -39,6 +41,14 @@ export class EditorStore {
       this.variations = vars
       this.initFlag = true
     }
+  }
+
+  get currLayers(): Array<Layer> {
+    return this.currFlame.layers
+  }
+
+  get currXForms(): Array<XForm> {
+    return this.currLayer? this.currLayer.xforms : []
   }
 
 }

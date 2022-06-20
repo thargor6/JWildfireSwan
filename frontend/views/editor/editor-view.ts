@@ -33,6 +33,8 @@ import '@vaadin/vaadin-progress-bar'
 import '@vaadin/scroller'
 import '@vaadin/split-layout';
 import '@vaadin/vaadin-notification'
+import '@vaadin/vaadin-grid'
+import '@vaadin/vaadin-split-layout'
 
 import {FlameRenderer} from '../../flames/renderer/flame-renderer'
 import {FlamesEndpoint} from "Frontend/generated/endpoints";
@@ -59,10 +61,18 @@ import './editor-edit-camera-panel'
 import './editor-edit-coloring-panel'
 import './editor-edit-denoiser-panel'
 import './editor-edit-motion-panel'
+import './editor-edit-xform-affine-panel'
+import './editor-edit-xform-nonlinear-panel'
+import './editor-edit-xform-xaos-panel'
+import './editor-edit-xform-color-panel'
 import {EditorEditCameraPanel} from "Frontend/views/editor/editor-edit-camera-panel";
 import {EditorEditColoringPanel} from "Frontend/views/editor/editor-edit-coloring-panel";
 import {EditorEditDenoiserPanel} from "Frontend/views/editor/editor-edit-denoiser-panel";
 import {EditorEditMotionPanel} from "Frontend/views/editor/editor-edit-motion-panel";
+import {EditorEditXformAffinePanel} from "Frontend/views/editor/editor-edit-xform-affine-panel";
+import {EditorEditXformNonlinearPanel} from "Frontend/views/editor/editor-edit-xform-nonlinear-panel";
+import {EditorEditXformXaosPanel} from "Frontend/views/editor/editor-edit-xform-xaos-panel";
+import {EditorEditXformColorPanel} from "Frontend/views/editor/editor-edit-xform-color-panel";
 
 @localized()
 @customElement('editor-view')
@@ -94,33 +104,52 @@ export class EditorView extends View implements BeforeEnterObserver {
   @query('editor-edit-motion-panel')
   flameMotionPanel!: EditorEditMotionPanel
 
-    render() {
+  @query('editor-edit-xform-affine-panel')
+  xformAffinePanel!: EditorEditXformAffinePanel
+
+  @query('editor-edit-xform-nonlinear-panel')
+  xformNonlinearPanel!: EditorEditXformNonlinearPanel
+
+  @query('editor-edit-xform-xaos-panel')
+  xformXaosPanel!: EditorEditXformXaosPanel
+
+  @query('editor-edit-xform-color-panel')
+  xformColorPanel!: EditorEditXformColorPanel
+
+  render() {
         return html`
           <swan-notification-panel></swan-notification-panel>
-
-            <swan-error-panel .errorMessage=${editorStore.lastError}></swan-error-panel>
-            <vertical-layout>
-     
-              <div class="gap-m grid list-none m-0 p-0" style="grid-template-columns: repeat(auto-fill, minmax(30em, 1fr));">
-                <render-panel .onCreateFlameRenderer=${this.createFlameRenderer}></render-panel>
-
-                  <vertical-layout>
-                  
-                                            <editor-toolbar-panel 
-              .onEditPasteFlameFromClipboard="${this.importParamsFromClipboard}"
-              .onEditCopyFlameToClipboard="${this.exportParamsToClipboard}"
-              .onNewBlankFlame="${this.createBlankFlame}"
-              .onNewRandomFlame="${this.createRandomFlame}"
-              .onNewRandomGradient="${this.createRandomGradient}"
-            ></editor-toolbar-panel>
-                  
-                ${this.renderTransformTabs()}
+          <swan-error-panel .errorMessage=${editorStore.lastError}></swan-error-panel>
+          <vertical-layout>
+            <div class=" grid list-none m-0 p-0" style="grid-template-columns: repeat(auto-fill, minmax(30em, 1fr));">
+              <render-panel .onCreateFlameRenderer=${this.createFlameRenderer}></render-panel>
+                <vaadin-split-layout>
+                  <vertical-layout style="width: 33%;">
+                    <h2>${msg('Transformations')}</h2>
+                    <vaadin-grid theme="compact" .items="${editorStore.currXForms}">
+                      <vaadin-grid-column path="weight"></vaadin-grid-column>
+                      <vaadin-grid-column path="color"></vaadin-grid-column>
+                    </vaadin-grid>
+                    <h2>${msg('Layers')}</h2>
+                    <vaadin-grid style="height: 33%;" theme="compact" .items="${editorStore.currLayers}">
+                      <vaadin-grid-column path="weight"></vaadin-grid-column>
+                      <vaadin-grid-column path="density"></vaadin-grid-column>
+                    </vaadin-grid>
                   </vertical-layout>
-              </div>
-                
-              ${this.renderFlameTabs()}
-              </vertical-layout>
-
+                  <vertical-layout>
+                    <editor-toolbar-panel 
+                      .onEditPasteFlameFromClipboard="${this.importParamsFromClipboard}"
+                      .onEditCopyFlameToClipboard="${this.exportParamsToClipboard}"
+                      .onNewBlankFlame="${this.createBlankFlame}"
+                      .onNewRandomFlame="${this.createRandomFlame}"
+                      .onNewRandomGradient="${this.createRandomGradient}"
+                    ></editor-toolbar-panel>
+                    ${this.renderTransformTabs()}
+                  </vertical-layout>
+              </vaadin-split-layout>
+            </div>
+            ${this.renderFlameTabs()}
+          </vertical-layout>
         `;
     }
 
@@ -244,27 +273,34 @@ export class EditorView extends View implements BeforeEnterObserver {
 
   private renderTransformTabs = () => {
     return html `
-           <div style="display: flex; flex-direction: row   ; padding: 1em;">
-                <vaadin-tabs theme="centered" orientation="vertical" @selected-changed="${this.selectedTransformTabChanged}">
+           <div style="display: flex; flex-direction: column; padding: 1em;">
+                <vaadin-tabs @selected-changed="${this.selectedTransformTabChanged}">
                     <vaadin-tab theme="icon-on-top">
                         <vaadin-icon icon="vaadin:fire"></vaadin-icon>
-                        <span>Camera</span>
+                        <span>${msg('Affine')}</span>
                     </vaadin-tab>
                     <vaadin-tab theme="icon-on-top">
                         <vaadin-icon icon="vaadin:eye"></vaadin-icon>
-                        <span>Coloring</span>
+                        <span>${msg('Nonlinear')}</span>
                     </vaadin-tab>
                     <vaadin-tab theme="icon-on-top">
                         <vaadin-icon icon="vaadin:eye"></vaadin-icon>
-                        <span>Denoiser</span>
+                        <span>${msg('Xaos')}</span>
                     </vaadin-tab>
                     <vaadin-tab theme="icon-on-top">
                         <vaadin-icon icon="vaadin:eye"></vaadin-icon>
-                        <span>Motion</span>
+                        <span>${msg('Color')}</span>
                     </vaadin-tab>
                 </vaadin-tabs>
                 <div style="display: flex; flex-direction: column; align-items: center; width: 100%;">
-   Panels...
+                  <editor-edit-xform-affine-panel .visible=${this.selectedTransformTab === 0}
+                    .afterPropertyChange=${this.rerender}></editor-edit-xform-affine-panel>
+                  <editor-edit-xform-nonlinear-panel .visible=${this.selectedTransformTab === 1}
+                    .afterPropertyChange=${this.rerender}></editor-edit-xform-nonlinear-panel>
+                  <editor-edit-xform-xaos-panel .visible=${this.selectedTransformTab === 2}
+                    .afterPropertyChange=${this.rerender}></editor-edit-xform-xaos-panel>
+                  <editor-edit-xform-color-panel .visible=${this.selectedTransformTab === 3}
+                    .afterPropertyChange=${this.rerender}></editor-edit-xform-color-panel>
                  </div>
            </div>`
   }
@@ -356,10 +392,16 @@ export class EditorView extends View implements BeforeEnterObserver {
 
   private set currFlame(newFlame) {
     editorStore.currFlame = newFlame
+    editorStore.currLayer = newFlame.layers[0]
+    editorStore.currXform = editorStore.currLayer.xforms[0]
     this.flameCameraPanel.refreshForm()
     this.flameColoringPanel.refreshForm()
     this.flameDenoiserPanel.refreshForm()
     this.flameMotionPanel.refreshForm()
+    this.xformAffinePanel.renderControls()
+    this.xformNonlinearPanel.renderControls()
+    this.xformXaosPanel.renderControls()
+    this.xformColorPanel.renderControls()
   }
 
 }

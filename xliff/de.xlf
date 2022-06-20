@@ -2,6 +2,9 @@
 <xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
 <file target-language="de" source-language="en" original="lit-localize-inputs" datatype="plaintext">
 <body>
+<trans-unit id="sbd47872b4f16b63c">
+  <source>An error has occured!</source>
+</trans-unit>
 <trans-unit id="sd1f81284eeb7b503">
   <source>File</source>
   <target>Datei</target>
@@ -28,7 +31,7 @@
 </trans-unit>
 <trans-unit id="s096657af8f7c09b4">
   <source>New random gradient</source>
-  <target>Neuer zufällier Gradient</target>
+  <target>Neuer zufälliger Gradient</target>
 </trans-unit>
 <trans-unit id="s64ef2a6c2dd1d3d1">
   <source>Edit</source>
@@ -48,6 +51,102 @@
 <trans-unit id="s7417792bbe720149">
   <source>Redo</source>
   <target>Wiederherstellen</target>
+</trans-unit>
+<trans-unit id="sca7ff42bef53d77e">
+  <source>Roll</source>
+</trans-unit>
+<trans-unit id="s1369ddcc1b221411">
+  <source>Pitch</source>
+</trans-unit>
+<trans-unit id="scb55ae1a17457048">
+  <source>Yaw</source>
+</trans-unit>
+<trans-unit id="sc141e0a7a88d8c97">
+  <source>Bank</source>
+</trans-unit>
+<trans-unit id="s36b3cefdcb897f15">
+  <source>Perspective</source>
+</trans-unit>
+<trans-unit id="se962ab6ba1a7c23a">
+  <source>CentreX</source>
+</trans-unit>
+<trans-unit id="se962ac6ba1a7c3ed">
+  <source>CentreY</source>
+</trans-unit>
+<trans-unit id="s166bd56d19670a72">
+  <source>Zoom</source>
+</trans-unit>
+<trans-unit id="sf7ef7bd814fbaa8a">
+  <source>Brightness</source>
+</trans-unit>
+<trans-unit id="sd90da6239cf0e1f8">
+  <source>Low brightness</source>
+</trans-unit>
+<trans-unit id="se2505e23917f48ca">
+  <source>Gamma</source>
+</trans-unit>
+<trans-unit id="s5bddb2a4353594c9">
+  <source>Gamma threshold</source>
+</trans-unit>
+<trans-unit id="sda9eb7b6b70799f3">
+  <source>Contrast</source>
+</trans-unit>
+<trans-unit id="sc34461fd85e105c8">
+  <source>Red balance</source>
+</trans-unit>
+<trans-unit id="s9c02aab42153c0e8">
+  <source>Green balance</source>
+</trans-unit>
+<trans-unit id="scb7fe67139d6a0b5">
+  <source>Blue balance</source>
+</trans-unit>
+<trans-unit id="s4e7f6f3437e25fc5">
+  <source>Fade to white</source>
+</trans-unit>
+<trans-unit id="s7e5c851fb89603b3">
+  <source>Vibrancy</source>
+</trans-unit>
+<trans-unit id="sde5bacc4f3675657">
+  <source>Fg opacity</source>
+</trans-unit>
+<trans-unit id="s5ef44b4e7287bd5f">
+  <source>Backend transparency</source>
+</trans-unit>
+<trans-unit id="sd2223afb7d6b100d">
+  <source>Type</source>
+</trans-unit>
+<trans-unit id="sa5a3cce5b80df746">
+  <source>Splitter</source>
+</trans-unit>
+<trans-unit id="s9bc213b5a2a7f9f4">
+  <source>Sigma</source>
+</trans-unit>
+<trans-unit id="s462a030648434c91">
+  <source>KSigma</source>
+</trans-unit>
+<trans-unit id="sc624bc75df66a8c7">
+  <source>Edge threshold</source>
+</trans-unit>
+<trans-unit id="s1dfd7119b50f64a1">
+  <source>Mix</source>
+</trans-unit>
+<trans-unit id="sef191ab7b2c9f986">
+  <source>Frame</source>
+</trans-unit>
+<trans-unit id="sa339710fadd15e59">
+  <source>Frame count</source>
+</trans-unit>
+<trans-unit id="sf2fbc9199cc91e28">
+  <source>FPS</source>
+</trans-unit>
+<trans-unit id="s5f752c8abb5ed4bd">
+  <source>Motion-blur length</source>
+</trans-unit>
+<trans-unit id="sd5910b2b3bbea561">
+  <source>Motion-blur time-step</source>
+</trans-unit>
+<trans-unit id="s1d8b27d503ad3af5">
+  <source>Motion-blur decay</source>
 </trans-unit>
 <trans-unit id="sb6fe3cfa16fec3c6">
   <source>Parameters were copied to the Clipboard</source>

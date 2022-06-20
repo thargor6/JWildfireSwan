@@ -84,6 +84,18 @@ export abstract class EditPropertyPanel extends MobxLitElement {
     return 0
   }
 
+  getXformValue(key: string): number {
+    if(!editorStore.currXform) {
+      return 0
+    }
+    // @ts-ignore
+    const val: any = this.getProperty(editorStore.currXform, key)
+    if(val && val.type) {
+      return val.value
+    }
+    return 0
+  }
+
   getFlameBooleanValue(key: string): boolean {
     // @ts-ignore
     const val: any = this.getProperty(editorStore.currFlame, key)
@@ -101,6 +113,21 @@ export abstract class EditPropertyPanel extends MobxLitElement {
         oldVal.value = value
         this.afterPropertyChange()
         // console.log('CHANGED', key, value, oldVal)
+      }
+    }
+  }
+
+  xformPropertyChange = (key: string, value: number) => {
+    if(!editorStore.currXform) {
+      return
+    }
+    // @ts-ignore
+    const oldVal: any = this.getProperty(editorStore.currXform, key)
+    if(oldVal && oldVal.type) {
+      if(oldVal.value !== value) {
+        oldVal.value = value
+        this.afterPropertyChange()
+         console.log('CHANGED', key, value, oldVal)
       }
     }
   }
