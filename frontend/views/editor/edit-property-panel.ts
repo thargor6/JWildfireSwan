@@ -49,7 +49,7 @@ export interface NumberFieldDescriptor {
   max: number
   step: number
   onChange(value: number): void
-  value(): number
+  value(): number | undefined
 }
 
 export abstract class EditPropertyPanel extends MobxLitElement {
@@ -60,7 +60,6 @@ export abstract class EditPropertyPanel extends MobxLitElement {
   afterPropertyChange = ()=>{}
 
   render() {
-    console.log('RENDER MAIN')
     return html`
       <vertical-layout theme="spacing" style="${this.visible ? `display:block;`: `display:none;`}">
        ${this.renderControls()}
@@ -75,25 +74,51 @@ export abstract class EditPropertyPanel extends MobxLitElement {
     return o[propertyName]; // o[propertyName] is of type T[K]
   }
 
-  getFlameValue(key: string): number {
-    // @ts-ignore
-    const val: any = this.getProperty(editorStore.currFlame, key)
-    if(val && val.type) {
-      return val.value
+  getFlameValue(key: string): number | undefined {
+    if(editorStore.currFlame) {
+      // @ts-ignore
+      const val: any = this.getProperty(editorStore.currFlame, key)
+      if (val) {
+        if (val.type) {
+          return val.value
+        } else {
+          return 0
+        }
+      }
     }
-    return 0
+    return undefined
   }
 
-  getXformValue(key: string): number {
-    if(!editorStore.currXform) {
-      return 0
+  getLayerValue(key: string): number | undefined {
+    if(editorStore.currLayer) {
+      // @ts-ignore
+      const val: any = this.getProperty(editorStore.currLayer, key)
+      if(val) {
+        if(val.type) {
+          return val.value
+        }
+        else {
+          return 0
+        }
+      }
     }
-    // @ts-ignore
-    const val: any = this.getProperty(editorStore.currXform, key)
-    if(val && val.type) {
-      return val.value
+    return undefined
+  }
+
+  getXformValue(key: string): number | undefined {
+    if(editorStore.currXform) {
+      // @ts-ignore
+      const val: any = this.getProperty(editorStore.currXform, key)
+      if(val) {
+        if(val.type) {
+          return val.value
+        }
+        else {
+          return 0
+        }
+      }
     }
-    return 0
+    return undefined
   }
 
   getFlameBooleanValue(key: string): boolean {
@@ -106,28 +131,43 @@ export abstract class EditPropertyPanel extends MobxLitElement {
   }
 
   flamePropertyChange = (key: string, value: number) => {
-    // @ts-ignore
-    const oldVal: any = this.getProperty(editorStore.currFlame, key)
-    if(oldVal && oldVal.type) {
-      if(oldVal.value !== value) {
-        oldVal.value = value
-        this.afterPropertyChange()
-        // console.log('CHANGED', key, value, oldVal)
+    if(editorStore.currFlame) {
+      // @ts-ignore
+      const oldVal: any = this.getProperty(editorStore.currFlame, key)
+      if (oldVal && oldVal.type) {
+        if (oldVal.value !== value) {
+          oldVal.value = value
+          this.afterPropertyChange()
+          // console.log('FLAME ATTRIBUTE CHANGED', key, value, oldVal)
+        }
+      }
+    }
+  }
+
+  layerPropertyChange = (key: string, value: number) => {
+    if(editorStore.currLayer) {
+      // @ts-ignore
+      const oldVal: any = this.getProperty(editorStore.currLayer, key)
+      if (oldVal && oldVal.type) {
+        if (oldVal.value !== value) {
+          oldVal.value = value
+          this.afterPropertyChange()
+          // console.log('LAYER ATTRIBUTE CHANGED', key, value, oldVal)
+        }
       }
     }
   }
 
   xformPropertyChange = (key: string, value: number) => {
-    if(!editorStore.currXform) {
-      return
-    }
-    // @ts-ignore
-    const oldVal: any = this.getProperty(editorStore.currXform, key)
-    if(oldVal && oldVal.type) {
-      if(oldVal.value !== value) {
-        oldVal.value = value
-        this.afterPropertyChange()
-         console.log('CHANGED', key, value, oldVal)
+    if(editorStore.currXform) {
+      // @ts-ignore
+      const oldVal: any = this.getProperty(editorStore.currXform, key)
+      if(oldVal && oldVal.type) {
+        if(oldVal.value !== value) {
+          oldVal.value = value
+          this.afterPropertyChange()
+          // console.log('XFORM ATTRIBUTE CHANGED', key, value, oldVal)
+        }
       }
     }
   }
@@ -135,9 +175,10 @@ export abstract class EditPropertyPanel extends MobxLitElement {
   abstract renderControls(): TemplateResult
 
   renderNumberField(desc: NumberFieldDescriptor): TemplateResult {
+    console.log('RENDER', desc.value())
     return html `
-      <swan-number-slider min="${desc.min}" max="${desc.max}" step="${desc.step}" 
-        label="${desc.label}" value="${desc.value()}"
+      <swan-number-slider .disabled="${undefined===desc.value()}" min="${desc.min}" max="${desc.max}" step="${desc.step}" 
+        label="${desc.label}" value="${desc.value()} "
         .onValueChange="${desc.onChange}">
       </swan-number-slider>
     `
@@ -163,7 +204,7 @@ export abstract class EditPropertyPanel extends MobxLitElement {
   }
 
   refreshForm() {
-   // this.render()
+    // this.render()
     // TODO
   }
 

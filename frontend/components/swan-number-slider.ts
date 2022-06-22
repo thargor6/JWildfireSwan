@@ -44,6 +44,9 @@ export class SwanNumberSlider extends MobxLitElement {
     step = 0.5
 
     @property()
+    disabled = false
+
+    @property()
     onValueChange?: (value: number)=>{}
 
     @query('vaadin-custom-field')
@@ -59,8 +62,7 @@ export class SwanNumberSlider extends MobxLitElement {
         return html  `
 
             <vaadin-custom-field
-              label="${this.label}"
-              theme="whitespace"
+              ?disabled="${this.disabled}"
               @change="${(e: CustomFieldValueChangedEvent) => {
                   // console.log(e.detail.value)
                   const val = e.detail.value
@@ -74,16 +76,16 @@ export class SwanNumberSlider extends MobxLitElement {
               }}"
             >
 
-            <div style="display: flex; flex-direction: column;">
-                <div style="display: flex; flex-direction: row; align-items: center;">
-                     <vaadin-number-field @change=${this.numberFieldChanged} step=${this.step} min="${this.min}" 
-                                         max="${this.max}" value="${this.value}" has-controls></vaadin-number-field>
-                    <paper-slider @immediate-value-change="${this.immediateValueChanged}"
-                                  @value-change="${this.sliderChange}"
-                                  value="${this.value}" min="${this.min}"
-                                  step=${this.step} max="${this.max}"></paper-slider>
+            <div style="display: flex; flex-direction: row; align-items: center;">
+                <div style="max-width: 30em; margin-right: 0.5em;">${this.label}</div>
 
-                </div>
+                     <vaadin-number-field @change=${this.numberFieldChanged} step=${this.step} min="${this.min}"
+                       ?disabled="${this.disabled}" max="${this.max}" value="${this.value}" has-controls></vaadin-number-field>
+                    <paper-slider @immediate-value-change="${this.immediateValueChanged}"
+                       ?disabled="${this.disabled}" @value-change="${this.sliderChange}" value="${this.value}" min="${this.min}"
+                       step=${this.step} max="${this.max}"></paper-slider>
+
+       
             </div>
 
             </vaadin-custom-field>

@@ -26,9 +26,9 @@ export class EditorStore {
   variations: string[] = []
   calculating = false
   lastError = ''
-  currFlame = new Flame()
-  currLayer: Layer | undefined = undefined
-  currXform: XForm | undefined = undefined
+  _currFlame = new Flame()
+  _currLayer: Layer | undefined = undefined
+  _currXform: XForm | undefined = undefined
 
   constructor() {
     makeAutoObservable(this);
@@ -43,12 +43,38 @@ export class EditorStore {
     }
   }
 
-  get currLayers(): Array<Layer> {
-    return this.currFlame.layers
+  get currFlame() {
+    return this._currFlame
   }
 
-  get currXForms(): Array<XForm> {
-    return this.currLayer? this.currLayer.xforms : []
+  set currFlame(newFlame: Flame) {
+    this._currFlame = newFlame
+    this._currLayer = undefined
+  }
+
+  get currLayer() {
+    return this._currLayer
+  }
+
+  set currLayer(newLayer: Layer | undefined) {
+    this._currLayer = newLayer
+    this._currXform = undefined
+  }
+
+  get currLayers(): Array<Layer> {
+    return this._currFlame.layers
+  }
+
+  get currXform() {
+    return this._currXform
+  }
+
+  set currXform(newXform: XForm | undefined) {
+    this._currXform = newXform
+  }
+
+  get currXforms(): Array<XForm> {
+    return this._currLayer? this._currLayer.xforms : []
   }
 
 }
