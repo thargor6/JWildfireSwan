@@ -26,6 +26,7 @@ import '@vaadin/vaadin-combo-box'
 import '@vaadin/vaadin-checkbox'
 import '@vaadin/scroller'
 import '@vaadin/vaadin-progress-bar'
+import '@vaadin/app-layout/vaadin-drawer-toggle';
 import {RendererFlame, rendererStore} from "Frontend/stores/renderer-store";
 import '../../components/render-panel'
 import '../../components/swan-error-panel'
@@ -36,12 +37,11 @@ import {autorun} from "mobx";
 import {state} from "lit/decorators";
 import {HasValue} from "@hilla/form";
 import '../../components/swan-loading-indicator';
-import {RenderResolution, RenderResolutions} from "Frontend/flames/renderer/render-resolution";
-import {FlamesEndpoint} from "Frontend/generated/endpoints";
-import {FlameMapper} from "Frontend/flames/model/mapper/flame-mapper";
-import {playgroundStore} from "Frontend/stores/playground-store";
+import {RenderResolutions} from "Frontend/flames/renderer/render-resolution";
 import {Parameters} from "Frontend/flames/model/parameters";
+import {msg, localized} from "@lit/localize";
 
+@localized()
 @customElement('renderer-view')
 export class RendererView extends View  {
     @state()
@@ -78,6 +78,10 @@ export class RendererView extends View  {
 
     render() {
         return html`
+            <header class="bg-base border-b border-contrast-10 box-border flex h-xl items-center w-full" slot="navbar">
+                <vaadin-drawer-toggle aria-label="Menu toggle" class="text-secondary" theme="contrast"></vaadin-drawer-toggle>
+                <h1 class="m-0 text-l">${msg('Batch flame renderer')}</h1>
+            </header>
             <vertical-layout theme="spacing">
               <swan-error-panel .errorMessage=${rendererStore.lastError}></swan-error-panel>
               <div class="gap-m grid list-none m-2 p-2" style="grid-template-columns: repeat(auto-fill, minmax(24em, 1fr));">

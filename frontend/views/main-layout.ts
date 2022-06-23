@@ -29,7 +29,8 @@ import { router } from '../index';
 import { views } from '../routes';
 import { appStore } from '../stores/app-store';
 import { Layout } from './view';
-import {galleryStore} from "Frontend/stores/gallery-store";
+import '../components/swan-progress-indicator'
+import {renderInfoStore} from "Frontend/stores/render-info-store";
 
 interface RouteInfo {
     path: string;
@@ -42,10 +43,6 @@ export class MainLayout extends Layout {
     render() {
         return html`
       <vaadin-app-layout primary-section="drawer">
-        <header class="bg-base border-b border-contrast-10 box-border flex h-xl items-center w-full" slot="navbar">
-          <vaadin-drawer-toggle aria-label="Menu toggle" class="text-secondary" theme="contrast"></vaadin-drawer-toggle>
-          <h1 class="m-0 text-l">${appStore.currentViewTitle}</h1>
-        </header>
         <section class="flex flex-col items-stretch max-h-full min-h-full" slot="drawer">
           <img style="margin-left: 1em; margin-top: 1em; width: 12.5rem;" alt="JWildfire Swan" src="./icons/swan_logo_05.svg" />
           <h2 class="flex items-center h-xl m-0 px-m text-m">${appStore.applicationName}</h2>
@@ -68,7 +65,10 @@ export class MainLayout extends Layout {
         )}
             </ul>
           </nav>
-          <footer class="flex items-center my-s px-m py-xs">Footer</footer>
+          <footer class="flex items-center my-s px-m py-xs">              
+              <swan-progress-indicator .displayWidth=${'10em'} renderInfo=${renderInfoStore.renderInfo}
+                .renderProgress="${renderInfoStore.renderProgress}"></swan-progress-indicator>
+          </footer>
         </section>
         <slot></slot>
       </vaadin-app-layout>

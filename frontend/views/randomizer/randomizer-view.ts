@@ -22,12 +22,11 @@ import '@vaadin/select';
 import '@vaadin/vertical-layout';
 import '@vaadin/vaadin-button'
 import '@vaadin/combo-box'
+import '@vaadin/app-layout/vaadin-drawer-toggle';
 import {html, nothing} from 'lit';
 import { customElement } from 'lit/decorators.js';
 import { View } from '../../views/view';
-import {galleryStore} from "Frontend/stores/gallery-store";
 import {Router} from "@vaadin/router";
-import {SortOrder} from "Frontend/stores/example-flames";
 import {FlamesEndpoint} from "Frontend/generated/endpoints";
 import {FlameMapper} from "Frontend/flames/model/mapper/flame-mapper";
 import {RandomFlame, randomizerStore} from "Frontend/stores/randomizer-store";
@@ -40,12 +39,18 @@ import {DisplayMode} from "Frontend/flames/renderer/render-settings";
 import {playgroundStore} from "Frontend/stores/playground-store";
 import '@vaadin/icon';
 import {prefsStore} from "Frontend/stores/prefs-store";
+import {msg, localized} from "@lit/localize";
 
+@localized()
 @customElement('randomizer-view')
 export class RandomizerView extends View {
 
   render = () => {
     return html`
+      <header class="bg-base border-b border-contrast-10 box-border flex h-xl items-center w-full" slot="navbar">
+          <vaadin-drawer-toggle aria-label="Menu toggle" class="text-secondary" theme="contrast"></vaadin-drawer-toggle>
+          <h1 class="m-0 text-l">${msg('Flame randomizer')}</h1>
+      </header>
       <main class="max-w-screen-lg mx-auto pb-l px-l">
         <vaadin-horizontal-layout class="items-center justify-between">
           <vaadin-vertical-layout>

@@ -22,18 +22,25 @@ import '@vaadin/select';
 import '@vaadin/vertical-layout';
 import '@vaadin/vaadin-button'
 import '@vaadin/combo-box'
+import '@vaadin/app-layout/vaadin-drawer-toggle';
 import {html, nothing} from 'lit';
 import { customElement } from 'lit/decorators.js';
 import { View } from '../../views/view';
 import {galleryStore} from "Frontend/stores/gallery-store";
 import {Router} from "@vaadin/router";
 import {SortOrder} from "Frontend/stores/example-flames";
+import {msg, localized} from "@lit/localize";
 
+@localized()
 @customElement('gallery-view')
 export class GalleryView extends View {
 
   render = () => {
     return html`
+      <header class="bg-base border-b border-contrast-10 box-border flex h-xl items-center w-full" slot="navbar">
+          <vaadin-drawer-toggle aria-label="Menu toggle" class="text-secondary" theme="contrast"></vaadin-drawer-toggle>
+          <h1 class="m-0 text-l">${msg('Example flame gallery')}</h1>
+      </header>
       <main class="max-w-screen-lg mx-auto pb-l px-l">
         <vaadin-horizontal-layout class="items-center justify-between">
           <vaadin-vertical-layout>

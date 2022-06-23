@@ -35,6 +35,7 @@ import '@vaadin/scroller'
 import '@vaadin/split-layout';
 import '@vaadin/vaadin-notification'
 import type { Notification } from '@vaadin/notification';
+import '@vaadin/app-layout/vaadin-drawer-toggle';
 
 import {FlameRenderer} from '../../flames/renderer/flame-renderer'
 import {FlamesEndpoint, GalleryEndpoint} from "Frontend/generated/endpoints";
@@ -51,9 +52,10 @@ import '../../components/render-panel'
 import {BeforeEnterObserver, PreventAndRedirectCommands, Router, RouterLocation} from "@vaadin/router";
 import {RenderPanel} from "Frontend/components/render-panel";
 import {RenderResolutions} from "Frontend/flames/renderer/render-resolution";
-import {RandomFlame, randomizerStore} from 'Frontend/stores/randomizer-store';
-import {renderInfoStore} from "Frontend/stores/render-info-store";
+import {randomizerStore} from 'Frontend/stores/randomizer-store';
+import {msg, localized} from "@lit/localize";
 
+@localized()
 @customElement('playground-view')
 export class PlaygroundView extends View implements BeforeEnterObserver {
     @state()
@@ -70,15 +72,15 @@ export class PlaygroundView extends View implements BeforeEnterObserver {
 
     render() {
         return html`
+            <header class="bg-base border-b border-contrast-10 box-border flex h-xl items-center w-full" slot="navbar">
+                <vaadin-drawer-toggle aria-label="Menu toggle" class="text-secondary" theme="contrast"></vaadin-drawer-toggle>
+                <h1 class="m-0 text-l">${msg('Playground')}</h1>
+            </header>
             ${this.renderNotification()}
             <vertical-layout theme="spacing">
               <swan-error-panel .errorMessage=${playgroundStore.lastError}></swan-error-panel>
               <div class="gap-m grid list-none m-0 p-0" style="grid-template-columns: repeat(auto-fill, minmax(30em, 1fr));">
-                <div style="display: flex; flex-direction: column; align-items: center;">
-                  <render-panel .onCreateFlameRenderer=${this.createFlameRenderer}></render-panel>
-                  <swan-progress-indicator .displayWidth='24em' .renderInfo=${renderInfoStore.renderInfo}
-                                           .renderProgress="${renderInfoStore.renderProgress}"></swan-progress-indicator>
-                </div>
+                <render-panel .onCreateFlameRenderer=${this.createFlameRenderer}></render-panel>
                 ${this.renderMainTabs()}
               </div>  
             </vertical-layout>

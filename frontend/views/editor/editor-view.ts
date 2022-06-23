@@ -35,6 +35,7 @@ import '@vaadin/split-layout';
 import '@vaadin/vaadin-notification'
 import '@vaadin/vaadin-grid'
 import '@vaadin/vaadin-split-layout'
+import '@vaadin/app-layout/vaadin-drawer-toggle';
 
 import {FlameRenderer} from '../../flames/renderer/flame-renderer'
 import {FlamesEndpoint} from "Frontend/generated/endpoints";
@@ -123,8 +124,20 @@ export class EditorView extends View implements BeforeEnterObserver {
 
   render() {
         return html`
+          <header class="bg-base border-b border-contrast-10 box-border flex h-xl items-center w-full" slot="navbar">
+            <vaadin-drawer-toggle aria-label="Menu toggle" class="text-secondary" theme="contrast"></vaadin-drawer-toggle>
+            <h1 class="m-0 text-l" style="margin-right: 1em;">${msg('Flame editor')}</h1>
+              <editor-toolbar-panel 
+                      .onEditPasteFlameFromClipboard="${this.importParamsFromClipboard}"
+                      .onEditCopyFlameToClipboard="${this.exportParamsToClipboard}"
+                      .onNewBlankFlame="${this.createBlankFlame}"
+                      .onNewRandomFlame="${this.createRandomFlame}"
+                      .onNewRandomGradient="${this.createRandomGradient}"
+                    ></editor-toolbar-panel>
+          </header>
           <swan-notification-panel></swan-notification-panel>
           <swan-error-panel .errorMessage=${editorStore.lastError}></swan-error-panel>
+          
           <vaadin-vertical-layout>
             <div>
               <render-panel .onCreateFlameRenderer=${this.createFlameRenderer}></render-panel>
@@ -137,13 +150,7 @@ export class EditorView extends View implements BeforeEnterObserver {
                     </vaadin-grid>
                   </vaadin-vertical-layout>
                   <vaadin-vertical-layout>
-                    <editor-toolbar-panel 
-                      .onEditPasteFlameFromClipboard="${this.importParamsFromClipboard}"
-                      .onEditCopyFlameToClipboard="${this.exportParamsToClipboard}"
-                      .onNewBlankFlame="${this.createBlankFlame}"
-                      .onNewRandomFlame="${this.createRandomFlame}"
-                      .onNewRandomGradient="${this.createRandomGradient}"
-                    ></editor-toolbar-panel>
+                    
                     ${this.renderTransformTabs()}
                   </vaadin-vertical-layout>
               </vaadin-split-layout>

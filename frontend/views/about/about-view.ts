@@ -29,12 +29,15 @@ import '@vaadin/text-field';
 import '@vaadin/vertical-layout';
 import '@vaadin/vaadin-details'
 import '@vaadin/tabs'
+import '@vaadin/app-layout/vaadin-drawer-toggle';
 
 import '@vaadin/vaadin-combo-box';
 import './about-variations-panel'
 import './about-app-info-panel'
 import './about-session-info-panel'
+import {msg, localized} from "@lit/localize";
 
+@localized()
 @customElement('about-view')
 export class AboutView extends View {
 
@@ -59,6 +62,10 @@ export class AboutView extends View {
 
   render() {
     return html`
+        <header class="bg-base border-b border-contrast-10 box-border flex h-xl items-center w-full" slot="navbar">
+            <vaadin-drawer-toggle aria-label="Menu toggle" class="text-secondary" theme="contrast"></vaadin-drawer-toggle>
+            <h1 class="m-0 text-l">${msg('Help / About')}</h1>
+        </header>
       <div style="margin: 1em;">
       <div
           class="bg-contrast flex items-center justify-center mb-m overflow-hidden rounded-m w-full"
