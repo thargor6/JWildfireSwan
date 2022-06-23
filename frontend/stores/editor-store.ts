@@ -27,6 +27,7 @@ export class EditorStore {
   calculating = false
   lastError = ''
   _currFlame = new Flame()
+  _currLayers: Layer[] = []
   _currLayer: Layer | undefined = undefined
   _currXform: XForm | undefined = undefined
 
@@ -49,6 +50,7 @@ export class EditorStore {
 
   set currFlame(newFlame: Flame) {
     this._currFlame = newFlame
+    this.refreshLayers()
     this._currLayer = undefined
   }
 
@@ -62,7 +64,7 @@ export class EditorStore {
   }
 
   get currLayers(): Array<Layer> {
-    return this._currFlame.layers
+    return this._currLayers
   }
 
   get currXform() {
@@ -77,6 +79,9 @@ export class EditorStore {
     return this._currLayer? this._currLayer.xforms : []
   }
 
+  refreshLayers() {
+    this._currLayers = [...this._currFlame.layers]
+  }
 }
 
 registerVars_All()

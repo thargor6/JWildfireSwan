@@ -16,6 +16,7 @@
 */
 
 import {FlameParameter, FlameResource, Parameters} from "Frontend/flames/model/parameters";
+import {cloneDeep} from "lodash";
 
 export const GRADIENT_SIZE = 256
 
@@ -199,5 +200,22 @@ export class Flame {
 
     public get layers() {
         return this._layers;
+    }
+
+    addLayer() {
+        const layer = new Layer()
+        this._layers.push(layer)
+    }
+
+    duplicateLayer(refLayer: Layer) {
+        const layer = cloneDeep(refLayer)
+        this._layers.push(layer)
+    }
+
+    deleteLayer(layer: Layer) {
+        const idx = this._layers.indexOf(layer)
+        if(idx>=0) {
+            this._layers.splice(idx, 1)
+        }
     }
 }

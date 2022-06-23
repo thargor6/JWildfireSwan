@@ -60,7 +60,6 @@ export class SwanNumberSlider extends MobxLitElement {
 
     render() {
         return html  `
-
             <vaadin-custom-field
               ?disabled="${this.disabled}"
               @change="${(e: CustomFieldValueChangedEvent) => {
@@ -73,21 +72,15 @@ export class SwanNumberSlider extends MobxLitElement {
                   if(this.onValueChange) {
                       this.onValueChange(this.value)
                   }
-              }}"
-            >
-
-            <div style="display: flex; flex-direction: row; align-items: center;">
-                <div style="max-width: 30em; margin-right: 0.5em;">${this.label}</div>
-
-                     <vaadin-number-field @change=${this.numberFieldChanged} step=${this.step} min="${this.min}"
-                       ?disabled="${this.disabled}" max="${this.max}" value="${this.value}" has-controls></vaadin-number-field>
-                    <paper-slider @immediate-value-change="${this.immediateValueChanged}"
-                       ?disabled="${this.disabled}" @value-change="${this.sliderChange}" value="${this.value}" min="${this.min}"
-                       step=${this.step} max="${this.max}"></paper-slider>
-
-       
-            </div>
-
+              }}">
+              <div style="display: flex; flex-direction: row; align-items: center;">
+                <div style="width: 10em; margin-right: 0.5em;">${this.label}</div>
+                <vaadin-number-field @change=${this.numberFieldChanged} step=${this.step} min="${this.min}"
+                  ?disabled="${this.disabled}" max="${this.max}" value="${this.value}" has-controls></vaadin-number-field>
+                 <paper-slider @immediate-value-change="${this.immediateValueChanged}"
+                   ?disabled="${this.disabled}" @value-change="${this.sliderChange}" value="${this.value}" min="${this.min}"
+                   step=${this.step} max="${this.max}"></paper-slider>
+              </div>
             </vaadin-custom-field>
         `
     }

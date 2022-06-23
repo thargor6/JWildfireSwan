@@ -175,7 +175,6 @@ export abstract class EditPropertyPanel extends MobxLitElement {
   abstract renderControls(): TemplateResult
 
   renderNumberField(desc: NumberFieldDescriptor): TemplateResult {
-    console.log('RENDER', desc.value())
     return html `
       <swan-number-slider .disabled="${undefined===desc.value()}" min="${desc.min}" max="${desc.max}" step="${desc.step}" 
         label="${desc.label}" value="${desc.value()} "

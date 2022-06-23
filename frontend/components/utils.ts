@@ -19,3 +19,7 @@ export function getTimeStamp() {
     // @ts-ignore
     return window.performance && window.performance.now && window.performance.timing && window.performance.timing.navigationStart ? window.performance.now() + window.performance.timing.navigationStart : Date.now()
 }
+
+export function floatToStr(value: number) {
+    return value.toLocaleString()
+}
