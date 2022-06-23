@@ -52,6 +52,7 @@ import {BeforeEnterObserver, PreventAndRedirectCommands, Router, RouterLocation}
 import {RenderPanel} from "Frontend/components/render-panel";
 import {RenderResolutions} from "Frontend/flames/renderer/render-resolution";
 import {RandomFlame, randomizerStore} from 'Frontend/stores/randomizer-store';
+import {renderInfoStore} from "Frontend/stores/render-info-store";
 
 @customElement('playground-view')
 export class PlaygroundView extends View implements BeforeEnterObserver {
@@ -73,7 +74,11 @@ export class PlaygroundView extends View implements BeforeEnterObserver {
             <vertical-layout theme="spacing">
               <swan-error-panel .errorMessage=${playgroundStore.lastError}></swan-error-panel>
               <div class="gap-m grid list-none m-0 p-0" style="grid-template-columns: repeat(auto-fill, minmax(30em, 1fr));">
-                <render-panel .onCreateFlameRenderer=${this.createFlameRenderer}></render-panel> 
+                <div style="display: flex; flex-direction: column; align-items: center;">
+                  <render-panel .onCreateFlameRenderer=${this.createFlameRenderer}></render-panel>
+                  <swan-progress-indicator .displayWidth='24em' .renderInfo=${renderInfoStore.renderInfo}
+                                           .renderProgress="${renderInfoStore.renderProgress}"></swan-progress-indicator>
+                </div>
                 ${this.renderMainTabs()}
               </div>  
             </vertical-layout>

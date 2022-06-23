@@ -125,18 +125,18 @@ export class EditorView extends View implements BeforeEnterObserver {
         return html`
           <swan-notification-panel></swan-notification-panel>
           <swan-error-panel .errorMessage=${editorStore.lastError}></swan-error-panel>
-          <vertical-layout>
-            <div class=" grid list-none m-0 p-0" style="grid-template-columns: repeat(auto-fill, minmax(30em, 1fr));">
+          <vaadin-vertical-layout>
+            <div>
               <render-panel .onCreateFlameRenderer=${this.createFlameRenderer}></render-panel>
                 <vaadin-split-layout>
-                  <vertical-layout style="width: 33%;">
+                  <vaadin-vertical-layout style="width: 33%;">
                     <h2>${msg('Transformations')}</h2>
                     <vaadin-grid theme="compact" .items="${editorStore.currXforms}">
                       <vaadin-grid-column path="weight"></vaadin-grid-column>
                       <vaadin-grid-column path="color"></vaadin-grid-column>
                     </vaadin-grid>
-                  </vertical-layout>
-                  <vertical-layout>
+                  </vaadin-vertical-layout>
+                  <vaadin-vertical-layout>
                     <editor-toolbar-panel 
                       .onEditPasteFlameFromClipboard="${this.importParamsFromClipboard}"
                       .onEditCopyFlameToClipboard="${this.exportParamsToClipboard}"
@@ -145,11 +145,11 @@ export class EditorView extends View implements BeforeEnterObserver {
                       .onNewRandomGradient="${this.createRandomGradient}"
                     ></editor-toolbar-panel>
                     ${this.renderTransformTabs()}
-                  </vertical-layout>
+                  </vaadin-vertical-layout>
               </vaadin-split-layout>
             </div>
             ${this.renderFlameTabs()}
-          </vertical-layout>
+          </vaadin-vertical-layout>
         `;
     }
 

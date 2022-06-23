@@ -22,33 +22,26 @@ import '@polymer/paper-slider/paper-slider'
 import '@vaadin/vaadin-button'
 import '@vaadin/vaadin-combo-box';
 import '@vaadin/scroller';
-import '@vaadin/vaadin-progress-bar'
+import '../components/swan-progress-indicator'
 import {MobxLitElement} from "@adobe/lit-mobx";
 import {FlameRenderer} from "Frontend/flames/renderer/flame-renderer";
 import {getTimeStamp} from "Frontend/components/utils";
 import {AppInfoEndpoint} from "Frontend/generated/endpoints";
-import {autorun} from "mobx";
-import {rendererStore} from "Frontend/stores/renderer-store";
+import {renderInfoStore} from "Frontend/stores/render-info-store";
 
 @customElement('render-panel')
 export class RenderPanel extends MobxLitElement {
-  @state()
-  renderInfo = ''
-
-  @state()
-  renderProgress = 0.0
+  @property()
+  containerWidth = '30em'
 
   @property()
-  containerWidth = '34em'
+  containerHeight = '30em'
 
   @property()
-  containerHeight = '34em'
+  canvasDisplayWidth = '24em'
 
   @property()
-  canvasDisplayWidth = '28em'
-
-  @property()
-  canvasDisplayHeight = '28em'
+  canvasDisplayHeight = '24em'
 
   @property({type: Boolean})
   withProgressBar = true
@@ -65,16 +58,10 @@ export class RenderPanel extends MobxLitElement {
   renderer: FlameRenderer | undefined = undefined
 
   render() {
-    return html `
-            <div style="display: flex; flex-direction: column; align-items: center;">
-                <vaadin-scroller style="max-width: ${this.containerWidth}; max-height: ${this.containerHeight};" id="canvas-container">
-                    <canvas  width="64" height="64"></canvas>
-                </vaadin-scroller>
-                <div style="display: flex; flex-direction: column; min-width: ${this.canvasDisplayWidth};">
-                    <div style="${this.withProgressBar ? `display:block;`: `display:none;`}">${this.renderInfo}</div>
-                    <vaadin-progress-bar style="${this.withProgressBar ? `display:block;`: `display:none;`}" .value=${this.renderProgress} theme="contrast"></vaadin-progress-bar>
-                </div>
-            </div>
+    return html `         
+        <vaadin-scroller style="max-width: ${this.containerWidth}; max-height: ${this.containerHeight};" id="canvas-container">
+            <canvas width="64" height="64"></canvas>
+        </vaadin-scroller>
     `
   }
 
@@ -105,7 +92,7 @@ export class RenderPanel extends MobxLitElement {
   }
 
   renderAndSave = ()=> {
-    console.log("SAVE")
+    // console.log("SAVE")
   }
 
   public rerenderFlame = (renderer: FlameRenderer | undefined = undefined)=> {
@@ -139,8 +126,8 @@ export class RenderPanel extends MobxLitElement {
       console.log("NO CANVAS - creating one!")
       this.recreateCanvas()
     }
-    this.renderProgress = 0.0
-    this.renderInfo = 'Rendering'
+    renderInfoStore.renderProgress = 0.0
+    renderInfoStore.renderInfo = 'Rendering'
     if(renderer) {
       this.renderer = renderer
     }
@@ -155,8 +142,8 @@ export class RenderPanel extends MobxLitElement {
   }
 
   execOnRenderFinished = (frameCount: number, elapsedTimeInS: number) => {
-    this.renderProgress = 1.0
-    this.renderInfo = 'Rendering finished after ' + Math.round((elapsedTimeInS + Number.EPSILON) * 100) / 100 + ' s'
+    renderInfoStore.renderProgress = 1.0
+    renderInfoStore.renderInfo = 'Rendering finished after ' + Math.round((elapsedTimeInS + Number.EPSILON) * 100) / 100 + ' s'
     AppInfoEndpoint.incFlamesRendered()
     if(this.onRenderFinished) {
       this.onRenderFinished(frameCount, elapsedTimeInS)
@@ -170,8 +157,8 @@ export class RenderPanel extends MobxLitElement {
   onUpdateRenderProgress = (currSampleCount: number, maxSampleCount: number, frameCount: number, elapsedTimeInSeconds: number)=> {
     const currTimeStamp = getTimeStamp()
     if(currTimeStamp > this.lastProgressUpdate + 333) {
-      this.renderProgress = currSampleCount / maxSampleCount
-      this.renderInfo = `Rendering in progress ${Math.round(currSampleCount/maxSampleCount*100)}% (frame: ${frameCount})`
+      renderInfoStore.renderProgress = currSampleCount / maxSampleCount
+      renderInfoStore.renderInfo = `Rendering in progress ${Math.round(currSampleCount/maxSampleCount*100)}% (frame: ${frameCount})`
       this.lastProgressUpdate = currTimeStamp
     }
   }
