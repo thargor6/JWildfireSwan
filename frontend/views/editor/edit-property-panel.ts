@@ -39,7 +39,7 @@ export interface ComboBoxDescriptor {
   label: string
   items?:Array<ComoboBoxItem>
   onChange(value: number): void
-  value(): number
+  value(): number | undefined
 }
 
 export interface NumberFieldDescriptor {
