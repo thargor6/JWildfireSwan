@@ -67,6 +67,7 @@ export const views: ViewRoute[] = [
       return;
     },
   },
+  /*
   {
     path: 'randomizer',
     component: 'randomizer-view',
@@ -77,6 +78,8 @@ export const views: ViewRoute[] = [
       return;
     },
   },
+
+   */
   {
     path: 'gallery',
     component: 'gallery-view',
@@ -87,6 +90,7 @@ export const views: ViewRoute[] = [
       return;
     },
   },
+  /*
   {
     path: 'renderer',
     component: 'renderer-view',
@@ -97,6 +101,8 @@ export const views: ViewRoute[] = [
       return;
     },
   },
+
+   */
   {
     path: 'about',
     component: 'about-view',

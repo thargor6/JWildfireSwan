@@ -67,6 +67,7 @@ import './editor-edit-xform-affine-panel'
 import './editor-edit-xform-nonlinear-panel'
 import './editor-edit-xform-xaos-panel'
 import './editor-edit-xform-color-panel'
+import './editor-transforms-grid-panel'
 import {EditorEditCameraPanel} from "Frontend/views/editor/editor-edit-camera-panel";
 import {EditorEditColoringPanel} from "Frontend/views/editor/editor-edit-coloring-panel";
 import {EditorEditDenoiserPanel} from "Frontend/views/editor/editor-edit-denoiser-panel";
@@ -76,6 +77,7 @@ import {EditorEditXformAffinePanel} from "Frontend/views/editor/editor-edit-xfor
 import {EditorEditXformNonlinearPanel} from "Frontend/views/editor/editor-edit-xform-nonlinear-panel";
 import {EditorEditXformXaosPanel} from "Frontend/views/editor/editor-edit-xform-xaos-panel";
 import {EditorEditXformColorPanel} from "Frontend/views/editor/editor-edit-xform-color-panel";
+import {EditorTransformsGridPanel} from "Frontend/views/editor/editor-transforms-grid-panel";
 
 @localized()
 @customElement('editor-view')
@@ -95,32 +97,11 @@ export class EditorView extends View implements BeforeEnterObserver {
   @query('swan-notification-panel')
   notificationPnl!: SwanNotificationPanel
 
-  @query('editor-edit-camera-panel')
-  flameCameraPanel!: EditorEditCameraPanel
-
-  @query('editor-edit-coloring-panel')
-  flameColoringPanel!: EditorEditColoringPanel
-
-  @query('editor-edit-denoiser-panel')
-  flameDenoiserPanel!: EditorEditDenoiserPanel
-
-  @query('editor-edit-motion-panel')
-  flameMotionPanel!: EditorEditMotionPanel
-
   @query('editor-edit-layers-panel')
   flameLayersPanel!: EditorEditLayersPanel
 
-  @query('editor-edit-xform-affine-panel')
-  xformAffinePanel!: EditorEditXformAffinePanel
-
-  @query('editor-edit-xform-nonlinear-panel')
-  xformNonlinearPanel!: EditorEditXformNonlinearPanel
-
-  @query('editor-edit-xform-xaos-panel')
-  xformXaosPanel!: EditorEditXformXaosPanel
-
-  @query('editor-edit-xform-color-panel')
-  xformColorPanel!: EditorEditXformColorPanel
+  @query('editor-transforms-grid-panel')
+  tranaformsGridPanel!: EditorTransformsGridPanel
 
   render() {
         return html`
@@ -142,13 +123,7 @@ export class EditorView extends View implements BeforeEnterObserver {
             <vaadin-horizontal-layout>
               <render-panel .onCreateFlameRenderer=${this.createFlameRenderer}></render-panel>
               ${this.renderTransformTabs()}
-              <vaadin-vertical-layout style="width: 33%;">
-                <h2>${msg('Transformations')}</h2>
-                <vaadin-grid style="width: 10em; height: 20em;" theme="no-border" .items="${editorStore.currXforms}">
-                  <vaadin-grid-column path="weight"></vaadin-grid-column>
-                  <vaadin-grid-column path="color"></vaadin-grid-column>
-                </vaadin-grid>
-              </vaadin-vertical-layout>
+              <editor-transforms-grid-panel></editor-transforms-grid-panel>
             </vaadin-horizontal-layout>
             ${this.renderFlameTabs()}
           </vaadin-vertical-layout>
@@ -401,6 +376,7 @@ export class EditorView extends View implements BeforeEnterObserver {
   private set currFlame(newFlame) {
     editorStore.currFlame = newFlame
     setTimeout(()=>this.flameLayersPanel.selectFirstLayer(), 250)
+    setTimeout(()=>this.tranaformsGridPanel.selectFirstXform(), 250)
     if(this.flameLayersPanel) {
       this.flameLayersPanel.selectFirstLayer()
     }

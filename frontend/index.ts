@@ -24,5 +24,5 @@ export const {getLocale, setLocale} = configureLocalization({
 });
 
 (async () => {
-  await setLocale('de');
+  //await setLocale('de');
 })();

@@ -65,8 +65,7 @@ export class EditorEditLayersPanel extends EditPropertyPanel {
               const item = e.detail.value;
               this.selectedItems = item ? [item] : [];
               editorStore.currLayer = item ? item : undefined
-             }}"
-          >
+             }}">
             <vaadin-grid-column frozen header="${msg('Layer')}" .renderer="${this.layerColRenderer}"></vaadin-grid-column>
             <vaadin-grid-column frozen header="${msg('Density')}" text-align="end" .renderer="${this.densityColRenderer}"></vaadin-grid-column>
             <vaadin-grid-column frozen header="${msg('Weight')}" text-align="end" .renderer="${this.weightColRenderer}"></vaadin-grid-column>
@@ -117,7 +116,6 @@ export class EditorEditLayersPanel extends EditPropertyPanel {
       editorStore.refreshLayers()
     }
   }
-
 
   selectFirstLayer = ()=> {
     if(editorStore.currLayers.length>0) {
