@@ -202,12 +202,6 @@ export abstract class EditPropertyPanel extends MobxLitElement {
     `
   }
 
-  refreshForm() {
-    // this.render()
-    // TODO
-  }
-
-
   /*
   export function getFlameParam(propertyPath: string): FlameParameter | undefined {
     if(!playgroundStore || !playgroundStore.flame) {

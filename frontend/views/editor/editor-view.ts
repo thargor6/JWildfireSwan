@@ -139,22 +139,17 @@ export class EditorView extends View implements BeforeEnterObserver {
           <swan-error-panel .errorMessage=${editorStore.lastError}></swan-error-panel>
           
           <vaadin-vertical-layout>
-            <div>
+            <vaadin-horizontal-layout>
               <render-panel .onCreateFlameRenderer=${this.createFlameRenderer}></render-panel>
-                <vaadin-split-layout>
-                  <vaadin-vertical-layout style="width: 33%;">
-                    <h2>${msg('Transformations')}</h2>
-                    <vaadin-grid theme="compact" .items="${editorStore.currXforms}">
-                      <vaadin-grid-column path="weight"></vaadin-grid-column>
-                      <vaadin-grid-column path="color"></vaadin-grid-column>
-                    </vaadin-grid>
-                  </vaadin-vertical-layout>
-                  <vaadin-vertical-layout>
-                    
-                    ${this.renderTransformTabs()}
-                  </vaadin-vertical-layout>
-              </vaadin-split-layout>
-            </div>
+              ${this.renderTransformTabs()}
+              <vaadin-vertical-layout style="width: 33%;">
+                <h2>${msg('Transformations')}</h2>
+                <vaadin-grid style="width: 10em; height: 20em;" theme="no-border" .items="${editorStore.currXforms}">
+                  <vaadin-grid-column path="weight"></vaadin-grid-column>
+                  <vaadin-grid-column path="color"></vaadin-grid-column>
+                </vaadin-grid>
+              </vaadin-vertical-layout>
+            </vaadin-horizontal-layout>
             ${this.renderFlameTabs()}
           </vaadin-vertical-layout>
         `;
@@ -405,17 +400,10 @@ export class EditorView extends View implements BeforeEnterObserver {
 
   private set currFlame(newFlame) {
     editorStore.currFlame = newFlame
-  //  editorStore.currLayer = newFlame.layers[0]
-  //  editorStore.currXform = editorStore.currLayer.xforms[0]
-    this.flameCameraPanel.refreshForm()
-    this.flameColoringPanel.refreshForm()
-    this.flameDenoiserPanel.refreshForm()
-    this.flameMotionPanel.refreshForm()
-    this.flameLayersPanel.refreshForm()
-    this.xformAffinePanel.renderControls()
-    this.xformNonlinearPanel.renderControls()
-    this.xformXaosPanel.renderControls()
-    this.xformColorPanel.renderControls()
+    setTimeout(()=>this.flameLayersPanel.selectFirstLayer(), 250)
+    if(this.flameLayersPanel) {
+      this.flameLayersPanel.selectFirstLayer()
+    }
   }
 
 }

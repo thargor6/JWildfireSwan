@@ -118,5 +118,12 @@ export class EditorEditLayersPanel extends EditPropertyPanel {
     }
   }
 
+
+  selectFirstLayer = ()=> {
+    if(editorStore.currLayers.length>0) {
+      const event = new CustomEvent('active-item-changed', { detail: { value: editorStore.currLayers[0]} });
+      this.grid.dispatchEvent(event)
+    }
+  }
 }
 
