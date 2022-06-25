@@ -37,7 +37,6 @@ export class EditorTransformsGridPanel extends MobxLitElement {
   @query('vaadin-grid')
   grid!: Grid
 
-
   render() {
     return html`
         <vaadin-vertical-layout style="width: 33%;">

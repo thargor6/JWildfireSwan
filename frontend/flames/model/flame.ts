@@ -135,6 +135,37 @@ export class Layer {
     public get finalXforms() {
         return this._finalXforms;
     }
+
+    public randomizeColors() {
+        for(let idx=0;idx<this._xforms.length; idx++) {
+            let xform = this._xforms[idx]
+            xform.color = Parameters.floatParam(Math.random())
+        }
+    }
+
+    public randomizeColorSymmetry() {
+        for(let idx=0;idx<this._xforms.length; idx++) {
+            let xform = this._xforms[idx]
+            xform.colorSymmetry = Parameters.floatParam(Math.random())
+        }
+    }
+
+    public resetColors() {
+        for(let idx=0;idx<this._xforms.length; idx++) {
+            let xform = this._xforms[idx]
+            xform.color =  Parameters.floatParam(0)
+            xform.colorSymmetry =  Parameters.floatParam(0)
+        }
+    }
+
+    public distributeColors() {
+        if(this._xforms.length>1) {
+            for (let idx = 0; idx < this._xforms.length; idx++) {
+                let xform = this._xforms[idx]
+                xform.color = Parameters.floatParam( idx /  (this._xforms.length - 1))
+            }
+        }
+    }
 }
 
 export class Flame {

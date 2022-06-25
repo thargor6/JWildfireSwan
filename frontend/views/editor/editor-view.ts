@@ -375,8 +375,8 @@ export class EditorView extends View implements BeforeEnterObserver {
 
   private set currFlame(newFlame) {
     editorStore.currFlame = newFlame
-    setTimeout(()=>this.flameLayersPanel.selectFirstLayer(), 250)
-    setTimeout(()=>this.tranaformsGridPanel.selectFirstXform(), 250)
+    setTimeout(()=>this.flameLayersPanel.selectFirstLayer(), 200)
+    setTimeout(()=>this.tranaformsGridPanel.selectFirstXform(), 400)
     if(this.flameLayersPanel) {
       this.flameLayersPanel.selectFirstLayer()
     }
