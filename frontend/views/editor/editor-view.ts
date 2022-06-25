@@ -68,15 +68,7 @@ import './editor-edit-xform-nonlinear-panel'
 import './editor-edit-xform-xaos-panel'
 import './editor-edit-xform-color-panel'
 import './editor-transforms-grid-panel'
-import {EditorEditCameraPanel} from "Frontend/views/editor/editor-edit-camera-panel";
-import {EditorEditColoringPanel} from "Frontend/views/editor/editor-edit-coloring-panel";
-import {EditorEditDenoiserPanel} from "Frontend/views/editor/editor-edit-denoiser-panel";
-import {EditorEditMotionPanel} from "Frontend/views/editor/editor-edit-motion-panel";
 import {EditorEditLayersPanel} from "Frontend/views/editor/editor-edit-layers-panel";
-import {EditorEditXformAffinePanel} from "Frontend/views/editor/editor-edit-xform-affine-panel";
-import {EditorEditXformNonlinearPanel} from "Frontend/views/editor/editor-edit-xform-nonlinear-panel";
-import {EditorEditXformXaosPanel} from "Frontend/views/editor/editor-edit-xform-xaos-panel";
-import {EditorEditXformColorPanel} from "Frontend/views/editor/editor-edit-xform-color-panel";
 import {EditorTransformsGridPanel} from "Frontend/views/editor/editor-transforms-grid-panel";
 
 @localized()
@@ -101,7 +93,7 @@ export class EditorView extends View implements BeforeEnterObserver {
   flameLayersPanel!: EditorEditLayersPanel
 
   @query('editor-transforms-grid-panel')
-  tranaformsGridPanel!: EditorTransformsGridPanel
+  transformsGridPanel!: EditorTransformsGridPanel
 
   render() {
         return html`
@@ -241,15 +233,15 @@ export class EditorView extends View implements BeforeEnterObserver {
                 </vaadin-tabs>
                 <div style="display: flex; flex-direction: column; align-items: center; width: 100%;">
                     <editor-edit-camera-panel .visible=${this.selectedFlameTab === 0}
-                     .afterPropertyChange=${this.rerender}></editor-edit-camera-panel>
+                     .afterPropertyChange=${this.reRender}></editor-edit-camera-panel>
                     <editor-edit-coloring-panel .visible=${this.selectedFlameTab === 1}
-                      .afterPropertyChange=${this.rerender}></editor-edit-coloring-panel>
+                      .afterPropertyChange=${this.reRender}></editor-edit-coloring-panel>
                     <editor-edit-denoiser-panel .visible=${this.selectedFlameTab === 2}
-                      .afterPropertyChange=${this.rerender}></editor-edit-denoiser-panel>
+                      .afterPropertyChange=${this.reRender}></editor-edit-denoiser-panel>
                     <editor-edit-motion-panel .visible=${this.selectedFlameTab === 3}
-                      .afterPropertyChange=${this.rerender}></editor-edit-motion-panel>
+                      .afterPropertyChange=${this.reRender}></editor-edit-motion-panel>
                     <editor-edit-layers-panel .visible=${this.selectedFlameTab === 4}
-                      .afterPropertyChange=${this.rerender}></editor-edit-layers-panel>
+                      .afterPropertyChange=${this.reRender}></editor-edit-layers-panel>
                  </div>
            </div>`
     }
@@ -277,13 +269,13 @@ export class EditorView extends View implements BeforeEnterObserver {
                 </vaadin-tabs>
                 <div style="display: flex; flex-direction: column; align-items: center; width: 100%;">
                   <editor-edit-xform-affine-panel .visible=${this.selectedTransformTab === 0}
-                    .afterPropertyChange=${this.rerender}></editor-edit-xform-affine-panel>
+                    .afterPropertyChange=${this.reRender} .onPropertyChange="${this.fluidReRender}" ></editor-edit-xform-affine-panel>
                   <editor-edit-xform-nonlinear-panel .visible=${this.selectedTransformTab === 1}
-                    .afterPropertyChange=${this.rerender}></editor-edit-xform-nonlinear-panel>
+                    .afterPropertyChange=${this.reRender}></editor-edit-xform-nonlinear-panel>
                   <editor-edit-xform-xaos-panel .visible=${this.selectedTransformTab === 2}
-                    .afterPropertyChange=${this.rerender}></editor-edit-xform-xaos-panel>
+                    .afterPropertyChange=${this.reRender}></editor-edit-xform-xaos-panel>
                   <editor-edit-xform-color-panel .visible=${this.selectedTransformTab === 3}
-                    .afterPropertyChange=${this.rerender}></editor-edit-xform-color-panel>
+                    .afterPropertyChange=${this.reRender}></editor-edit-xform-color-panel>
                  </div>
            </div>`
   }
@@ -358,7 +350,18 @@ export class EditorView extends View implements BeforeEnterObserver {
         })
     }
 
-    rerender = ()=> {
+    fluidReRender = (paramId: number, refValue: number, newValue: number) => {
+      editorStore.refreshing = true
+      try {
+        this.getRenderPanel().fluidReRenderFlame(undefined, paramId, refValue, newValue)
+        editorStore.calculating = false
+      }
+      finally {
+        editorStore.refreshing = false
+      }
+    }
+
+    reRender = ()=> {
       editorStore.refreshing = true
       try {
         this.getRenderPanel().rerenderFlame()
@@ -375,8 +378,10 @@ export class EditorView extends View implements BeforeEnterObserver {
 
   private set currFlame(newFlame) {
     editorStore.currFlame = newFlame
-    setTimeout(()=>this.flameLayersPanel.selectFirstLayer(), 200)
-    setTimeout(()=>this.tranaformsGridPanel.selectFirstXform(), 400)
+    setTimeout(()=>{
+      this.flameLayersPanel.selectFirstLayer()
+      setTimeout(()=>this.transformsGridPanel.selectFirstXform(), 150)
+    }, 150)
     if(this.flameLayersPanel) {
       this.flameLayersPanel.selectFirstLayer()
     }

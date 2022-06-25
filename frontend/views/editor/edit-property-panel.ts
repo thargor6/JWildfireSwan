@@ -59,6 +59,9 @@ export abstract class EditPropertyPanel extends MobxLitElement {
   @property()
   afterPropertyChange = ()=>{}
 
+  @property()
+  onPropertyChange = (paramId: number, oldValue: number, newValue: number)=>{}
+
   render() {
     return html`
       <vertical-layout theme="spacing" style="${this.visible ? `display:block;`: `display:none;`}">
@@ -164,8 +167,15 @@ export abstract class EditPropertyPanel extends MobxLitElement {
       const oldVal: any = this.getProperty(editorStore.currXform, key)
       if(oldVal && oldVal.type) {
         if(oldVal.value !== value) {
+          const oldValueNumber = oldVal.value
           oldVal.value = value
-          this.afterPropertyChange()
+          // !!!just for testing now, do not use in production!!!
+          if(key==='_xyC21_') {
+            this.onPropertyChange(0, oldValueNumber, value)
+          }
+          else {
+            this.afterPropertyChange()
+          }
           // console.log('XFORM ATTRIBUTE CHANGED', key, value, oldVal)
         }
       }

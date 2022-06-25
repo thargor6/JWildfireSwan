@@ -42,19 +42,19 @@ import {msg, localized} from "@lit/localize";
 export class AboutView extends View {
 
   @state()
-  example_1 = "example003"
+  example_1 = "example232"
 
   @state()
-  example_2 = "example002"
+  example_2 = "example082"
 
   @state()
-  example_3 = "example068"
+  example_3 = "example157"
 
   @state()
-  example_4 = "example035"
+  example_4 = "example151"
 
   @state()
-  example_5 = "example092"
+  example_5 = "example199"
 
 
   @state()
@@ -68,7 +68,7 @@ export class AboutView extends View {
         </header>
       <div style="margin: 1em;">
       <div
-          class="bg-contrast flex items-center justify-center mb-m overflow-hidden rounded-m w-full"
+          class="flex items-center justify-center mb-m overflow-hidden rounded-m w-full"
           style="max-height: 160px;">
         <img alt=${this.example_1} loading="lazy" src="./images/${this.example_1}.jpg" />
         <img alt=${this.example_2} loading="lazy" src="./images/${this.example_2}.jpg" />

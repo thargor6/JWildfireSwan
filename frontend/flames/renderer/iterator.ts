@@ -26,6 +26,10 @@ export class FlameIterator {
 
     private flag = true;
 
+    currChangeParamId = -1
+    currChangeRefValue = 0
+    currChangeNewValue = 0
+
     public iterateIFS() {
         const gl = this.ctx.gl;
         const canvas_size = this.settings.canvas_size;
@@ -34,23 +38,18 @@ export class FlameIterator {
 
         gl.disable(gl.BLEND);
 
-        var seed = Math.random();
-        var seed2 = Math.random();
-        var seed3 = Math.random();
-
         // P = fi(P)
         for(let layerIdx=0;layerIdx<this.flame.layers.length;layerIdx++) {
             gl.useProgram(this.ctx.shaders.prog_comp_array[layerIdx]);
-            gl.uniform1f(this.ctx.shaders.prog_comp_array[layerIdx].seed, seed);
-            gl.uniform1f(this.ctx.shaders.prog_comp_array[layerIdx].seed2, seed2);
-            gl.uniform1f(this.ctx.shaders.prog_comp_array[layerIdx].seed3, seed3);
-            gl.uniform1f(this.ctx.shaders.prog_comp_array[layerIdx].time, this.settings.time);
+            gl.uniform1f(this.ctx.shaders.prog_comp_array[layerIdx].seed, Math.random());
+            gl.uniform1i(this.ctx.shaders.prog_comp_array[layerIdx].currChangeParamId, this.currChangeParamId);
+            gl.uniform1f(this.ctx.shaders.prog_comp_array[layerIdx].currChangeRefValue, this.currChangeRefValue);
+            gl.uniform1f(this.ctx.shaders.prog_comp_array[layerIdx].currChangeNewValue, this.currChangeNewValue);
             gl.uniform1i(this.ctx.shaders.prog_comp_array[layerIdx].uTexSamp, 0);
             gl.uniform1i(this.ctx.shaders.prog_comp_array[layerIdx].motionBlurTimeStamp, 1);
 
             gl.activeTexture(gl.TEXTURE1);
             gl.bindTexture(gl.TEXTURE_2D, this.ctx.textures.motionBlurTime);
-
             gl.activeTexture(gl.TEXTURE0);
             if (this.flag) {
                 gl.bindFramebuffer(gl.FRAMEBUFFER, this.ctx.framebuffers.FBO1_array[layerIdx]);
@@ -114,8 +113,10 @@ export class FlameIterator {
             gl.uniform1i(this.ctx.shaders.prog_points_array[layerIdx].uTexSamp_Points, 0);
             gl.uniform1i(this.ctx.shaders.prog_points_array[layerIdx].uTexSamp_Colors, 1);
             gl.uniform1i(this.ctx.shaders.prog_points_array[layerIdx].motionBlurTimeStamp, 2);
-            gl.uniform1f(this.ctx.shaders.prog_points_array[layerIdx].time, this.settings.time);
             gl.uniform1f(this.ctx.shaders.prog_points_array[layerIdx].seed, Math.random());
+            gl.uniform1i(this.ctx.shaders.prog_points_array[layerIdx].currChangeParamId, this.currChangeParamId);
+            gl.uniform1f(this.ctx.shaders.prog_points_array[layerIdx].currChangeRefValue, this.currChangeRefValue);
+            gl.uniform1f(this.ctx.shaders.prog_points_array[layerIdx].currChangeNewValue, this.currChangeNewValue);
 
             gl.activeTexture(gl.TEXTURE2);
             gl.bindTexture(gl.TEXTURE_2D, this.ctx.textures.gradient);
@@ -150,4 +151,9 @@ export class FlameIterator {
         gl.disable(gl.BLEND);
     }
 
+    public changeParameter(paramId: number, refValue: number, currValue: number) {
+        this.currChangeParamId = paramId
+        this.currChangeRefValue = refValue
+        this.currChangeNewValue = currValue
+    }
 }

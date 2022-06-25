@@ -33,8 +33,10 @@ interface ComputePointsProgram extends WebGLProgram {
     uTexSamp_Points: WebGLUniformLocation;
     uTexSamp_Colors: WebGLUniformLocation;
     motionBlurTimeStamp: WebGLUniformLocation;
-    time: WebGLUniformLocation;
     seed: WebGLUniformLocation;
+    currChangeParamId: WebGLUniformLocation;
+    currChangeRefValue: WebGLUniformLocation;
+    currChangeNewValue: WebGLUniformLocation;
 }
 
 interface IteratePointsProgram extends WebGLProgram {
@@ -42,9 +44,9 @@ interface IteratePointsProgram extends WebGLProgram {
     uTexSamp: WebGLUniformLocation;
     motionBlurTimeStamp: WebGLUniformLocation;
     seed: WebGLUniformLocation;
-    seed2: WebGLUniformLocation;
-    seed3: WebGLUniformLocation;
-    time: WebGLUniformLocation;
+    currChangeParamId: WebGLUniformLocation;
+    currChangeRefValue: WebGLUniformLocation;
+    currChangeNewValue: WebGLUniformLocation;
 }
 
 interface ComputeColorsProgram extends WebGLProgram {
@@ -91,8 +93,10 @@ export class WebglShaders implements CloseableBuffers{
             prog_points.uTexSamp_Points = gl.getUniformLocation(prog_points, "uTexSamp_Points")!;
             prog_points.uTexSamp_Colors = gl.getUniformLocation(prog_points, "uTexSamp_Colors")!;
             prog_points.motionBlurTimeStamp = gl.getUniformLocation(prog_points, "motionBlurTimeStamp")!;
-            prog_points.time = gl.getUniformLocation(prog_points, "time")!;
             prog_points.seed = gl.getUniformLocation(prog_points, "seed")!;
+            prog_points.currChangeParamId = gl.getUniformLocation(prog_points, "currChangeParamId")!;
+            prog_points.currChangeRefValue = gl.getUniformLocation(prog_points, "currChangeRefValue")!;
+            prog_points.currChangeNewValue = gl.getUniformLocation(prog_points, "currChangeNewValue")!;
             this.prog_points_array[layerIdx] = prog_points
             this.compPointsFragmentShader_array[layerIdx] = progPointsVertexShader
 
@@ -105,9 +109,9 @@ export class WebglShaders implements CloseableBuffers{
             prog_comp.uTexSamp = gl.getUniformLocation(prog_comp, "uTexSamp")!;
             prog_comp.motionBlurTimeStamp = gl.getUniformLocation(prog_comp, "motionBlurTimeStamp")!;
             prog_comp.seed = gl.getUniformLocation(prog_comp, "seed")!;
-            prog_comp.seed2 = gl.getUniformLocation(prog_comp, "seed2")!;
-            prog_comp.seed3 = gl.getUniformLocation(prog_comp, "seed3")!;
-            prog_comp.time = gl.getUniformLocation(prog_comp, "time")!;
+            prog_comp.currChangeParamId = gl.getUniformLocation(prog_comp, "currChangeParamId")!;
+            prog_comp.currChangeRefValue = gl.getUniformLocation(prog_comp, "currChangeRefValue")!;
+            prog_comp.currChangeNewValue = gl.getUniformLocation(prog_comp, "currChangeNewValue")!;
             this.compPointsFragmentShader_array[layerIdx] = compPointsFragmentShader
             this.prog_comp_array[layerIdx] = prog_comp
         }

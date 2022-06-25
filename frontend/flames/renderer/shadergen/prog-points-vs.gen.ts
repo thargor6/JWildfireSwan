@@ -34,8 +34,10 @@ export class ProgPointsVertexShaderGenerator {
         uniform sampler2D uTexSamp_Colors;
         uniform sampler2D motionBlurTimeStamp;
         
-        uniform float seed;            
-        uniform float time;
+        uniform float seed;             
+	  		uniform int currChangeParamId;
+		  	uniform float currChangeRefValue;
+			  uniform float currChangeNewValue;
                     
         varying vec4 fragColor;		
         

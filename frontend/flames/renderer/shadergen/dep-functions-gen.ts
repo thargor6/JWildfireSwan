@@ -47,10 +47,6 @@ export class DepFunctionsPartShaderGenerator {
     return `
     			const float M_PI = 3.141592;
 			const float EPSILON = 0.000001;
-
-      float evalP(float startValue, float amp, float freq, float phase) {
-        return startValue + amp*sin(time*freq+phase);
-      }
       
 			float atan2(in float y, in float x) {
         return x == 0.0 ? sign(y)*M_PI * 0.5 : atan(y, x);

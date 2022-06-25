@@ -91,10 +91,9 @@ export class CompPointsFragmentShaderGenerator {
 			uniform sampler2D uTexSamp;
 			uniform sampler2D motionBlurTimeStamp;
 			uniform float seed;
-			uniform float seed2;
-			uniform float seed3;
-			uniform float time;
-
+			uniform int currChangeParamId;
+			uniform float currChangeRefValue;
+			uniform float currChangeNewValue;
    
       ${this.depFuncGen.addStandardFunctions()}           
       ${this.depFuncGen.addDepFunctions(layer.xforms)}

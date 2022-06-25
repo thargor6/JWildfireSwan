@@ -191,7 +191,14 @@ export class XFormPartShaderGenerator {
       }  
       _tx += ${xForm.xyC20.toWebGl()} + ${xForm.zxC20.toWebGl()};
       _ty += ${xForm.xyC21.toWebGl()} + ${xForm.yzC20.toWebGl()};
-      _tz += ${xForm.yzC21.toWebGl()} + ${xForm.zxC21.toWebGl()};    
+      _tz += ${xForm.yzC21.toWebGl()} + ${xForm.zxC21.toWebGl()};          
+      
+      
+      
+               if(currChangeParamId>=0) {
+                _ty += currChangeNewValue;
+              }
+      
     `
   }
 

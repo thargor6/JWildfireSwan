@@ -42,6 +42,7 @@ export class FlameRenderer implements CloseableBuffers {
     settings: FlameRenderSettings
     iterator: FlameIterator
     display: FlameRendererDisplay
+    initialMaxSampleCount: number
     maxSampleCount: number
     currSampleCount: number
     samplesPerFrame: number
@@ -84,6 +85,7 @@ export class FlameRenderer implements CloseableBuffers {
         renderFlame.height = imageHeight
 
         this.maxSampleCount = imageWidth * imageHeight * flame.sampleDensity.value * 1.5 * this.qualityScale
+        this.initialMaxSampleCount = this.maxSampleCount
 
         this.samplesPerFrame = swarm_size * swarm_size
         this.currSampleCount = 0
@@ -279,6 +281,14 @@ export class FlameRenderer implements CloseableBuffers {
             cb()
         }
         this.cancelSignalled = true
+    }
+
+    public changeParameter(paramId: number, refValue: number, currValue: number): boolean {
+        this.iterator.changeParameter(paramId, refValue, currValue)
+        const currMax = this.maxSampleCount
+        this.maxSampleCount += this.initialMaxSampleCount
+        this.currSampleCount = currMax
+        return this.isFinished
     }
 
 }

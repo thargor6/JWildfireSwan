@@ -90,7 +90,7 @@ export const views: ViewRoute[] = [
       return;
     },
   },
-  /*
+/*
   {
     path: 'renderer',
     component: 'renderer-view',
@@ -101,8 +101,7 @@ export const views: ViewRoute[] = [
       return;
     },
   },
-
-   */
+*/
   {
     path: 'about',
     component: 'about-view',

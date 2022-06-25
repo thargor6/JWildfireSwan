@@ -113,6 +113,22 @@ export class RenderPanel extends MobxLitElement {
     }
   }
 
+  public fluidReRenderFlame = (renderer: FlameRenderer | undefined = undefined,paramId: number, refValue: number, newValue: number) => {
+    if(this.renderer) {
+      const reuseCanvas = this.hasCanvas()
+      const that = this
+      const wasFinished = this.renderer.changeParameter(paramId, refValue, newValue)
+      if(wasFinished) {
+        this.renderFlame(renderer)
+      }
+    }
+    else {
+      this.recreateCanvas()
+      this.renderFlame(renderer)
+    }
+  }
+
+
   disconnectedCallback() {
     if(this.renderer) {
       this.renderer.signalCancel(undefined)
