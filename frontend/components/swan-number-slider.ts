@@ -61,6 +61,7 @@ export class SwanNumberSlider extends MobxLitElement {
     render() {
         return html  `
             <vaadin-custom-field
+              theme="small"
               ?disabled="${this.disabled}"
               @change="${(e: CustomFieldValueChangedEvent) => {
                   // console.log(e.detail.value)
@@ -75,7 +76,7 @@ export class SwanNumberSlider extends MobxLitElement {
               }}">
               <div style="display: flex; flex-direction: row; align-items: center;">
                 <div style="width: 10em; margin-right: 0.5em;">${this.label}</div>
-                <vaadin-number-field @change=${this.numberFieldChanged} step=${this.step} min="${this.min}"
+                <vaadin-number-field theme="small" @change=${this.numberFieldChanged} step=${this.step} min="${this.min}"
                   ?disabled="${this.disabled}" max="${this.max}" value="${this.value}" has-controls></vaadin-number-field>
                  <paper-slider @immediate-value-change="${this.immediateValueChanged}"
                    ?disabled="${this.disabled}" @value-change="${this.sliderChange}" value="${this.value}" min="${this.min}"

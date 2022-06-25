@@ -67,9 +67,9 @@ import './editor-edit-xform-affine-panel'
 import './editor-edit-xform-nonlinear-panel'
 import './editor-edit-xform-xaos-panel'
 import './editor-edit-xform-color-panel'
-import './editor-transforms-grid-panel'
+import './editor-xforms-grid-panel'
 import {EditorEditLayersPanel} from "Frontend/views/editor/editor-edit-layers-panel";
-import {EditorTransformsGridPanel} from "Frontend/views/editor/editor-transforms-grid-panel";
+import {EditorXformsGridPanel} from "Frontend/views/editor/editor-xforms-grid-panel";
 
 @localized()
 @customElement('editor-view')
@@ -92,8 +92,8 @@ export class EditorView extends View implements BeforeEnterObserver {
   @query('editor-edit-layers-panel')
   flameLayersPanel!: EditorEditLayersPanel
 
-  @query('editor-transforms-grid-panel')
-  transformsGridPanel!: EditorTransformsGridPanel
+  @query('editor-xforms-grid-panel')
+  transformsGridPanel!: EditorXformsGridPanel
 
   render() {
         return html`
@@ -111,11 +111,11 @@ export class EditorView extends View implements BeforeEnterObserver {
           <swan-notification-panel></swan-notification-panel>
           <swan-error-panel .errorMessage=${editorStore.lastError}></swan-error-panel>
           
-          <vaadin-vertical-layout>
+          <vaadin-vertical-layout style="width: 100%;">
             <vaadin-horizontal-layout>
               <render-panel .onCreateFlameRenderer=${this.createFlameRenderer}></render-panel>
+              <editor-xforms-grid-panel style="height: 100%;"></editor-xforms-grid-panel>
               ${this.renderTransformTabs()}
-              <editor-transforms-grid-panel></editor-transforms-grid-panel>
             </vaadin-horizontal-layout>
             ${this.renderFlameTabs()}
           </vaadin-vertical-layout>
@@ -380,11 +380,8 @@ export class EditorView extends View implements BeforeEnterObserver {
     editorStore.currFlame = newFlame
     setTimeout(()=>{
       this.flameLayersPanel.selectFirstLayer()
-      setTimeout(()=>this.transformsGridPanel.selectFirstXform(), 150)
+      //setTimeout(()=>this.transformsGridPanel.selectFirstXform(), 150)
     }, 150)
-    if(this.flameLayersPanel) {
-      this.flameLayersPanel.selectFirstLayer()
-    }
   }
 
 }

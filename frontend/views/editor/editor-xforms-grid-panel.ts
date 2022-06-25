@@ -24,13 +24,13 @@ import '@vaadin/vaadin-button'
 import {localized, msg} from "@lit/localize";
 import {editorStore} from "Frontend/stores/editor-store";
 import {MobxLitElement} from "@adobe/lit-mobx";
-import {Layer, XForm} from "Frontend/flames/model/flame";
+import {XForm} from "Frontend/flames/model/flame";
 import {Grid, GridActiveItemChangedEvent, GridItemModel} from "@vaadin/grid";
 import {floatToStr} from "Frontend/components/utils";
 
 @localized()
-@customElement('editor-transforms-grid-panel')
-export class EditorTransformsGridPanel extends MobxLitElement {
+@customElement('editor-xforms-grid-panel')
+export class EditorXformsGridPanel extends MobxLitElement {
   @state()
   private selectedItems: XForm[] = [];
 
@@ -39,35 +39,37 @@ export class EditorTransformsGridPanel extends MobxLitElement {
 
   render() {
     return html`
-        <vaadin-vertical-layout style="width: 33%;">
-          <h2>${msg('Transformations')}</h2>
-          <vaadin-grid style="width: 10em; height: 20em;" theme="no-border" .items="${editorStore.currXforms}"
+        <vaadin-vertical-layout style="margin-left: 1em;">
+          <h3>${msg('Transformations')}</h3>
+          <vaadin-grid style="width: 10em; height: 20em;" theme="compact" .items="${editorStore.currXforms}"
               .selectedItems="${this.selectedItems}" @active-item-changed="${(e: GridActiveItemChangedEvent<XForm>) => {
                 const item = e.detail.value;
                 this.selectedItems = item ? [item] : [];
                 editorStore.currXform = item ? item : undefined
             }}">
-            <vaadin-grid-column header="${msg('Tx')}" .renderer="${this.txColRenderer}"></vaadin-grid-column>
-            <vaadin-grid-column header="${msg('Weight')}" .renderer="${this.weightColRenderer}"></vaadin-grid-column>
-
+            <vaadin-grid-column header="${msg('Transformation')}" .renderer="${this.txColRenderer}"></vaadin-grid-column>
           </vaadin-grid>
         </vaadin-vertical-layout>
       `
   }
+/*
+            <vaadin-grid-column header="${msg('Weight')}" .renderer="${this.weightColRenderer}"></vaadin-grid-column>
+
+ */
 
   private txColRenderer = (root: HTMLElement, _: HTMLElement, model: GridItemModel<XForm>) => {
     if(editorStore.currLayer) {
       {
         const txIdx = editorStore.currLayer.xforms.indexOf(model.item)
         if (txIdx >= 0) {
-          render(html`${msg('Tx')} ${txIdx.toString() + 1}`, root)
+          render(html`${msg('XForm')} ${txIdx.toString() + 1}`, root)
           return
         }
       }
       {
         const finalTxIdx = editorStore.currLayer.finalXforms.indexOf(model.item)
         if (finalTxIdx >= 0) {
-          render(html`${msg('Final tx')} ${finalTxIdx.toString() + 1}`, root)
+          render(html`${msg('FinalXF')} ${finalTxIdx.toString() + 1}`, root)
           return
         }
       }

@@ -50,7 +50,7 @@ export class EditorEditMotionPanel extends EditPropertyPanel {
   }
 
   private motionBlurTimeStep: NumberFieldDescriptor = {
-    key: 'motionBlurTimeStep', label: msg('Motion-blur time-step'), min: 0, max: 1, step: 0.05,
+    key: 'motionBlurTimeStep', label: msg('Mblur time-step'), min: 0, max: 1, step: 0.05,
     onChange: this.flamePropertyChange.bind(this,'motionBlurTimeStep'),
     value: this.getFlameValue.bind(this,'motionBlurTimeStep')
   }

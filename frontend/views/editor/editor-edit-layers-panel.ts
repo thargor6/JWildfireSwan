@@ -72,10 +72,10 @@ export class EditorEditLayersPanel extends EditPropertyPanel {
           </vaadin-grid>
         </vaadin-vertical-layout>
         <vaadin-vertical-layout>
-          <vaadin-button @click="${this.addLayer}">${msg('Add')}</vaadin-button>
-          <vaadin-button ?disabled="${undefined===editorStore.currLayer}" @click="${this.duplicateLayer}">${msg('Duplicate')}</vaadin-button>
-          <vaadin-button ?disabled="${undefined===editorStore.currLayer}" @click="${this.deleteLayer}">${msg('Delete')}</vaadin-button>
-      </vaadin-horizontal-layout>    
+          <vaadin-button style="width: 7em;" @click="${this.addLayer}">${msg('Add')}</vaadin-button>
+          <vaadin-button style="width: 7em;" ?disabled="${undefined===editorStore.currLayer}" @click="${this.duplicateLayer}">${msg('Duplicate')}</vaadin-button>
+          <vaadin-button style="width: 7em;" ?disabled="${undefined===editorStore.currLayer}" @click="${this.deleteLayer}">${msg('Delete')}</vaadin-button>
+        </vaadin-vertical-layout>
         <vaadin-vertical-layout>
           ${this.renderNumberField(this.weight)}
           ${this.renderNumberField(this.density)}
