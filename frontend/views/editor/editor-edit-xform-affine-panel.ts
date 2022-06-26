@@ -18,6 +18,8 @@
 import {html} from 'lit';
 import {customElement, state} from 'lit/decorators.js';
 import '@vaadin/vaadin-tabs'
+import '@vaadin/vaadin-ordered-layout/vaadin-horizontal-layout'
+import '@vaadin/vaadin-ordered-layout/vaadin-vertical-layout'
 import {localized, msg} from "@lit/localize";
 import {EditPropertyPanel, NumberFieldDescriptor} from "Frontend/views/editor/edit-property-panel";
 
@@ -32,6 +34,14 @@ export class EditorEditXformAffinePanel extends EditPropertyPanel {
   private readonly AFFINE_MAX_VALUE = 3
   private readonly AFFINE_VALUE_STEP = 0.01
 
+  private readonly AFFINE_ROT_MIN_VALUE = -360
+  private readonly AFFINE_ROT_MAX_VALUE = 360
+  private readonly AFFINE_ROT_VALUE_STEP = 3
+
+  private readonly AFFINE_SCL_MIN_VALUE = -2
+  private readonly AFFINE_SCL_MAX_VALUE = 2
+  private readonly AFFINE_SCL_VALUE_STEP = 0.1
+
   private readonly LABEL_WIDTH = '2em'
   
   @state()
@@ -39,162 +49,216 @@ export class EditorEditXformAffinePanel extends EditPropertyPanel {
 
 
   private xyC00: NumberFieldDescriptor = {
-    key: 'xyC00', label: msg('xyC00'), min: this.AFFINE_MIN_VALUE, max: this.AFFINE_MAX_VALUE, step: this.AFFINE_VALUE_STEP,
+    key: 'xyC00', label: msg('C00'), min: this.AFFINE_MIN_VALUE, max: this.AFFINE_MAX_VALUE, step: this.AFFINE_VALUE_STEP,
     labelWidth: this.LABEL_WIDTH,
     onChange: this.xformPropertyChange.bind(this,'xyC00'),
     value: this.getXformValue.bind(this,'xyC00')
   }
 
   private xyC01: NumberFieldDescriptor = {
-    key: 'xyC01', label: msg('xyC01'), min: this.AFFINE_MIN_VALUE, max: this.AFFINE_MAX_VALUE, step: this.AFFINE_VALUE_STEP,
+    key: 'xyC01', label: msg('C01'), min: this.AFFINE_MIN_VALUE, max: this.AFFINE_MAX_VALUE, step: this.AFFINE_VALUE_STEP,
     labelWidth: this.LABEL_WIDTH,
     onChange: this.xformPropertyChange.bind(this,'xyC01'),
     value: this.getXformValue.bind(this,'xyC01')
   }
 
   private xyC10: NumberFieldDescriptor = {
-    key: 'xyC10', label: msg('xyC10'), min: this.AFFINE_MIN_VALUE, max: this.AFFINE_MAX_VALUE, step: this.AFFINE_VALUE_STEP,
+    key: 'xyC10', label: msg('C10'), min: this.AFFINE_MIN_VALUE, max: this.AFFINE_MAX_VALUE, step: this.AFFINE_VALUE_STEP,
     labelWidth: this.LABEL_WIDTH,
     onChange: this.xformPropertyChange.bind(this,'xyC10'),
     value: this.getXformValue.bind(this,'xyC10')
   }
 
   private xyC11: NumberFieldDescriptor = {
-    key: 'xyC11', label: msg('xyC11'), min: this.AFFINE_MIN_VALUE, max: this.AFFINE_MAX_VALUE, step: this.AFFINE_VALUE_STEP,
+    key: 'xyC11', label: msg('C11'), min: this.AFFINE_MIN_VALUE, max: this.AFFINE_MAX_VALUE, step: this.AFFINE_VALUE_STEP,
     labelWidth: this.LABEL_WIDTH,
     onChange: this.xformPropertyChange.bind(this,'xyC11'),
     value: this.getXformValue.bind(this,'xyC11')
   }
 
   private xyC20: NumberFieldDescriptor = {
-    key: 'xyC20', label: msg('xyC20'), min: this.AFFINE_MIN_VALUE, max: this.AFFINE_MAX_VALUE, step: this.AFFINE_VALUE_STEP,
+    key: 'xyC20', label: msg('C20'), min: this.AFFINE_MIN_VALUE, max: this.AFFINE_MAX_VALUE, step: this.AFFINE_VALUE_STEP,
     labelWidth: this.LABEL_WIDTH,
     onChange: this.xformPropertyChange.bind(this,'xyC20'),
     value: this.getXformValue.bind(this,'xyC20')
   }
 
   private xyC21: NumberFieldDescriptor = {
-    key: 'xyC21', label: msg('xyC21'), min: this.AFFINE_MIN_VALUE, max: this.AFFINE_MAX_VALUE, step: this.AFFINE_VALUE_STEP,
+    key: 'xyC21', label: msg('C21'), min: this.AFFINE_MIN_VALUE, max: this.AFFINE_MAX_VALUE, step: this.AFFINE_VALUE_STEP,
     labelWidth: this.LABEL_WIDTH,
     onChange: this.xformPropertyChange.bind(this,'xyC21'),
     value: this.getXformValue.bind(this,'xyC21')
   }
 
+  private xyCRotate: NumberFieldDescriptor = {
+    key: 'xyCRotate', label: msg('Rot'), min: this.AFFINE_ROT_MIN_VALUE, max: this.AFFINE_ROT_MAX_VALUE, step: this.AFFINE_ROT_VALUE_STEP,
+    labelWidth: this.LABEL_WIDTH,
+    onChange: this.xformPropertyChange.bind(this,'xyCRotate'),
+    value: this.getXformValue.bind(this,'xyCRotate')
+  }
+
+  private xyCScale: NumberFieldDescriptor = {
+    key: 'xyCScale', label: msg('Scl'), min: this.AFFINE_SCL_MIN_VALUE, max: this.AFFINE_SCL_MAX_VALUE, step: this.AFFINE_SCL_VALUE_STEP,
+    labelWidth: this.LABEL_WIDTH,
+    onChange: this.xformPropertyChange.bind(this,'xyCScale'),
+    value: this.getXformValue.bind(this,'xyCScale')
+  }
+
   private yzC00: NumberFieldDescriptor = {
-    key: 'yzC00', label: msg('yzC00'), min: this.AFFINE_MIN_VALUE, max: this.AFFINE_MAX_VALUE, step: this.AFFINE_VALUE_STEP,
+    key: 'yzC00', label: msg('C00'), min: this.AFFINE_MIN_VALUE, max: this.AFFINE_MAX_VALUE, step: this.AFFINE_VALUE_STEP,
     labelWidth: this.LABEL_WIDTH,
     onChange: this.xformPropertyChange.bind(this,'yzC00'),
     value: this.getXformValue.bind(this,'yzC00')
   }
 
   private yzC01: NumberFieldDescriptor = {
-    key: 'yzC01', label: msg('yzC01'), min: this.AFFINE_MIN_VALUE, max: this.AFFINE_MAX_VALUE, step: this.AFFINE_VALUE_STEP,
+    key: 'yzC01', label: msg('C01'), min: this.AFFINE_MIN_VALUE, max: this.AFFINE_MAX_VALUE, step: this.AFFINE_VALUE_STEP,
     labelWidth: this.LABEL_WIDTH,
     onChange: this.xformPropertyChange.bind(this,'yzC01'),
     value: this.getXformValue.bind(this,'yzC01')
   }
 
   private yzC10: NumberFieldDescriptor = {
-    key: 'yzC10', label: msg('yzC10'), min: this.AFFINE_MIN_VALUE, max: this.AFFINE_MAX_VALUE, step: this.AFFINE_VALUE_STEP,
+    key: 'yzC10', label: msg('C10'), min: this.AFFINE_MIN_VALUE, max: this.AFFINE_MAX_VALUE, step: this.AFFINE_VALUE_STEP,
     labelWidth: this.LABEL_WIDTH,
     onChange: this.xformPropertyChange.bind(this,'yzC10'),
     value: this.getXformValue.bind(this,'yzC10')
   }
 
   private yzC11: NumberFieldDescriptor = {
-    key: 'yzC11', label: msg('yzC11'), min: this.AFFINE_MIN_VALUE, max: this.AFFINE_MAX_VALUE, step: this.AFFINE_VALUE_STEP,
+    key: 'yzC11', label: msg('C11'), min: this.AFFINE_MIN_VALUE, max: this.AFFINE_MAX_VALUE, step: this.AFFINE_VALUE_STEP,
     labelWidth: this.LABEL_WIDTH,
     onChange: this.xformPropertyChange.bind(this,'yzC11'),
     value: this.getXformValue.bind(this,'yzC11')
   }
 
   private yzC20: NumberFieldDescriptor = {
-    key: 'yzC20', label: msg('yzC20'), min: this.AFFINE_MIN_VALUE, max: this.AFFINE_MAX_VALUE, step: this.AFFINE_VALUE_STEP,
+    key: 'yzC20', label: msg('C20'), min: this.AFFINE_MIN_VALUE, max: this.AFFINE_MAX_VALUE, step: this.AFFINE_VALUE_STEP,
     labelWidth: this.LABEL_WIDTH,
     onChange: this.xformPropertyChange.bind(this,'yzC20'),
     value: this.getXformValue.bind(this,'yzC20')
   }
 
   private yzC21: NumberFieldDescriptor = {
-    key: 'yzC21', label: msg('yzC21'), min: this.AFFINE_MIN_VALUE, max: this.AFFINE_MAX_VALUE, step: this.AFFINE_VALUE_STEP,
+    key: 'yzC21', label: msg('C21'), min: this.AFFINE_MIN_VALUE, max: this.AFFINE_MAX_VALUE, step: this.AFFINE_VALUE_STEP,
     labelWidth: this.LABEL_WIDTH,
     onChange: this.xformPropertyChange.bind(this,'yzC21'),
     value: this.getXformValue.bind(this,'yzC21')
   }
 
+  private yzCRotate: NumberFieldDescriptor = {
+    key: 'yzCRotate', label: msg('Rot'), min: this.AFFINE_ROT_MIN_VALUE, max: this.AFFINE_ROT_MAX_VALUE, step: this.AFFINE_ROT_VALUE_STEP,
+    labelWidth: this.LABEL_WIDTH,
+    onChange: this.xformPropertyChange.bind(this,'yzCRotate'),
+    value: this.getXformValue.bind(this,'yzCRotate')
+  }
+
+  private yzCScale: NumberFieldDescriptor = {
+    key: 'yzCScale', label: msg('Scl'), min: this.AFFINE_SCL_MIN_VALUE, max: this.AFFINE_SCL_MAX_VALUE, step: this.AFFINE_SCL_VALUE_STEP,
+    labelWidth: this.LABEL_WIDTH,
+    onChange: this.xformPropertyChange.bind(this,'yzCScale'),
+    value: this.getXformValue.bind(this,'yzCScale')
+  }
+
   private zxC00: NumberFieldDescriptor = {
-    key: 'zxC00', label: msg('zxC00'), min: this.AFFINE_MIN_VALUE, max: this.AFFINE_MAX_VALUE, step: this.AFFINE_VALUE_STEP,
+    key: 'zxC00', label: msg('C00'), min: this.AFFINE_MIN_VALUE, max: this.AFFINE_MAX_VALUE, step: this.AFFINE_VALUE_STEP,
     labelWidth: this.LABEL_WIDTH,
     onChange: this.xformPropertyChange.bind(this,'zxC00'),
     value: this.getXformValue.bind(this,'zxC00')
   }
 
   private zxC01: NumberFieldDescriptor = {
-    key: 'zxC01', label: msg('zxC01'), min: this.AFFINE_MIN_VALUE, max: this.AFFINE_MAX_VALUE, step: this.AFFINE_VALUE_STEP,
+    key: 'zxC01', label: msg('C01'), min: this.AFFINE_MIN_VALUE, max: this.AFFINE_MAX_VALUE, step: this.AFFINE_VALUE_STEP,
     labelWidth: this.LABEL_WIDTH,
     onChange: this.xformPropertyChange.bind(this,'zxC01'),
     value: this.getXformValue.bind(this,'zxC01')
   }
 
   private zxC10: NumberFieldDescriptor = {
-    key: 'zxC10', label: msg('zxC10'), min: this.AFFINE_MIN_VALUE, max: this.AFFINE_MAX_VALUE, step: this.AFFINE_VALUE_STEP,
+    key: 'zxC10', label: msg('C10'), min: this.AFFINE_MIN_VALUE, max: this.AFFINE_MAX_VALUE, step: this.AFFINE_VALUE_STEP,
     labelWidth: this.LABEL_WIDTH,
     onChange: this.xformPropertyChange.bind(this,'zxC10'),
     value: this.getXformValue.bind(this,'zxC10')
   }
 
   private zxC11: NumberFieldDescriptor = {
-    key: 'zxC11', label: msg('zxC11'), min: this.AFFINE_MIN_VALUE, max: this.AFFINE_MAX_VALUE, step: this.AFFINE_VALUE_STEP,
+    key: 'zxC11', label: msg('C11'), min: this.AFFINE_MIN_VALUE, max: this.AFFINE_MAX_VALUE, step: this.AFFINE_VALUE_STEP,
     labelWidth: this.LABEL_WIDTH,
     onChange: this.xformPropertyChange.bind(this,'zxC11'),
     value: this.getXformValue.bind(this,'zxC11')
   }
 
   private zxC20: NumberFieldDescriptor = {
-    key: 'zxC20', label: msg('zxC20'), min: this.AFFINE_MIN_VALUE, max: this.AFFINE_MAX_VALUE, step: this.AFFINE_VALUE_STEP,
+    key: 'zxC20', label: msg('C20'), min: this.AFFINE_MIN_VALUE, max: this.AFFINE_MAX_VALUE, step: this.AFFINE_VALUE_STEP,
     labelWidth: this.LABEL_WIDTH,
     onChange: this.xformPropertyChange.bind(this,'zxC20'),
     value: this.getXformValue.bind(this,'zxC20')
   }
 
   private zxC21: NumberFieldDescriptor = {
-    key: 'zxC21', label: msg('zxC21'), min: this.AFFINE_MIN_VALUE, max: this.AFFINE_MAX_VALUE, step: this.AFFINE_VALUE_STEP,
+    key: 'zxC21', label: msg('C21'), min: this.AFFINE_MIN_VALUE, max: this.AFFINE_MAX_VALUE, step: this.AFFINE_VALUE_STEP,
     labelWidth: this.LABEL_WIDTH,
     onChange: this.xformPropertyChange.bind(this,'zxC21'),
     value: this.getXformValue.bind(this,'zxC21')
+  }
+
+  private zxCRotate: NumberFieldDescriptor = {
+    key: 'zxCRotate', label: msg('Rot'), min: this.AFFINE_ROT_MIN_VALUE, max: this.AFFINE_ROT_MAX_VALUE, step: this.AFFINE_ROT_VALUE_STEP,
+    labelWidth: this.LABEL_WIDTH,
+    onChange: this.xformPropertyChange.bind(this,'zxCRotate'),
+    value: this.getXformValue.bind(this,'zxCRotate')
+  }
+
+  private zxCScale: NumberFieldDescriptor = {
+    key: 'zxCScale', label: msg('Scl'), min: this.AFFINE_SCL_MIN_VALUE, max: this.AFFINE_SCL_MAX_VALUE, step: this.AFFINE_SCL_VALUE_STEP,
+    labelWidth: this.LABEL_WIDTH,
+    onChange: this.xformPropertyChange.bind(this,'zxCScale'),
+    value: this.getXformValue.bind(this,'zxCScale')
   }
 
   renderControls() {
     return html`
         <vaadin-tabs  @selected-changed="${this.editPlaneTabChanged}">
             <vaadin-tab>${msg('XY-plane')}</vaadin-tab>
-            <vaadin-tab>${msg('YZ-plane')}d</vaadin-tab>
+            <vaadin-tab>${msg('YZ-plane')}</vaadin-tab>
             <vaadin-tab>${msg('ZX-plane')}</vaadin-tab>
         </vaadin-tabs>
 
         <div style="${this.selectedEditPlane === this.EDITPLANE_XY ? `display:block;`: `display:none;`}">
-          ${this.renderNumberField(this.xyC00)}
-          ${this.renderNumberField(this.xyC01)}
-          ${this.renderNumberField(this.xyC10)}
-          ${this.renderNumberField(this.xyC11)}
-          ${this.renderNumberField(this.xyC20)}
-          ${this.renderNumberField(this.xyC21)}
+          <vaadin-vertical-layout>  
+            ${this.renderNumberField(this.xyC00)}
+            ${this.renderNumberField(this.xyC01)}
+            ${this.renderNumberField(this.xyC10)}
+            ${this.renderNumberField(this.xyC11)}
+            ${this.renderNumberField(this.xyC20)}
+            ${this.renderNumberField(this.xyC21)}
+            ${this.renderNumberField(this.xyCRotate)}
+            ${this.renderNumberField(this.xyCScale)}
+          </vaadin-vertical-layout>
         </div>
         <div style="${this.selectedEditPlane === this.EDITPLANE_YZ ? `display:block;`: `display:none;`}">
-          ${this.renderNumberField(this.yzC00)}
-          ${this.renderNumberField(this.yzC01)}
-          ${this.renderNumberField(this.yzC10)}
-          ${this.renderNumberField(this.yzC11)}
-          ${this.renderNumberField(this.yzC20)}
-          ${this.renderNumberField(this.yzC21)}
+          <vaadin-vertical-layout>
+            ${this.renderNumberField(this.yzC00)}
+            ${this.renderNumberField(this.yzC01)}
+            ${this.renderNumberField(this.yzC10)}
+            ${this.renderNumberField(this.yzC11)}
+            ${this.renderNumberField(this.yzC20)}
+            ${this.renderNumberField(this.yzC21)}
+            ${this.renderNumberField(this.yzCRotate)}
+            ${this.renderNumberField(this.yzCScale)}
+          </vaadin-vertical-layout>
         </div>
         <div style="${this.selectedEditPlane === this.EDITPLANE_ZX ? `display:block;`: `display:none;`}">
-          ${this.renderNumberField(this.zxC00)}
-          ${this.renderNumberField(this.zxC01)}
-          ${this.renderNumberField(this.zxC10)}
-          ${this.renderNumberField(this.zxC11)}
-          ${this.renderNumberField(this.zxC20)}
-          ${this.renderNumberField(this.zxC21)}
+          <vaadin-vertical-layout>
+            ${this.renderNumberField(this.zxC00)}
+            ${this.renderNumberField(this.zxC01)}
+            ${this.renderNumberField(this.zxC10)}
+            ${this.renderNumberField(this.zxC11)}
+            ${this.renderNumberField(this.zxC20)}
+            ${this.renderNumberField(this.zxC21)}
+            ${this.renderNumberField(this.zxCRotate)}
+            ${this.renderNumberField(this.zxCScale)}
+          </vaadin-vertical-layout>
         </div>
     `;
   }

@@ -79,8 +79,8 @@ export class SwanNumberSlider extends MobxLitElement {
               }}">
               <div style="display: flex; flex-direction: row; align-items: center;">
                 <div style="width: ${this.labelWidth}; margin-right: 0.5em;">${this.label}</div>
-                <vaadin-number-field theme="small" @change=${this.numberFieldChanged} step=${this.step} min="${this.min}"
-                  ?disabled="${this.disabled}" max="${this.max}" value="${this.value}" has-controls></vaadin-number-field>
+                <vaadin-number-field theme="small" @change=${this.numberFieldChanged} step=${this.step}
+                  ?disabled="${this.disabled}" value="${this.value}" has-controls></vaadin-number-field>
                  <paper-slider @immediate-value-change="${this.immediateValueChanged}"
                    ?disabled="${this.disabled}" @value-change="${this.sliderChange}" value="${this.value}" min="${this.min}"
                    step=${this.step} max="${this.max}"></paper-slider>

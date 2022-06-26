@@ -133,8 +133,8 @@ export class XFormPartShaderGenerator {
               float c10 = ${xForm.yzC10.toWebGl()};
               float c01 = ${xForm.yzC01.toWebGl()}; 
               float c11 = ${xForm.yzC11.toWebGl()};
-              float _ny = (c00*cosa + c01*sina) * _ty + (c10*cosa + c11*sina) * _tz;
-              float _nz = (-c00*sina + c01*cosa) * _ty + (-c10*sina + c11*cosa) * _tz;
+              float _ny = ((c00*cosa + c01*sina) * _ty + (c10*cosa + c11*sina) * _tz) * scale;
+              float _nz = ((-c00*sina + c01*cosa) * _ty + (-c10*sina + c11*cosa) * _tz) * scale;
               _ty = _ny;
               _tz = _nz;
         `
@@ -162,8 +162,8 @@ export class XFormPartShaderGenerator {
               float c10 = ${xForm.zxC10.toWebGl()};
               float c01 = ${xForm.zxC01.toWebGl()}; 
               float c11 = ${xForm.zxC11.toWebGl()};
-              float _nx = (c00*cosa + c01*sina) * _tx + (c10*cosa + c11*sina) * _tz;
-              float _nz = (-c00*sina + c01*cosa) * _tx + (-c10*sina + c11*cosa) * _tz;
+              float _nx = ((c00*cosa + c01*sina) * _tx + (c10*cosa + c11*sina) * _tz) * scale;
+              float _nz = ((-c00*sina + c01*cosa) * _tx + (-c10*sina + c11*cosa) * _tz) * scale;
               _tx = _nx;
               _tz = _nz;
           `
