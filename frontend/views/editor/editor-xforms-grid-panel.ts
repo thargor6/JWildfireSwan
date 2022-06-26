@@ -40,8 +40,8 @@ export class EditorXformsGridPanel extends MobxLitElement {
   render() {
     return html`
         <vaadin-vertical-layout style="margin-left: 1em;">
-          <h3>${msg('Transformations')}</h3>
-          <vaadin-grid style="width: 10em; height: 20em;" theme="compact" .items="${editorStore.currXforms}"
+          <h4>${msg('Transformations')}</h4>
+          <vaadin-grid style="width: 9em; height: 24em;" theme="compact" .items="${editorStore.currXforms}"
               .selectedItems="${this.selectedItems}" @active-item-changed="${(e: GridActiveItemChangedEvent<XForm>) => {
                 const item = e.detail.value;
                 this.selectedItems = item ? [item] : [];

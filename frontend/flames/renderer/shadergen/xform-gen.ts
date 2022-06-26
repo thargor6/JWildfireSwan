@@ -214,8 +214,8 @@ export class XFormPartShaderGenerator {
               float c10 = ${xForm.xyP10.toWebGl()};
               float c01 = ${xForm.xyP01.toWebGl()}; 
               float c11 = ${xForm.xyP11.toWebGl()};
-              float _px = (c00*cosa + c01*sina) * _vx + (c10*cosa + c11*sina) * _vy;
-              float _py = (-c00*sina + c01*cosa) * _vx + (-c10*sina + c11*cosa) * _vy;
+              float _px = ((c00*cosa + c01*sina) * _vx + (c10*cosa + c11*sina) * _vy)*scale;
+              float _py = ((-c00*sina + c01*cosa) * _vx + (-c10*sina + c11*cosa) * _vy)*scale;
               _vx = _px;
               _vy = _py;
         `
@@ -243,8 +243,8 @@ export class XFormPartShaderGenerator {
               float c10 = ${xForm.yzP10.toWebGl()};
               float c01 = ${xForm.yzP01.toWebGl()}; 
               float c11 = ${xForm.yzP11.toWebGl()};
-              float _py = (c00*cosa + c01*sina) * _vy + (c10*cosa + c11*sina) * _vz;
-              float _pz = (-c00*sina + c01*cosa) * _vy + (-c10*sina + c11*cosa) * _vz;
+              float _py = ((c00*cosa + c01*sina) * _vy + (c10*cosa + c11*sina) * _vz)*scale;
+              float _pz = ((-c00*sina + c01*cosa) * _vy + (-c10*sina + c11*cosa) * _vz)*scale;
               _ty = _py;
               _tz = _pz;
         `
@@ -272,8 +272,8 @@ export class XFormPartShaderGenerator {
               float c10 = ${xForm.zxP10.toWebGl()};
               float c01 = ${xForm.zxP01.toWebGl()}; 
               float c11 = ${xForm.zxP11.toWebGl()};
-              float _px = (c00*cosa + c01*sina) * _vx + (c10*cosa + c11*sina) * _vz;
-              float _pz = (-c00*sina + c01*cosa) * _vx + (-c10*sina + c11*cosa) * _vz;
+              float _px = ((c00*cosa + c01*sina) * _vx + (c10*cosa + c11*sina) * _vz)*scale;
+              float _pz = ((-c00*sina + c01*cosa) * _vx + (-c10*sina + c11*cosa) * _vz)*scale;
               _tx = _px;
               _tz = _pz;
         `

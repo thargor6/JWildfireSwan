@@ -216,6 +216,174 @@ export class EditorEditXformAffinePanel extends EditPropertyPanel {
     value: this.getXformValue.bind(this,'zxCScale')
   }
 
+  private xyP00: NumberFieldDescriptor = {
+    key: 'xyP00', label: msg('P00'), min: this.AFFINE_MIN_VALUE, max: this.AFFINE_MAX_VALUE, step: this.AFFINE_VALUE_STEP,
+    labelWidth: this.LABEL_WIDTH,
+    onChange: this.xformPropertyChange.bind(this,'xyP00'),
+    value: this.getXformValue.bind(this,'xyP00')
+  }
+
+  private xyP01: NumberFieldDescriptor = {
+    key: 'xyP01', label: msg('P01'), min: this.AFFINE_MIN_VALUE, max: this.AFFINE_MAX_VALUE, step: this.AFFINE_VALUE_STEP,
+    labelWidth: this.LABEL_WIDTH,
+    onChange: this.xformPropertyChange.bind(this,'xyP01'),
+    value: this.getXformValue.bind(this,'xyP01')
+  }
+
+  private xyP10: NumberFieldDescriptor = {
+    key: 'xyP10', label: msg('P10'), min: this.AFFINE_MIN_VALUE, max: this.AFFINE_MAX_VALUE, step: this.AFFINE_VALUE_STEP,
+    labelWidth: this.LABEL_WIDTH,
+    onChange: this.xformPropertyChange.bind(this,'xyP10'),
+    value: this.getXformValue.bind(this,'xyP10')
+  }
+
+  private xyP11: NumberFieldDescriptor = {
+    key: 'xyP11', label: msg('P11'), min: this.AFFINE_MIN_VALUE, max: this.AFFINE_MAX_VALUE, step: this.AFFINE_VALUE_STEP,
+    labelWidth: this.LABEL_WIDTH,
+    onChange: this.xformPropertyChange.bind(this,'xyP11'),
+    value: this.getXformValue.bind(this,'xyP11')
+  }
+
+  private xyP20: NumberFieldDescriptor = {
+    key: 'xyP20', label: msg('P20'), min: this.AFFINE_MIN_VALUE, max: this.AFFINE_MAX_VALUE, step: this.AFFINE_VALUE_STEP,
+    labelWidth: this.LABEL_WIDTH,
+    onChange: this.xformPropertyChange.bind(this,'xyP20'),
+    value: this.getXformValue.bind(this,'xyP20')
+  }
+
+  private xyP21: NumberFieldDescriptor = {
+    key: 'xyP21', label: msg('P21'), min: this.AFFINE_MIN_VALUE, max: this.AFFINE_MAX_VALUE, step: this.AFFINE_VALUE_STEP,
+    labelWidth: this.LABEL_WIDTH,
+    onChange: this.xformPropertyChange.bind(this,'xyP21'),
+    value: this.getXformValue.bind(this,'xyP21')
+  }
+
+  private xyPRotate: NumberFieldDescriptor = {
+    key: 'xyPRotate', label: msg('Rot'), min: this.AFFINE_ROT_MIN_VALUE, max: this.AFFINE_ROT_MAX_VALUE, step: this.AFFINE_ROT_VALUE_STEP,
+    labelWidth: this.LABEL_WIDTH,
+    onChange: this.xformPropertyChange.bind(this,'xyPRotate'),
+    value: this.getXformValue.bind(this,'xyPRotate')
+  }
+
+  private xyPScale: NumberFieldDescriptor = {
+    key: 'xyPScale', label: msg('Scl'), min: this.AFFINE_SCL_MIN_VALUE, max: this.AFFINE_SCL_MAX_VALUE, step: this.AFFINE_SCL_VALUE_STEP,
+    labelWidth: this.LABEL_WIDTH,
+    onChange: this.xformPropertyChange.bind(this,'xyPScale'),
+    value: this.getXformValue.bind(this,'xyPScale')
+  }
+
+  private yzP00: NumberFieldDescriptor = {
+    key: 'yzP00', label: msg('P00'), min: this.AFFINE_MIN_VALUE, max: this.AFFINE_MAX_VALUE, step: this.AFFINE_VALUE_STEP,
+    labelWidth: this.LABEL_WIDTH,
+    onChange: this.xformPropertyChange.bind(this,'yzP00'),
+    value: this.getXformValue.bind(this,'yzP00')
+  }
+
+  private yzP01: NumberFieldDescriptor = {
+    key: 'yzP01', label: msg('P01'), min: this.AFFINE_MIN_VALUE, max: this.AFFINE_MAX_VALUE, step: this.AFFINE_VALUE_STEP,
+    labelWidth: this.LABEL_WIDTH,
+    onChange: this.xformPropertyChange.bind(this,'yzP01'),
+    value: this.getXformValue.bind(this,'yzP01')
+  }
+
+  private yzP10: NumberFieldDescriptor = {
+    key: 'yzP10', label: msg('P10'), min: this.AFFINE_MIN_VALUE, max: this.AFFINE_MAX_VALUE, step: this.AFFINE_VALUE_STEP,
+    labelWidth: this.LABEL_WIDTH,
+    onChange: this.xformPropertyChange.bind(this,'yzP10'),
+    value: this.getXformValue.bind(this,'yzP10')
+  }
+
+  private yzP11: NumberFieldDescriptor = {
+    key: 'yzP11', label: msg('P11'), min: this.AFFINE_MIN_VALUE, max: this.AFFINE_MAX_VALUE, step: this.AFFINE_VALUE_STEP,
+    labelWidth: this.LABEL_WIDTH,
+    onChange: this.xformPropertyChange.bind(this,'yzP11'),
+    value: this.getXformValue.bind(this,'yzP11')
+  }
+
+  private yzP20: NumberFieldDescriptor = {
+    key: 'yzP20', label: msg('P20'), min: this.AFFINE_MIN_VALUE, max: this.AFFINE_MAX_VALUE, step: this.AFFINE_VALUE_STEP,
+    labelWidth: this.LABEL_WIDTH,
+    onChange: this.xformPropertyChange.bind(this,'yzP20'),
+    value: this.getXformValue.bind(this,'yzP20')
+  }
+
+  private yzP21: NumberFieldDescriptor = {
+    key: 'yzP21', label: msg('P21'), min: this.AFFINE_MIN_VALUE, max: this.AFFINE_MAX_VALUE, step: this.AFFINE_VALUE_STEP,
+    labelWidth: this.LABEL_WIDTH,
+    onChange: this.xformPropertyChange.bind(this,'yzP21'),
+    value: this.getXformValue.bind(this,'yzP21')
+  }
+
+  private yzPRotate: NumberFieldDescriptor = {
+    key: 'yzPRotate', label: msg('Rot'), min: this.AFFINE_ROT_MIN_VALUE, max: this.AFFINE_ROT_MAX_VALUE, step: this.AFFINE_ROT_VALUE_STEP,
+    labelWidth: this.LABEL_WIDTH,
+    onChange: this.xformPropertyChange.bind(this,'yzPRotate'),
+    value: this.getXformValue.bind(this,'yzPRotate')
+  }
+
+  private yzPScale: NumberFieldDescriptor = {
+    key: 'yzPScale', label: msg('Scl'), min: this.AFFINE_SCL_MIN_VALUE, max: this.AFFINE_SCL_MAX_VALUE, step: this.AFFINE_SCL_VALUE_STEP,
+    labelWidth: this.LABEL_WIDTH,
+    onChange: this.xformPropertyChange.bind(this,'yzPScale'),
+    value: this.getXformValue.bind(this,'yzPScale')
+  }
+
+  private zxP00: NumberFieldDescriptor = {
+    key: 'zxP00', label: msg('P00'), min: this.AFFINE_MIN_VALUE, max: this.AFFINE_MAX_VALUE, step: this.AFFINE_VALUE_STEP,
+    labelWidth: this.LABEL_WIDTH,
+    onChange: this.xformPropertyChange.bind(this,'zxP00'),
+    value: this.getXformValue.bind(this,'zxP00')
+  }
+
+  private zxP01: NumberFieldDescriptor = {
+    key: 'zxP01', label: msg('P01'), min: this.AFFINE_MIN_VALUE, max: this.AFFINE_MAX_VALUE, step: this.AFFINE_VALUE_STEP,
+    labelWidth: this.LABEL_WIDTH,
+    onChange: this.xformPropertyChange.bind(this,'zxP01'),
+    value: this.getXformValue.bind(this,'zxP01')
+  }
+
+  private zxP10: NumberFieldDescriptor = {
+    key: 'zxP10', label: msg('P10'), min: this.AFFINE_MIN_VALUE, max: this.AFFINE_MAX_VALUE, step: this.AFFINE_VALUE_STEP,
+    labelWidth: this.LABEL_WIDTH,
+    onChange: this.xformPropertyChange.bind(this,'zxP10'),
+    value: this.getXformValue.bind(this,'zxP10')
+  }
+
+  private zxP11: NumberFieldDescriptor = {
+    key: 'zxP11', label: msg('P11'), min: this.AFFINE_MIN_VALUE, max: this.AFFINE_MAX_VALUE, step: this.AFFINE_VALUE_STEP,
+    labelWidth: this.LABEL_WIDTH,
+    onChange: this.xformPropertyChange.bind(this,'zxP11'),
+    value: this.getXformValue.bind(this,'zxP11')
+  }
+
+  private zxP20: NumberFieldDescriptor = {
+    key: 'zxP20', label: msg('P20'), min: this.AFFINE_MIN_VALUE, max: this.AFFINE_MAX_VALUE, step: this.AFFINE_VALUE_STEP,
+    labelWidth: this.LABEL_WIDTH,
+    onChange: this.xformPropertyChange.bind(this,'zxP20'),
+    value: this.getXformValue.bind(this,'zxP20')
+  }
+
+  private zxP21: NumberFieldDescriptor = {
+    key: 'zxP21', label: msg('P21'), min: this.AFFINE_MIN_VALUE, max: this.AFFINE_MAX_VALUE, step: this.AFFINE_VALUE_STEP,
+    labelWidth: this.LABEL_WIDTH,
+    onChange: this.xformPropertyChange.bind(this,'zxP21'),
+    value: this.getXformValue.bind(this,'zxP21')
+  }
+
+  private zxPRotate: NumberFieldDescriptor = {
+    key: 'zxPRotate', label: msg('Rot'), min: this.AFFINE_ROT_MIN_VALUE, max: this.AFFINE_ROT_MAX_VALUE, step: this.AFFINE_ROT_VALUE_STEP,
+    labelWidth: this.LABEL_WIDTH,
+    onChange: this.xformPropertyChange.bind(this,'zxPRotate'),
+    value: this.getXformValue.bind(this,'zxPRotate')
+  }
+
+  private zxPScale: NumberFieldDescriptor = {
+    key: 'zxPScale', label: msg('Scl'), min: this.AFFINE_SCL_MIN_VALUE, max: this.AFFINE_SCL_MAX_VALUE, step: this.AFFINE_SCL_VALUE_STEP,
+    labelWidth: this.LABEL_WIDTH,
+    onChange: this.xformPropertyChange.bind(this,'zxPScale'),
+    value: this.getXformValue.bind(this,'zxPScale')
+  }
+
   renderControls() {
     return html`
         <vaadin-tabs  @selected-changed="${this.editPlaneTabChanged}">
@@ -225,40 +393,76 @@ export class EditorEditXformAffinePanel extends EditPropertyPanel {
         </vaadin-tabs>
 
         <div style="${this.selectedEditPlane === this.EDITPLANE_XY ? `display:block;`: `display:none;`}">
-          <vaadin-vertical-layout>  
-            ${this.renderNumberField(this.xyC00)}
-            ${this.renderNumberField(this.xyC01)}
-            ${this.renderNumberField(this.xyC10)}
-            ${this.renderNumberField(this.xyC11)}
-            ${this.renderNumberField(this.xyC20)}
-            ${this.renderNumberField(this.xyC21)}
-            ${this.renderNumberField(this.xyCRotate)}
-            ${this.renderNumberField(this.xyCScale)}
-          </vaadin-vertical-layout>
+          <vaadin-horizontal-layout>
+            <vaadin-vertical-layout>  
+              ${this.renderNumberField(this.xyC00)}
+              ${this.renderNumberField(this.xyC01)}
+              ${this.renderNumberField(this.xyC10)}
+              ${this.renderNumberField(this.xyC11)}
+              ${this.renderNumberField(this.xyC20)}
+              ${this.renderNumberField(this.xyC21)}
+              ${this.renderNumberField(this.xyCRotate)}
+              ${this.renderNumberField(this.xyCScale)}
+            </vaadin-vertical-layout>
+            <vaadin-vertical-layout>  
+              ${this.renderNumberField(this.xyP00)}
+              ${this.renderNumberField(this.xyP01)}
+              ${this.renderNumberField(this.xyP10)}
+              ${this.renderNumberField(this.xyP11)}
+              ${this.renderNumberField(this.xyP20)}
+              ${this.renderNumberField(this.xyP21)}
+              ${this.renderNumberField(this.xyPRotate)}
+              ${this.renderNumberField(this.xyPScale)}
+            </vaadin-vertical-layout>
+          </vaadin-horizontal-layout>
         </div>
         <div style="${this.selectedEditPlane === this.EDITPLANE_YZ ? `display:block;`: `display:none;`}">
-          <vaadin-vertical-layout>
-            ${this.renderNumberField(this.yzC00)}
-            ${this.renderNumberField(this.yzC01)}
-            ${this.renderNumberField(this.yzC10)}
-            ${this.renderNumberField(this.yzC11)}
-            ${this.renderNumberField(this.yzC20)}
-            ${this.renderNumberField(this.yzC21)}
-            ${this.renderNumberField(this.yzCRotate)}
-            ${this.renderNumberField(this.yzCScale)}
+          <vaadin-horizontal-layout>
+            <vaadin-vertical-layout>
+              ${this.renderNumberField(this.yzC00)}
+              ${this.renderNumberField(this.yzC01)}
+              ${this.renderNumberField(this.yzC10)}
+              ${this.renderNumberField(this.yzC11)}
+              ${this.renderNumberField(this.yzC20)}
+              ${this.renderNumberField(this.yzC21)}
+              ${this.renderNumberField(this.yzCRotate)}
+              ${this.renderNumberField(this.yzCScale)}
+            </vaadin-vertical-layout>
+            <vaadin-vertical-layout>
+              ${this.renderNumberField(this.yzP00)}
+              ${this.renderNumberField(this.yzP01)}
+              ${this.renderNumberField(this.yzP10)}
+              ${this.renderNumberField(this.yzP11)}
+              ${this.renderNumberField(this.yzP20)}
+              ${this.renderNumberField(this.yzP21)}
+              ${this.renderNumberField(this.yzPRotate)}
+              ${this.renderNumberField(this.yzPScale)}
           </vaadin-vertical-layout>
+          </vaadin-horizontal-layout>
         </div>
         <div style="${this.selectedEditPlane === this.EDITPLANE_ZX ? `display:block;`: `display:none;`}">
-          <vaadin-vertical-layout>
-            ${this.renderNumberField(this.zxC00)}
-            ${this.renderNumberField(this.zxC01)}
-            ${this.renderNumberField(this.zxC10)}
-            ${this.renderNumberField(this.zxC11)}
-            ${this.renderNumberField(this.zxC20)}
-            ${this.renderNumberField(this.zxC21)}
-            ${this.renderNumberField(this.zxCRotate)}
-            ${this.renderNumberField(this.zxCScale)}
-          </vaadin-vertical-layout>
+          <vaadin-horizontal-layout>
+            <vaadin-vertical-layout>
+              ${this.renderNumberField(this.zxC00)}
+              ${this.renderNumberField(this.zxC01)}
+              ${this.renderNumberField(this.zxC10)}
+              ${this.renderNumberField(this.zxC11)}
+              ${this.renderNumberField(this.zxC20)}
+              ${this.renderNumberField(this.zxC21)}
+              ${this.renderNumberField(this.zxCRotate)}
+              ${this.renderNumberField(this.zxCScale)}
+            </vaadin-vertical-layout>
+            <vaadin-vertical-layout>
+              ${this.renderNumberField(this.zxP00)}
+              ${this.renderNumberField(this.zxP01)}
+              ${this.renderNumberField(this.zxP10)}
+              ${this.renderNumberField(this.zxP11)}
+              ${this.renderNumberField(this.zxP20)}
+              ${this.renderNumberField(this.zxP21)}
+              ${this.renderNumberField(this.zxPRotate)}
+              ${this.renderNumberField(this.zxPScale)}
+            </vaadin-vertical-layout>
+          </vaadin-horizontal-layout>
         </div>
     `;
   }
