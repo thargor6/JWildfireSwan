@@ -48,6 +48,7 @@ export interface NumberFieldDescriptor {
   min: number
   max: number
   step: number
+  labelWidth?: string
   onChange(value: number): void
   value(): number | undefined
 }
@@ -186,7 +187,7 @@ export abstract class EditPropertyPanel extends MobxLitElement {
 
   renderNumberField(desc: NumberFieldDescriptor): TemplateResult {
     return html `
-      <swan-number-slider .disabled="${undefined===desc.value()}" min="${desc.min}" max="${desc.max}" step="${desc.step}" 
+      <swan-number-slider labelWidth="${desc.labelWidth ? desc.labelWidth : '10em'}" .disabled="${undefined===desc.value()}" min="${desc.min}" max="${desc.max}" step="${desc.step}" 
         label="${desc.label}" value="${desc.value()} "
         .onValueChange="${desc.onChange}">
       </swan-number-slider>
