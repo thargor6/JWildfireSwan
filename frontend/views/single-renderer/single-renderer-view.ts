@@ -85,10 +85,9 @@ export class SingleRendererView extends View {
                   .containerWidth="${'40em'}" .containerHeight="${'40em'}"
                   .canvasDisplayWidth="${'40em'}" .canvasDisplayHeight="${'40em'}"
                   .onCreateFlameRenderer=${this.createFlameRenderer}></render-panel>
-                <single-renderer-render-panel id='viewOptsPnl' 
-                  .onRefresh="${()=>this.getRenderPanel().rerenderFlame()}"
+                <single-renderer-render-panel id='viewOptsPnl'
                   .onCancelRender="${()=>this.getRenderPanel().cancelRender()}"
-                  .onRenderAndSave="${()=>this.getRenderPanel().rerenderFlame()}"
+                  .onRender="${()=>this.getRenderPanel().rerenderFlame()}"
                   .onImageSizeChanged="${()=>this.getRenderPanel().rerenderFlame()}"></single-renderer-render-panel>
 
               </div>  

@@ -341,7 +341,7 @@ export class PlaygroundView extends View implements BeforeEnterObserver {
                     .onFlameNameChanged="${this.importExampleFlame}"></playground-flame-panel>
                     <playground-render-panel id='viewOptsPnl' .onRefresh="${()=>this.getRenderPanel().rerenderFlame()}"
                                              .onCancelRender="${()=>this.getRenderPanel().cancelRender()}"
-                                             .onRenderAndSave="${()=>this.getRenderPanel().renderAndSave()}"
+                                             .onRender="${()=>this.getRenderPanel().rerenderFlame()}"
                       .visible=${this.selectedTab === 1} .onImageSizeChanged="${()=>this.getRenderPanel().rerenderFlame()}"></playground-render-panel>
                  </div>
            </div>`

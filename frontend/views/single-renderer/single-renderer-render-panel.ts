@@ -45,7 +45,7 @@ export class SingleRendererRenderPanel extends MobxLitElement {
   onCancelRender = ()=>{}
 
   @property()
-  onRenderAndSave = ()=>{}
+  onRender = ()=>{}
 
   @property()
   onImageSizeChanged: ()=>void = ()=>{}
@@ -106,7 +106,7 @@ export class SingleRendererRenderPanel extends MobxLitElement {
  
 
           <vaadin-horizontal-layout theme="spacing">
-              <vaadin-button theme="primary" style="max-width: 20em;" @click="${this.onRenderAndSave}">${msg('Render flame')}</vaadin-button>
+              <vaadin-button theme="primary" style="max-width: 20em;" @click="${this.onRender}">${msg('Render flame')}</vaadin-button>
               <vaadin-button theme="tertiary" style="max-width: 20em;" @click="${this.onCancelRender}">${msg('Cancel')}</vaadin-button>
           </vaadin-horizontal-layout>
           
