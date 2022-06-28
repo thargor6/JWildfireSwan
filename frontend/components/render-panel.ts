@@ -91,10 +91,6 @@ export class RenderPanel extends MobxLitElement {
     }
   }
 
-  renderAndSave = ()=> {
-    // console.log("SAVE")
-  }
-
   public rerenderFlame = (renderer: FlameRenderer | undefined = undefined)=> {
     if(this.renderer) {
       const reuseCanvas = this.hasCanvas()

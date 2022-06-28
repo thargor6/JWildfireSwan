@@ -42,8 +42,8 @@ import {Parameters} from "Frontend/flames/model/parameters";
 import {msg, localized} from "@lit/localize";
 
 @localized()
-@customElement('renderer-view')
-export class RendererView extends View  {
+@customElement('batch-renderer-view')
+export class BatchRendererView extends View  {
     @state()
     renderSize = RenderResolutions.defaultRenderSize
 

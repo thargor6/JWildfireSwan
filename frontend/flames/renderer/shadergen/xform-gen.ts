@@ -245,8 +245,8 @@ export class XFormPartShaderGenerator {
               float c11 = ${xForm.yzP11.toWebGl()};
               float _py = ((c00*cosa + c01*sina) * _vy + (c10*cosa + c11*sina) * _vz)*scale;
               float _pz = ((-c00*sina + c01*cosa) * _vy + (-c10*sina + c11*cosa) * _vz)*scale;
-              _ty = _py;
-              _tz = _pz;
+              _vy = _py;
+              _vz = _pz;
         `
     }
     else if (!xForm.yzP00.equals(1.0) || !xForm.yzP01.equals(0.0) ||
@@ -255,8 +255,8 @@ export class XFormPartShaderGenerator {
         {
           float _py = ${xForm.yzP00.toWebGl()} * _vy + ${xForm.yzP10.toWebGl()} * _vz;
           float _pz = ${xForm.yzP01.toWebGl()} * _vy + ${xForm.yzP11.toWebGl()} * _vz;
-          _ty = _py;
-          _tz = _pz;
+          _vy = _py;
+          _vz = _pz;
         }
         `
     }
@@ -274,8 +274,8 @@ export class XFormPartShaderGenerator {
               float c11 = ${xForm.zxP11.toWebGl()};
               float _px = ((c00*cosa + c01*sina) * _vx + (c10*cosa + c11*sina) * _vz)*scale;
               float _pz = ((-c00*sina + c01*cosa) * _vx + (-c10*sina + c11*cosa) * _vz)*scale;
-              _tx = _px;
-              _tz = _pz;
+              _vx = _px;
+              _vz = _pz;
         `
     }
     else if (!xForm.zxP00.equals(1.0) || !xForm.zxP01.equals(0.0) ||
@@ -284,8 +284,8 @@ export class XFormPartShaderGenerator {
         {
           float _px = ${xForm.yzP00.toWebGl()} * _vx + ${xForm.yzP10.toWebGl()} * _vz;
           float _pz = ${xForm.yzP01.toWebGl()} * _vx + ${xForm.yzP11.toWebGl()} * _vz;
-          _tx = _px;
-          _tz = _pz;
+          _vx = _px;
+          _vz = _pz;
         }
         `
     }

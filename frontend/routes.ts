@@ -18,6 +18,7 @@
 import { Route } from '@vaadin/router';
 import './views/playground/playground-view';
 import './views/main-layout';
+import {msg} from "@lit/localize";
 
 export type ViewRoute = Route & {
   title?: string;
@@ -61,9 +62,20 @@ export const views: ViewRoute[] = [
     path: 'editor',
     component: 'editor-view',
     icon: 'la la-file',
-    title: 'Editor',
+    title: msg('Flame editor'),
     action: async (_context, _command) => {
       await import('./views/editor/editor-view');
+      return;
+    },
+  },
+
+  {
+    path: 'single-renderer',
+    component: 'single-renderer-view',
+    icon: 'la la-th-list',
+    title: msg('Flame renderer'),
+    action: async (_context, _command) => {
+      await import('./views/single-renderer/single-renderer-view');
       return;
     },
   },
@@ -84,7 +96,7 @@ export const views: ViewRoute[] = [
     path: 'gallery',
     component: 'gallery-view',
     icon: 'la la-th-list',
-    title: 'Example Gallery',
+    title: msg('Flame example gallery'),
     action: async (_context, _command) => {
       await import('./views/gallery/gallery-view');
       return;
@@ -92,12 +104,12 @@ export const views: ViewRoute[] = [
   },
 /*
   {
-    path: 'renderer',
-    component: 'renderer-view',
+    path: 'batch-renderer',
+    component: 'batch-renderer-view',
     icon: 'la la-th-list',
-    title: 'Batch renderer',
+    title: msg('Batch renderer'),
     action: async (_context, _command) => {
-      await import('./views/renderer/renderer-view');
+      await import('./views/batch-renderer/batch-renderer-view');
       return;
     },
   },
@@ -106,7 +118,7 @@ export const views: ViewRoute[] = [
     path: 'about',
     component: 'about-view',
     icon: 'la la-file',
-    title: 'Help / About',
+    title: msg('Help / About'),
     action: async (_context, _command) => {
       await import('./views/about/about-view');
       return;
