@@ -20,6 +20,7 @@ import {state} from "lit/decorators";
 export class RenderInfoStore {
   renderInfo = ''
   renderProgress = 0.0
+  calculating = false
 
   constructor() {
     makeAutoObservable(this);

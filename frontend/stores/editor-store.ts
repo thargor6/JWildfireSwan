@@ -28,7 +28,6 @@ export class EditorStore {
   initFlag = false
   refreshing = true
   variations: string[] = []
-  calculating = false
   lastError = ''
   _currFlame = new Flame()
   _currLayers: Layer[] = []

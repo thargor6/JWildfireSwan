@@ -19,6 +19,7 @@ import {randomizerStore} from "Frontend/stores/randomizer-store";
 import {editorStore} from "Frontend/stores/editor-store";
 import {FlameMapper} from "Frontend/flames/model/mapper/flame-mapper";
 import {FlamesEndpoint} from "Frontend/generated/endpoints";
+import {renderInfoStore} from "Frontend/stores/render-info-store";
 
 export interface StartupAction {
   execute(): void
@@ -45,6 +46,35 @@ export class LoadExampleFlameAction implements StartupAction {
       }).catch(err=>{
         console.log(`Error loading example flame ${this.exampleName}: ${err}`)
       })
+      this.executed = true
+    }
+  }
+}
+
+export class GenerateRandomFlameAction implements StartupAction {
+  private executed = false
+
+  constructor(private generatorName: string) {
+    //
+  }
+
+  execute(): void {
+    if(!this.executed) {
+      renderInfoStore.calculating = true
+      editorStore.lastError = ''
+      try {
+        FlamesEndpoint.generateRandomFlame(editorStore.variations).then(
+          randomFlame => {
+            editorStore.currFlame = FlameMapper.mapFromBackend(randomFlame.flame)
+          }
+        ).catch(err=> {
+          renderInfoStore.calculating = false
+          editorStore.lastError = err
+        })
+      }
+      finally {
+        renderInfoStore.calculating = false
+      }
       this.executed = true
     }
   }

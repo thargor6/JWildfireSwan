@@ -69,11 +69,12 @@ import './editor-xforms-grid-panel'
 import {EditorEditLayersPanel} from "Frontend/views/editor/editor-edit-layers-panel";
 import {EditorXformsGridPanel} from "Frontend/views/editor/editor-xforms-grid-panel";
 import {
-  EmptyAction,
+  EmptyAction, GenerateRandomFlameAction,
   LoadExampleFlameAction, LoadRandomFlameAction,
   LoadRandomSubFlameAction,
   startupActionHolder
 } from "Frontend/stores/editor-startup-actions";
+import {renderInfoStore} from "Frontend/stores/render-info-store";
 
 @localized()
 @customElement('editor-view')
@@ -127,8 +128,6 @@ export class EditorView extends View implements BeforeEnterObserver {
     }
 
     createFlameRenderer = ()=> {
-    console.log("RENDER FLAME", this.currFlame)
-
         return new FlameRenderer(512, 256,
           DisplayMode.FLAME, this.getRenderPanel().canvas,
           undefined, false,
@@ -157,21 +156,21 @@ export class EditorView extends View implements BeforeEnterObserver {
 
     importParamsFromClipboard = (): void => {
        navigator.clipboard.readText().then(text => {
-           editorStore.calculating = true
+           renderInfoStore.calculating = true
            editorStore.lastError = ''
            FlamesEndpoint.parseFlame(text).then(flame => {
                editorStore.refreshing = true
                try {
                  this.currFlame = FlameMapper.mapFromBackend(flame)
                    this.getRenderPanel().rerenderFlame()
-                   editorStore.calculating = false
+                   renderInfoStore.calculating = false
                }
                finally {
                    editorStore.refreshing = false
                }
            }).catch(err=> {
              console.log('ERROR', err)
-               editorStore.calculating = false
+               renderInfoStore.calculating = false
                editorStore.lastError = err
            })
          }
@@ -186,6 +185,13 @@ export class EditorView extends View implements BeforeEnterObserver {
         const exampleName = _location.params['example'] as string;
         if (exampleName && exampleName !== '') {
           startupActionHolder.action = new LoadExampleFlameAction(exampleName)
+          return
+        }
+      }
+      {
+        const rndGenName = _location.params['rndGenName'] as string;
+        if (rndGenName && rndGenName !== '') {
+          startupActionHolder.action = new GenerateRandomFlameAction(rndGenName)
           return
         }
       }
@@ -284,7 +290,7 @@ export class EditorView extends View implements BeforeEnterObserver {
   }
 
     createBlankFlame = () => {
-        editorStore.calculating = true
+        renderInfoStore.calculating = true
         editorStore.lastError = ''
 
         FlamesEndpoint.generateRandomFlame(editorStore.variations).then(
@@ -293,20 +299,20 @@ export class EditorView extends View implements BeforeEnterObserver {
               try {
                 this.currFlame = new Flame()
                   this.getRenderPanel().rerenderFlame()
-                  editorStore.calculating = false
+                  renderInfoStore.calculating = false
               }
               finally {
                   editorStore.refreshing = false
               }
           }
         ).catch(err=> {
-            editorStore.calculating = false
+            renderInfoStore.calculating = false
             editorStore.lastError = err
         })
     }
 
     createRandomFlame = () => {
-        editorStore.calculating = true
+        renderInfoStore.calculating = true
         editorStore.lastError = ''
 
         FlamesEndpoint.generateRandomFlame(editorStore.variations).then(
@@ -315,20 +321,20 @@ export class EditorView extends View implements BeforeEnterObserver {
               try {
                 this.currFlame = FlameMapper.mapFromBackend(randomFlame.flame)
                   this.getRenderPanel().rerenderFlame()
-                  editorStore.calculating = false
+                  renderInfoStore.calculating = false
               }
               finally {
                   editorStore.refreshing = false
               }
           }
         ).catch(err=> {
-            editorStore.calculating = false
+            renderInfoStore.calculating = false
             editorStore.lastError = err
         })
     }
 
     createRandomGradient = () => {
-        editorStore.calculating = true
+        renderInfoStore.calculating = true
         editorStore.lastError = ''
 
         FlamesEndpoint.generateRandomGradientForFlame(FlameMapper.mapToBackend(this.currFlame)).then(
@@ -337,14 +343,14 @@ export class EditorView extends View implements BeforeEnterObserver {
               try {
                 this.currFlame = FlameMapper.mapFromBackend(randomFlame.flame)
                   this.getRenderPanel().rerenderFlame()
-                  editorStore.calculating = false
+                  renderInfoStore.calculating = false
               }
               finally {
                   editorStore.refreshing = false
               }
           }
         ).catch(err=> {
-            editorStore.calculating = false
+            renderInfoStore.calculating = false
             editorStore.lastError = err
         })
     }
@@ -353,7 +359,7 @@ export class EditorView extends View implements BeforeEnterObserver {
       editorStore.refreshing = true
       try {
         this.getRenderPanel().fluidReRenderFlame(undefined, paramId, refValue, newValue)
-        editorStore.calculating = false
+        renderInfoStore.calculating = false
       }
       finally {
         editorStore.refreshing = false
@@ -364,7 +370,7 @@ export class EditorView extends View implements BeforeEnterObserver {
       editorStore.refreshing = true
       try {
         this.getRenderPanel().rerenderFlame()
-        editorStore.calculating = false
+        renderInfoStore.calculating = false
       }
       finally {
         editorStore.refreshing = false

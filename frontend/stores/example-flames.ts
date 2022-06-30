@@ -60,7 +60,6 @@ const shuffle = (array: ExampleFlame[]) => {
 }
 
 export const sortExamples = (examples: ExampleFlame[], sortOrder: SortOrder) => {
-  console.log("SORT", sortOrder)
   switch (sortOrder) {
     case SortOrder.RANDOM:
       return shuffle([...examples])
