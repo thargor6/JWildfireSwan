@@ -16,13 +16,13 @@
 */
 
 import {html} from 'lit';
-import {customElement, property, state} from 'lit/decorators.js';
+import {customElement, property} from 'lit/decorators.js';
 
 import '@polymer/paper-slider/paper-slider'
 import '@vaadin/vaadin-text-field'
 import '@vaadin/text-area'
-import {playgroundStore} from "Frontend/stores/playground-store";
 import {MobxLitElement} from "@adobe/lit-mobx";
+import {editorStore} from "Frontend/stores/editor-store";
 
 @customElement('about-variations-panel')
 export class AboutVariationsPanel extends MobxLitElement {
@@ -33,8 +33,8 @@ export class AboutVariationsPanel extends MobxLitElement {
     return html`
       <div style="${this.visible ? `display:block;`: `display:none;`}">
         <div style="display: flex; flex-direction: column;">
-        <vaadin-text-field readonly label="Supported variations" value="${playgroundStore.variations.length}"></vaadin-text-field>
-        <vaadin-text-area style="max-height: 24em;" readonly value="${playgroundStore.variations.join('\n')}"></vaadin-text-area>
+        <vaadin-text-field readonly label="Supported variations" value="${editorStore.variations.length}"></vaadin-text-field>
+        <vaadin-text-area style="max-height: 24em;" readonly value="${editorStore.variations.join('\n')}"></vaadin-text-area>
         </div>          
       </div>
 `;

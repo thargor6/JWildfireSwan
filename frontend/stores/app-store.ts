@@ -17,8 +17,8 @@
 import { RouterLocation } from '@vaadin/router';
 import { makeAutoObservable } from 'mobx';
 import {VariationShaders} from "Frontend/flames/renderer/variations/variation-shaders";
-import {playgroundStore} from "Frontend/stores/playground-store";
 import {galleryStore} from "Frontend/stores/gallery-store";
+import {editorStore} from "Frontend/stores/editor-store";
 
 export class AppStore {
   applicationName = 'JWildfire Swan';
@@ -43,7 +43,7 @@ export class AppStore {
 
   async initVariations() {
     this.variations = VariationShaders.varNameList
-    playgroundStore.initialize()
+    editorStore.initialize()
     galleryStore.initialize()
   }
 
