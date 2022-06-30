@@ -20,7 +20,11 @@ import {VariationShaders} from "Frontend/flames/renderer/variations/variation-sh
 import {Flame, Layer, XForm} from "Frontend/flames/model/flame";
 import {registerVars_All} from "Frontend/flames/renderer/variations/variation-shaders-all";
 
+type InitCallback = () => void
+
 export class EditorStore {
+  initCallbacks = new Map<string[], InitCallback>()
+  initState = new Set<string>()
   initFlag = false
   refreshing = true
   variations: string[] = []
@@ -42,7 +46,36 @@ export class EditorStore {
       vars.sort()
       this.variations = vars
       this.initFlag = true
+      this.notifyInit('store')
     }
+  }
+
+
+  notifyInit(tagName: string) {
+    this.initState.add(tagName)
+    this.executeOnInitCallbacks()
+  }
+
+  registerInitCallback(componentIds: string[], cb: InitCallback) {
+    this.initCallbacks.set(['store', ...componentIds], cb)
+  }
+
+  private executeOnInitCallbacks() {
+    let removeCbs = new Array<string[]>()
+    this.initCallbacks.forEach((value, key) => {
+      let registerState = true
+      key.forEach(key => {
+        if(!this.initState.has(key)) {
+          registerState = false
+        }
+      })
+      if(registerState) {
+        removeCbs.push(key)
+        value()
+      }
+    })
+    // remove executed callbacks
+    removeCbs.forEach(key=>this.initCallbacks.delete(key))
   }
 
   get currFlame() {

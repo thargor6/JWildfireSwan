@@ -15,7 +15,7 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 */
 
-import {html} from 'lit'
+import {html, PropertyValues} from 'lit'
 import {customElement, query, state} from 'lit/decorators.js'
 import { View } from '../../views/view'
 
@@ -38,11 +38,9 @@ import '@vaadin/vaadin-split-layout'
 import '@vaadin/app-layout/vaadin-drawer-toggle';
 
 import {FlameRenderer} from '../../flames/renderer/flame-renderer'
-import {FlamesEndpoint} from "Frontend/generated/endpoints";
+import {FlamesEndpoint, GalleryEndpoint} from "Frontend/generated/endpoints";
 import {FlameMapper} from '../../flames/model/mapper/flame-mapper'
 import '@vaadin/vaadin-combo-box';
-import {PlaygroundRenderPanel} from "Frontend/views/playground/playground-render-panel";
-import {PlaygroundFlamePanel} from "Frontend/views/playground/playground-flame-panel";
 import '../../components/swan-loading-indicator'
 import '../../components/swan-error-panel'
 import '../../components/render-panel'
@@ -70,6 +68,12 @@ import './editor-edit-xform-color-panel'
 import './editor-xforms-grid-panel'
 import {EditorEditLayersPanel} from "Frontend/views/editor/editor-edit-layers-panel";
 import {EditorXformsGridPanel} from "Frontend/views/editor/editor-xforms-grid-panel";
+import {
+  EmptyAction,
+  LoadExampleFlameAction, LoadRandomFlameAction,
+  LoadRandomSubFlameAction,
+  startupActionHolder
+} from "Frontend/stores/editor-startup-actions";
 
 @localized()
 @customElement('editor-view')
@@ -123,6 +127,8 @@ export class EditorView extends View implements BeforeEnterObserver {
     }
 
     createFlameRenderer = ()=> {
+    console.log("RENDER FLAME", this.currFlame)
+
         return new FlameRenderer(512, 256,
           DisplayMode.FLAME, this.getRenderPanel().canvas,
           undefined, false,
@@ -138,14 +144,6 @@ export class EditorView extends View implements BeforeEnterObserver {
   selectedTransformTabChanged(e: CustomEvent) {
     this.selectedTransformTab = e.detail.value;
   }
-
-    getFlamePanel = (): PlaygroundFlamePanel => {
-        return document.querySelector('#flamePnl')!
-    }
-
-    getRenderSettingsPanel = (): PlaygroundRenderPanel => {
-        return document.querySelector('#viewOptsPnl')!
-    }
 
     exportParamsToClipboard = (): void => {
         FlamesEndpoint.convertFlameToXml(FlameMapper.mapToBackend(this.currFlame)).then(flameXml => {
@@ -184,26 +182,27 @@ export class EditorView extends View implements BeforeEnterObserver {
         _location: RouterLocation,
         _commands: PreventAndRedirectCommands,
         _router: Router) {
-        /*
-        this.loadExampleAtStartup = ''
-        this.loadRndFlameAtStartup = ''
-
+      {
         const exampleName = _location.params['example'] as string;
-        if(exampleName && exampleName!=='') {
-            this.loadExampleAtStartup = exampleName
+        if (exampleName && exampleName !== '') {
+          startupActionHolder.action = new LoadExampleFlameAction(exampleName)
+          return
         }
-
+      }
+      {
         const rndFlameName = _location.params['rndFlameName'] as string;
-        if(rndFlameName && rndFlameName!=='') {
-            const parentRndFlameName = _location.params['parentRndFlameName'] as string;
-            if(parentRndFlameName && parentRndFlameName.length>0) {
-                this.loadRndFlameAtStartup = `${parentRndFlameName}/${rndFlameName}`
-            }
-            else {
-                this.loadRndFlameAtStartup = rndFlameName
-            }
+        if (rndFlameName && rndFlameName !== '') {
+          const parentRndFlameName = _location.params['parentRndFlameName'] as string;
+          if (parentRndFlameName && parentRndFlameName.length > 0) {
+            startupActionHolder.action = new LoadRandomSubFlameAction(parentRndFlameName, rndFlameName)
+            return
+          } else {
+            startupActionHolder.action = new LoadRandomFlameAction(rndFlameName)
+            return
+          }
         }
-         */
+      }
+      startupActionHolder.action = new EmptyAction()
     }
 
     private renderFlameTabs = () => {
@@ -384,4 +383,13 @@ export class EditorView extends View implements BeforeEnterObserver {
     }, 150)
   }
 
+  protected firstUpdated(_changedProperties: PropertyValues) {
+    super.firstUpdated(_changedProperties);
+    startupActionHolder.action.execute()
+    editorStore.registerInitCallback(['editor-xforms-grid-panel'], this.renderFirstFlame)
+  }
+
+  renderFirstFlame = ()=> {
+    this.getRenderPanel().rerenderFlame()
+  }
 }

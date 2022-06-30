@@ -74,7 +74,7 @@ export class GalleryView extends View {
                 <span class="text-s text-secondary">Date: ${example.modified.toLocaleString()}</span>
                 ${(example.description && example.description!=='') ? html `<p class = "my-m" >${example.description}</p>`: nothing}
                 ${example.tags.length > 0 ? html `${example.tags.map(tag => html `#${tag} `)}` : nothing}
-                <vaadin-button @click="${this.renderExample.bind(this, example.name)}">Render in Playground</vaadin-button>
+                <vaadin-button @click="${this.renderExample.bind(this, example.name)}">${msg('Render in editor')}</vaadin-button>
               </li>
             `
           )}
@@ -94,7 +94,7 @@ export class GalleryView extends View {
   }
 
   renderExample = (example: string) => {
-      Router.go('/playground/'+example)
+      Router.go('/editor/example/'+example)
   }
 
   refreshItems = () => {

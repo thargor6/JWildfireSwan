@@ -36,10 +36,10 @@ import '../../components/swan-error-panel'
 import '../../components/render-panel'
 import {FlameRenderer} from "Frontend/flames/renderer/flame-renderer";
 import {DisplayMode} from "Frontend/flames/renderer/render-settings";
-import {playgroundStore} from "Frontend/stores/playground-store";
 import '@vaadin/icon';
 import {prefsStore} from "Frontend/stores/prefs-store";
 import {msg, localized} from "@lit/localize";
+import {editorStore} from "Frontend/stores/editor-store";
 
 @localized()
 @customElement('randomizer-view')
@@ -162,7 +162,7 @@ export class RandomizerView extends View {
     randomizerStore.calculating = true
     randomizerStore.lastError = ''
 
-    FlamesEndpoint.generateRandomFlame(playgroundStore.variations).then(
+    FlamesEndpoint.generateRandomFlame(editorStore.variations).then(
       randomFlame => {
         randomizerStore.currFlame = FlameMapper.mapFromBackend(randomFlame.flame)
         this.getRenderPanel().rerenderFlame()

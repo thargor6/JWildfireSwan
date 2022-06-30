@@ -21,7 +21,6 @@ import {customElement, property, state} from 'lit/decorators.js';
 import '@polymer/paper-slider/paper-slider'
 import '@vaadin/vaadin-button'
 import '@vaadin/vaadin-combo-box';
-import {playgroundStore} from "Frontend/stores/playground-store";
 
 import {MobxLitElement} from "@adobe/lit-mobx";
 import {HasValue} from "@hilla/form";
@@ -30,6 +29,7 @@ import '@vaadin/vaadin-ordered-layout/vaadin-vertical-layout'
 import '@vaadin/vaadin-ordered-layout/vaadin-horizontal-layout'
 import { RenderResolutions} from "Frontend/flames/renderer/render-resolution";
 import {msg} from "@lit/localize";
+import {editorStore} from "Frontend/stores/editor-store";
 
 interface DisplayModeItem {
   displayMode: DisplayMode;
@@ -159,7 +159,7 @@ export class SingleRendererRenderPanel extends MobxLitElement {
 
   protected firstUpdated() {
     this.capturedImageContainer = this.shadowRoot!.querySelector('#captured-image-container')!
-    playgroundStore.notifyInit(this.tagName)
+    editorStore.notifyInit(this.tagName)
   }
 
 }

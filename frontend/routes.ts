@@ -16,7 +16,7 @@
 */
 
 import { Route } from '@vaadin/router';
-import './views/playground/playground-view';
+import './views/editor/editor-view';
 import './views/main-layout';
 import {msg} from "@lit/localize";
 
@@ -30,45 +30,40 @@ export const views: ViewRoute[] = [
   // place routes below (more info https://vaadin.com/docs/latest/fusion/routing/overview)
   {
     path: '',
-    component: 'playground-view',
+    component: 'editor-view',
     icon: '',
     title: '',
-  },
-  {
-    path: 'playground',
-    component: 'playground-view',
-    icon: 'la la-file',
-    title: 'Playground',
-  },
-  {
-    path: 'playground/:example',
-    component: 'playground-view',
-    icon: 'la la-file',
-    title: 'Playground',
-  },
-  {
-    path: 'playground/rnd/:rndFlameName',
-    component: 'playground-view',
-    icon: 'la la-file',
-    title: 'Playground',
-  },
-  {
-    path: 'playground/rnd/:parentRndFlameName/:rndFlameName',
-    component: 'playground-view',
-    icon: 'la la-file',
-    title: 'Playground',
   },
   {
     path: 'editor',
     component: 'editor-view',
     icon: 'la la-file',
     title: msg('Flame editor'),
-    action: async (_context, _command) => {
-      await import('./views/editor/editor-view');
-      return;
-    },
   },
-
+  {
+    path: 'editor/example/:example',
+    component: 'editor-view',
+    icon: 'la la-file',
+    title: msg('Flame editor'),
+  },
+  {
+    path: 'editor/genrnd/:rndGenName',
+    component: 'editor-view',
+    icon: 'la la-file',
+    title: msg('Flame editor'),
+  },
+  {
+    path: 'editor/openrnd/:rndFlameName',
+    component: 'editor-view',
+    icon: 'la la-file',
+    title: msg('Flame editor'),
+  },
+  {
+    path: 'playground/openrnd/:parentRndFlameName/:rndFlameName',
+    component: 'editor-view',
+    icon: 'la la-file',
+    title: msg('Flame editor'),
+  },
   {
     path: 'single-renderer',
     component: 'single-renderer-view',

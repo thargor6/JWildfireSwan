@@ -75,6 +75,7 @@ export class RenderPanel extends MobxLitElement {
   }
 
   recreateCanvas = ()=> {
+    console.log("CRREATE CANVVAS")
     this.canvasContainer.innerHTML = '';
     this.canvas = document.createElement('canvas')
     this.canvas.id = 'screen'
@@ -92,7 +93,9 @@ export class RenderPanel extends MobxLitElement {
   }
 
   public rerenderFlame = (renderer: FlameRenderer | undefined = undefined)=> {
+    console.log("RENDER1")
     if(this.renderer) {
+      console.log("RENDER2")
       const reuseCanvas = this.hasCanvas()
       const that = this
       this.renderer.signalCancel(()=>{
@@ -104,6 +107,7 @@ export class RenderPanel extends MobxLitElement {
       })
     }
     else {
+      console.log("RENDER3")
       this.recreateCanvas()
       this.renderFlame(renderer)
     }
@@ -123,7 +127,6 @@ export class RenderPanel extends MobxLitElement {
       this.renderFlame(renderer)
     }
   }
-
 
   disconnectedCallback() {
     if(this.renderer) {
@@ -174,7 +177,6 @@ export class RenderPanel extends MobxLitElement {
       this.lastProgressUpdate = currTimeStamp
     }
   }
-
 
   clearRenderer() {
     if(this.renderer) {

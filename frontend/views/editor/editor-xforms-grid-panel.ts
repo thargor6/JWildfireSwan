@@ -15,7 +15,7 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 */
 
-import {html, render} from 'lit';
+import {html, PropertyValues, render} from 'lit';
 import {customElement, query, state} from 'lit/decorators.js';
 import '@vaadin/vaadin-ordered-layout/vaadin-vertical-layout'
 import '@vaadin/vaadin-ordered-layout/vaadin-horizontal-layout'
@@ -85,6 +85,11 @@ export class EditorXformsGridPanel extends MobxLitElement {
       const event = new CustomEvent('active-item-changed', { detail: { value: editorStore.currXforms[0]} });
       this.grid.dispatchEvent(event)
     }
+  }
+
+  protected firstUpdated(_changedProperties: PropertyValues) {
+    super.firstUpdated(_changedProperties);
+    editorStore.notifyInit('editor-xforms-grid-panel')
   }
 }
 
