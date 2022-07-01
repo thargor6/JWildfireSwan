@@ -52,6 +52,8 @@ export class EditorXformsGridPanel extends MobxLitElement {
         </vaadin-vertical-layout>
       `
   }
+
+  // TODO display name column
 /*
             <vaadin-grid-column header="${msg('Weight')}" .renderer="${this.weightColRenderer}"></vaadin-grid-column>
 

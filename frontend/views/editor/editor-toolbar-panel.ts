@@ -112,7 +112,7 @@ export class EditorToolbarPanel extends MobxLitElement {
             <vaadin-item @click="${this.onNewRandomFlame}" id="new_random_flame_itm"><vaadin-icon style="padding-right: 0.5em; width: 1.6em;" icon="vaadin:magic"></vaadin-icon>${msg('New random flame')}</vaadin-item>
             <vaadin-item @click="${this.onNewRandomGradient}" id="new_random_gradient_itm"><vaadin-icon style="padding-right: 0.5em; width: 1.6em;" icon="vaadin:palette"></vaadin-icon>${msg('New random gradient')}</vaadin-item>
 
-            <vaadin-item id="edit_menu"><vaadin-icon style="padding-right: 0.5em; width: 1.6em;" icon="vaadin:plus-circle"></vaadin-icon>${msg('Edit')}</vaadin-item>
+            <vaadin-item id="edit_menu"><vaadin-icon style="padding-right: 0.5em; width: 1.6em;" icon="vaadin:edit"></vaadin-icon>${msg('Edit')}</vaadin-item>
             <vaadin-item @click="${this.onEditCopyFlameToClipboard}" id="edit_copy_flame_to_clipboard_itm"><vaadin-icon style="padding-right: 0.5em; width: 1.6em;" icon="vaadin:copy-o"></vaadin-icon>${msg('Copy flame to clipboard')}</vaadin-item>
             <vaadin-item @click="${this.onEditPasteFlameFromClipboard}" id="edit_paste_flame_from_clipboard_itm"><vaadin-icon style="padding-right: 0.5em; width: 1.6em;" icon="vaadin:paste"></vaadin-icon>${msg('Paste flame from clipboard')}</vaadin-item>
             <vaadin-item @click="${this.onEditUndo}" id="edit_undo_itm"><vaadin-icon style="padding-right: 0.5em; width: 1.6em;" icon="vaadin:arrow-backward"></vaadin-icon>${msg('Undo')}</vaadin-item>

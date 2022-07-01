@@ -66,6 +66,7 @@ import './editor-edit-xform-nonlinear-panel'
 import './editor-edit-xform-xaos-panel'
 import './editor-edit-xform-color-panel'
 import './editor-xforms-grid-panel'
+import './editor-xform-toolbar-panel'
 import {EditorEditLayersPanel} from "Frontend/views/editor/editor-edit-layers-panel";
 import {EditorXformsGridPanel} from "Frontend/views/editor/editor-xforms-grid-panel";
 import {
@@ -119,7 +120,7 @@ export class EditorView extends View implements BeforeEnterObserver {
           <vaadin-vertical-layout style="width: 100%;">
             <vaadin-horizontal-layout>
               <render-panel .onCreateFlameRenderer=${this.createFlameRenderer}></render-panel>
-              <editor-xforms-grid-panel style="height: 100%;"></editor-xforms-grid-panel>
+              <editor-xforms-grid-panel></editor-xforms-grid-panel>
               ${this.renderTransformTabs()}
             </vaadin-horizontal-layout>
             ${this.renderFlameTabs()}
@@ -254,6 +255,10 @@ export class EditorView extends View implements BeforeEnterObserver {
   private renderTransformTabs = () => {
     return html `
            <div style="display: flex; flex-direction: column; padding: 1em;">
+               <editor-xform-toolbar-panel
+                 
+               
+               ></editor-xform-toolbar-panel>
                 <vaadin-tabs @selected-changed="${this.selectedTransformTabChanged}">
                     <vaadin-tab theme="icon-on-top">
                         <vaadin-icon icon="vaadin:fire"></vaadin-icon>
@@ -272,6 +277,7 @@ export class EditorView extends View implements BeforeEnterObserver {
                         <span>${msg('Color')}</span>
                     </vaadin-tab>
                 </vaadin-tabs>
+               <vaadin-scroller style="height: 300px; width: 100%;">
                 <div style="display: flex; flex-direction: column; align-items: center; width: 100%;">
                   <editor-edit-xform-affine-panel .visible=${this.selectedTransformTab === 0}
                     .afterPropertyChange=${this.reRender} .onPropertyChange="${this.fluidReRender}" ></editor-edit-xform-affine-panel>
@@ -282,6 +288,7 @@ export class EditorView extends View implements BeforeEnterObserver {
                   <editor-edit-xform-color-panel .visible=${this.selectedTransformTab === 3}
                     .afterPropertyChange=${this.reRender}></editor-edit-xform-color-panel>
                  </div>
+               </vaadin-scroller>
            </div>`
   }
 
