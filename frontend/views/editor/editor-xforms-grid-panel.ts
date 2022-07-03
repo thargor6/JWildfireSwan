@@ -21,16 +21,21 @@ import '@vaadin/vaadin-ordered-layout/vaadin-vertical-layout'
 import '@vaadin/vaadin-ordered-layout/vaadin-horizontal-layout'
 import '@vaadin/vaadin-grid'
 import '@vaadin/vaadin-button'
+import '@vaadin/radio-group'
 import {localized, msg} from "@lit/localize";
 import {editorStore} from "Frontend/stores/editor-store";
 import {MobxLitElement} from "@adobe/lit-mobx";
 import {XForm} from "Frontend/flames/model/flame";
 import {Grid, GridActiveItemChangedEvent, GridItemModel} from "@vaadin/grid";
 import {floatToStr} from "Frontend/components/utils";
+import './editor-xform-toolbar-panel'
+import {FlameEditService} from "Frontend/flames/service/flame-edit-service";
 
 @localized()
 @customElement('editor-xforms-grid-panel')
 export class EditorXformsGridPanel extends MobxLitElement {
+  private flameEditService = new FlameEditService()
+
   @state()
   private selectedItems: XForm[] = [];
 
@@ -40,8 +45,21 @@ export class EditorXformsGridPanel extends MobxLitElement {
   render() {
     return html`
         <vaadin-vertical-layout style="margin-left: 1em;">
-          <h4>${msg('Transformations')}</h4>
-          <vaadin-grid style="width: 9em; height: 24em;" theme="compact" .items="${editorStore.currXforms}"
+            <vaadin-radio-group label="${msg('Edit transformations')}" theme="horizontal">
+                <vaadin-radio-button value="affine" label="${msg('Affine')}" checked></vaadin-radio-button>
+                <vaadin-radio-button value="post_affine" label="${msg('Post')}"></vaadin-radio-button>
+            </vaadin-radio-group>
+            
+            <editor-xform-toolbar-panel
+                   .onAddTransform=${this.onAddTransform}
+                   .onAddLinkedTransform=${this.onAddLinkedTransform}
+                   .onAddFinalTransform=${this.onAddFinalTransform}
+                   .onEditDeleteTransform=${this.onEditDeleteTransform}
+                   .onEditDuplicateTransform=${this.onEditDuplicateTransform}
+                   .onEditTransformName=${this.onEditTransformName}
+               ></editor-xform-toolbar-panel>
+            
+          <vaadin-grid style="width: 9em; height: 19em;" theme="compact" .items="${editorStore.currXforms}"
               .selectedItems="${this.selectedItems}" @active-item-changed="${(e: GridActiveItemChangedEvent<XForm>) => {
                 const item = e.detail.value;
                 this.selectedItems = item ? [item] : [];
@@ -92,6 +110,58 @@ export class EditorXformsGridPanel extends MobxLitElement {
   protected firstUpdated(_changedProperties: PropertyValues) {
     super.firstUpdated(_changedProperties);
     editorStore.notifyInit('editor-xforms-grid-panel')
+  }
+
+  onAddTransform = ()=> {
+    if(editorStore.currLayer) {
+      this.flameEditService.addTransform(editorStore.currLayer)
+      editorStore.currLayer = editorStore.currLayer
+      this.reRender()
+    }
+  }
+
+  onAddLinkedTransform = ()=> {
+    if(editorStore.currLayer && editorStore.currXform) {
+      this.flameEditService.addLinkedTransform(editorStore.currLayer, editorStore.currXform)
+      editorStore.currLayer = editorStore.currLayer
+      this.reRender()
+    }
+  }
+
+  onAddFinalTransform = ()=> {
+    if(editorStore.currLayer) {
+      this.flameEditService.addFinalTransform(editorStore.currLayer)
+      editorStore.currLayer = editorStore.currLayer
+      this.reRender()
+    }
+  }
+
+  onEditDeleteTransform = ()=> {
+    if(editorStore.currLayer && editorStore.currXform) {
+      this.flameEditService.deleteTransform(editorStore.currLayer, editorStore.currXform)
+      editorStore.currLayer = editorStore.currLayer
+      this.reRender()
+    }
+  }
+
+  onEditDuplicateTransform = ()=> {
+    if(editorStore.currLayer && editorStore.currXform) {
+      this.flameEditService.duplicateTransform(editorStore.currLayer, editorStore.currXform)
+      editorStore.currLayer = editorStore.currLayer
+      this.reRender()
+    }
+  }
+
+  onEditTransformName = ()=> {
+    if(editorStore.currLayer && editorStore.currXform) {
+// TODO
+    //  this.notificationPnl.showNotifivation(msg('Not implemented yet'))
+    }
+  }
+
+
+  private reRender() {
+    // TODO
   }
 }
 

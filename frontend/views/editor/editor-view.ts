@@ -66,7 +66,6 @@ import './editor-edit-xform-nonlinear-panel'
 import './editor-edit-xform-xaos-panel'
 import './editor-edit-xform-color-panel'
 import './editor-xforms-grid-panel'
-import './editor-xform-toolbar-panel'
 import {EditorEditLayersPanel} from "Frontend/views/editor/editor-edit-layers-panel";
 import {EditorXformsGridPanel} from "Frontend/views/editor/editor-xforms-grid-panel";
 import {
@@ -76,12 +75,10 @@ import {
   startupActionHolder
 } from "Frontend/stores/editor-startup-actions";
 import {renderInfoStore} from "Frontend/stores/render-info-store";
-import {FlameEditService} from "Frontend/flames/service/flame-edit-service";
 
 @localized()
 @customElement('editor-view')
 export class EditorView extends View implements BeforeEnterObserver {
-  private flameEditService = new FlameEditService()
 
   @state()
   selectedFlameTab = 0
@@ -109,7 +106,7 @@ export class EditorView extends View implements BeforeEnterObserver {
           <header class="bg-base border-b border-contrast-10 box-border flex h-xl items-center w-full" slot="navbar">
             <vaadin-drawer-toggle aria-label="Menu toggle" class="text-secondary" theme="contrast"></vaadin-drawer-toggle>
             <h1 class="m-0 text-l" style="margin-right: 1em;">${msg('Flame editor')}</h1>
-              <editor-toolbar-panel 
+            <editor-toolbar-panel 
                       .onEditPasteFlameFromClipboard="${this.importParamsFromClipboard}"
                       .onEditCopyFlameToClipboard="${this.exportParamsToClipboard}"
                       .onNewBlankFlame="${this.createBlankFlame}"
@@ -119,10 +116,13 @@ export class EditorView extends View implements BeforeEnterObserver {
           </header>
           <swan-notification-panel></swan-notification-panel>
           <swan-error-panel .errorMessage=${editorStore.lastError}></swan-error-panel>
-          
           <vaadin-vertical-layout style="width: 100%;">
             <vaadin-horizontal-layout>
-              <render-panel .onCreateFlameRenderer=${this.createFlameRenderer}></render-panel>
+              <render-panel
+                      .containerWidth="${'34em'}" .containerHeight="${'34em'}"
+                      .canvasDisplayWidth="${'30em'}" .canvasDisplayHeight="${'30em'}"
+                      
+                      .onCreateFlameRenderer=${this.createFlameRenderer}></render-panel>
               <editor-xforms-grid-panel></editor-xforms-grid-panel>
               ${this.renderTransformTabs()}
             </vaadin-horizontal-layout>
@@ -217,7 +217,7 @@ export class EditorView extends View implements BeforeEnterObserver {
 
     private renderFlameTabs = () => {
         return html `
-           <div style="display: flex; flex-direction: column; padding: 1em;">
+           <div style="display: flex; flex-direction: column; padding: 0.5em;">
                 <vaadin-tabs @selected-changed="${this.selectedFlameTabChanged}">
                     <vaadin-tab theme="icon-on-top">
                         <vaadin-icon icon="vaadin:fire"></vaadin-icon>
@@ -257,15 +257,8 @@ export class EditorView extends View implements BeforeEnterObserver {
 
   private renderTransformTabs = () => {
     return html `
-           <div style="display: flex; flex-direction: column; padding: 1em;">
-               <editor-xform-toolbar-panel
-                   .onAddTransform=${this.onAddTransform}
-                   .onAddLinkedTransform=${this.onAddLinkedTransform}
-                   .onAddFinalTransform=${this.onAddFinalTransform}
-                   .onEditDeleteTransform=${this.onEditDeleteTransform}
-                   .onEditDuplicateTransform=${this.onEditDuplicateTransform}
-                   .onEditTransformName=${this.onEditTransformName}
-               ></editor-xform-toolbar-panel>
+           <div style="display: flex; flex-direction: column; padding: 0.5em;">
+              
                 <vaadin-tabs @selected-changed="${this.selectedTransformTabChanged}">
                     <vaadin-tab theme="icon-on-top">
                         <vaadin-icon icon="vaadin:fire"></vaadin-icon>
@@ -284,7 +277,7 @@ export class EditorView extends View implements BeforeEnterObserver {
                         <span>${msg('Color')}</span>
                     </vaadin-tab>
                 </vaadin-tabs>
-               <vaadin-scroller style="height: 300px; width: 100%;">
+               <vaadin-scroller style="height: 22em; width: 100%;">
                 <div style="display: flex; flex-direction: column; align-items: center; width: 100%;">
                   <editor-edit-xform-affine-panel .visible=${this.selectedTransformTab === 0}
                     .afterPropertyChange=${this.reRender} .onPropertyChange="${this.fluidReRender}" ></editor-edit-xform-affine-panel>
@@ -299,52 +292,6 @@ export class EditorView extends View implements BeforeEnterObserver {
            </div>`
   }
 
-  onAddTransform = ()=> {
-    if(editorStore.currLayer) {
-      this.flameEditService.addTransform(editorStore.currLayer)
-      editorStore.currLayer = editorStore.currLayer
-      this.reRender()
-    }
-  }
-
-  onAddLinkedTransform = ()=> {
-    if(editorStore.currLayer && editorStore.currXform) {
-      this.flameEditService.addLinkedTransform(editorStore.currLayer, editorStore.currXform)
-      editorStore.currLayer = editorStore.currLayer
-      this.reRender()
-    }
-  }
-
-  onAddFinalTransform = ()=> {
-    if(editorStore.currLayer) {
-      this.flameEditService.addFinalTransform(editorStore.currLayer)
-      editorStore.currLayer = editorStore.currLayer
-      this.reRender()
-    }
-  }
-
-  onEditDeleteTransform = ()=> {
-    if(editorStore.currLayer && editorStore.currXform) {
-      this.flameEditService.deleteTransform(editorStore.currLayer, editorStore.currXform)
-      editorStore.currLayer = editorStore.currLayer
-      this.reRender()
-    }
-  }
-
-  onEditDuplicateTransform = ()=> {
-    if(editorStore.currLayer && editorStore.currXform) {
-      this.flameEditService.duplicateTransform(editorStore.currLayer, editorStore.currXform)
-      editorStore.currLayer = editorStore.currLayer
-      this.reRender()
-    }
-  }
-
-  onEditTransformName = ()=> {
-    if(editorStore.currLayer && editorStore.currXform) {
-
-      this.notificationPnl.showNotifivation(msg('Not implemented yet'))
-    }
-  }
 
   getRenderPanel = (): RenderPanel =>  {
         return document.querySelector('render-panel')!
@@ -446,8 +393,9 @@ export class EditorView extends View implements BeforeEnterObserver {
     editorStore.currFlame = newFlame
     setTimeout(()=>{
       this.flameLayersPanel.selectFirstLayer()
-      //setTimeout(()=>this.transformsGridPanel.selectFirstXform(), 150)
-    }, 150)
+      // seems to modify the flame (!?)
+     // setTimeout(()=>this.transformsGridPanel.selectFirstXform(), 250)
+    }, 250)
   }
 
   protected firstUpdated(_changedProperties: PropertyValues) {

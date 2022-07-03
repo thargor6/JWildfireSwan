@@ -82,7 +82,7 @@ export class SingleRendererView extends View {
               <swan-notification-panel></swan-notification-panel>
               <div class="gap-m grid list-none m-0 p-0" style="grid-template-columns: repeat(auto-fill, minmax(30em, 1fr));">
                 <render-panel 
-                  .containerWidth="${'40em'}" .containerHeight="${'40em'}"
+                  .containerWidth="${'44em'}" .containerHeight="${'44em'}"
                   .canvasDisplayWidth="${'40em'}" .canvasDisplayHeight="${'40em'}"
                   .onCreateFlameRenderer=${this.createFlameRenderer}></render-panel>
                 <single-renderer-render-panel id='viewOptsPnl'
