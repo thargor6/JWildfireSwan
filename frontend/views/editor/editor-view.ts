@@ -76,10 +76,13 @@ import {
   startupActionHolder
 } from "Frontend/stores/editor-startup-actions";
 import {renderInfoStore} from "Frontend/stores/render-info-store";
+import {FlameEditService} from "Frontend/flames/service/flame-edit-service";
 
 @localized()
 @customElement('editor-view')
 export class EditorView extends View implements BeforeEnterObserver {
+  private flameEditService = new FlameEditService()
+
   @state()
   selectedFlameTab = 0
 
@@ -256,8 +259,12 @@ export class EditorView extends View implements BeforeEnterObserver {
     return html `
            <div style="display: flex; flex-direction: column; padding: 1em;">
                <editor-xform-toolbar-panel
-                 
-               
+                   .onAddTransform=${this.onAddTransform}
+                   .onAddLinkedTransform=${this.onAddLinkedTransform}
+                   .onAddFinalTransform=${this.onAddFinalTransform}
+                   .onEditDeleteTransform=${this.onEditDeleteTransform}
+                   .onEditDuplicateTransform=${this.onEditDuplicateTransform}
+                   .onEditTransformName=${this.onEditTransformName}
                ></editor-xform-toolbar-panel>
                 <vaadin-tabs @selected-changed="${this.selectedTransformTabChanged}">
                     <vaadin-tab theme="icon-on-top">
@@ -290,6 +297,53 @@ export class EditorView extends View implements BeforeEnterObserver {
                  </div>
                </vaadin-scroller>
            </div>`
+  }
+
+  onAddTransform = ()=> {
+    if(editorStore.currLayer) {
+      this.flameEditService.addTransform(editorStore.currLayer)
+      editorStore.currLayer = editorStore.currLayer
+      this.reRender()
+    }
+  }
+
+  onAddLinkedTransform = ()=> {
+    if(editorStore.currLayer && editorStore.currXform) {
+      editorStore.currLayer.addLinkedTransform(editorStore.currXform)
+      editorStore.currLayer = editorStore.currLayer
+      this.reRender()
+    }
+  }
+
+  onAddFinalTransform = ()=> {
+    if(editorStore.currLayer) {
+      this.flameEditService.addFinalTransform(editorStore.currLayer)
+      editorStore.currLayer = editorStore.currLayer
+      this.reRender()
+    }
+  }
+
+  onEditDeleteTransform = ()=> {
+    if(editorStore.currLayer && editorStore.currXform) {
+      editorStore.currLayer.deleteTransform(editorStore.currXform)
+      editorStore.currLayer = editorStore.currLayer
+      this.reRender()
+    }
+  }
+
+  onEditDuplicateTransform = ()=> {
+    if(editorStore.currLayer && editorStore.currXform) {
+      editorStore.currLayer.duplicateTransform(editorStore.currXform)
+      editorStore.currLayer = editorStore.currLayer
+      this.reRender()
+    }
+  }
+
+  onEditTransformName = ()=> {
+    if(editorStore.currLayer && editorStore.currXform) {
+
+      this.notificationPnl.showNotifivation(msg('Not implemented yet'))
+    }
   }
 
   getRenderPanel = (): RenderPanel =>  {

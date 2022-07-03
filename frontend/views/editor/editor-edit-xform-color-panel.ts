@@ -18,15 +18,18 @@
 import {html} from 'lit';
 import '@vaadin/vaadin-button'
 import '@vaadin/vaadin-ordered-layout/vaadin-horizontal-layout'
+import '@vaadin/vaadin-ordered-layout/vaadin-vertical-layout'
 import {customElement} from 'lit/decorators.js';
 import {localized, msg} from "@lit/localize";
 import {EditPropertyPanel, NumberFieldDescriptor} from "Frontend/views/editor/edit-property-panel";
 import {editorStore} from "Frontend/stores/editor-store";
 import {Parameters} from "Frontend/flames/model/parameters";
+import {FlameEditService} from "Frontend/flames/service/flame-edit-service";
 
 @localized()
 @customElement('editor-edit-xform-color-panel')
 export class EditorEditXformColorPanel extends EditPropertyPanel {
+  private flameEditService = new FlameEditService()
 
   private color: NumberFieldDescriptor = {
     key: 'color', label: msg('Color'), min: 0, max: 1, step: 0.01,
@@ -48,9 +51,11 @@ export class EditorEditXformColorPanel extends EditPropertyPanel {
 
   renderControls() {
     return html`
-        ${this.renderNumberField(this.weight)}
-        ${this.renderNumberField(this.color)}
-        ${this.renderNumberField(this.colorSymmetry)}
+        <vaadin-vertical-layout>
+          ${this.renderNumberField(this.weight)}
+          ${this.renderNumberField(this.color)}
+          ${this.renderNumberField(this.colorSymmetry)}
+        </vaadin-vertical-layout>
         <vaadin-button ?disabled=${undefined===editorStore.currLayer} @click="${this.randomizeColors}">${msg('Randomize colors')}</vaadin-button>
         <vaadin-button ?disabled=${undefined===editorStore.currLayer} @click="${this.randomizeColorSymmetry}">${msg('Randomize color speed')}</vaadin-button>
         <vaadin-button ?disabled=${undefined===editorStore.currLayer} @click="${this.resetColors}">${msg('Reset colors')}</vaadin-button>
@@ -60,7 +65,7 @@ export class EditorEditXformColorPanel extends EditPropertyPanel {
 
   randomizeColors = ()=> {
     if(editorStore.currLayer) {
-      editorStore.currLayer.randomizeColors()
+      this.flameEditService.randomizeColors(editorStore.currLayer)
       this.afterPropertyChange()
       this.refreshForm()
       this.requestUpdate()
@@ -69,7 +74,7 @@ export class EditorEditXformColorPanel extends EditPropertyPanel {
 
   randomizeColorSymmetry = ()=> {
     if(editorStore.currLayer) {
-      editorStore.currLayer.randomizeColorSymmetry()
+      this.flameEditService.randomizeColorSymmetry(editorStore.currLayer)
       this.afterPropertyChange()
       this.refreshForm()
       this.requestUpdate()
@@ -78,7 +83,7 @@ export class EditorEditXformColorPanel extends EditPropertyPanel {
 
   resetColors = ()=> {
     if(editorStore.currLayer) {
-      editorStore.currLayer.resetColors()
+      this.flameEditService.resetColors(editorStore.currLayer)
       this.afterPropertyChange()
       this.refreshForm()
       this.requestUpdate()
@@ -87,7 +92,7 @@ export class EditorEditXformColorPanel extends EditPropertyPanel {
 
   distributeColors = ()=> {
     if(editorStore.currLayer) {
-      editorStore.currLayer.distributeColors()
+      this.flameEditService.distributeColors(editorStore.currLayer)
       this.afterPropertyChange()
       this.refreshForm()
       this.requestUpdate()

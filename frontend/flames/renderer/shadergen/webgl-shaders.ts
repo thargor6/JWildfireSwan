@@ -83,6 +83,7 @@ export class WebglShaders implements CloseableBuffers{
     compPointsFragmentShader_array: string[] = []
 
     constructor(private gl: WebGLRenderingContext, canvas: HTMLCanvasElement, canvas_size: number, swarm_size: number, private flame: RenderFlame) {
+        //console.log("RENDER", flame)
         for(let layerIdx=0;layerIdx<flame.layers.length;layerIdx++) {
             const progPointsVertexShader = new ProgPointsVertexShaderGenerator().createShader(flame, flame.layers[layerIdx], canvas_size);
             //console.log(progPointsVertexShader)
