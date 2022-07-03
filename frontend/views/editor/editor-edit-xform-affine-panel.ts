@@ -22,6 +22,7 @@ import '@vaadin/vaadin-ordered-layout/vaadin-horizontal-layout'
 import '@vaadin/vaadin-ordered-layout/vaadin-vertical-layout'
 import {localized, msg} from "@lit/localize";
 import {EditPropertyPanel, NumberFieldDescriptor} from "Frontend/views/editor/edit-property-panel";
+import {editorStore} from "Frontend/stores/editor-store";
 
 @localized()
 @customElement('editor-edit-xform-affine-panel')
@@ -394,7 +395,7 @@ export class EditorEditXformAffinePanel extends EditPropertyPanel {
 
         <div style="${this.selectedEditPlane === this.EDITPLANE_XY ? `display:block;`: `display:none;`}">
           <vaadin-horizontal-layout>
-            <vaadin-vertical-layout>  
+            <vaadin-vertical-layout style="${editorStore.isEditModeAffine() || editorStore.isEditModeAffinePost() ? `display:block;`: `display:none;`}">  
               ${this.renderNumberField(this.xyC00)}
               ${this.renderNumberField(this.xyC01)}
               ${this.renderNumberField(this.xyC10)}
@@ -404,7 +405,7 @@ export class EditorEditXformAffinePanel extends EditPropertyPanel {
               ${this.renderNumberField(this.xyCRotate)}
               ${this.renderNumberField(this.xyCScale)}
             </vaadin-vertical-layout>
-            <vaadin-vertical-layout>  
+            <vaadin-vertical-layout style="${editorStore.isEditModePost() || editorStore.isEditModeAffinePost() ? `display:block;`: `display:none;`}">  
               ${this.renderNumberField(this.xyP00)}
               ${this.renderNumberField(this.xyP01)}
               ${this.renderNumberField(this.xyP10)}
@@ -418,7 +419,7 @@ export class EditorEditXformAffinePanel extends EditPropertyPanel {
         </div>
         <div style="${this.selectedEditPlane === this.EDITPLANE_YZ ? `display:block;`: `display:none;`}">
           <vaadin-horizontal-layout>
-            <vaadin-vertical-layout>
+            <vaadin-vertical-layout style="${editorStore.isEditModeAffine() || editorStore.isEditModeAffinePost() ? `display:block;`: `display:none;`}">
               ${this.renderNumberField(this.yzC00)}
               ${this.renderNumberField(this.yzC01)}
               ${this.renderNumberField(this.yzC10)}
@@ -428,7 +429,7 @@ export class EditorEditXformAffinePanel extends EditPropertyPanel {
               ${this.renderNumberField(this.yzCRotate)}
               ${this.renderNumberField(this.yzCScale)}
             </vaadin-vertical-layout>
-            <vaadin-vertical-layout>
+            <vaadin-vertical-layout style="${editorStore.isEditModePost() || editorStore.isEditModeAffinePost() ? `display:block;`: `display:none;`}">
               ${this.renderNumberField(this.yzP00)}
               ${this.renderNumberField(this.yzP01)}
               ${this.renderNumberField(this.yzP10)}
@@ -442,7 +443,7 @@ export class EditorEditXformAffinePanel extends EditPropertyPanel {
         </div>
         <div style="${this.selectedEditPlane === this.EDITPLANE_ZX ? `display:block;`: `display:none;`}">
           <vaadin-horizontal-layout>
-            <vaadin-vertical-layout>
+            <vaadin-vertical-layout style="${editorStore.isEditModeAffine() || editorStore.isEditModeAffinePost() ? `display:block;`: `display:none;`}">
               ${this.renderNumberField(this.zxC00)}
               ${this.renderNumberField(this.zxC01)}
               ${this.renderNumberField(this.zxC10)}
@@ -452,7 +453,7 @@ export class EditorEditXformAffinePanel extends EditPropertyPanel {
               ${this.renderNumberField(this.zxCRotate)}
               ${this.renderNumberField(this.zxCScale)}
             </vaadin-vertical-layout>
-            <vaadin-vertical-layout>
+            <vaadin-vertical-layout style="${editorStore.isEditModePost() || editorStore.isEditModeAffinePost() ? `display:block;`: `display:none;`}">
               ${this.renderNumberField(this.zxP00)}
               ${this.renderNumberField(this.zxP01)}
               ${this.renderNumberField(this.zxP10)}

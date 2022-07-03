@@ -30,6 +30,7 @@ import {Grid, GridActiveItemChangedEvent, GridItemModel} from "@vaadin/grid";
 import {floatToStr} from "Frontend/components/utils";
 import './editor-xform-toolbar-panel'
 import {FlameEditService} from "Frontend/flames/service/flame-edit-service";
+import {property} from "lit/decorators";
 
 @localized()
 @customElement('editor-xforms-grid-panel')
@@ -42,12 +43,17 @@ export class EditorXformsGridPanel extends MobxLitElement {
   @query('vaadin-grid')
   grid!: Grid
 
+  @property()
+  afterPropertyChange = ()=>{}
+
   render() {
     return html`
         <vaadin-vertical-layout style="margin-left: 1em;">
             <vaadin-radio-group label="${msg('Edit transformations')}" theme="horizontal">
-                <vaadin-radio-button value="affine" label="${msg('Affine')}" checked></vaadin-radio-button>
-                <vaadin-radio-button value="post_affine" label="${msg('Post')}"></vaadin-radio-button>
+                <vaadin-radio-button value="affine" label="${msg('Affine')}" @checked-changed="${(e: CustomEvent)=>editorStore.checkedSetEditModeTxAffine(e.detail.value)}" ?checked="${editorStore.isEditModeAffine()}"></vaadin-radio-button>
+                <vaadin-radio-button value="post" label="${msg('Post')}" @checked-changed="${(e: CustomEvent)=>editorStore.checkedSetEditModeTxPost(e.detail.value)}" ?checked="${editorStore.isEditModePost()}"></vaadin-radio-button>
+                <vaadin-radio-button value="both" label="${msg('A+P')}" @checked-changed="${(e: CustomEvent)=>editorStore.checkedSetEditModeTxPostAffine(e.detail.value)}" ?checked="${editorStore.isEditModeAffinePost()}"></vaadin-radio-button>
+
             </vaadin-radio-group>
             
             <editor-xform-toolbar-panel
@@ -161,7 +167,7 @@ export class EditorXformsGridPanel extends MobxLitElement {
 
 
   private reRender() {
-    // TODO
+    this.afterPropertyChange()
   }
 }
 

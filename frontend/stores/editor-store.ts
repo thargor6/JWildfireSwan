@@ -22,10 +22,15 @@ import {registerVars_All} from "Frontend/flames/renderer/variations/variation-sh
 
 type InitCallback = () => void
 
+const EDIT_MODE_TX_AFFINE = 0
+const EDIT_MODE_TX_POST = 1
+const EDIT_MODE_TX_AFFINE_POST = 2
+
 export class EditorStore {
   initCallbacks = new Map<string[], InitCallback>()
   initState = new Set<string>()
   initFlag = false
+  editModeTx = EDIT_MODE_TX_AFFINE
   refreshing = true
   variations: string[] = []
   lastError = ''
@@ -75,6 +80,36 @@ export class EditorStore {
     })
     // remove executed callbacks
     removeCbs.forEach(key=>this.initCallbacks.delete(key))
+  }
+
+  isEditModeAffine = () => {
+    return this.editModeTx === EDIT_MODE_TX_AFFINE
+  }
+
+  checkedSetEditModeTxAffine = (checked: boolean) => {
+    if(checked) {
+      this.editModeTx = EDIT_MODE_TX_AFFINE
+    }
+  }
+
+  isEditModePost = () => {
+    return this.editModeTx === EDIT_MODE_TX_POST
+  }
+
+  checkedSetEditModeTxPost = (checked: boolean) => {
+    if(checked) {
+      this.editModeTx = EDIT_MODE_TX_POST
+    }
+  }
+
+  checkedSetEditModeTxPostAffine = (checked: boolean) => {
+    if(checked) {
+      this.editModeTx = EDIT_MODE_TX_AFFINE_POST
+    }
+  }
+
+  isEditModeAffinePost = () => {
+    return this.editModeTx === EDIT_MODE_TX_AFFINE_POST
   }
 
   get currFlame() {

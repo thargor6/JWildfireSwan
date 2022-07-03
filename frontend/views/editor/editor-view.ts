@@ -121,9 +121,8 @@ export class EditorView extends View implements BeforeEnterObserver {
               <render-panel
                       .containerWidth="${'34em'}" .containerHeight="${'34em'}"
                       .canvasDisplayWidth="${'30em'}" .canvasDisplayHeight="${'30em'}"
-                      
                       .onCreateFlameRenderer=${this.createFlameRenderer}></render-panel>
-              <editor-xforms-grid-panel></editor-xforms-grid-panel>
+              <editor-xforms-grid-panel .afterPropertyChange=${this.reRender}></editor-xforms-grid-panel>
               ${this.renderTransformTabs()}
             </vaadin-horizontal-layout>
             ${this.renderFlameTabs()}
