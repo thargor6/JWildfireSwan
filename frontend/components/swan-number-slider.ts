@@ -47,7 +47,10 @@ export class SwanNumberSlider extends MobxLitElement {
     disabled = false
 
     @property()
-    labelWidth = '10em'
+    labelWidth = '9em'
+
+    @property()
+    sliderWidth = '12em'
 
     @property()
     onValueChange?: (value: number)=>{}
@@ -78,10 +81,10 @@ export class SwanNumberSlider extends MobxLitElement {
                   }
               }}">
               <div style="display: flex; flex-direction: row; align-items: center;">
-                <div style="width: ${this.labelWidth}; margin-right: 0.5em;">${this.label}</div>
+                <div style="width: ${this.labelWidth}; margin-right: 0.5em; text-align: end; font-weight: bold;">${this.label}</div>
                 <vaadin-number-field theme="small" @change=${this.numberFieldChanged} step=${this.step}
                   ?disabled="${this.disabled}" value="${this.value}" has-controls></vaadin-number-field>
-                 <paper-slider @immediate-value-change="${this.immediateValueChanged}"
+                 <paper-slider style="width: ${this.sliderWidth};" @immediate-value-change="${this.immediateValueChanged}"
                    ?disabled="${this.disabled}" @value-change="${this.sliderChange}" value="${this.value}" min="${this.min}"
                    step=${this.step} max="${this.max}"></paper-slider>
               </div>

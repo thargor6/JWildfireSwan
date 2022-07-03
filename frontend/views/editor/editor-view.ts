@@ -309,7 +309,7 @@ export class EditorView extends View implements BeforeEnterObserver {
 
   onAddLinkedTransform = ()=> {
     if(editorStore.currLayer && editorStore.currXform) {
-      editorStore.currLayer.addLinkedTransform(editorStore.currXform)
+      this.flameEditService.addLinkedTransform(editorStore.currLayer, editorStore.currXform)
       editorStore.currLayer = editorStore.currLayer
       this.reRender()
     }
@@ -325,7 +325,7 @@ export class EditorView extends View implements BeforeEnterObserver {
 
   onEditDeleteTransform = ()=> {
     if(editorStore.currLayer && editorStore.currXform) {
-      editorStore.currLayer.deleteTransform(editorStore.currXform)
+      this.flameEditService.deleteTransform(editorStore.currLayer, editorStore.currXform)
       editorStore.currLayer = editorStore.currLayer
       this.reRender()
     }
@@ -333,7 +333,7 @@ export class EditorView extends View implements BeforeEnterObserver {
 
   onEditDuplicateTransform = ()=> {
     if(editorStore.currLayer && editorStore.currXform) {
-      editorStore.currLayer.duplicateTransform(editorStore.currXform)
+      this.flameEditService.duplicateTransform(editorStore.currLayer, editorStore.currXform)
       editorStore.currLayer = editorStore.currLayer
       this.reRender()
     }

@@ -58,7 +58,7 @@ export class XForm {
     public xyC20: FlameParameter = Parameters.floatParam(0.0);
     public xyC21: FlameParameter = Parameters.floatParam(0.0);
     public xyCRotate: FlameParameter = Parameters.floatParam(0.0);
-    public xyCScale: FlameParameter = Parameters.floatParam(0.0);
+    public xyCScale: FlameParameter = Parameters.floatParam(1.0);
 
     public yzC00: FlameParameter = Parameters.floatParam(1.0);
     public yzC01: FlameParameter = Parameters.floatParam(0.0);
@@ -67,7 +67,7 @@ export class XForm {
     public yzC20: FlameParameter = Parameters.floatParam(0.0);
     public yzC21: FlameParameter = Parameters.floatParam(0.0);
     public yzCRotate: FlameParameter = Parameters.floatParam(0.0);
-    public yzCScale: FlameParameter = Parameters.floatParam(0.0);
+    public yzCScale: FlameParameter = Parameters.floatParam(1.0);
 
     public zxC00: FlameParameter = Parameters.floatParam(1.0);
     public zxC01: FlameParameter = Parameters.floatParam(0.0);
@@ -76,7 +76,7 @@ export class XForm {
     public zxC20: FlameParameter = Parameters.floatParam(0.0);
     public zxC21: FlameParameter = Parameters.floatParam(0.0);
     public zxCRotate: FlameParameter = Parameters.floatParam(0.0);
-    public zxCScale: FlameParameter = Parameters.floatParam(0.0);
+    public zxCScale: FlameParameter = Parameters.floatParam(1.0);
 
     public xyP00: FlameParameter = Parameters.floatParam(1.0);
     public xyP01: FlameParameter = Parameters.floatParam(0.0);
@@ -85,7 +85,7 @@ export class XForm {
     public xyP20: FlameParameter = Parameters.floatParam(0.0);
     public xyP21: FlameParameter = Parameters.floatParam(0.0);
     public xyPRotate: FlameParameter = Parameters.floatParam(0.0);
-    public xyPScale: FlameParameter = Parameters.floatParam(0.0);
+    public xyPScale: FlameParameter = Parameters.floatParam(1.0);
 
     public yzP00: FlameParameter = Parameters.floatParam(1.0);
     public yzP01: FlameParameter = Parameters.floatParam(0.0);
@@ -94,7 +94,7 @@ export class XForm {
     public yzP20: FlameParameter = Parameters.floatParam(0.0);
     public yzP21: FlameParameter = Parameters.floatParam(0.0);
     public yzPRotate: FlameParameter = Parameters.floatParam(0.0);
-    public yzPScale: FlameParameter = Parameters.floatParam(0.0);
+    public yzPScale: FlameParameter = Parameters.floatParam(1.0);
 
     public zxP00: FlameParameter = Parameters.floatParam(1.0);
     public zxP01: FlameParameter = Parameters.floatParam(0.0);
@@ -103,7 +103,7 @@ export class XForm {
     public zxP20: FlameParameter = Parameters.floatParam(0.0);
     public zxP21: FlameParameter = Parameters.floatParam(0.0);
     public zxPRotate: FlameParameter = Parameters.floatParam(0.0);
-    public zxPScale: FlameParameter = Parameters.floatParam(0.0);
+    public zxPScale: FlameParameter = Parameters.floatParam(1.0);
 
     public color: FlameParameter = Parameters.floatParam(0.5);
     public colorSymmetry: FlameParameter = Parameters.floatParam(0.0);
@@ -134,37 +134,6 @@ export class Layer {
 
     public get finalXforms() {
         return this._finalXforms;
-    }
-
-    public randomizeColors() {
-        for(let idx=0;idx<this._xforms.length; idx++) {
-            let xform = this._xforms[idx]
-            xform.color = Parameters.floatParam(Math.random())
-        }
-    }
-
-    public randomizeColorSymmetry() {
-        for(let idx=0;idx<this._xforms.length; idx++) {
-            let xform = this._xforms[idx]
-            xform.colorSymmetry = Parameters.floatParam(Math.random())
-        }
-    }
-
-    public resetColors() {
-        for(let idx=0;idx<this._xforms.length; idx++) {
-            let xform = this._xforms[idx]
-            xform.color =  Parameters.floatParam(0)
-            xform.colorSymmetry =  Parameters.floatParam(0)
-        }
-    }
-
-    public distributeColors() {
-        if(this._xforms.length>1) {
-            for (let idx = 0; idx < this._xforms.length; idx++) {
-                let xform = this._xforms[idx]
-                xform.color = Parameters.floatParam( idx /  (this._xforms.length - 1))
-            }
-        }
     }
 }
 

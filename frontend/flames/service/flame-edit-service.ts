@@ -78,4 +78,33 @@ export class FlameEditService {
     xform.variations.push(variation)
     layer.finalXforms.push(xform)
   }
+
+  deleteTransform(layer: Layer, xform: XForm) {
+    {
+      const idx = layer.xforms.indexOf(xform)
+      if(idx>=0) {
+        // remove xform
+        layer.xforms.splice(idx, 1)
+        // adjust xaos
+        for (let i = 0; i < layer.xforms.length; i++) {
+          const xform_i = layer.xforms[i]
+          for (let j = idx; j < layer.xforms.length; j++) {
+            xform_i.modifiedWeights[j] = xform_i.modifiedWeights[j + 1]
+          }
+          xform_i.modifiedWeights.slice(layer.xforms.length-1, 1)
+        }
+        return;
+      }
+    }
+    {
+      const idx = layer.finalXforms.indexOf(xform)
+      if(idx>=0) {
+        // simply remove xform
+        layer.finalXforms.splice(idx, 1)
+        return
+      }
+    }
+  }
+
+
 }
