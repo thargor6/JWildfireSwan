@@ -31,16 +31,26 @@ export class SwanVariationEditPanel extends EditPropertyPanel {
   variation: Variation = new Variation()
 
   renderControls() {
-    const varIdx = editorStore.currXform!.variations.indexOf(this.variation)
     const amount: NumberFieldDescriptor = {
       key: 'amount', label: msg('Amount'), min: -5, max: 5, step: 0.01,
       onChange: this.variationPropertyChange.bind(this, this.variation, 'amount'),
       value: this.getVariationValue.bind(this, this.variation, 'amount')
     }
+    const paramsDesc: NumberFieldDescriptor[] = []
+    this.variation.params.forEach(( value, key, map)=> {
+      paramsDesc.push({
+        key: key, label: msg(key), min: -5, max: 5, step: 0.01,
+        onChange: this.variationPropertyChange.bind(this, this.variation, key),
+        value: this.getVariationValue.bind(this, this.variation, key)
+      })
+    })
+
     return html `
       <vaadin-vertical-layout>  
-      ${this.variation.name}
+      <h4>${this.variation.name}</h4>
       ${this.renderNumberField(amount)}
+      ${paramsDesc.map(paramDesc=>this.renderNumberField(paramDesc))}    
+
     `
   }
 

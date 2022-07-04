@@ -129,7 +129,10 @@ export abstract class EditPropertyPanel extends MobxLitElement {
   getVariationValue(src: Variation | undefined, key: string): number | undefined {
     if(src) {
       // @ts-ignore
-      const val: any = this.getProperty(src, key)
+      let val: any = this.getProperty(src, key)
+      if(!val) {
+        val = src.params.get(key)
+      }
       if(val) {
         if(val.type) {
           return val.value
@@ -203,7 +206,10 @@ export abstract class EditPropertyPanel extends MobxLitElement {
   variationPropertyChange = (src: Variation | undefined, key: string, value: number) => {
     if(src) {
       // @ts-ignore
-      const oldVal: any = this.getProperty(src, key)
+      let oldVal: any = this.getProperty(src, key)
+      if(!oldVal) {
+        oldVal = src.params.get(key)
+      }
       if(oldVal && oldVal.type) {
         if(oldVal.value !== value) {
           const oldValueNumber = oldVal.value
