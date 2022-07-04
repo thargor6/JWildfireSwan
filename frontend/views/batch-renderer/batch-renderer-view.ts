@@ -28,11 +28,11 @@ import '@vaadin/scroller'
 import '@vaadin/vaadin-progress-bar'
 import '@vaadin/app-layout/vaadin-drawer-toggle';
 import {RendererFlame, rendererStore} from "Frontend/stores/renderer-store";
-import '../../components/render-panel'
+import '../../components/swan-render-panel'
 import '../../components/swan-error-panel'
 import {FlameRenderer} from "Frontend/flames/renderer/flame-renderer";
 import {DisplayMode} from "Frontend/flames/renderer/render-settings";
-import {RenderPanel} from "Frontend/components/render-panel";
+import {SwanRenderPanel} from "Frontend/components/swan-render-panel";
 import {autorun} from "mobx";
 import {state} from "lit/decorators";
 import {HasValue} from "@hilla/form";
@@ -116,8 +116,8 @@ export class BatchRendererView extends View  {
                   </div>
                    <div style="border-radius: var(--lumo-border-radius); border: 1px dashed gray; margin: 1.0em;">
                        <renderer-render-panel></renderer-render-panel>
-                       <render-panel style="margin: 1em;" .withProgressBar="${false}" containerWidth="12.5em" containerHeight="12.5em"
-                                     canvasDisplayWidth="12em" canvasDisplayHeight="12em" .onCreateFlameRenderer=${this.createFlameRenderer}></render-panel>
+                       <swan-render-panel style="margin: 1em;" .withProgressBar="${false}" containerWidth="12.5em" containerHeight="12.5em"
+                                     canvasDisplayWidth="12em" canvasDisplayHeight="12em" .onCreateFlameRenderer=${this.createFlameRenderer}></swan-render-panel>
                    </div>
                   <div class="gap-m grid list-none m-2 p-2" style="grid-template-columns: repeat(auto-fill, minmax(7em, 1fr));" id="allImageContainer"></div>
 
@@ -181,8 +181,8 @@ export class BatchRendererView extends View  {
           false, '', undefined, 1.0, rendererStore.selectedFlames[0].flame)
     }
 
-    getRenderPanel = (): RenderPanel =>  {
-        return document.querySelector('render-panel')!
+    getRenderPanel = (): SwanRenderPanel =>  {
+        return document.querySelector('swan-render-panel')!
     }
 
     renderFlames = () => {

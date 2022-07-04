@@ -30,10 +30,10 @@ import {Router} from "@vaadin/router";
 import {FlamesEndpoint} from "Frontend/generated/endpoints";
 import {FlameMapper} from "Frontend/flames/model/mapper/flame-mapper";
 import {RandomFlame, randomizerStore} from "Frontend/stores/randomizer-store";
-import {RenderPanel} from "Frontend/components/render-panel";
+import {SwanRenderPanel} from "Frontend/components/swan-render-panel";
 import '../../components/swan-loading-indicator'
 import '../../components/swan-error-panel'
-import '../../components/render-panel'
+import '../../components/swan-render-panel'
 import {FlameRenderer} from "Frontend/flames/renderer/flame-renderer";
 import {DisplayMode} from "Frontend/flames/renderer/render-settings";
 import '@vaadin/icon';
@@ -59,7 +59,7 @@ export class RandomizerView extends View {
             <p class="mb-xl mt-0 text-secondary">...</p>
           </vaadin-vertical-layout>
 
-            <render-panel style="display: none;" .onCreateFlameRenderer=${this.createFlameRenderer}></render-panel>
+            <swan-render-panel style="display: none;" .onCreateFlameRenderer=${this.createFlameRenderer}></swan-render-panel>
 
             <vaadin-button style="width: 14em;" ?disabled=${randomizerStore.calculating} theme="tertiary" @click="${this.deleteAll}">Delete all</vaadin-button>
 
@@ -192,8 +192,8 @@ export class RandomizerView extends View {
     }
   }
 
-  getRenderPanel = (): RenderPanel =>  {
-    const renderPnl = document.querySelector('render-panel')! as RenderPanel
+  getRenderPanel = (): SwanRenderPanel =>  {
+    const renderPnl = document.querySelector('swan-render-panel')! as SwanRenderPanel
     renderPnl.onRenderFinished = this.onRenderFinished
     return renderPnl
   }

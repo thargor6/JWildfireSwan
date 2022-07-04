@@ -772,6 +772,13 @@ export class FlameMapper {
         source.layers.map(layer => {
             res.layers.push(LayerMapper.mapForRendering(ctx, layer))
         })
+        // currently, the renderer requires at least one layer, so just create an empty layer when there is not any
+        if(res.layers.length==0) {
+            const layer = new RenderLayer()
+            layer.density = 1
+            layer.weight = 1
+            res.layers.push(layer)
+        }
         return res
     }
 }

@@ -17,18 +17,40 @@
 
 import {html} from 'lit';
 import {customElement} from 'lit/decorators.js';
+import '@vaadin/vaadin-button'
+import '@vaadin/vaadin-ordered-layout/vaadin-vertical-layout'
+import '../../components/swan-variation-edit-panel'
 import {localized, msg} from "@lit/localize";
-import {EditPropertyPanel, NumberFieldDescriptor} from "Frontend/views/editor/edit-property-panel";
+import {EditPropertyPanel} from "Frontend/views/editor/edit-property-panel";
+import {editorStore} from "Frontend/stores/editor-store";
+import {Variation} from "Frontend/flames/model/flame";
 
 @localized()
 @customElement('editor-edit-xform-nonlinear-panel')
 export class EditorEditXformNonlinearPanel extends EditPropertyPanel {
   renderControls() {
     return html`
-         Nonlinear
+         <vaadin-vertical-layout>
+             <vaadin-button ?disabled="${undefined===editorStore.currXform}" @click="${this.addVariation}">${msg('Add variation')}</vaadin-button>
+            ${editorStore.currXform?.variations.map(variation => {
+                return html `<swan-variation-edit-panel .variation=${variation} 
+                               .afterPropertyChange=${this.afterPropertyChange}>
+                             </swan-variation-edit-panel>`
+            })}
+         </vaadin-vertical-layout>
     `;
   }
 
+  addVariation = ()=> {
+    if(editorStore.currXform) {
+      const variation = new Variation()
+      editorStore.currXform.variations.push(variation)
+      const prevXform = editorStore.currXform
+      editorStore.currLayer = editorStore.currLayer
+      editorStore.currXform = prevXform
+      this.afterPropertyChange()
+    }
+  }
 
 }
 

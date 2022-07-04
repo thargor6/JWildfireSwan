@@ -45,9 +45,9 @@ import {SingleRendererRenderPanel} from "Frontend/views/single-renderer/single-r
 import '../../components/swan-loading-indicator'
 import '../../components/swan-error-panel'
 import '../../components/swan-notification-panel'
-import '../../components/render-panel'
+import '../../components/swan-render-panel'
 import './single-renderer-toolbar-panel'
-import {RenderPanel} from "Frontend/components/render-panel";
+import {SwanRenderPanel} from "Frontend/components/swan-render-panel";
 import {RenderResolutions} from "Frontend/flames/renderer/render-resolution";
 import {msg, localized} from "@lit/localize";
 import {singleRendererStore} from "Frontend/stores/single-renderer-store";
@@ -81,10 +81,10 @@ export class SingleRendererView extends View {
               <swan-error-panel .errorMessage=${singleRendererStore.lastError}></swan-error-panel>
               <swan-notification-panel></swan-notification-panel>
               <div class="gap-m grid list-none m-0 p-0" style="grid-template-columns: repeat(auto-fill, minmax(30em, 1fr));">
-                <render-panel 
+                <swan-render-panel 
                   .containerWidth="${'44em'}" .containerHeight="${'44em'}"
                   .canvasDisplayWidth="${'40em'}" .canvasDisplayHeight="${'40em'}"
-                  .onCreateFlameRenderer=${this.createFlameRenderer}></render-panel>
+                  .onCreateFlameRenderer=${this.createFlameRenderer}></swan-render-panel>
                 <single-renderer-render-panel id='viewOptsPnl'
                   .onCancelRender="${()=>this.getRenderPanel().cancelRender()}"
                   .onRender="${()=>this.getRenderPanel().rerenderFlame()}"
@@ -136,8 +136,8 @@ export class SingleRendererView extends View {
        )
     }
 
-    getRenderPanel = (): RenderPanel =>  {
-        return document.querySelector('render-panel')!
+    getRenderPanel = (): SwanRenderPanel =>  {
+        return document.querySelector('swan-render-panel')!
     }
 
 }

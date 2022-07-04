@@ -43,11 +43,11 @@ import {FlameMapper} from '../../flames/model/mapper/flame-mapper'
 import '@vaadin/vaadin-combo-box';
 import '../../components/swan-loading-indicator'
 import '../../components/swan-error-panel'
-import '../../components/render-panel'
+import '../../components/swan-render-panel'
 import '../../components/swan-notification-panel'
 import '../../components/swan-number-slider'
 import {BeforeEnterObserver, PreventAndRedirectCommands, Router, RouterLocation} from "@vaadin/router";
-import {RenderPanel} from "Frontend/components/render-panel";
+import {SwanRenderPanel} from "Frontend/components/swan-render-panel";
 
 import './editor-toolbar-panel'
 import {editorStore} from "Frontend/stores/editor-store";
@@ -118,10 +118,10 @@ export class EditorView extends View implements BeforeEnterObserver {
           <swan-error-panel .errorMessage=${editorStore.lastError}></swan-error-panel>
           <vaadin-vertical-layout style="width: 100%;">
             <vaadin-horizontal-layout>
-              <render-panel
+              <swan-render-panel
                       .containerWidth="${'34em'}" .containerHeight="${'34em'}"
                       .canvasDisplayWidth="${'30em'}" .canvasDisplayHeight="${'30em'}"
-                      .onCreateFlameRenderer=${this.createFlameRenderer}></render-panel>
+                      .onCreateFlameRenderer=${this.createFlameRenderer}></swan-render-panel>
               <editor-xforms-grid-panel .afterPropertyChange=${this.reRender}></editor-xforms-grid-panel>
               ${this.renderTransformTabs()}
             </vaadin-horizontal-layout>
@@ -292,8 +292,8 @@ export class EditorView extends View implements BeforeEnterObserver {
   }
 
 
-  getRenderPanel = (): RenderPanel =>  {
-        return document.querySelector('render-panel')!
+  getRenderPanel = (): SwanRenderPanel =>  {
+        return document.querySelector('swan-render-panel')!
   }
 
     createBlankFlame = () => {
@@ -374,6 +374,7 @@ export class EditorView extends View implements BeforeEnterObserver {
     }
 
     reRender = ()=> {
+    console.log("REEEENBDER")
       editorStore.refreshing = true
       try {
         this.getRenderPanel().rerenderFlame()

@@ -21,6 +21,7 @@ import {MobxLitElement} from "@adobe/lit-mobx";
 import {TemplateResult} from "lit-html";
 import {editorStore} from "Frontend/stores/editor-store";
 import {HasValue} from "@hilla/form";
+import {Variation} from "Frontend/flames/model/flame";
 
 export interface ComoboBoxItem {
   key: number
@@ -125,6 +126,22 @@ export abstract class EditPropertyPanel extends MobxLitElement {
     return undefined
   }
 
+  getVariationValue(src: Variation | undefined, key: string): number | undefined {
+    if(src) {
+      // @ts-ignore
+      const val: any = this.getProperty(src, key)
+      if(val) {
+        if(val.type) {
+          return val.value
+        }
+        else {
+          return 0
+        }
+      }
+    }
+    return undefined
+  }
+
   getFlameBooleanValue(key: string): boolean {
     // @ts-ignore
     const val: any = this.getProperty(editorStore.currFlame, key)
@@ -178,6 +195,27 @@ export abstract class EditPropertyPanel extends MobxLitElement {
             this.afterPropertyChange()
           }
           // console.log('XFORM ATTRIBUTE CHANGED', key, value, oldVal)
+        }
+      }
+    }
+  }
+
+  variationPropertyChange = (src: Variation | undefined, key: string, value: number) => {
+    if(src) {
+      // @ts-ignore
+      const oldVal: any = this.getProperty(src, key)
+      if(oldVal && oldVal.type) {
+        if(oldVal.value !== value) {
+          const oldValueNumber = oldVal.value
+          oldVal.value = value
+          // !!!just for testing now, do not use in production!!!
+          if(key==='_xyC21_') {
+            this.onPropertyChange(0, oldValueNumber, value)
+          }
+          else {
+            this.afterPropertyChange()
+          }
+          // console.log('VARIATION ATTRIBUTE CHANGED', key, value, oldVal)
         }
       }
     }

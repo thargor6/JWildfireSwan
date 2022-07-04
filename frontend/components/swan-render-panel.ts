@@ -29,8 +29,8 @@ import {getTimeStamp} from "Frontend/components/utils";
 import {AppInfoEndpoint} from "Frontend/generated/endpoints";
 import {renderInfoStore} from "Frontend/stores/render-info-store";
 
-@customElement('render-panel')
-export class RenderPanel extends MobxLitElement {
+@customElement('swan-render-panel')
+export class SwanRenderPanel extends MobxLitElement {
   @property()
   containerWidth = '30em'
 
