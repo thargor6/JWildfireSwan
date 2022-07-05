@@ -271,12 +271,12 @@
     "mobx": "$mobx",
     "@hilla/form": "$@hilla/form",
     "@hilla/frontend": "$@hilla/frontend",
-    "@polymer/paper-slider": "$@polymer/paper-slider",
     "chokidar": "$chokidar",
     "electron": "$electron",
     "@lit/localize": "$@lit/localize",
     "lodash.clonedeep": "$lodash.clonedeep",
-    "@vaadin/lit-renderer": "$@vaadin/lit-renderer"
+    "@vaadin/lit-renderer": "$@vaadin/lit-renderer",
+    "@polymer/paper-slider": "$@polymer/paper-slider"
   },
   "vaadin": {
     "dependencies": {

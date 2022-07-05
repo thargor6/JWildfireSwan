@@ -118,6 +118,10 @@ export class XForm {
     public get variations() {
         return this._variations
     }
+
+    public set variations(newValue:Variation[]) {
+        this._variations = newValue
+    }
 }
 
 export class Layer {

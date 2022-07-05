@@ -18,15 +18,22 @@
 import {html} from 'lit';
 import {customElement, property, state} from 'lit/decorators.js';
 
-import '@vaadin/vaadin-progress-bar'
-import {Variation} from "Frontend/flames/model/flame";
+import '@vaadin/vaadin-button'
+import '@vaadin/vaadin-combo-box'
+import {Variation} from "Frontend/flames/model/flame"
+import '@vaadin/vaadin-ordered-layout/vaadin-horizontal-layout'
 import '@vaadin/vaadin-ordered-layout/vaadin-vertical-layout'
 import {EditPropertyPanel, NumberFieldDescriptor} from "Frontend/views/editor/edit-property-panel";
 import {msg} from "@lit/localize";
 import {editorStore} from "Frontend/stores/editor-store";
+import {FlameEditService} from "Frontend/flames/service/flame-edit-service";
+import {cloneDeep} from "lodash";
+import {VariationShaders} from "Frontend/flames/renderer/variations/variation-shaders";
+import {Parameters} from "Frontend/flames/model/parameters";
 
 @customElement('swan-variation-edit-panel')
 export class SwanVariationEditPanel extends EditPropertyPanel {
+
   @property()
   variation: Variation = new Variation()
 
@@ -46,12 +53,50 @@ export class SwanVariationEditPanel extends EditPropertyPanel {
     })
 
     return html `
-      <vaadin-vertical-layout>  
-      <h4>${this.variation.name}</h4>
-      ${this.renderNumberField(amount)}
-      ${paramsDesc.map(paramDesc=>this.renderNumberField(paramDesc))}    
-
+      <vaadin-vertical-layout>
+        <vaadin-horizontal-layout>  
+          <vaadin-combo-box style="min-width: 20em;" @value-changed="${this.variationChanged}" value="${this.variation.name}" .items=${editorStore.variations}></vaadin-combo-box>
+          <vaadin-button @click="${this.deleteVariation}">${msg('Delete')}</vaadin-button>  
+        </vaadin-horizontal-layout>
+        ${this.renderNumberField(amount)}
+        ${paramsDesc.map(paramDesc=>this.renderNumberField(paramDesc))}
+      </vaadin-vertical-layout>
     `
+  }
+
+  deleteVariation = ()=> {
+    if(editorStore.currXform) {
+      const idx = editorStore.currXform.variations.indexOf(this.variation)
+      if(idx>=0) {
+        editorStore.currXform.variations.splice(idx, 1)
+        const prevXform = editorStore.currXform
+        editorStore.currLayer = editorStore.currLayer
+        editorStore.currXform = prevXform
+        this.afterPropertyChange()
+      }
+    }
+  }
+
+  variationChanged = (e: CustomEvent) => {
+    if(editorStore.currXform && e && e.detail && e.detail.value) {
+      const idx = editorStore.currXform.variations.indexOf(this.variation)
+      if(idx>=0) {
+        let newVariation = new Variation()
+        newVariation.amount = this.variation.amount
+        newVariation.name = e.detail.value
+
+        VariationShaders.getVariationParams(newVariation.name).forEach((param)=>{
+          newVariation.params.set(param.name, Parameters.floatParam(param.initialValue))
+        })
+
+        editorStore.currXform.variations = [...editorStore.currXform.variations.slice(0, idx), newVariation, ...editorStore.currXform.variations.slice(idx+1, editorStore.currXform.variations.length - idx)]
+        this.variation = newVariation
+        const prevXform = editorStore.currXform
+        editorStore.currLayer = editorStore.currLayer
+        editorStore.currXform = prevXform
+        this.afterPropertyChange()
+      }
+    }
   }
 
 }

@@ -15,7 +15,7 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 */
 
-import {VariationShaderFunc} from "Frontend/flames/renderer/variations/variation-shader-func";
+import {VariationParam, VariationShaderFunc} from "Frontend/flames/renderer/variations/variation-shader-func";
 import {RenderVariation, RenderXForm} from "Frontend/flames/model/render-flame";
 
 export class VariationShaders {
@@ -43,6 +43,16 @@ export class VariationShaders {
             return [];
         }
         return vsFunc.funcDependencies
+    }
+
+    static getVariationParams(name: string): VariationParam[] {
+        const vsFunc = this.variations.get(name)
+        if(!vsFunc) {
+            return [];
+        }
+        else {
+            return vsFunc.params
+        }
     }
 
     public static registerVar(varFunc: VariationShaderFunc) {

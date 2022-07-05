@@ -157,6 +157,7 @@ export class EditorStore {
   refreshLayers() {
     this._currLayers = [...this._currFlame.layers]
   }
+
 }
 
 registerVars_All()
