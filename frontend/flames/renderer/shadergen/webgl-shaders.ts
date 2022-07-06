@@ -26,6 +26,7 @@ import {CompPointsFragmentShaderGenerator} from "Frontend/flames/renderer/shader
 import {ProgPointsVertexShaderGenerator} from "Frontend/flames/renderer/shadergen/prog-points-vs.gen";
 import {DenoiserType} from "Frontend/flames/model/flame";
 import {shader_show_with_denoiser_fs} from "Frontend/flames/renderer/shaders/shader-show-denoise-fs";
+import {SharedRenderContext} from "Frontend/flames/renderer/shared-render-context";
 
 interface ComputePointsProgram extends WebGLProgram {
     vertexPositionAttribute: GLint;
@@ -82,11 +83,11 @@ export class WebglShaders implements CloseableBuffers{
     progPointsVertexShader_array: string[] = []
     compPointsFragmentShader_array: string[] = []
 
-    constructor(private gl: WebGLRenderingContext, canvas: HTMLCanvasElement, canvas_size: number, swarm_size: number, private flame: RenderFlame) {
+    constructor(private sharedRenderCtx: SharedRenderContext, private gl: WebGLRenderingContext, canvas: HTMLCanvasElement, canvas_size: number, swarm_size: number, private flame: RenderFlame) {
         //console.log("RENDER", flame)
         for(let layerIdx=0;layerIdx<flame.layers.length;layerIdx++) {
             const progPointsVertexShader = new ProgPointsVertexShaderGenerator().createShader(flame, flame.layers[layerIdx], canvas_size);
-            //console.log(progPointsVertexShader)
+            sharedRenderCtx.currProgPointsVertexShader = progPointsVertexShader
             let prog_points = compileShaderDirect(gl, progPointsVertexShader, shader_points_fs, {}) as ComputePointsProgram;
             prog_points.vertexPositionAttribute = gl.getAttribLocation(prog_points, "aVertexPosition");
             gl.enableVertexAttribArray(prog_points.vertexPositionAttribute);
@@ -102,8 +103,7 @@ export class WebglShaders implements CloseableBuffers{
             this.compPointsFragmentShader_array[layerIdx] = progPointsVertexShader
 
             const compPointsFragmentShader = new CompPointsFragmentShaderGenerator().createShader(flame, flame.layers[layerIdx]);
-            // console.log('FLAME', flame)
-            // console.log(compPointsFragmentShader)
+            sharedRenderCtx.currCompPointsFragmentShader = compPointsFragmentShader
             let prog_comp = compileShaderDirect(gl, shader_direct_vs, compPointsFragmentShader, {RESOLUTION: swarm_size}) as IteratePointsProgram;
             prog_comp.vertexPositionAttribute = gl.getAttribLocation(prog_comp, "aVertexPosition");
             gl.enableVertexAttribArray(prog_comp.vertexPositionAttribute);

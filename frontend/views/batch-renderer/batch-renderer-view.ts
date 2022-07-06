@@ -27,7 +27,7 @@ import '@vaadin/vaadin-checkbox'
 import '@vaadin/scroller'
 import '@vaadin/vaadin-progress-bar'
 import '@vaadin/app-layout/vaadin-drawer-toggle';
-import {RendererFlame, rendererStore} from "Frontend/stores/renderer-store";
+import {BatchRendererFlame, batchRendererStore} from "Frontend/stores/batch-renderer-store";
 import '../../components/swan-render-panel'
 import '../../components/swan-error-panel'
 import {FlameRenderer} from "Frontend/flames/renderer/flame-renderer";
@@ -83,7 +83,7 @@ export class BatchRendererView extends View  {
                 <h1 class="m-0 text-l">${msg('Batch flame renderer')}</h1>
             </header>
             <vertical-layout theme="spacing">
-              <swan-error-panel .errorMessage=${rendererStore.lastError}></swan-error-panel>
+              <swan-error-panel .errorMessage=${batchRendererStore.lastError}></swan-error-panel>
               <div class="gap-m grid list-none m-2 p-2" style="grid-template-columns: repeat(auto-fill, minmax(24em, 1fr));">
                   <div style="display: flex; flex-direction: column; padding: 1em;">
                       <renderer-upload-panel style="border-radius: var(--lumo-border-radius); border: 1px dashed gray;"></renderer-upload-panel>
@@ -110,8 +110,8 @@ export class BatchRendererView extends View  {
                              <vaadin-button @click="${this.renderFlames}">Render</vaadin-button>
                              <vaadin-button theme="tertiary" @click="${this.signalCancel}">Cancel</vaadin-button>
                           </div>    
-                         <vaadin-progress-bar value="${rendererStore.renderProgress}"></vaadin-progress-bar>
-                         <swan-loading-indicator .loading=${rendererStore.rendering} caption="${rendererStore.cancelSignalled ? 'Aborting...' : 'Rendering...'}"></swan-loading-indicator>
+                         <vaadin-progress-bar value="${batchRendererStore.renderProgress}"></vaadin-progress-bar>
+                         <swan-loading-indicator .loading=${batchRendererStore.rendering} caption="${batchRendererStore.cancelSignalled ? 'Aborting...' : 'Rendering...'}"></swan-loading-indicator>
                        </div>
                   </div>
                    <div style="border-radius: var(--lumo-border-radius); border: 1px dashed gray; margin: 1.0em;">
@@ -168,17 +168,17 @@ export class BatchRendererView extends View  {
         super.firstUpdated(_changedProperties);
         const that = this
         autorun(() => {
-            const sel = rendererStore.selectedFlames
-            if(sel && sel.length>0 && !rendererStore.rendering) {
+            const sel = batchRendererStore.selectedFlames
+            if(sel && sel.length>0 && !batchRendererStore.rendering) {
                 that.getRenderPanel().rerenderFlame()
             }
         })
     }
 
     createFlameRenderer = ()=> {
-      return new FlameRenderer(256, 256,
+      return new FlameRenderer(batchRendererStore.sharedRenderCtx, 256, 256,
         DisplayMode.FLAME, this.getRenderPanel().canvas, undefined,
-          false, '', undefined, 1.0, rendererStore.selectedFlames[0].flame)
+          false, '', undefined, 1.0, batchRendererStore.selectedFlames[0].flame)
     }
 
     getRenderPanel = (): SwanRenderPanel =>  {
@@ -186,9 +186,9 @@ export class BatchRendererView extends View  {
     }
 
     renderFlames = () => {
-      rendererStore.cancelSignalled = false
-      rendererStore.rendering = true
-      rendererStore.renderFlameTotalCount = rendererStore.flames.filter(flame=>!flame.finished).length
+      batchRendererStore.cancelSignalled = false
+      batchRendererStore.rendering = true
+      batchRendererStore.renderFlameTotalCount = batchRendererStore.flames.filter(flame=>!flame.finished).length
       this.renderNextFlame();
     }
 
@@ -197,8 +197,8 @@ export class BatchRendererView extends View  {
     MAX_IMAGES_HOLD = 4
 
     renderNextFlame = ()=> {
-        const flame = rendererStore.flames.find(flame => !flame.finished)
-        if(flame && !rendererStore.cancelSignalled) {
+        const flame = batchRendererStore.flames.find(flame => !flame.finished)
+        if(flame && !batchRendererStore.cancelSignalled) {
             if(this.disableTransparency) {
                 flame.flame.bgTransparency = Parameters.booleanParam(false)
             }
@@ -207,12 +207,12 @@ export class BatchRendererView extends View  {
                   this.allImageContainer.removeChild(this.allImageContainer.children[0])
               }
             }
-            const remaining = rendererStore.flames.filter(flame=>!flame.finished).length
-            rendererStore.renderProgress = (rendererStore.renderFlameTotalCount - remaining) / rendererStore.renderFlameTotalCount
+            const remaining = batchRendererStore.flames.filter(flame=>!flame.finished).length
+            batchRendererStore.renderProgress = (batchRendererStore.renderFlameTotalCount - remaining) / batchRendererStore.renderFlameTotalCount
             const renderPanel = this.getRenderPanel()
             renderPanel.clearRenderer()
             this.getRenderPanel().recreateCanvas()
-            this.renderer = new FlameRenderer(this.renderSize, this.swarmSize,
+            this.renderer = new FlameRenderer(batchRendererStore.sharedRenderCtx, this.renderSize, this.swarmSize,
               DisplayMode.FLAME, this.getRenderPanel().canvas, this.imageContainer,
               true, '',
               // TODO: renderPath
@@ -222,20 +222,20 @@ export class BatchRendererView extends View  {
             this.getRenderPanel().rerenderFlame(this.renderer)
         }
         else {
-            rendererStore.rendering = false
-            if(!rendererStore.cancelSignalled) {
-                rendererStore.renderProgress = 1.0
+            batchRendererStore.rendering = false
+            if(!batchRendererStore.cancelSignalled) {
+                batchRendererStore.renderProgress = 1.0
             }
         }
     }
 
-    private onFlameFinished = (flame: RendererFlame, frameCount: number, elapsedTimeInSeconds: number) => {
-        const idx = rendererStore.flames.indexOf(flame)
+    private onFlameFinished = (flame: BatchRendererFlame, frameCount: number, elapsedTimeInSeconds: number) => {
+        const idx = batchRendererStore.flames.indexOf(flame)
         if(idx < 0) {
             console.log("RenderFlame not found - aborting")
         }
         else {
-            rendererStore.updateFlameStatus(flame.uuid, true, elapsedTimeInSeconds)
+            batchRendererStore.updateFlameStatus(flame.uuid, true, elapsedTimeInSeconds)
             const img = this.imageContainer.querySelector("img")!
             const a = document.createElement('a')
             const linkText = flame.filename
@@ -252,6 +252,6 @@ export class BatchRendererView extends View  {
     }
 
     signalCancel = () => {
-        rendererStore.cancelSignalled = true
+        batchRendererStore.cancelSignalled = true
     }
 }

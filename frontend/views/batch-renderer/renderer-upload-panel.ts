@@ -22,7 +22,7 @@ import {Upload, UploadSuccessEvent} from "@vaadin/upload";
 import "@vaadin/upload";
 import '@vaadin/vaadin-checkbox'
 import '@vaadin/number-field'
-import {rendererStore} from "Frontend/stores/renderer-store";
+import {batchRendererStore} from "Frontend/stores/batch-renderer-store";
 import {FlamesEndpoint, GalleryEndpoint} from "Frontend/generated/endpoints";
 import {FlameMapper} from "Frontend/flames/model/mapper/flame-mapper";
 import {Parameters} from "Frontend/flames/model/parameters";
@@ -107,11 +107,11 @@ export class RendererUploadPanel extends MobxLitElement {
   private uploadFileSuccessHandler(event:UploadSuccessEvent) {
     try {
       const uuid = event.detail.xhr.response
-      if(!rendererStore.hasFlameWithUuid(uuid)) {
+      if(!batchRendererStore.hasFlameWithUuid(uuid)) {
         FlamesEndpoint.parseTempFlame(uuid).then(parsedFlame => {
           const flame = FlameMapper.mapFromBackend(parsedFlame)
           if(flame.frameCount.value<=1 || !this.evalMotionCurves) {
-            rendererStore.addFlameWithUuid(uuid, event.detail.file.name, flame)
+            batchRendererStore.addFlameWithUuid(uuid, event.detail.file.name, flame)
           }
           else {
             const fromFrame = typeof this.fromFrame === 'string' ? parseInt(this.fromFrame) : this.fromFrame
@@ -120,11 +120,11 @@ export class RendererUploadPanel extends MobxLitElement {
               const currFlame = FlameMapper.mapFromBackend(FlameMapper.mapToBackend(flame))
               currFlame.frame =  Parameters.intParam(frame)
               const currName = this.addNumericPostfix(event.detail.file.name, frame)
-              rendererStore.addFlameWithUuid(uuid+this.numericPostfix(frame), currName, currFlame)
+              batchRendererStore.addFlameWithUuid(uuid+this.numericPostfix(frame), currName, currFlame)
             }
           }
         }).catch(err=> {
-          rendererStore.lastError = err
+          batchRendererStore.lastError = err
         })
       }
       else {
@@ -132,7 +132,7 @@ export class RendererUploadPanel extends MobxLitElement {
       }
     }
     catch(err) {
-      rendererStore.lastError = `${err}`
+      batchRendererStore.lastError = `${err}`
     }
   }
 

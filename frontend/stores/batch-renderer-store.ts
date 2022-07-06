@@ -18,8 +18,9 @@
 import { makeAutoObservable } from 'mobx';
 import {Flame} from "Frontend/flames/model/flame";
 import {FlameRenderer} from "Frontend/flames/renderer/flame-renderer";
+import {SharedRenderContext} from "Frontend/flames/renderer/shared-render-context";
 
-export interface RendererFlame {
+export interface BatchRendererFlame {
   finished: boolean;
   elapsedTimeInSeconds: number;
   uuid: string;
@@ -27,15 +28,16 @@ export interface RendererFlame {
   flame: Flame;
 }
 
-export class RendererStore {
+export class BatchRendererStore {
   rendering = false
   renderProgress = 0.0
   lastError = ''
   renderer!: FlameRenderer
-  flames: RendererFlame[] = []
-  selectedFlames: RendererFlame[] = [];
+  flames: BatchRendererFlame[] = []
+  selectedFlames: BatchRendererFlame[] = [];
   cancelSignalled = false
   renderFlameTotalCount = 0
+  sharedRenderCtx = new SharedRenderContext()
 
   constructor() {
     makeAutoObservable(this);
@@ -75,4 +77,4 @@ export class RendererStore {
   }
 }
 
-export const rendererStore = new RendererStore()
+export const batchRendererStore = new BatchRendererStore()

@@ -121,7 +121,8 @@ export class EditorView extends View implements BeforeEnterObserver {
               <swan-render-panel
                       .containerWidth="${'34em'}" .containerHeight="${'34em'}"
                       .canvasDisplayWidth="${'30em'}" .canvasDisplayHeight="${'30em'}"
-                      .onCreateFlameRenderer=${this.createFlameRenderer}></swan-render-panel>
+                      .onCreateFlameRenderer=${this.createFlameRenderer}
+                      .sharedRenderCtx=${editorStore.sharedRenderCtx}></swan-render-panel>
               <editor-xforms-grid-panel .afterPropertyChange=${this.reRender}></editor-xforms-grid-panel>
               ${this.renderTransformTabs()}
             </vaadin-horizontal-layout>
@@ -131,7 +132,7 @@ export class EditorView extends View implements BeforeEnterObserver {
     }
 
     createFlameRenderer = ()=> {
-        return new FlameRenderer(512, 256,
+        return new FlameRenderer(editorStore.sharedRenderCtx,512, 256,
           DisplayMode.FLAME, this.getRenderPanel().canvas,
           undefined, false,
           '',

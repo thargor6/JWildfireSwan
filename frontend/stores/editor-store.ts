@@ -19,6 +19,7 @@ import {makeAutoObservable} from 'mobx';
 import {VariationShaders} from "Frontend/flames/renderer/variations/variation-shaders";
 import {Flame, Layer, XForm} from "Frontend/flames/model/flame";
 import {registerVars_All} from "Frontend/flames/renderer/variations/variation-shaders-all";
+import {SharedRenderContext} from "Frontend/flames/renderer/shared-render-context";
 
 type InitCallback = () => void
 
@@ -39,6 +40,7 @@ export class EditorStore {
   _currLayer: Layer | undefined = undefined
   _currXforms: XForm[] = []
   _currXform: XForm | undefined = undefined
+  sharedRenderCtx = new SharedRenderContext()
 
   constructor() {
     makeAutoObservable(this);

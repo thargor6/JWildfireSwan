@@ -37,7 +37,7 @@ import '@vaadin/vaadin-notification'
 import '@vaadin/app-layout/vaadin-drawer-toggle';
 
 import {FlameRenderer} from '../../flames/renderer/flame-renderer'
-import {FlamesEndpoint, GalleryEndpoint} from "Frontend/generated/endpoints";
+import {FlamesEndpoint} from "Frontend/generated/endpoints";
 import {FlameMapper} from '../../flames/model/mapper/flame-mapper'
 import '@vaadin/vaadin-combo-box';
 import './single-renderer-render-panel'
@@ -96,7 +96,8 @@ export class SingleRendererView extends View {
     }
 
     createFlameRenderer = ()=> {
-        return new FlameRenderer(this.getRenderSettingsPanel().renderSize, this.getRenderSettingsPanel().swarmSize,
+        return new FlameRenderer(singleRendererStore.sharedRenderCtx,
+           this.getRenderSettingsPanel().renderSize, this.getRenderSettingsPanel().swarmSize,
            this.getRenderSettingsPanel().displayMode, this.getRenderPanel().canvas,
           this.getRenderSettingsPanel().capturedImageContainer, true,
           '',

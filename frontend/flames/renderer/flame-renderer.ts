@@ -30,6 +30,7 @@ import {RenderColor, RenderMappingContext, RenderFlame} from "Frontend/flames/mo
 import {getTimeStamp} from "Frontend/components/utils";
 import {CropRegion} from "Frontend/flames/renderer/render-resolution";
 import {appStore} from "Frontend/stores/app-store";
+import {SharedRenderContext} from "Frontend/flames/renderer/shared-render-context";
 
 type RenderFinishedHandler = (frameCount: number, elapsedTimeInMs: number) => void
 type RenderProgressHandler = (currSampleCount: number, maxSampleCount: number, frameCount: number, elapsedTimeInMs: number) => void
@@ -63,7 +64,8 @@ export class FlameRenderer implements CloseableBuffers {
     onRenderCancelledCallback: OnRenderCancelledCallback | undefined = undefined
     isFinished = true
 
-    constructor(private canvas_size: number,
+    constructor(private sharedRenderCtx: SharedRenderContext,
+                private canvas_size: number,
                 private swarm_size: number,
                 private displayMode: DisplayMode,
                 private canvas: HTMLCanvasElement,
@@ -75,7 +77,9 @@ export class FlameRenderer implements CloseableBuffers {
                 private flame: Flame) {
         const renderMappingCtx = new RenderMappingContext(flame.frame.value, flame.motionBlurLength.value, flame.motionBlurTimeStep.value)
         const renderFlame = FlameMapper.mapForRendering(renderMappingCtx, flame)
+        sharedRenderCtx.currFlame = flame
         this.prepareFlame(renderFlame)
+        sharedRenderCtx.currRenderFlame = renderFlame
         const imageWidth = canvas_size
         const imageHeight = canvas_size
         const wScl = imageWidth / renderFlame.width
@@ -95,7 +99,7 @@ export class FlameRenderer implements CloseableBuffers {
 
         const gl = initGL(canvas)
 
-        this.shaders = new WebglShaders(gl, canvas, this.canvas_size, this.swarm_size, renderFlame)
+        this.shaders = new WebglShaders(sharedRenderCtx, gl, canvas, this.canvas_size, this.swarm_size, renderFlame)
         this.buffers = new Buffers(gl, this.shaders, this.swarm_size, renderFlame)
         this.textures = new Textures(gl, this.swarm_size, this.canvas_size, renderFlame)
         this.framebuffers = new Framebuffers(gl, this.textures, renderFlame)

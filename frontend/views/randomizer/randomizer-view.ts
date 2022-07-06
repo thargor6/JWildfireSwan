@@ -206,7 +206,7 @@ export class RandomizerView extends View {
     const imgCnt =  this.getCapturedImageContainer()
     imgCnt.innerHTML = ''
 
-    return new FlameRenderer(512, 128,
+    return new FlameRenderer(randomizerStore.sharedRenderCtx, 512, 128,
       DisplayMode.FLAME, this.getRenderPanel().canvas,
      imgCnt, true,
       '',

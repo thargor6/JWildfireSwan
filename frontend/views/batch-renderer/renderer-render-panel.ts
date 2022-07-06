@@ -18,7 +18,7 @@
 import {html, nothing, render} from 'lit';
 import {customElement, property, state} from 'lit/decorators.js';
 import {MobxLitElement} from "@adobe/lit-mobx";
-import {RendererFlame, rendererStore} from "Frontend/stores/renderer-store";
+import {BatchRendererFlame, batchRendererStore} from "Frontend/stores/batch-renderer-store";
 import '@vaadin/vaadin-grid'
 import '@vaadin/vaadin-grid/vaadin-grid-column'
 import '@vaadin/vaadin-button'
@@ -37,12 +37,12 @@ export class RendererRenderPanel extends MobxLitElement {
 
   render() {
     return html`
-          <vaadin-button @click="${()=>rendererStore.clearFlames()}">Clear all (${rendererStore.flames.length})</vaadin-button>
-          <vaadin-grid .items=${rendererStore.flames}
-                  .selectedItems="${rendererStore.selectedFlames}"
-                  @active-item-changed="${(e: GridActiveItemChangedEvent<RendererFlame>) => {
+          <vaadin-button @click="${()=>batchRendererStore.clearFlames()}">Clear all (${batchRendererStore.flames.length})</vaadin-button>
+          <vaadin-grid .items=${batchRendererStore.flames}
+                  .selectedItems="${batchRendererStore.selectedFlames}"
+                  @active-item-changed="${(e: GridActiveItemChangedEvent<BatchRendererFlame>) => {
                   const item = e.detail.value;
-                  rendererStore.selectedFlames = item ? [item] : [];
+                  batchRendererStore.selectedFlames = item ? [item] : [];
               }}">
               <vaadin-grid-column
                       header="Flame"
@@ -61,7 +61,7 @@ export class RendererRenderPanel extends MobxLitElement {
      `;
   }
 
-  private flameRenderer = (root: HTMLElement, _: HTMLElement, model: GridItemModel<RendererFlame>) => {
+  private flameRenderer = (root: HTMLElement, _: HTMLElement, model: GridItemModel<BatchRendererFlame>) => {
     const flame = model.item;
     render(
       html`
@@ -74,7 +74,7 @@ export class RendererRenderPanel extends MobxLitElement {
     );
   };
 
-  private statusRenderer = (root: HTMLElement, _: HTMLElement, model: GridItemModel<RendererFlame>) => {
+  private statusRenderer = (root: HTMLElement, _: HTMLElement, model: GridItemModel<BatchRendererFlame>) => {
     const flame = model.item;
     render(
       html`
@@ -88,7 +88,7 @@ export class RendererRenderPanel extends MobxLitElement {
   };
 
   disconnectedCallback() {
-    rendererStore.selectedFlames = [];
+    batchRendererStore.selectedFlames = [];
     super.disconnectedCallback();
   }
 }

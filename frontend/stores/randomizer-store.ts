@@ -30,6 +30,7 @@ import {registerVars_Blur} from "Frontend/flames/renderer/variations/variation-s
 import {registerVars_2D_PartS} from "Frontend/flames/renderer/variations/variation-shaders-2d-partS";
 import {ExampleFlame, parseExampleFlame, sortExamples, SortOrder} from "Frontend/stores/example-flames";
 import {registerVars_Plot} from "Frontend/flames/renderer/variations/variation-shaders-plot";
+import {SharedRenderContext} from "Frontend/flames/renderer/shared-render-context";
 
 type OnInitCallback = () => void
 
@@ -56,6 +57,7 @@ export class RandomizerStore {
   currRndStackIdx = 0
   currBaseFlamename: string | undefined = undefined
   cancelSignalled = false
+  sharedRenderCtx = new SharedRenderContext()
 
   randomFlames = new Array<RandomFlame>()
 

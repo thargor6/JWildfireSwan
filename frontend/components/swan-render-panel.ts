@@ -28,6 +28,7 @@ import {FlameRenderer} from "Frontend/flames/renderer/flame-renderer";
 import {getTimeStamp} from "Frontend/components/utils";
 import {AppInfoEndpoint} from "Frontend/generated/endpoints";
 import {renderInfoStore} from "Frontend/stores/render-info-store";
+import {SharedRenderContext} from "Frontend/flames/renderer/shared-render-context";
 
 @customElement('swan-render-panel')
 export class SwanRenderPanel extends MobxLitElement {
@@ -45,6 +46,9 @@ export class SwanRenderPanel extends MobxLitElement {
 
   @property({type: Boolean})
   withProgressBar = true
+
+  @property()
+  sharedRenderCtx: SharedRenderContext | undefined = undefined
 
   canvas!: HTMLCanvasElement
   canvasContainer!: HTMLDivElement
@@ -133,23 +137,37 @@ export class SwanRenderPanel extends MobxLitElement {
   }
 
   renderFlame =(renderer: FlameRenderer | undefined = undefined) => {
-    if(!this.hasCanvas()) {
-      console.log("NO CANVAS - creating one!")
-      this.recreateCanvas()
+    try {
+      if (!this.hasCanvas()) {
+        console.log("NO CANVAS - creating one!")
+        this.recreateCanvas()
+      }
+      renderInfoStore.renderProgress = 0.0
+      renderInfoStore.renderInfo = 'Rendering'
+      if (renderer) {
+        this.renderer = renderer
+      } else {
+        this.renderer = this.onCreateFlameRenderer!();
+        this.renderer.onRenderFinished = this.execOnRenderFinished
+        this.renderer.onRenderCancelled = this.onRenderCancelled
+        this.renderer.onUpdateRenderProgress = this.onUpdateRenderProgress
+      }
+      this.lastProgressUpdate = getTimeStamp()
+      this.renderer.drawScene()
     }
-    renderInfoStore.renderProgress = 0.0
-    renderInfoStore.renderInfo = 'Rendering'
-    if(renderer) {
-      this.renderer = renderer
+    catch(e) {
+      console.log('ERROR WHILE RENDERING:', e)
+      if(this.sharedRenderCtx) {
+        console.log('Flame:', this.sharedRenderCtx.currFlame)
+        console.log('RenderFlame:', this.sharedRenderCtx.currRenderFlame)
+        console.log('CompPointsFragmentShader:', this.sharedRenderCtx.currCompPointsFragmentShader)
+        console.log('currProgPointsVertexShader:', this.sharedRenderCtx.currProgPointsVertexShader)
+      }
+      else {
+        console.log('Connect the render-panel with a shared render context to gather diagnostic information')
+      }
+      throw e
     }
-    else {
-      this.renderer = this.onCreateFlameRenderer!();
-      this.renderer.onRenderFinished = this.execOnRenderFinished
-      this.renderer.onRenderCancelled = this.onRenderCancelled
-      this.renderer.onUpdateRenderProgress = this.onUpdateRenderProgress
-    }
-    this.lastProgressUpdate = getTimeStamp()
-    this.renderer.drawScene()
   }
 
   execOnRenderFinished = (frameCount: number, elapsedTimeInS: number) => {

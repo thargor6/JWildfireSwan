@@ -15,24 +15,13 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 */
 
-import {makeAutoObservable} from 'mobx';
 import {Flame} from "Frontend/flames/model/flame";
-import {SharedRenderContext} from "Frontend/flames/renderer/shared-render-context";
+import {RenderFlame} from "Frontend/flames/model/render-flame";
 
-export class SingleRendererStore {
-  initFlag = false
-  refreshing = true
-  variations: string[] = []
-  initState = new Set<string>()
-  calculating = false
-  lastError = ''
-  flame = new Flame()
-  sharedRenderCtx = new SharedRenderContext()
-
-  constructor() {
-    makeAutoObservable(this);
-  }
-
+/** the purpose if this class is primarily for keeping information together which might be useful for error-tracking */
+export class SharedRenderContext {
+  currFlame: Flame | undefined = undefined
+  currRenderFlame: RenderFlame | undefined = undefined
+  currProgPointsVertexShader: string | undefined = undefined
+  currCompPointsFragmentShader: string | undefined = undefined
 }
-
-export const singleRendererStore = new SingleRendererStore()
