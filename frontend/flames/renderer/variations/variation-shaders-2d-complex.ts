@@ -248,19 +248,19 @@ class CombimirrorFunc extends VariationShaderFunc3D {
     PARAM_PCOLORSHIFT = 'pcolorshift'
 
     get params(): VariationParam[] {
-        return [{ name: this.PARAM_VMIRROR, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
-            { name: this.PARAM_VMOVE, type: VariationParamType.VP_NUMBER, initialValue: 0.05 },
-            { name: this.PARAM_HMIRROR, type: VariationParamType.VP_NUMBER, initialValue: 0.50 },
-            { name: this.PARAM_HMOVE, type: VariationParamType.VP_NUMBER, initialValue: 0.35 },
-            { name: this.PARAM_ZMIRROR, type: VariationParamType.VP_NUMBER, initialValue: 0.0 },
-            { name: this.PARAM_ZMOVE, type: VariationParamType.VP_NUMBER, initialValue: 0.00 },
-            { name: this.PARAM_PMIRROR, type: VariationParamType.VP_NUMBER, initialValue: 0.00 },
-            { name: this.PARAM_PMOVEX, type: VariationParamType.VP_NUMBER, initialValue: 0.05 },
-            { name: this.PARAM_PMOVEY, type: VariationParamType.VP_NUMBER, initialValue: 0.00 },
-            { name: this.PARAM_VCOLORSHIFT, type: VariationParamType.VP_NUMBER, initialValue: 0.00 },
-            { name: this.PARAM_HCOLORSHIFT, type: VariationParamType.VP_NUMBER, initialValue: 0.0 },
-            { name: this.PARAM_ZCOLORSHIFT, type: VariationParamType.VP_NUMBER, initialValue: 0.00 },
-            { name: this.PARAM_PCOLORSHIFT, type: VariationParamType.VP_NUMBER, initialValue: 0.00 }]
+        return [{ name: this.PARAM_VMIRROR, type: VariationParamType.VP_FLOAT, initialValue: 1.0 },
+            { name: this.PARAM_VMOVE, type: VariationParamType.VP_FLOAT, initialValue: 0.05 },
+            { name: this.PARAM_HMIRROR, type: VariationParamType.VP_FLOAT, initialValue: 0.50 },
+            { name: this.PARAM_HMOVE, type: VariationParamType.VP_FLOAT, initialValue: 0.35 },
+            { name: this.PARAM_ZMIRROR, type: VariationParamType.VP_FLOAT, initialValue: 0.0 },
+            { name: this.PARAM_ZMOVE, type: VariationParamType.VP_FLOAT, initialValue: 0.00 },
+            { name: this.PARAM_PMIRROR, type: VariationParamType.VP_FLOAT, initialValue: 0.00 },
+            { name: this.PARAM_PMOVEX, type: VariationParamType.VP_FLOAT, initialValue: 0.05 },
+            { name: this.PARAM_PMOVEY, type: VariationParamType.VP_FLOAT, initialValue: 0.00 },
+            { name: this.PARAM_VCOLORSHIFT, type: VariationParamType.VP_FLOAT, initialValue: 0.00 },
+            { name: this.PARAM_HCOLORSHIFT, type: VariationParamType.VP_FLOAT, initialValue: 0.0 },
+            { name: this.PARAM_ZCOLORSHIFT, type: VariationParamType.VP_FLOAT, initialValue: 0.00 },
+            { name: this.PARAM_PCOLORSHIFT, type: VariationParamType.VP_FLOAT, initialValue: 0.00 }]
     }
 
     getCode(xform: RenderXForm, variation: RenderVariation): string {
@@ -332,7 +332,7 @@ class CSinFunc extends VariationShaderFunc2D {
     PARAM_STRETCH = 'stretch'
 
     get params(): VariationParam[] {
-        return [{ name: this.PARAM_STRETCH, type: VariationParamType.VP_NUMBER, initialValue: 1.5 }]
+        return [{ name: this.PARAM_STRETCH, type: VariationParamType.VP_FLOAT, initialValue: 1.5 }]
     }
 
     getCode(xform: RenderXForm, variation: RenderVariation): string {
@@ -367,9 +367,9 @@ class JuliaOutsideFunc extends VariationShaderFunc2D {
     PARAM_MODE = 'mode'
 
     get params(): VariationParam[] {
-        return [{ name: this.PARAM_RE_DIV, type: VariationParamType.VP_NUMBER, initialValue: 4.0 },
-            { name: this.PARAM_IM_DIV, type: VariationParamType.VP_NUMBER, initialValue: 0.0 },
-            { name: this.PARAM_MODE, type: VariationParamType.VP_NUMBER, initialValue: 0 }]
+        return [{ name: this.PARAM_RE_DIV, type: VariationParamType.VP_FLOAT, initialValue: 4.0 },
+            { name: this.PARAM_IM_DIV, type: VariationParamType.VP_FLOAT, initialValue: 0.0 },
+            { name: this.PARAM_MODE, type: VariationParamType.VP_INT, initialValue: 0 }]
     }
 
     getCode(xform: RenderXForm, variation: RenderVariation): string {
@@ -436,8 +436,8 @@ class PlusRecipFunc extends VariationShaderFunc2D {
     PARAM_AI = 'ai'
 
     get params(): VariationParam[] {
-        return [{ name: this.PARAM_AR, type: VariationParamType.VP_NUMBER, initialValue: 4.0 },
-            { name: this.PARAM_AI, type: VariationParamType.VP_NUMBER, initialValue: 0.0 }]
+        return [{ name: this.PARAM_AR, type: VariationParamType.VP_FLOAT, initialValue: 4.0 },
+            { name: this.PARAM_AI, type: VariationParamType.VP_FLOAT, initialValue: 0.0 }]
     }
 
     getCode(xform: RenderXForm, variation: RenderVariation): string {

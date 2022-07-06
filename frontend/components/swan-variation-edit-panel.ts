@@ -16,7 +16,7 @@
 */
 
 import {html} from 'lit';
-import {customElement, property, state} from 'lit/decorators.js';
+import {customElement, property} from 'lit/decorators.js';
 
 import '@vaadin/vaadin-button'
 import '@vaadin/vaadin-combo-box'
@@ -26,10 +26,9 @@ import '@vaadin/vaadin-ordered-layout/vaadin-vertical-layout'
 import {EditPropertyPanel, NumberFieldDescriptor} from "Frontend/views/editor/edit-property-panel";
 import {msg} from "@lit/localize";
 import {editorStore} from "Frontend/stores/editor-store";
-import {FlameEditService} from "Frontend/flames/service/flame-edit-service";
-import {cloneDeep} from "lodash";
 import {VariationShaders} from "Frontend/flames/renderer/variations/variation-shaders";
 import {Parameters} from "Frontend/flames/model/parameters";
+import {VariationParamType} from "Frontend/flames/renderer/variations/variation-shader-func";
 
 @customElement('swan-variation-edit-panel')
 export class SwanVariationEditPanel extends EditPropertyPanel {
@@ -86,7 +85,7 @@ export class SwanVariationEditPanel extends EditPropertyPanel {
         newVariation.name = e.detail.value
 
         VariationShaders.getVariationParams(newVariation.name).forEach((param)=>{
-          newVariation.params.set(param.name, Parameters.floatParam(param.initialValue))
+          newVariation.params.set(param.name, param.type===VariationParamType.VP_INT ? Parameters.intParam(param.initialValue) : Parameters.floatParam(param.initialValue))
         })
 
         editorStore.currXform.variations = [...editorStore.currXform.variations.slice(0, idx), newVariation, ...editorStore.currXform.variations.slice(idx+1, editorStore.currXform.variations.length - idx)]

@@ -37,7 +37,7 @@ class CannabisCurveWFFunc extends VariationShaderFunc2D {
     PARAM_FILLED = 'filled'
 
     get params(): VariationParam[] {
-        return [{ name: this.PARAM_FILLED, type: VariationParamType.VP_NUMBER, initialValue: 0.85 }]
+        return [{ name: this.PARAM_FILLED, type: VariationParamType.VP_FLOAT, initialValue: 0.85 }]
     }
 
     getCode(xform: RenderXForm, variation: RenderVariation): string {
@@ -75,7 +75,7 @@ class CardioidFunc extends VariationShaderFunc2D {
     PARAM_A = 'a'
 
     get params(): VariationParam[] {
-        return [{ name: this.PARAM_A, type: VariationParamType.VP_NUMBER, initialValue: 1.0 }]
+        return [{ name: this.PARAM_A, type: VariationParamType.VP_FLOAT, initialValue: 1.0 }]
     }
 
     getCode(xform: RenderXForm, variation: RenderVariation): string {
@@ -108,10 +108,10 @@ class ChecksFunc extends VariationShaderFunc2D {
     PARAM_BOTTOM = 'rnd'
 
     get params(): VariationParam[] {
-        return [{ name: this.PARAM_LEFT, type: VariationParamType.VP_NUMBER, initialValue: 3.00 },
-            { name: this.PARAM_TOP, type: VariationParamType.VP_NUMBER, initialValue: 3.00 },
-            { name: this.PARAM_RIGHT, type: VariationParamType.VP_NUMBER, initialValue: 1.00 },
-            { name: this.PARAM_BOTTOM, type: VariationParamType.VP_NUMBER, initialValue: 0.50 }]
+        return [{ name: this.PARAM_LEFT, type: VariationParamType.VP_FLOAT, initialValue: 3.00 },
+            { name: this.PARAM_TOP, type: VariationParamType.VP_FLOAT, initialValue: 3.00 },
+            { name: this.PARAM_RIGHT, type: VariationParamType.VP_FLOAT, initialValue: 1.00 },
+            { name: this.PARAM_BOTTOM, type: VariationParamType.VP_FLOAT, initialValue: 0.50 }]
     }
 
     getCode(xform: RenderXForm, variation: RenderVariation): string {
@@ -158,7 +158,7 @@ class CellFunc extends VariationShaderFunc2D {
     PARAM_SIZE = 'size'
 
     get params(): VariationParam[] {
-        return [{ name: this.PARAM_SIZE, type: VariationParamType.VP_NUMBER, initialValue: 0.6 }]
+        return [{ name: this.PARAM_SIZE, type: VariationParamType.VP_FLOAT, initialValue: 0.6 }]
     }
 
     getCode(xform: RenderXForm, variation: RenderVariation): string {
@@ -240,7 +240,7 @@ class CirclizeFunc extends VariationShaderFunc2D {
     PARAM_HOLE = 'hole'
 
     get params(): VariationParam[] {
-        return [{ name: this.PARAM_HOLE, type: VariationParamType.VP_NUMBER, initialValue: 0.40 }]
+        return [{ name: this.PARAM_HOLE, type: VariationParamType.VP_FLOAT, initialValue: 0.40 }]
     }
 
     getCode(xform: RenderXForm, variation: RenderVariation): string {
@@ -288,7 +288,7 @@ class CircusFunc extends VariationShaderFunc2D {
     PARAM_SCALE = 'scale'
 
     get params(): VariationParam[] {
-        return [{ name: this.PARAM_SCALE, type: VariationParamType.VP_NUMBER, initialValue: 0.92 }]
+        return [{ name: this.PARAM_SCALE, type: VariationParamType.VP_FLOAT, initialValue: 0.92 }]
     }
 
     getCode(xform: RenderXForm, variation: RenderVariation): string {
@@ -323,7 +323,7 @@ class CloverLeafWFFunc extends VariationShaderFunc2D {
     PARAM_FILLED = 'filled'
 
     get params(): VariationParam[] {
-      return [{ name: this.PARAM_FILLED, type: VariationParamType.VP_NUMBER, initialValue: 0.85 }]
+      return [{ name: this.PARAM_FILLED, type: VariationParamType.VP_FLOAT, initialValue: 0.85 }]
     }
 
     getCode(xform: RenderXForm, variation: RenderVariation): string {
@@ -363,10 +363,10 @@ class CliffordFunc extends VariationShaderFunc2D {
     PARAM_D = 'd'
 
     get params(): VariationParam[] {
-        return [{ name: this.PARAM_A, type: VariationParamType.VP_NUMBER, initialValue: -1.4 },
-            { name: this.PARAM_B, type: VariationParamType.VP_NUMBER, initialValue: 1.6 },
-            { name: this.PARAM_C, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
-            { name: this.PARAM_D, type: VariationParamType.VP_NUMBER, initialValue: 0.7 }]
+        return [{ name: this.PARAM_A, type: VariationParamType.VP_FLOAT, initialValue: -1.4 },
+            { name: this.PARAM_B, type: VariationParamType.VP_FLOAT, initialValue: 1.6 },
+            { name: this.PARAM_C, type: VariationParamType.VP_FLOAT, initialValue: 1.0 },
+            { name: this.PARAM_D, type: VariationParamType.VP_FLOAT, initialValue: 0.7 }]
     }
 
     getCode(xform: RenderXForm, variation: RenderVariation): string {
@@ -404,8 +404,8 @@ class CollideoscopeFunc extends VariationShaderFunc2D {
     PARAM_NUM = 'num'
 
     get params(): VariationParam[] {
-        return [{ name: this.PARAM_A, type: VariationParamType.VP_NUMBER, initialValue: 0.20 },
-            { name: this.PARAM_NUM, type: VariationParamType.VP_NUMBER, initialValue: 1 }]
+        return [{ name: this.PARAM_A, type: VariationParamType.VP_FLOAT, initialValue: 0.20 },
+            { name: this.PARAM_NUM, type: VariationParamType.VP_INT, initialValue: 1 }]
     }
 
     getCode(xform: RenderXForm, variation: RenderVariation): string {
@@ -461,8 +461,8 @@ class ConicFunc extends VariationShaderFunc2D {
     PARAM_HOLES = 'holes'
 
     get params(): VariationParam[] {
-        return [{ name: this.PARAM_ECCENTRICITY, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
-            { name: this.PARAM_HOLES, type: VariationParamType.VP_NUMBER, initialValue: 0.0 }]
+        return [{ name: this.PARAM_ECCENTRICITY, type: VariationParamType.VP_FLOAT, initialValue: 1.0 },
+            { name: this.PARAM_HOLES, type: VariationParamType.VP_FLOAT, initialValue: 0.0 }]
     }
 
     getCode(xform: RenderXForm, variation: RenderVariation): string {
@@ -494,10 +494,10 @@ class Cot2_BSFunc extends VariationShaderFunc2D {
     PARAM_Y2 = 'y2'
 
     get params(): VariationParam[] {
-        return [{ name: this.PARAM_X1, type: VariationParamType.VP_NUMBER, initialValue: 2.0 },
-            { name: this.PARAM_X2, type: VariationParamType.VP_NUMBER, initialValue: 2.0 },
-            { name: this.PARAM_Y1, type: VariationParamType.VP_NUMBER, initialValue: 2.0 },
-            { name: this.PARAM_Y2, type: VariationParamType.VP_NUMBER, initialValue: 2.0 }
+        return [{ name: this.PARAM_X1, type: VariationParamType.VP_FLOAT, initialValue: 2.0 },
+            { name: this.PARAM_X2, type: VariationParamType.VP_FLOAT, initialValue: 2.0 },
+            { name: this.PARAM_Y1, type: VariationParamType.VP_FLOAT, initialValue: 2.0 },
+            { name: this.PARAM_Y2, type: VariationParamType.VP_FLOAT, initialValue: 2.0 }
         ]
     }
 
@@ -543,10 +543,10 @@ class Coth2_BSFunc extends VariationShaderFunc2D {
     PARAM_Y2 = 'y2'
 
     get params(): VariationParam[] {
-        return [{ name: this.PARAM_X1, type: VariationParamType.VP_NUMBER, initialValue: 2.0 },
-            { name: this.PARAM_X2, type: VariationParamType.VP_NUMBER, initialValue: 2.0 },
-            { name: this.PARAM_Y1, type: VariationParamType.VP_NUMBER, initialValue: 2.0 },
-            { name: this.PARAM_Y2, type: VariationParamType.VP_NUMBER, initialValue: 2.0 }
+        return [{ name: this.PARAM_X1, type: VariationParamType.VP_FLOAT, initialValue: 2.0 },
+            { name: this.PARAM_X2, type: VariationParamType.VP_FLOAT, initialValue: 2.0 },
+            { name: this.PARAM_Y1, type: VariationParamType.VP_FLOAT, initialValue: 2.0 },
+            { name: this.PARAM_Y2, type: VariationParamType.VP_FLOAT, initialValue: 2.0 }
         ]
     }
 
@@ -593,9 +593,9 @@ class CPowFunc extends VariationShaderFunc2D {
     PARAM_POWER = 'power'
 
     get params(): VariationParam[] {
-        return [{ name: this.PARAM_R, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
-            { name: this.PARAM_I, type: VariationParamType.VP_NUMBER, initialValue: 0.1 },
-            { name: this.PARAM_POWER, type: VariationParamType.VP_NUMBER, initialValue: 1.5 }]
+        return [{ name: this.PARAM_R, type: VariationParamType.VP_FLOAT, initialValue: 1.0 },
+            { name: this.PARAM_I, type: VariationParamType.VP_FLOAT, initialValue: 0.1 },
+            { name: this.PARAM_POWER, type: VariationParamType.VP_FLOAT, initialValue: 1.5 }]
     }
 
     /* Cpow in the Apophysis Plugin Pack */
@@ -641,12 +641,12 @@ class CropFunc extends VariationShaderFunc2D {
     PARAM_ZERO = 'zero'
 
     get params(): VariationParam[] {
-        return [{ name: this.PARAM_LEFT, type: VariationParamType.VP_NUMBER, initialValue: -1.00 },
-            { name: this.PARAM_TOP, type: VariationParamType.VP_NUMBER, initialValue: -1.00 },
-            { name: this.PARAM_RIGHT, type: VariationParamType.VP_NUMBER, initialValue: 1.00 },
-            { name: this.PARAM_BOTTOM, type: VariationParamType.VP_NUMBER, initialValue: 1.00 },
-            { name: this.PARAM_SCATTER_AREA, type: VariationParamType.VP_NUMBER, initialValue: 0.00 },
-            { name: this.PARAM_ZERO, type: VariationParamType.VP_NUMBER, initialValue: 0 }]
+        return [{ name: this.PARAM_LEFT, type: VariationParamType.VP_FLOAT, initialValue: -1.00 },
+            { name: this.PARAM_TOP, type: VariationParamType.VP_FLOAT, initialValue: -1.00 },
+            { name: this.PARAM_RIGHT, type: VariationParamType.VP_FLOAT, initialValue: 1.00 },
+            { name: this.PARAM_BOTTOM, type: VariationParamType.VP_FLOAT, initialValue: 1.00 },
+            { name: this.PARAM_SCATTER_AREA, type: VariationParamType.VP_FLOAT, initialValue: 0.00 },
+            { name: this.PARAM_ZERO, type: VariationParamType.VP_INT, initialValue: 0 }]
     }
 
     getCode(xform: RenderXForm, variation: RenderVariation): string {
@@ -753,10 +753,10 @@ class Csc2_BSFunc extends VariationShaderFunc2D {
     PARAM_Y2 = 'y2'
 
     get params(): VariationParam[] {
-        return [{ name: this.PARAM_X1, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
-            { name: this.PARAM_Y1, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
-            { name: this.PARAM_X2, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
-            { name: this.PARAM_Y2, type: VariationParamType.VP_NUMBER, initialValue: 1.0 }
+        return [{ name: this.PARAM_X1, type: VariationParamType.VP_FLOAT, initialValue: 1.0 },
+            { name: this.PARAM_Y1, type: VariationParamType.VP_FLOAT, initialValue: 1.0 },
+            { name: this.PARAM_X2, type: VariationParamType.VP_FLOAT, initialValue: 1.0 },
+            { name: this.PARAM_Y2, type: VariationParamType.VP_FLOAT, initialValue: 1.0 }
         ]
     }
 
@@ -807,13 +807,13 @@ class CscSquaredFunc extends VariationShaderFunc2D {
     PARAM_SCALE_Y = 'scale_y'
 
     get params(): VariationParam[] {
-        return [{ name: this.PARAM_CSC_DIV, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
-            { name: this.PARAM_COS_DIV, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
-            { name: this.PARAM_TAN_DIV, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
-            { name: this.PARAM_CSC_POW, type: VariationParamType.VP_NUMBER, initialValue: 0.5 },
-            { name: this.PARAM_PI_MULT, type: VariationParamType.VP_NUMBER, initialValue: 0.5 },
-            { name: this.PARAM_CSC_ADD, type: VariationParamType.VP_NUMBER, initialValue: 0.25 },
-            { name: this.PARAM_SCALE_Y, type: VariationParamType.VP_NUMBER, initialValue: 1.0 }
+        return [{ name: this.PARAM_CSC_DIV, type: VariationParamType.VP_FLOAT, initialValue: 1.0 },
+            { name: this.PARAM_COS_DIV, type: VariationParamType.VP_FLOAT, initialValue: 1.0 },
+            { name: this.PARAM_TAN_DIV, type: VariationParamType.VP_FLOAT, initialValue: 1.0 },
+            { name: this.PARAM_CSC_POW, type: VariationParamType.VP_FLOAT, initialValue: 0.5 },
+            { name: this.PARAM_PI_MULT, type: VariationParamType.VP_FLOAT, initialValue: 0.5 },
+            { name: this.PARAM_CSC_ADD, type: VariationParamType.VP_FLOAT, initialValue: 0.25 },
+            { name: this.PARAM_SCALE_Y, type: VariationParamType.VP_FLOAT, initialValue: 1.0 }
         ]
     }
 
@@ -948,10 +948,10 @@ class Cosh2_BSFunc extends VariationShaderFunc2D {
     PARAM_Y2 = 'y2'
 
     get params(): VariationParam[] {
-        return [{ name: this.PARAM_X1, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
-            { name: this.PARAM_X2, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
-            { name: this.PARAM_Y1, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
-            { name: this.PARAM_Y2, type: VariationParamType.VP_NUMBER, initialValue: 1.0 }
+        return [{ name: this.PARAM_X1, type: VariationParamType.VP_FLOAT, initialValue: 1.0 },
+            { name: this.PARAM_X2, type: VariationParamType.VP_FLOAT, initialValue: 1.0 },
+            { name: this.PARAM_Y1, type: VariationParamType.VP_FLOAT, initialValue: 1.0 },
+            { name: this.PARAM_Y2, type: VariationParamType.VP_FLOAT, initialValue: 1.0 }
         ]
     }
 
@@ -1083,10 +1083,10 @@ class Csch2_BSFunc extends VariationShaderFunc2D {
     PARAM_Y2 = 'y2'
 
     get params(): VariationParam[] {
-        return [{ name: this.PARAM_X1, type: VariationParamType.VP_NUMBER, initialValue: 2.0 },
-            { name: this.PARAM_X2, type: VariationParamType.VP_NUMBER, initialValue: 2.0 },
-            { name: this.PARAM_Y1, type: VariationParamType.VP_NUMBER, initialValue: 2.0 },
-            { name: this.PARAM_Y2, type: VariationParamType.VP_NUMBER, initialValue: 2.0 }
+        return [{ name: this.PARAM_X1, type: VariationParamType.VP_FLOAT, initialValue: 2.0 },
+            { name: this.PARAM_X2, type: VariationParamType.VP_FLOAT, initialValue: 2.0 },
+            { name: this.PARAM_Y1, type: VariationParamType.VP_FLOAT, initialValue: 2.0 },
+            { name: this.PARAM_Y2, type: VariationParamType.VP_FLOAT, initialValue: 2.0 }
         ]
     }
 
@@ -1132,8 +1132,8 @@ class CurlFunc extends VariationShaderFunc2D {
     PARAM_C2 = 'c2'
 
     get params(): VariationParam[] {
-        return [{ name: this.PARAM_C1, type: VariationParamType.VP_NUMBER, initialValue: 0.1 },
-                { name: this.PARAM_C2, type: VariationParamType.VP_NUMBER, initialValue: 0.0 }]
+        return [{ name: this.PARAM_C1, type: VariationParamType.VP_FLOAT, initialValue: 0.1 },
+                { name: this.PARAM_C2, type: VariationParamType.VP_FLOAT, initialValue: 0.0 }]
     }
 
     getCode(xform: RenderXForm, variation: RenderVariation): string {
@@ -1165,10 +1165,10 @@ class CurveFunc extends VariationShaderFunc2D {
     PARAM_YLENGTH = 'ylength'
 
     get params(): VariationParam[] {
-        return [{ name: this.PARAM_XAMP, type: VariationParamType.VP_NUMBER, initialValue: 0.25 },
-            { name: this.PARAM_YAMP, type: VariationParamType.VP_NUMBER, initialValue: 0.50 },
-            { name: this.PARAM_XLENGTH, type: VariationParamType.VP_NUMBER, initialValue: 1.00 },
-            { name: this.PARAM_YLENGTH, type: VariationParamType.VP_NUMBER, initialValue: 1.00 }
+        return [{ name: this.PARAM_XAMP, type: VariationParamType.VP_FLOAT, initialValue: 0.25 },
+            { name: this.PARAM_YAMP, type: VariationParamType.VP_FLOAT, initialValue: 0.50 },
+            { name: this.PARAM_XLENGTH, type: VariationParamType.VP_FLOAT, initialValue: 1.00 },
+            { name: this.PARAM_YLENGTH, type: VariationParamType.VP_FLOAT, initialValue: 1.00 }
         ]
     }
 

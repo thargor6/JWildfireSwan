@@ -93,19 +93,19 @@ class ParPlot2DWFFunc extends VariationShaderFunc3D {
 
   get params(): VariationParam[] {
     return [
-      { name: this.PARAM_UMIN, type: VariationParamType.VP_NUMBER, initialValue: 0.0 },
-      { name: this.PARAM_UMAX, type: VariationParamType.VP_NUMBER, initialValue: 2.0 * M_PI },
-      { name: this.PARAM_VMIN, type: VariationParamType.VP_NUMBER, initialValue: 0.0 },
-      { name: this.PARAM_VMAX, type: VariationParamType.VP_NUMBER, initialValue: 2.0 * M_PI },
-      { name: this.PARAM_DIRECT_COLOR, type: VariationParamType.VP_NUMBER, initialValue: 1 },
-      { name: this.PARAM_COLOR_MODE, type: VariationParamType.VP_NUMBER, initialValue: this.CM_UV },
-      { name: this.PARAM_SOLID, type: VariationParamType.VP_NUMBER, initialValue: 1 },
-      { name: this.PARAM_A, type: VariationParamType.VP_NUMBER, initialValue: 0.0 },
-      { name: this.PARAM_B, type: VariationParamType.VP_NUMBER, initialValue: 0.0 },
-      { name: this.PARAM_C, type: VariationParamType.VP_NUMBER, initialValue: 0.0 },
-      { name: this.PARAM_D, type: VariationParamType.VP_NUMBER, initialValue: 0.0 },
-      { name: this.PARAM_E, type: VariationParamType.VP_NUMBER, initialValue: 0.0 },
-      { name: this.PARAM_F, type: VariationParamType.VP_NUMBER, initialValue: 0.0 }
+      { name: this.PARAM_UMIN, type: VariationParamType.VP_FLOAT, initialValue: 0.0 },
+      { name: this.PARAM_UMAX, type: VariationParamType.VP_FLOAT, initialValue: 2.0 * M_PI },
+      { name: this.PARAM_VMIN, type: VariationParamType.VP_FLOAT, initialValue: 0.0 },
+      { name: this.PARAM_VMAX, type: VariationParamType.VP_FLOAT, initialValue: 2.0 * M_PI },
+      { name: this.PARAM_DIRECT_COLOR, type: VariationParamType.VP_INT, initialValue: 1 },
+      { name: this.PARAM_COLOR_MODE, type: VariationParamType.VP_INT, initialValue: this.CM_UV },
+      { name: this.PARAM_SOLID, type: VariationParamType.VP_INT, initialValue: 1 },
+      { name: this.PARAM_A, type: VariationParamType.VP_FLOAT, initialValue: 0.0 },
+      { name: this.PARAM_B, type: VariationParamType.VP_FLOAT, initialValue: 0.0 },
+      { name: this.PARAM_C, type: VariationParamType.VP_FLOAT, initialValue: 0.0 },
+      { name: this.PARAM_D, type: VariationParamType.VP_FLOAT, initialValue: 0.0 },
+      { name: this.PARAM_E, type: VariationParamType.VP_FLOAT, initialValue: 0.0 },
+      { name: this.PARAM_F, type: VariationParamType.VP_FLOAT, initialValue: 0.0 }
     ]
   }
 
@@ -293,20 +293,20 @@ class PolarPlot2DWFFunc extends VariationShaderFunc3D {
   CM_R = 2
 
   get params(): VariationParam[] {
-    return [{ name: this.PARAM_TMIN, type: VariationParamType.VP_NUMBER, initialValue: -3.0 },
-      { name: this.PARAM_TMAX, type: VariationParamType.VP_NUMBER, initialValue: 2.0 },
-      { name: this.PARAM_RMIN, type: VariationParamType.VP_NUMBER, initialValue: 0.0 },
-      { name: this.PARAM_RMAX, type: VariationParamType.VP_NUMBER, initialValue: 2.0 },
-      { name: this.PARAM_ZMIN, type: VariationParamType.VP_NUMBER, initialValue: -2.0 },
-      { name: this.PARAM_ZMAX, type: VariationParamType.VP_NUMBER, initialValue: 2.0 },
-      { name: this.PARAM_DIRECT_COLOR, type: VariationParamType.VP_NUMBER, initialValue: 1 },
-      { name: this.PARAM_COLOR_MODE, type: VariationParamType.VP_NUMBER, initialValue: this.CM_T },
-      { name: this.PARAM_A, type: VariationParamType.VP_NUMBER, initialValue: 0.0 },
-      { name: this.PARAM_B, type: VariationParamType.VP_NUMBER, initialValue: 0.0 },
-      { name: this.PARAM_C, type: VariationParamType.VP_NUMBER, initialValue: 0.0 },
-      { name: this.PARAM_D, type: VariationParamType.VP_NUMBER, initialValue: 0.0 },
-      { name: this.PARAM_E, type: VariationParamType.VP_NUMBER, initialValue: 0.0 },
-      { name: this.PARAM_F, type: VariationParamType.VP_NUMBER, initialValue: 0.0 }
+    return [{ name: this.PARAM_TMIN, type: VariationParamType.VP_FLOAT, initialValue: -3.0 },
+      { name: this.PARAM_TMAX, type: VariationParamType.VP_FLOAT, initialValue: 2.0 },
+      { name: this.PARAM_RMIN, type: VariationParamType.VP_FLOAT, initialValue: 0.0 },
+      { name: this.PARAM_RMAX, type: VariationParamType.VP_FLOAT, initialValue: 2.0 },
+      { name: this.PARAM_ZMIN, type: VariationParamType.VP_FLOAT, initialValue: -2.0 },
+      { name: this.PARAM_ZMAX, type: VariationParamType.VP_FLOAT, initialValue: 2.0 },
+      { name: this.PARAM_DIRECT_COLOR, type: VariationParamType.VP_INT, initialValue: 1 },
+      { name: this.PARAM_COLOR_MODE, type: VariationParamType.VP_INT, initialValue: this.CM_T },
+      { name: this.PARAM_A, type: VariationParamType.VP_FLOAT, initialValue: 0.0 },
+      { name: this.PARAM_B, type: VariationParamType.VP_FLOAT, initialValue: 0.0 },
+      { name: this.PARAM_C, type: VariationParamType.VP_FLOAT, initialValue: 0.0 },
+      { name: this.PARAM_D, type: VariationParamType.VP_FLOAT, initialValue: 0.0 },
+      { name: this.PARAM_E, type: VariationParamType.VP_FLOAT, initialValue: 0.0 },
+      { name: this.PARAM_F, type: VariationParamType.VP_FLOAT, initialValue: 0.0 }
     ]
   }
 
@@ -463,21 +463,21 @@ class PolarPlot3DWFFunc extends VariationShaderFunc3D {
   CM_TU = 4
 
   get params(): VariationParam[] {
-    return [{ name: this.PARAM_TMIN, type: VariationParamType.VP_NUMBER, initialValue: -M_PI },
-      { name: this.PARAM_TMAX, type: VariationParamType.VP_NUMBER, initialValue: M_PI },
-      { name: this.PARAM_UMIN, type: VariationParamType.VP_NUMBER, initialValue: 0.0 },
-      { name: this.PARAM_UMAX, type: VariationParamType.VP_NUMBER, initialValue: M_PI },
-      { name: this.PARAM_RMIN, type: VariationParamType.VP_NUMBER, initialValue: -2.0 },
-      { name: this.PARAM_RMAX, type: VariationParamType.VP_NUMBER, initialValue: 2.0 },
-      { name: this.PARAM_DIRECT_COLOR, type: VariationParamType.VP_NUMBER, initialValue: 1 },
-      { name: this.PARAM_CYLINDRICAL, type: VariationParamType.VP_NUMBER, initialValue: 0 },
-      { name: this.PARAM_COLOR_MODE, type: VariationParamType.VP_NUMBER, initialValue: this.CM_U },
-      { name: this.PARAM_A, type: VariationParamType.VP_NUMBER, initialValue: 0.0 },
-      { name: this.PARAM_B, type: VariationParamType.VP_NUMBER, initialValue: 0.0 },
-      { name: this.PARAM_C, type: VariationParamType.VP_NUMBER, initialValue: 0.0 },
-      { name: this.PARAM_D, type: VariationParamType.VP_NUMBER, initialValue: 0.0 },
-      { name: this.PARAM_E, type: VariationParamType.VP_NUMBER, initialValue: 0.0 },
-      { name: this.PARAM_F, type: VariationParamType.VP_NUMBER, initialValue: 0.0 }
+    return [{ name: this.PARAM_TMIN, type: VariationParamType.VP_FLOAT, initialValue: -M_PI },
+      { name: this.PARAM_TMAX, type: VariationParamType.VP_FLOAT, initialValue: M_PI },
+      { name: this.PARAM_UMIN, type: VariationParamType.VP_FLOAT, initialValue: 0.0 },
+      { name: this.PARAM_UMAX, type: VariationParamType.VP_FLOAT, initialValue: M_PI },
+      { name: this.PARAM_RMIN, type: VariationParamType.VP_FLOAT, initialValue: -2.0 },
+      { name: this.PARAM_RMAX, type: VariationParamType.VP_FLOAT, initialValue: 2.0 },
+      { name: this.PARAM_DIRECT_COLOR, type: VariationParamType.VP_INT, initialValue: 1 },
+      { name: this.PARAM_CYLINDRICAL, type: VariationParamType.VP_INT, initialValue: 0 },
+      { name: this.PARAM_COLOR_MODE, type: VariationParamType.VP_INT, initialValue: this.CM_U },
+      { name: this.PARAM_A, type: VariationParamType.VP_FLOAT, initialValue: 0.0 },
+      { name: this.PARAM_B, type: VariationParamType.VP_FLOAT, initialValue: 0.0 },
+      { name: this.PARAM_C, type: VariationParamType.VP_FLOAT, initialValue: 0.0 },
+      { name: this.PARAM_D, type: VariationParamType.VP_FLOAT, initialValue: 0.0 },
+      { name: this.PARAM_E, type: VariationParamType.VP_FLOAT, initialValue: 0.0 },
+      { name: this.PARAM_F, type: VariationParamType.VP_FLOAT, initialValue: 0.0 }
     ]
   }
 
@@ -639,20 +639,20 @@ class YPlot2DWFFunc extends VariationShaderFunc3D {
     CM_Y = 2;
 
     get params(): VariationParam[] {
-        return [{ name: this.PARAM_XMIN, type: VariationParamType.VP_NUMBER, initialValue: -3.0 },
-            { name: this.PARAM_XMAX, type: VariationParamType.VP_NUMBER, initialValue: 2.0 },
-            { name: this.PARAM_YMIN, type: VariationParamType.VP_NUMBER, initialValue: -4.0 },
-            { name: this.PARAM_YMAX, type: VariationParamType.VP_NUMBER, initialValue: 4.0 },
-            { name: this.PARAM_ZMIN, type: VariationParamType.VP_NUMBER, initialValue: -2.0 },
-            { name: this.PARAM_ZMAX, type: VariationParamType.VP_NUMBER, initialValue: 2.0 },
-            { name: this.PARAM_DIRECT_COLOR, type: VariationParamType.VP_NUMBER, initialValue: 1 },
-            { name: this.PARAM_COLOR_MODE, type: VariationParamType.VP_NUMBER, initialValue: this.CM_X },
-            { name: this.PARAM_A, type: VariationParamType.VP_NUMBER, initialValue: 0.0 },
-            { name: this.PARAM_B, type: VariationParamType.VP_NUMBER, initialValue: 0.0 },
-            { name: this.PARAM_C, type: VariationParamType.VP_NUMBER, initialValue: 0.0 },
-            { name: this.PARAM_D, type: VariationParamType.VP_NUMBER, initialValue: 0.0 },
-            { name: this.PARAM_E, type: VariationParamType.VP_NUMBER, initialValue: 0.0 },
-            { name: this.PARAM_F, type: VariationParamType.VP_NUMBER, initialValue: 0.0 }
+        return [{ name: this.PARAM_XMIN, type: VariationParamType.VP_FLOAT, initialValue: -3.0 },
+            { name: this.PARAM_XMAX, type: VariationParamType.VP_FLOAT, initialValue: 2.0 },
+            { name: this.PARAM_YMIN, type: VariationParamType.VP_FLOAT, initialValue: -4.0 },
+            { name: this.PARAM_YMAX, type: VariationParamType.VP_FLOAT, initialValue: 4.0 },
+            { name: this.PARAM_ZMIN, type: VariationParamType.VP_FLOAT, initialValue: -2.0 },
+            { name: this.PARAM_ZMAX, type: VariationParamType.VP_FLOAT, initialValue: 2.0 },
+            { name: this.PARAM_DIRECT_COLOR, type: VariationParamType.VP_INT, initialValue: 1 },
+            { name: this.PARAM_COLOR_MODE, type: VariationParamType.VP_INT, initialValue: this.CM_X },
+            { name: this.PARAM_A, type: VariationParamType.VP_FLOAT, initialValue: 0.0 },
+            { name: this.PARAM_B, type: VariationParamType.VP_FLOAT, initialValue: 0.0 },
+            { name: this.PARAM_C, type: VariationParamType.VP_FLOAT, initialValue: 0.0 },
+            { name: this.PARAM_D, type: VariationParamType.VP_FLOAT, initialValue: 0.0 },
+            { name: this.PARAM_E, type: VariationParamType.VP_FLOAT, initialValue: 0.0 },
+            { name: this.PARAM_F, type: VariationParamType.VP_FLOAT, initialValue: 0.0 }
         ]
     }
 
@@ -810,20 +810,20 @@ class YPlot3DWFFunc extends VariationShaderFunc3D {
   CM_XZ = 4
 
   get params(): VariationParam[] {
-    return [{ name: this.PARAM_XMIN, type: VariationParamType.VP_NUMBER, initialValue: -3.0 },
-      { name: this.PARAM_XMAX, type: VariationParamType.VP_NUMBER, initialValue: 2.0 },
-      { name: this.PARAM_YMIN, type: VariationParamType.VP_NUMBER, initialValue: -4.0 },
-      { name: this.PARAM_YMAX, type: VariationParamType.VP_NUMBER, initialValue: 4.0 },
-      { name: this.PARAM_ZMIN, type: VariationParamType.VP_NUMBER, initialValue: -2.0 },
-      { name: this.PARAM_ZMAX, type: VariationParamType.VP_NUMBER, initialValue: 2.0 },
-      { name: this.PARAM_DIRECT_COLOR, type: VariationParamType.VP_NUMBER, initialValue: 1 },
-      { name: this.PARAM_COLOR_MODE, type: VariationParamType.VP_NUMBER, initialValue: this.CM_Z },
-      { name: this.PARAM_A, type: VariationParamType.VP_NUMBER, initialValue: 0.0 },
-      { name: this.PARAM_B, type: VariationParamType.VP_NUMBER, initialValue: 0.0 },
-      { name: this.PARAM_C, type: VariationParamType.VP_NUMBER, initialValue: 0.0 },
-      { name: this.PARAM_D, type: VariationParamType.VP_NUMBER, initialValue: 0.0 },
-      { name: this.PARAM_E, type: VariationParamType.VP_NUMBER, initialValue: 0.0 },
-      { name: this.PARAM_F, type: VariationParamType.VP_NUMBER, initialValue: 0.0 }
+    return [{ name: this.PARAM_XMIN, type: VariationParamType.VP_FLOAT, initialValue: -3.0 },
+      { name: this.PARAM_XMAX, type: VariationParamType.VP_FLOAT, initialValue: 2.0 },
+      { name: this.PARAM_YMIN, type: VariationParamType.VP_FLOAT, initialValue: -4.0 },
+      { name: this.PARAM_YMAX, type: VariationParamType.VP_FLOAT, initialValue: 4.0 },
+      { name: this.PARAM_ZMIN, type: VariationParamType.VP_FLOAT, initialValue: -2.0 },
+      { name: this.PARAM_ZMAX, type: VariationParamType.VP_FLOAT, initialValue: 2.0 },
+      { name: this.PARAM_DIRECT_COLOR, type: VariationParamType.VP_INT, initialValue: 1 },
+      { name: this.PARAM_COLOR_MODE, type: VariationParamType.VP_INT, initialValue: this.CM_Z },
+      { name: this.PARAM_A, type: VariationParamType.VP_FLOAT, initialValue: 0.0 },
+      { name: this.PARAM_B, type: VariationParamType.VP_FLOAT, initialValue: 0.0 },
+      { name: this.PARAM_C, type: VariationParamType.VP_FLOAT, initialValue: 0.0 },
+      { name: this.PARAM_D, type: VariationParamType.VP_FLOAT, initialValue: 0.0 },
+      { name: this.PARAM_E, type: VariationParamType.VP_FLOAT, initialValue: 0.0 },
+      { name: this.PARAM_F, type: VariationParamType.VP_FLOAT, initialValue: 0.0 }
     ]
   }
 

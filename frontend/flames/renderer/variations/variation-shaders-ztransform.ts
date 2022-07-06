@@ -26,7 +26,7 @@ class ExtrudeFunc extends VariationShaderFunc3D {
     PARAM_ROOT_FACE = 'root_face'
 
     get params(): VariationParam[] {
-        return [{ name: this.PARAM_ROOT_FACE, type: VariationParamType.VP_NUMBER, initialValue: 0.5 }]
+        return [{ name: this.PARAM_ROOT_FACE, type: VariationParamType.VP_FLOAT, initialValue: 0.5 }]
     }
 
     getCode(xform: RenderXForm, variation: RenderVariation): string {
@@ -223,7 +223,7 @@ class PostZScaleWFFunc extends VariationShaderFunc3D {
     PARAM_ZTRANSLATE = 'ztranslate'
 
     get params(): VariationParam[] {
-        return [{ name: this.PARAM_ZTRANSLATE, type: VariationParamType.VP_NUMBER, initialValue: 0.0 }]
+        return [{ name: this.PARAM_ZTRANSLATE, type: VariationParamType.VP_FLOAT, initialValue: 0.0 }]
     }
 
     getCode(xform: RenderXForm, variation: RenderVariation): string {

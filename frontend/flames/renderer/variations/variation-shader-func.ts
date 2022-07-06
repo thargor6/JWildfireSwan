@@ -32,7 +32,8 @@ export enum VariationTypes {
 }
 
 export enum VariationParamType {
-    VP_NUMBER,
+    VP_FLOAT,
+    VP_INT,
     VP_BOOLEAN
 }
 

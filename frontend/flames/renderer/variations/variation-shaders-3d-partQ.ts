@@ -143,111 +143,111 @@ class QuaternionFunc extends VariationShaderFunc3D {
     M_E = 2.7182818284590452354;
 
     get params(): VariationParam[] {
-        return [{ name: this.PARAM_COSQPOW, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
-            { name: this.PARAM_COSQX1, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
-            { name: this.PARAM_COSQX2, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
-            { name: this.PARAM_COSQY1, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
-            { name: this.PARAM_COSQY2, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
-            { name: this.PARAM_COSQZ1, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
-            { name: this.PARAM_COSQZ2, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
+        return [{ name: this.PARAM_COSQPOW, type: VariationParamType.VP_FLOAT, initialValue: 1.0 },
+            { name: this.PARAM_COSQX1, type: VariationParamType.VP_FLOAT, initialValue: 1.0 },
+            { name: this.PARAM_COSQX2, type: VariationParamType.VP_FLOAT, initialValue: 1.0 },
+            { name: this.PARAM_COSQY1, type: VariationParamType.VP_FLOAT, initialValue: 1.0 },
+            { name: this.PARAM_COSQY2, type: VariationParamType.VP_FLOAT, initialValue: 1.0 },
+            { name: this.PARAM_COSQZ1, type: VariationParamType.VP_FLOAT, initialValue: 1.0 },
+            { name: this.PARAM_COSQZ2, type: VariationParamType.VP_FLOAT, initialValue: 1.0 },
 
-            { name: this.PARAM_COSHQPOW, type: VariationParamType.VP_NUMBER, initialValue: 0.0 },
-            { name: this.PARAM_COSHQX1, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
-            { name: this.PARAM_COSHQX2, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
-            { name: this.PARAM_COSHQY1, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
-            { name: this.PARAM_COSHQY2, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
-            { name: this.PARAM_COSHQZ1, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
-            { name: this.PARAM_COSHQZ2, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
+            { name: this.PARAM_COSHQPOW, type: VariationParamType.VP_FLOAT, initialValue: 0.0 },
+            { name: this.PARAM_COSHQX1, type: VariationParamType.VP_FLOAT, initialValue: 1.0 },
+            { name: this.PARAM_COSHQX2, type: VariationParamType.VP_FLOAT, initialValue: 1.0 },
+            { name: this.PARAM_COSHQY1, type: VariationParamType.VP_FLOAT, initialValue: 1.0 },
+            { name: this.PARAM_COSHQY2, type: VariationParamType.VP_FLOAT, initialValue: 1.0 },
+            { name: this.PARAM_COSHQZ1, type: VariationParamType.VP_FLOAT, initialValue: 1.0 },
+            { name: this.PARAM_COSHQZ2, type: VariationParamType.VP_FLOAT, initialValue: 1.0 },
 
-            { name: this.PARAM_COTQPOW, type: VariationParamType.VP_NUMBER, initialValue: 0.0 },
-            { name: this.PARAM_COTQX1, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
-            { name: this.PARAM_COTQX2, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
-            { name: this.PARAM_COTQY1, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
-            { name: this.PARAM_COTQY2, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
-            { name: this.PARAM_COTQZ1, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
-            { name: this.PARAM_COTQZ2, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
+            { name: this.PARAM_COTQPOW, type: VariationParamType.VP_FLOAT, initialValue: 0.0 },
+            { name: this.PARAM_COTQX1, type: VariationParamType.VP_FLOAT, initialValue: 1.0 },
+            { name: this.PARAM_COTQX2, type: VariationParamType.VP_FLOAT, initialValue: 1.0 },
+            { name: this.PARAM_COTQY1, type: VariationParamType.VP_FLOAT, initialValue: 1.0 },
+            { name: this.PARAM_COTQY2, type: VariationParamType.VP_FLOAT, initialValue: 1.0 },
+            { name: this.PARAM_COTQZ1, type: VariationParamType.VP_FLOAT, initialValue: 1.0 },
+            { name: this.PARAM_COTQZ2, type: VariationParamType.VP_FLOAT, initialValue: 1.0 },
 
-            { name: this.PARAM_COTHQPOW, type: VariationParamType.VP_NUMBER, initialValue: 0.0 },
-            { name: this.PARAM_COTHQX1, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
-            { name: this.PARAM_COTHQX2, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
-            { name: this.PARAM_COTHQY1, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
-            { name: this.PARAM_COTHQY2, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
-            { name: this.PARAM_COTHQZ1, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
-            { name: this.PARAM_COTHQZ2, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
+            { name: this.PARAM_COTHQPOW, type: VariationParamType.VP_FLOAT, initialValue: 0.0 },
+            { name: this.PARAM_COTHQX1, type: VariationParamType.VP_FLOAT, initialValue: 1.0 },
+            { name: this.PARAM_COTHQX2, type: VariationParamType.VP_FLOAT, initialValue: 1.0 },
+            { name: this.PARAM_COTHQY1, type: VariationParamType.VP_FLOAT, initialValue: 1.0 },
+            { name: this.PARAM_COTHQY2, type: VariationParamType.VP_FLOAT, initialValue: 1.0 },
+            { name: this.PARAM_COTHQZ1, type: VariationParamType.VP_FLOAT, initialValue: 1.0 },
+            { name: this.PARAM_COTHQZ2, type: VariationParamType.VP_FLOAT, initialValue: 1.0 },
 
-            { name: this.PARAM_CSCQPOW, type: VariationParamType.VP_NUMBER, initialValue: 0.0 },
-            { name: this.PARAM_CSCQX1, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
-            { name: this.PARAM_CSCQX2, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
-            { name: this.PARAM_CSCQY1, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
-            { name: this.PARAM_CSCQY2, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
-            { name: this.PARAM_CSCQZ1, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
-            { name: this.PARAM_CSCQZ2, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
+            { name: this.PARAM_CSCQPOW, type: VariationParamType.VP_FLOAT, initialValue: 0.0 },
+            { name: this.PARAM_CSCQX1, type: VariationParamType.VP_FLOAT, initialValue: 1.0 },
+            { name: this.PARAM_CSCQX2, type: VariationParamType.VP_FLOAT, initialValue: 1.0 },
+            { name: this.PARAM_CSCQY1, type: VariationParamType.VP_FLOAT, initialValue: 1.0 },
+            { name: this.PARAM_CSCQY2, type: VariationParamType.VP_FLOAT, initialValue: 1.0 },
+            { name: this.PARAM_CSCQZ1, type: VariationParamType.VP_FLOAT, initialValue: 1.0 },
+            { name: this.PARAM_CSCQZ2, type: VariationParamType.VP_FLOAT, initialValue: 1.0 },
 
-            { name: this.PARAM_CSCHQPOW, type: VariationParamType.VP_NUMBER, initialValue: 0.0 },
-            { name: this.PARAM_CSCHQX1, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
-            { name: this.PARAM_CSCHQX2, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
-            { name: this.PARAM_CSCHQY1, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
-            { name: this.PARAM_CSCHQY2, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
-            { name: this.PARAM_CSCHQZ1, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
-            { name: this.PARAM_CSCHQZ2, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
+            { name: this.PARAM_CSCHQPOW, type: VariationParamType.VP_FLOAT, initialValue: 0.0 },
+            { name: this.PARAM_CSCHQX1, type: VariationParamType.VP_FLOAT, initialValue: 1.0 },
+            { name: this.PARAM_CSCHQX2, type: VariationParamType.VP_FLOAT, initialValue: 1.0 },
+            { name: this.PARAM_CSCHQY1, type: VariationParamType.VP_FLOAT, initialValue: 1.0 },
+            { name: this.PARAM_CSCHQY2, type: VariationParamType.VP_FLOAT, initialValue: 1.0 },
+            { name: this.PARAM_CSCHQZ1, type: VariationParamType.VP_FLOAT, initialValue: 1.0 },
+            { name: this.PARAM_CSCHQZ2, type: VariationParamType.VP_FLOAT, initialValue: 1.0 },
 
-            { name: this.PARAM_ESTIQPOW, type: VariationParamType.VP_NUMBER, initialValue: 0.0 },
-            { name: this.PARAM_ESTIQX1, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
-            { name: this.PARAM_ESTIQY1, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
-            { name: this.PARAM_ESTIQY2, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
-            { name: this.PARAM_ESTIQZ1, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
-            { name: this.PARAM_ESTIQZ2, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
+            { name: this.PARAM_ESTIQPOW, type: VariationParamType.VP_FLOAT, initialValue: 0.0 },
+            { name: this.PARAM_ESTIQX1, type: VariationParamType.VP_FLOAT, initialValue: 1.0 },
+            { name: this.PARAM_ESTIQY1, type: VariationParamType.VP_FLOAT, initialValue: 1.0 },
+            { name: this.PARAM_ESTIQY2, type: VariationParamType.VP_FLOAT, initialValue: 1.0 },
+            { name: this.PARAM_ESTIQZ1, type: VariationParamType.VP_FLOAT, initialValue: 1.0 },
+            { name: this.PARAM_ESTIQZ2, type: VariationParamType.VP_FLOAT, initialValue: 1.0 },
 
-            { name: this.PARAM_LOGQPOW, type: VariationParamType.VP_NUMBER, initialValue: 0.0 },
-            { name: this.PARAM_LOGQBASE, type: VariationParamType.VP_NUMBER, initialValue: this.M_E },
+            { name: this.PARAM_LOGQPOW, type: VariationParamType.VP_FLOAT, initialValue: 0.0 },
+            { name: this.PARAM_LOGQBASE, type: VariationParamType.VP_FLOAT, initialValue: this.M_E },
 
-            { name: this.PARAM_SECQPOW, type: VariationParamType.VP_NUMBER, initialValue: 0.0 },
-            { name: this.PARAM_SECQX1, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
-            { name: this.PARAM_SECQX2, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
-            { name: this.PARAM_SECQY1, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
-            { name: this.PARAM_SECQY2, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
-            { name: this.PARAM_SECQZ1, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
-            { name: this.PARAM_SECQZ2, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
+            { name: this.PARAM_SECQPOW, type: VariationParamType.VP_FLOAT, initialValue: 0.0 },
+            { name: this.PARAM_SECQX1, type: VariationParamType.VP_FLOAT, initialValue: 1.0 },
+            { name: this.PARAM_SECQX2, type: VariationParamType.VP_FLOAT, initialValue: 1.0 },
+            { name: this.PARAM_SECQY1, type: VariationParamType.VP_FLOAT, initialValue: 1.0 },
+            { name: this.PARAM_SECQY2, type: VariationParamType.VP_FLOAT, initialValue: 1.0 },
+            { name: this.PARAM_SECQZ1, type: VariationParamType.VP_FLOAT, initialValue: 1.0 },
+            { name: this.PARAM_SECQZ2, type: VariationParamType.VP_FLOAT, initialValue: 1.0 },
 
-            { name: this.PARAM_SECHQPOW, type: VariationParamType.VP_NUMBER, initialValue: 0.0 },
-            { name: this.PARAM_SECHQX1, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
-            { name: this.PARAM_SECHQX2, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
-            { name: this.PARAM_SECHQY1, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
-            { name: this.PARAM_SECHQY2, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
-            { name: this.PARAM_SECHQZ1, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
-            { name: this.PARAM_SECHQZ2, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
+            { name: this.PARAM_SECHQPOW, type: VariationParamType.VP_FLOAT, initialValue: 0.0 },
+            { name: this.PARAM_SECHQX1, type: VariationParamType.VP_FLOAT, initialValue: 1.0 },
+            { name: this.PARAM_SECHQX2, type: VariationParamType.VP_FLOAT, initialValue: 1.0 },
+            { name: this.PARAM_SECHQY1, type: VariationParamType.VP_FLOAT, initialValue: 1.0 },
+            { name: this.PARAM_SECHQY2, type: VariationParamType.VP_FLOAT, initialValue: 1.0 },
+            { name: this.PARAM_SECHQZ1, type: VariationParamType.VP_FLOAT, initialValue: 1.0 },
+            { name: this.PARAM_SECHQZ2, type: VariationParamType.VP_FLOAT, initialValue: 1.0 },
 
-            { name: this.PARAM_SINQPOW, type: VariationParamType.VP_NUMBER, initialValue: 0.0 },
-            { name: this.PARAM_SINQX1, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
-            { name: this.PARAM_SINQX2, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
-            { name: this.PARAM_SINQY1, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
-            { name: this.PARAM_SINQY2, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
-            { name: this.PARAM_SINQZ1, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
-            { name: this.PARAM_SINQZ2, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
+            { name: this.PARAM_SINQPOW, type: VariationParamType.VP_FLOAT, initialValue: 0.0 },
+            { name: this.PARAM_SINQX1, type: VariationParamType.VP_FLOAT, initialValue: 1.0 },
+            { name: this.PARAM_SINQX2, type: VariationParamType.VP_FLOAT, initialValue: 1.0 },
+            { name: this.PARAM_SINQY1, type: VariationParamType.VP_FLOAT, initialValue: 1.0 },
+            { name: this.PARAM_SINQY2, type: VariationParamType.VP_FLOAT, initialValue: 1.0 },
+            { name: this.PARAM_SINQZ1, type: VariationParamType.VP_FLOAT, initialValue: 1.0 },
+            { name: this.PARAM_SINQZ2, type: VariationParamType.VP_FLOAT, initialValue: 1.0 },
 
-            { name: this.PARAM_SINHQPOW, type: VariationParamType.VP_NUMBER, initialValue: 0.0 },
-            { name: this.PARAM_SINHQX1, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
-            { name: this.PARAM_SINHQX2, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
-            { name: this.PARAM_SINHQY1, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
-            { name: this.PARAM_SINHQY2, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
-            { name: this.PARAM_SINHQZ1, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
-            { name: this.PARAM_SINHQZ2, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
+            { name: this.PARAM_SINHQPOW, type: VariationParamType.VP_FLOAT, initialValue: 0.0 },
+            { name: this.PARAM_SINHQX1, type: VariationParamType.VP_FLOAT, initialValue: 1.0 },
+            { name: this.PARAM_SINHQX2, type: VariationParamType.VP_FLOAT, initialValue: 1.0 },
+            { name: this.PARAM_SINHQY1, type: VariationParamType.VP_FLOAT, initialValue: 1.0 },
+            { name: this.PARAM_SINHQY2, type: VariationParamType.VP_FLOAT, initialValue: 1.0 },
+            { name: this.PARAM_SINHQZ1, type: VariationParamType.VP_FLOAT, initialValue: 1.0 },
+            { name: this.PARAM_SINHQZ2, type: VariationParamType.VP_FLOAT, initialValue: 1.0 },
 
-            { name: this.PARAM_TANQPOW, type: VariationParamType.VP_NUMBER, initialValue: 0.0 },
-            { name: this.PARAM_TANQX1, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
-            { name: this.PARAM_TANQX2, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
-            { name: this.PARAM_TANQY1, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
-            { name: this.PARAM_TANQY2, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
-            { name: this.PARAM_TANQZ1, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
-            { name: this.PARAM_TANQZ2, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
+            { name: this.PARAM_TANQPOW, type: VariationParamType.VP_FLOAT, initialValue: 0.0 },
+            { name: this.PARAM_TANQX1, type: VariationParamType.VP_FLOAT, initialValue: 1.0 },
+            { name: this.PARAM_TANQX2, type: VariationParamType.VP_FLOAT, initialValue: 1.0 },
+            { name: this.PARAM_TANQY1, type: VariationParamType.VP_FLOAT, initialValue: 1.0 },
+            { name: this.PARAM_TANQY2, type: VariationParamType.VP_FLOAT, initialValue: 1.0 },
+            { name: this.PARAM_TANQZ1, type: VariationParamType.VP_FLOAT, initialValue: 1.0 },
+            { name: this.PARAM_TANQZ2, type: VariationParamType.VP_FLOAT, initialValue: 1.0 },
 
-            { name: this.PARAM_TANHQPOW, type: VariationParamType.VP_NUMBER, initialValue: 0.0 },
-            { name: this.PARAM_TANHQX1, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
-            { name: this.PARAM_TANHQX2, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
-            { name: this.PARAM_TANHQY1, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
-            { name: this.PARAM_TANHQY2, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
-            { name: this.PARAM_TANHQZ1, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
-            { name: this.PARAM_TANHQZ2, type: VariationParamType.VP_NUMBER, initialValue: 1.0 }
+            { name: this.PARAM_TANHQPOW, type: VariationParamType.VP_FLOAT, initialValue: 0.0 },
+            { name: this.PARAM_TANHQX1, type: VariationParamType.VP_FLOAT, initialValue: 1.0 },
+            { name: this.PARAM_TANHQX2, type: VariationParamType.VP_FLOAT, initialValue: 1.0 },
+            { name: this.PARAM_TANHQY1, type: VariationParamType.VP_FLOAT, initialValue: 1.0 },
+            { name: this.PARAM_TANHQY2, type: VariationParamType.VP_FLOAT, initialValue: 1.0 },
+            { name: this.PARAM_TANHQZ1, type: VariationParamType.VP_FLOAT, initialValue: 1.0 },
+            { name: this.PARAM_TANHQZ2, type: VariationParamType.VP_FLOAT, initialValue: 1.0 }
         ]
     }
 
@@ -572,10 +572,10 @@ class SeaShell3DFunc extends VariationShaderFunc3D {
     PARAM_N_SPIRALS = 'nSpirals'
 
     get params(): VariationParam[] {
-        return [{ name: this.PARAM_FINAL_RADIUS, type: VariationParamType.VP_NUMBER, initialValue: 0.25 },
-            { name: this.PARAM_HEIGHT, type: VariationParamType.VP_NUMBER, initialValue: 3.5 },
-            { name: this.PARAM_INNER_RADIUS, type: VariationParamType.VP_NUMBER, initialValue: 0.4 },
-            { name: this.PARAM_N_SPIRALS, type: VariationParamType.VP_NUMBER, initialValue: 3 }]
+        return [{ name: this.PARAM_FINAL_RADIUS, type: VariationParamType.VP_FLOAT, initialValue: 0.25 },
+            { name: this.PARAM_HEIGHT, type: VariationParamType.VP_FLOAT, initialValue: 3.5 },
+            { name: this.PARAM_INNER_RADIUS, type: VariationParamType.VP_FLOAT, initialValue: 0.4 },
+            { name: this.PARAM_N_SPIRALS, type: VariationParamType.VP_INT, initialValue: 3 }]
     }
 
     getCode(xform: RenderXForm, variation: RenderVariation): string {
@@ -757,9 +757,9 @@ class Sph3DFunc extends VariationShaderFunc3D {
     PARAM_Z = 'z'
 
     get params(): VariationParam[] {
-        return [{ name: this.PARAM_X, type: VariationParamType.VP_NUMBER, initialValue: 0.75 },
-            { name: this.PARAM_Y, type: VariationParamType.VP_NUMBER, initialValue: 1.0},
-            { name: this.PARAM_Z, type: VariationParamType.VP_NUMBER, initialValue: 0.5}
+        return [{ name: this.PARAM_X, type: VariationParamType.VP_FLOAT, initialValue: 0.75 },
+            { name: this.PARAM_Y, type: VariationParamType.VP_FLOAT, initialValue: 1.0},
+            { name: this.PARAM_Z, type: VariationParamType.VP_FLOAT, initialValue: 0.5}
         ]
     }
 
@@ -800,8 +800,8 @@ class Spherical3DWFFunc extends VariationShaderFunc3D {
     PARAM_EXPONENT = 'exponent'
 
     get params(): VariationParam[] {
-        return [{ name: this.PARAM_INVERT, type: VariationParamType.VP_NUMBER, initialValue: 0 },
-            { name: this.PARAM_EXPONENT, type: VariationParamType.VP_NUMBER, initialValue: 2.0 }]
+        return [{ name: this.PARAM_INVERT, type: VariationParamType.VP_INT, initialValue: 0 },
+            { name: this.PARAM_EXPONENT, type: VariationParamType.VP_FLOAT, initialValue: 2.0 }]
     }
 
     getCode(xform: RenderXForm, variation: RenderVariation): string {
@@ -849,14 +849,14 @@ class Spirograph3DFunc extends VariationShaderFunc3D {
     PARAM_DIRECT_COLOR = 'direct_color'
 
     get params(): VariationParam[] {
-        return [{ name: this.PARAM_A, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
-            { name: this.PARAM_B, type: VariationParamType.VP_NUMBER, initialValue: -0.3 },
-            { name: this.PARAM_C, type: VariationParamType.VP_NUMBER, initialValue: 0.4 },
-            { name: this.PARAM_TMIN, type: VariationParamType.VP_NUMBER, initialValue: 0.0 },
-            { name: this.PARAM_TMAX, type: VariationParamType.VP_NUMBER, initialValue: 1000.0 },
-            { name: this.PARAM_WIDTH, type: VariationParamType.VP_NUMBER, initialValue: 0.0 },
-            { name: this.PARAM_MODE, type: VariationParamType.VP_NUMBER, initialValue: 0 },
-            { name: this.PARAM_DIRECT_COLOR, type: VariationParamType.VP_NUMBER, initialValue: 0 }]
+        return [{ name: this.PARAM_A, type: VariationParamType.VP_FLOAT, initialValue: 1.0 },
+            { name: this.PARAM_B, type: VariationParamType.VP_FLOAT, initialValue: -0.3 },
+            { name: this.PARAM_C, type: VariationParamType.VP_FLOAT, initialValue: 0.4 },
+            { name: this.PARAM_TMIN, type: VariationParamType.VP_FLOAT, initialValue: 0.0 },
+            { name: this.PARAM_TMAX, type: VariationParamType.VP_FLOAT, initialValue: 1000.0 },
+            { name: this.PARAM_WIDTH, type: VariationParamType.VP_FLOAT, initialValue: 0.0 },
+            { name: this.PARAM_MODE, type: VariationParamType.VP_INT, initialValue: 0 },
+            { name: this.PARAM_DIRECT_COLOR, type: VariationParamType.VP_INT, initialValue: 0 }]
     }
 
     getCode(xform: RenderXForm, variation: RenderVariation): string {
@@ -926,9 +926,9 @@ class Splits3DFunc extends VariationShaderFunc3D {
     PARAM_ZPOW = 'z'
 
     get params(): VariationParam[] {
-        return [{ name: this.PARAM_XPOW, type: VariationParamType.VP_NUMBER, initialValue: 0.10 },
-            { name: this.PARAM_YPOW, type: VariationParamType.VP_NUMBER, initialValue: 0.30},
-            { name: this.PARAM_ZPOW, type: VariationParamType.VP_NUMBER, initialValue: 0.20}
+        return [{ name: this.PARAM_XPOW, type: VariationParamType.VP_FLOAT, initialValue: 0.10 },
+            { name: this.PARAM_YPOW, type: VariationParamType.VP_FLOAT, initialValue: 0.30},
+            { name: this.PARAM_ZPOW, type: VariationParamType.VP_FLOAT, initialValue: 0.20}
         ]
     }
 
@@ -1006,22 +1006,22 @@ class SuperShape3DFunc extends VariationShaderFunc3D {
     PARAM_TOROIDMAP = 'toroidmap'
 
     get params(): VariationParam[] {
-        return [{ name: this.PARAM_RHO, type: VariationParamType.VP_NUMBER, initialValue: 9.9 },
-            { name: this.PARAM_PHI, type: VariationParamType.VP_NUMBER, initialValue: 2.5 },
-            { name: this.PARAM_M1, type: VariationParamType.VP_NUMBER, initialValue: 6.0 },
-            { name: this.PARAM_M2, type: VariationParamType.VP_NUMBER, initialValue: 3.0 },
-            { name: this.PARAM_A1, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
-            { name: this.PARAM_A2, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
-            { name: this.PARAM_B1, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
-            { name: this.PARAM_B2, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
-            { name: this.PARAM_N1_1, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
-            { name: this.PARAM_N1_2, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
-            { name: this.PARAM_N2_1, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
-            { name: this.PARAM_N2_2, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
-            { name: this.PARAM_N3_1, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
-            { name: this.PARAM_N3_2, type: VariationParamType.VP_NUMBER, initialValue: 1.0 },
-            { name: this.PARAM_SPIRAL, type: VariationParamType.VP_NUMBER, initialValue: 0.0 },
-            { name: this.PARAM_TOROIDMAP, type: VariationParamType.VP_NUMBER, initialValue: 0 }
+        return [{ name: this.PARAM_RHO, type: VariationParamType.VP_FLOAT, initialValue: 9.9 },
+            { name: this.PARAM_PHI, type: VariationParamType.VP_FLOAT, initialValue: 2.5 },
+            { name: this.PARAM_M1, type: VariationParamType.VP_FLOAT, initialValue: 6.0 },
+            { name: this.PARAM_M2, type: VariationParamType.VP_FLOAT, initialValue: 3.0 },
+            { name: this.PARAM_A1, type: VariationParamType.VP_FLOAT, initialValue: 1.0 },
+            { name: this.PARAM_A2, type: VariationParamType.VP_FLOAT, initialValue: 1.0 },
+            { name: this.PARAM_B1, type: VariationParamType.VP_FLOAT, initialValue: 1.0 },
+            { name: this.PARAM_B2, type: VariationParamType.VP_FLOAT, initialValue: 1.0 },
+            { name: this.PARAM_N1_1, type: VariationParamType.VP_FLOAT, initialValue: 1.0 },
+            { name: this.PARAM_N1_2, type: VariationParamType.VP_FLOAT, initialValue: 1.0 },
+            { name: this.PARAM_N2_1, type: VariationParamType.VP_FLOAT, initialValue: 1.0 },
+            { name: this.PARAM_N2_2, type: VariationParamType.VP_FLOAT, initialValue: 1.0 },
+            { name: this.PARAM_N3_1, type: VariationParamType.VP_FLOAT, initialValue: 1.0 },
+            { name: this.PARAM_N3_2, type: VariationParamType.VP_FLOAT, initialValue: 1.0 },
+            { name: this.PARAM_SPIRAL, type: VariationParamType.VP_FLOAT, initialValue: 0.0 },
+            { name: this.PARAM_TOROIDMAP, type: VariationParamType.VP_INT, initialValue: 0 }
         ]
     }
 
@@ -1112,7 +1112,7 @@ class SVFFunc extends VariationShaderFunc3D {
     PARAM_N = 'n'
 
     get params(): VariationParam[] {
-        return [{ name: this.PARAM_N, type: VariationParamType.VP_NUMBER, initialValue: 2.0 }]
+        return [{ name: this.PARAM_N, type: VariationParamType.VP_FLOAT, initialValue: 2.0 }]
     }
 
     getCode(xform: RenderXForm, variation: RenderVariation): string {
@@ -1144,7 +1144,7 @@ class Swirl3DWFFunc extends VariationShaderFunc3D {
     PARAM_N = 'n'
 
     get params(): VariationParam[] {
-        return [{ name: this.PARAM_N, type: VariationParamType.VP_NUMBER, initialValue: 0.0 }]
+        return [{ name: this.PARAM_N, type: VariationParamType.VP_FLOAT, initialValue: 0.0 }]
     }
 
     getCode(xform: RenderXForm, variation: RenderVariation): string {
@@ -1230,10 +1230,10 @@ class TaurusFunc extends VariationShaderFunc3D {
     PARAM_SOR = 'sor'
 
     get params(): VariationParam[] {
-        return [{ name: this.PARAM_R, type: VariationParamType.VP_NUMBER, initialValue: 3.00 },
-            { name: this.PARAM_N, type: VariationParamType.VP_NUMBER, initialValue: 5.00 },
-            { name: this.PARAM_INV, type: VariationParamType.VP_NUMBER, initialValue: 1.50 },
-            { name: this.PARAM_SOR, type: VariationParamType.VP_NUMBER, initialValue: 1.00 }
+        return [{ name: this.PARAM_R, type: VariationParamType.VP_FLOAT, initialValue: 3.00 },
+            { name: this.PARAM_N, type: VariationParamType.VP_FLOAT, initialValue: 5.00 },
+            { name: this.PARAM_INV, type: VariationParamType.VP_FLOAT, initialValue: 1.50 },
+            { name: this.PARAM_SOR, type: VariationParamType.VP_FLOAT, initialValue: 1.00 }
         ]
     }
 
@@ -1269,7 +1269,7 @@ class Tile_LogFunc extends VariationShaderFunc3D {
     PARAM_SPREAD = 'spread'
 
     get params(): VariationParam[] {
-        return [{ name: this.PARAM_SPREAD, type: VariationParamType.VP_NUMBER, initialValue: 1.0 }]
+        return [{ name: this.PARAM_SPREAD, type: VariationParamType.VP_FLOAT, initialValue: 1.0 }]
     }
 
     getCode(xform: RenderXForm, variation: RenderVariation): string {
