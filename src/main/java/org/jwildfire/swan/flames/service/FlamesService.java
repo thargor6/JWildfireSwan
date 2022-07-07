@@ -104,6 +104,9 @@ public class FlamesService {
     allGenerators.add(new SimpleTilingRandomFlameGenerator());
     allGenerators.add(new SynthRandomFlameGenerator());
     allGenerators.add(new TileBallRandomFlameGenerator());
+    allGenerators.add(new LayersRandomFlameGenerator());
+    allGenerators.add(new RunRandomScriptRandomFlameGenerator());
+    allGenerators.add(new BlackAndWhiteRandomFlameGenerator());
   }
 
   public RandomFlame generateRandomFlame(List<String> supportedVariations) {
