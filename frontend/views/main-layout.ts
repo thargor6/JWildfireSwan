@@ -22,6 +22,7 @@ import '@vaadin/avatar/vaadin-avatar';
 import '@vaadin/context-menu';
 import '@vaadin/polymer-legacy-adapter';
 import '@vaadin/tabs';
+import '@vaadin/vaadin-button'
 import '@vaadin/tabs/vaadin-tab';
 import { html } from 'lit';
 import { customElement } from 'lit/decorators.js';

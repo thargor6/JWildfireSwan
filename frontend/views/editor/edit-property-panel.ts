@@ -21,7 +21,7 @@ import {MobxLitElement} from "@adobe/lit-mobx";
 import {TemplateResult} from "lit-html";
 import {editorStore} from "Frontend/stores/editor-store";
 import {HasValue} from "@hilla/form";
-import {Variation} from "Frontend/flames/model/flame";
+import {Flame, Variation} from "Frontend/flames/model/flame";
 
 export interface ComoboBoxItem {
   key: number
@@ -50,7 +50,7 @@ export interface NumberFieldDescriptor {
   max: number
   step: number
   labelWidth?: string
-  onChange(value: number): void
+  onChange(value: number, isImmediateValue: boolean): void
   value(): number | undefined
 }
 
@@ -154,13 +154,16 @@ export abstract class EditPropertyPanel extends MobxLitElement {
     return false
   }
 
-  flamePropertyChange = (key: string, value: number) => {
+  flamePropertyChange = (key: string, value: number, isImmediateValue: boolean) => {
     if(editorStore.currFlame) {
       // @ts-ignore
       const oldVal: any = this.getProperty(editorStore.currFlame, key)
       if (oldVal && oldVal.type) {
         if (oldVal.value !== value) {
           oldVal.value = value
+          if(!isImmediateValue) {
+            editorStore.undoManager.registerFlameAttributeChange(editorStore.currFlame, <keyof Flame>key, value)
+          }
           this.afterPropertyChange()
           // console.log('FLAME ATTRIBUTE CHANGED', key, value, oldVal)
         }
@@ -168,7 +171,7 @@ export abstract class EditPropertyPanel extends MobxLitElement {
     }
   }
 
-  layerPropertyChange = (key: string, value: number) => {
+  layerPropertyChange = (key: string, value: number, isImmediateValue: boolean) => {
     if(editorStore.currLayer) {
       // @ts-ignore
       const oldVal: any = this.getProperty(editorStore.currLayer, key)
@@ -182,7 +185,7 @@ export abstract class EditPropertyPanel extends MobxLitElement {
     }
   }
 
-  xformPropertyChange = (key: string, value: number) => {
+  xformPropertyChange = (key: string, value: number, isImmediateValue: boolean) => {
     if(editorStore.currXform) {
       // @ts-ignore
       const oldVal: any = this.getProperty(editorStore.currXform, key)
@@ -203,7 +206,7 @@ export abstract class EditPropertyPanel extends MobxLitElement {
     }
   }
 
-  variationPropertyChange = (src: Variation | undefined, key: string, value: number) => {
+  variationPropertyChange = (src: Variation | undefined, key: string, value: number, isImmediateValue: boolean) => {
     if(src) {
       // @ts-ignore
       let oldVal: any = this.getProperty(src, key)

@@ -36,7 +36,7 @@ export interface FlameResource {
     stringValue?: string
 }
 
-class FloatScalarParameter implements FlameParameter {
+export class FloatScalarParameter implements FlameParameter {
     type: FlameParameterType = 'scalar'
     datatype: FlameParameterDataType = 'float'
 
@@ -143,7 +143,7 @@ export class IntMotionCurveParameter implements FlameParameter {
     }
 }
 
-class IntScalarParameter implements FlameParameter {
+export class IntScalarParameter implements FlameParameter {
     type: FlameParameterType = 'scalar'
     datatype: FlameParameterDataType = 'int'
 
@@ -152,7 +152,7 @@ class IntScalarParameter implements FlameParameter {
     }
 }
 
-class BooleanScalarParameter implements FlameParameter {
+export class BooleanScalarParameter implements FlameParameter {
     type: FlameParameterType = 'scalar'
     datatype: FlameParameterDataType = 'boolean'
 

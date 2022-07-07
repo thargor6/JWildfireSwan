@@ -20,6 +20,7 @@ import {VariationShaders} from "Frontend/flames/renderer/variations/variation-sh
 import {Flame, Layer, XForm} from "Frontend/flames/model/flame";
 import {registerVars_All} from "Frontend/flames/renderer/variations/variation-shaders-all";
 import {SharedRenderContext} from "Frontend/flames/renderer/shared-render-context";
+import {UndoManager} from "Frontend/stores/undo-manager";
 
 type InitCallback = () => void
 
@@ -40,6 +41,9 @@ export class EditorStore {
   _currLayer: Layer | undefined = undefined
   _currXforms: XForm[] = []
   _currXform: XForm | undefined = undefined
+
+  private _undoManager = new UndoManager(this._currFlame)
+
   sharedRenderCtx = new SharedRenderContext()
 
   constructor() {
@@ -120,8 +124,13 @@ export class EditorStore {
 
   set currFlame(newFlame: Flame) {
     this._currFlame = newFlame
+    this._undoManager = new UndoManager(newFlame)
     this.refreshLayers()
     this._currLayer = undefined
+  }
+
+  get undoManager() {
+    return this._undoManager
   }
 
   get currLayer() {

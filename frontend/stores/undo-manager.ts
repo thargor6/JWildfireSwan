@@ -15,20 +15,71 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 */
 
-import {Flame} from "Frontend/flames/model/flame";
+import {Color, Flame, Layer, Variation, XForm} from "Frontend/flames/model/flame";
 import { cloneDeep } from "lodash";
+import {BooleanScalarParameter, FloatScalarParameter, IntScalarParameter} from "Frontend/flames/model/parameters";
+import {msg} from "@lit/localize";
+
+interface UndoAction {
+
+}
+
+export abstract class AbstractUndoAction implements UndoAction {
+
+  getAttribute<T, K extends keyof T>(o: T, attributeName: K): T[K] {
+    return o[attributeName]
+  }
+
+  setAttribute<T, K extends keyof T>(o: T, attributeName: K, newValue: T[K]): void {
+    o[attributeName] = newValue
+  }
+
+}
+
+export class SetAttributeAction<T> extends AbstractUndoAction {
+  _oldValue: any
+  _currState: Flame
+
+  constructor(flame: Flame, src: T, private _key: keyof T, private _newValue: any, private _description: string) {
+    super()
+    this._oldValue = this.getAttribute(src, _key)
+    this._currState = cloneDeep(flame)
+  }
+
+}
 
 export class UndoManager {
-  constructor(private initialState: Flame) {
-    //
+  private _undoActions: UndoAction[] = []
+  private _undoPosition = -1
+  private _initialState: Flame
+
+  constructor(flame: Flame) {
+    this._initialState = cloneDeep(flame)
   }
 
   undo(): Flame {
-    return cloneDeep(this.initialState)
+    return this._initialState
   }
 
   redo(): Flame {
-    return cloneDeep(this.initialState)
+    return this._initialState
+  }
+
+  get undoActions() {
+    return this._undoActions
+  }
+
+  registerFlameAttributeChange(flame: Flame, key: keyof Flame, newValue: any) {
+    const desc = msg('Change flame attribute')
+    this._undoActions.push(new SetAttributeAction(flame, flame, key, newValue, desc))
+    this._undoPosition = this._undoActions.length
+    console.log(this._undoPosition)
+  }
+
+  registerLayerAttributeChange(flame: Flame, layer: Layer, key: keyof Layer, newValue: any) {
+    const desc = msg('Change layer attribute')
+    this._undoActions.push(new SetAttributeAction(flame, layer, key, newValue, desc))
+    this._undoPosition = this._undoActions.length
   }
 
 }

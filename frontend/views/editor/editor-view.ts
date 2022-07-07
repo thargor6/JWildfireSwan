@@ -375,7 +375,6 @@ export class EditorView extends View implements BeforeEnterObserver {
     }
 
     reRender = ()=> {
-    console.log("REEEENBDER")
       editorStore.refreshing = true
       try {
         this.getRenderPanel().rerenderFlame()

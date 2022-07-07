@@ -53,7 +53,7 @@ export class SwanNumberSlider extends MobxLitElement {
     sliderWidth = '12em'
 
     @property()
-    onValueChange?: (value: number)=>{}
+    onValueChange?: (value: number, isImmediateValue: boolean)=>{}
 
     @query('vaadin-custom-field')
     private customField!: CustomField
@@ -77,7 +77,7 @@ export class SwanNumberSlider extends MobxLitElement {
                   this.numberField.value = val
                   this.customField.value = val
                   if(this.onValueChange) {
-                      this.onValueChange(this.value)
+                      this.onValueChange(this.value, (e.detail as any).isImmediateValue)
                   }
               }}">
               <div style="display: flex; flex-direction: row; align-items: center;">
@@ -98,7 +98,7 @@ export class SwanNumberSlider extends MobxLitElement {
             e.preventDefault()
             this.value = target.value
             this.numberField.value = target.value
-            this.dispatchChangeEvent(target.value)
+            this.dispatchChangeEvent(target.value, false)
         }
     }
 
@@ -115,7 +115,7 @@ export class SwanNumberSlider extends MobxLitElement {
             e.preventDefault()
             this.value = target.immediateValue
             this.numberField.value = target.immediateValue
-            this.dispatchChangeEvent(target.immediateValue)
+            this.dispatchChangeEvent(target.immediateValue, true)
         }
     }
 
@@ -149,10 +149,11 @@ export class SwanNumberSlider extends MobxLitElement {
         return value.toString()
     }
 
-    dispatchChangeEvent = (value: number) => {
+    dispatchChangeEvent = (value: number, isImmediateValue: boolean) => {
         const event = new CustomEvent('change', {
             detail: {
                 value: this.convertValueToString(value),
+                isImmediateValue: isImmediateValue,
                 rawValue: value
             },
             bubbles: true,
