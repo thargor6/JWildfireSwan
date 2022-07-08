@@ -112,6 +112,8 @@ export class EditorView extends View implements BeforeEnterObserver {
                       .onNewBlankFlame="${this.createBlankFlame}"
                       .onNewRandomFlame="${this.createRandomFlame}"
                       .onNewRandomGradient="${this.createRandomGradient}"
+                      .onEditUndo="${this.undoEdit}"
+                      .onEditRedo="${this.redoEdit}"
                     ></editor-toolbar-panel>
           </header>
           <swan-notification-panel></swan-notification-panel>
@@ -406,5 +408,30 @@ export class EditorView extends View implements BeforeEnterObserver {
 
   renderFirstFlame = ()=> {
     this.getRenderPanel().rerenderFlame()
+  }
+
+  setEditflame = (newFlame: Flame) => {
+    const layerIdx = editorStore.currLayer ? editorStore.currFlame.layers.indexOf(editorStore.currLayer) : -1
+    editorStore.currFlame = newFlame
+    if(layerIdx >=0 && layerIdx<editorStore.currFlame.layers.length) {
+      editorStore.currLayer = editorStore.currFlame.layers[layerIdx]
+    }
+    this.getRenderPanel().rerenderFlame()
+  }
+
+  undoEdit = () => {
+    let newFlame = editorStore.undoManager.undo()
+    console.log("UNDO", newFlame)
+    if(newFlame) {
+      this.setEditflame(newFlame)
+    }
+  }
+
+
+  redoEdit = () => {
+    let newFlame = editorStore.undoManager.redo()
+    if(newFlame) {
+      this.setEditflame(newFlame)
+    }
   }
 }

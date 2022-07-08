@@ -18,12 +18,36 @@ import { makeAutoObservable } from 'mobx';
 import {state} from "lit/decorators";
 
 export class RenderInfoStore {
-  renderInfo = ''
-  renderProgress = 0.0
-  calculating = false
+  _renderInfo = ''
+  _renderProgress = 0.0
+  _calculating = false
 
   constructor() {
     makeAutoObservable(this);
+  }
+
+  get renderInfo() {
+    return this._renderInfo
+  }
+
+  set renderInfo(value) {
+    this._renderInfo = value
+  }
+
+  get renderProgress() {
+    return this._renderProgress
+  }
+
+  set renderProgress(value) {
+    this._renderProgress = value
+  }
+
+  get calculating() {
+    return this._calculating
+  }
+
+  set calculating(value) {
+    this._calculating = value
   }
 
 }

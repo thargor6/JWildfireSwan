@@ -21,7 +21,7 @@ import {BooleanScalarParameter, FloatScalarParameter, IntScalarParameter} from "
 import {msg} from "@lit/localize";
 
 interface UndoAction {
-
+  restore(): Flame
 }
 
 export abstract class AbstractUndoAction implements UndoAction {
@@ -34,16 +34,38 @@ export abstract class AbstractUndoAction implements UndoAction {
     o[attributeName] = newValue
   }
 
+  abstract restore(): Flame
+
 }
 
 export class SetAttributeAction<T> extends AbstractUndoAction {
   _oldValue: any
-  _currState: Flame
+  _prevState: Flame
 
   constructor(flame: Flame, src: T, private _key: keyof T, private _newValue: any, private _description: string) {
     super()
     this._oldValue = this.getAttribute(src, _key)
-    this._currState = cloneDeep(flame)
+    this._prevState = cloneDeep(flame)
+  }
+
+  restore(): Flame {
+    return cloneDeep(this._prevState)
+  }
+
+}
+
+export class SetVariationAtrtrMapAttributeAction extends AbstractUndoAction {
+  _oldValue: any
+  _prevState: Flame
+
+  constructor(flame: Flame, src: Variation, private _key: string, private _newValue: any, private _description: string) {
+    super()
+    this._oldValue = src.params.get(_key)
+    this._prevState = cloneDeep(flame)
+  }
+
+  restore(): Flame {
+    return cloneDeep(this._prevState)
   }
 
 }
@@ -57,12 +79,22 @@ export class UndoManager {
     this._initialState = cloneDeep(flame)
   }
 
-  undo(): Flame {
-    return this._initialState
+  undo(): Flame | undefined {
+    if(this._undoPosition>=0 && this._undoPosition<this._undoActions.length) {
+      return this._undoActions[this._undoPosition--].restore()
+    }
+    else {
+      return undefined
+    }
   }
 
-  redo(): Flame {
-    return this._initialState
+  redo(): Flame | undefined {
+    if(this._undoPosition>=-1 && this._undoPosition<this._undoActions.length-1) {
+      return this._undoActions[++this._undoPosition].restore()
+    }
+    else {
+      return undefined
+    }
   }
 
   get undoActions() {
@@ -72,14 +104,31 @@ export class UndoManager {
   registerFlameAttributeChange(flame: Flame, key: keyof Flame, newValue: any) {
     const desc = msg('Change flame attribute')
     this._undoActions.push(new SetAttributeAction(flame, flame, key, newValue, desc))
-    this._undoPosition = this._undoActions.length
+    this._undoPosition = this._undoActions.length - 1
     console.log(this._undoPosition)
   }
 
   registerLayerAttributeChange(flame: Flame, layer: Layer, key: keyof Layer, newValue: any) {
     const desc = msg('Change layer attribute')
     this._undoActions.push(new SetAttributeAction(flame, layer, key, newValue, desc))
-    this._undoPosition = this._undoActions.length
+    this._undoPosition = this._undoActions.length - 1
   }
 
+  registerXformAttributeChange(flame: Flame, xform: XForm, key: keyof XForm, newValue: any) {
+    const desc = msg('Change xform attribute')
+    this._undoActions.push(new SetAttributeAction(flame, xform, key, newValue, desc))
+    this._undoPosition = this._undoActions.length - 1
+  }
+
+  registerVariationAttributeChange(flame: Flame, variation: Variation, key: keyof Variation, newValue: any) {
+    const desc = msg('Change variation attribute')
+    this._undoActions.push(new SetAttributeAction(flame, variation, key, newValue, desc))
+    this._undoPosition = this._undoActions.length - 1
+  }
+
+  registerVariationAttrMapAttributeChange(flame: Flame, variation: Variation, key: string, newValue: any) {
+    const desc = msg('Change variation attribute')
+    this._undoActions.push(new SetVariationAtrtrMapAttributeAction(flame, variation, key, newValue, desc))
+    this._undoPosition = this._undoActions.length - 1
+  }
 }

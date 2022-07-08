@@ -21,7 +21,7 @@ import {MobxLitElement} from "@adobe/lit-mobx";
 import {TemplateResult} from "lit-html";
 import {editorStore} from "Frontend/stores/editor-store";
 import {HasValue} from "@hilla/form";
-import {Flame, Variation} from "Frontend/flames/model/flame";
+import {Flame, Layer, Variation, XForm} from "Frontend/flames/model/flame";
 
 export interface ComoboBoxItem {
   key: number
@@ -160,10 +160,10 @@ export abstract class EditPropertyPanel extends MobxLitElement {
       const oldVal: any = this.getProperty(editorStore.currFlame, key)
       if (oldVal && oldVal.type) {
         if (oldVal.value !== value) {
-          oldVal.value = value
           if(!isImmediateValue) {
             editorStore.undoManager.registerFlameAttributeChange(editorStore.currFlame, <keyof Flame>key, value)
           }
+          oldVal.value = value
           this.afterPropertyChange()
           // console.log('FLAME ATTRIBUTE CHANGED', key, value, oldVal)
         }
@@ -177,6 +177,9 @@ export abstract class EditPropertyPanel extends MobxLitElement {
       const oldVal: any = this.getProperty(editorStore.currLayer, key)
       if (oldVal && oldVal.type) {
         if (oldVal.value !== value) {
+          if(!isImmediateValue) {
+            editorStore.undoManager.registerLayerAttributeChange(editorStore.currFlame, editorStore.currLayer, <keyof Layer>key, value)
+          }
           oldVal.value = value
           this.afterPropertyChange()
           // console.log('LAYER ATTRIBUTE CHANGED', key, value, oldVal)
@@ -192,6 +195,9 @@ export abstract class EditPropertyPanel extends MobxLitElement {
       if(oldVal && oldVal.type) {
         if(oldVal.value !== value) {
           const oldValueNumber = oldVal.value
+          if(!isImmediateValue) {
+            editorStore.undoManager.registerXformAttributeChange(editorStore.currFlame, editorStore.currXform, <keyof XForm>key, value)
+          }
           oldVal.value = value
           // !!!just for testing now, do not use in production!!!
           if(key==='_xyC21_') {
@@ -210,12 +216,25 @@ export abstract class EditPropertyPanel extends MobxLitElement {
     if(src) {
       // @ts-ignore
       let oldVal: any = this.getProperty(src, key)
+      let isAttrFromMap: boolean
       if(!oldVal) {
         oldVal = src.params.get(key)
+        isAttrFromMap = true
+      }
+      else {
+        isAttrFromMap = false
       }
       if(oldVal && oldVal.type) {
         if(oldVal.value !== value) {
           const oldValueNumber = oldVal.value
+          if(!isImmediateValue) {
+            if(isAttrFromMap) {
+              editorStore.undoManager.registerVariationAttrMapAttributeChange(editorStore.currFlame, src, key, value)
+            }
+            else {
+              editorStore.undoManager.registerVariationAttributeChange(editorStore.currFlame, src, <keyof Variation>key, value)
+            }
+          }
           oldVal.value = value
           // !!!just for testing now, do not use in production!!!
           if(key==='_xyC21_') {
@@ -235,7 +254,7 @@ export abstract class EditPropertyPanel extends MobxLitElement {
   renderNumberField(desc: NumberFieldDescriptor): TemplateResult {
     return html `
       <swan-number-slider labelWidth="${desc.labelWidth ? desc.labelWidth : '10em'}" .disabled="${undefined===desc.value()}" min="${desc.min}" max="${desc.max}" step="${desc.step}" 
-        label="${desc.label}" value="${desc.value()} "
+        label="${desc.label}" .value=${desc.value()}
         .onValueChange="${desc.onChange}">
       </swan-number-slider>
     `

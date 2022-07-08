@@ -35,7 +35,7 @@ export class EditorStore {
   editModeTx = EDIT_MODE_TX_AFFINE
   refreshing = true
   variations: string[] = []
-  lastError = ''
+  _lastError = ''
   _currFlame = new Flame()
   _currLayers: Layer[] = []
   _currLayer: Layer | undefined = undefined
@@ -167,6 +167,14 @@ export class EditorStore {
 
   refreshLayers() {
     this._currLayers = [...this._currFlame.layers]
+  }
+
+  get lastError() {
+    return this._lastError
+  }
+
+  set lastError(value) {
+    this._lastError = value
   }
 
 }
