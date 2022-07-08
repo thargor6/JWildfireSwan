@@ -33,43 +33,49 @@ import {setLocale} from "Frontend/index";
 export class EditorToolbarPanel extends MobxLitElement {
 
   @query('#main_menu')
-  private mainMenu!: MenuBarElement;
+  private mainMenu!: MenuBarElement
 
   @query('#file_menu')
-  private fileMenu!: HTMLElement;
+  private fileMenu!: HTMLElement
 
   @query('#file_open_itm')
-  private fileOpenItm!: HTMLElement;
+  private fileOpenItm!: HTMLElement
 
   @query('#file_save_itm')
-  private fileSaveItm!: HTMLElement;
+  private fileSaveItm!: HTMLElement
 
   @query('#new_menu')
-  private newMenu!: HTMLElement;
+  private newMenu!: HTMLElement
 
   @query('#new_blank_flame_itm')
-  private newBlankFlameItm!: HTMLElement;
+  private newBlankFlameItm!: HTMLElement
 
   @query('#new_random_flame_itm')
-  private newRandomFlameItm!: HTMLElement;
+  private newRandomFlameItm!: HTMLElement
 
   @query('#new_random_gradient_itm')
-  private newRandomGradientItm!: HTMLElement;
+  private newRandomGradientItm!: HTMLElement
 
   @query('#edit_menu')
-  private editMenu!: HTMLElement;
+  private editMenu!: HTMLElement
 
   @query('#edit_copy_flame_to_clipboard_itm')
-  private editCopyFlameToClipboardItm!: HTMLElement;
+  private editCopyFlameToClipboardItm!: HTMLElement
 
   @query('#edit_paste_flame_from_clipboard_itm')
-  private editPasteFlameFromClipboardItm!: HTMLElement;
+  private editPasteFlameFromClipboardItm!: HTMLElement
 
   @query('#edit_undo_itm')
-  private editUndoItm!: HTMLElement;
+  private editUndoItm!: HTMLElement
 
   @query('#edit_redo_itm')
-  private editRedoItm!: HTMLElement;
+  private editRedoItm!: HTMLElement
+
+  @query('#tools_menu')
+  private toolsMenu!: HTMLElement;
+
+  @query('#tools_send_to_renderer_itm')
+  private toolsSendToRendererItm!: HTMLElement
 
   @property()
   onOpenFile = ()=> {}
@@ -98,6 +104,9 @@ export class EditorToolbarPanel extends MobxLitElement {
   @property()
   onEditRedo = ()=> {}
 
+  @property()
+  onToolsSendToRenderer = ()=> {}
+
   // Icons: https://vaadin.com/docs/latest/ds/foundation/icons/vaadin
   render() {
     return html`
@@ -117,6 +126,10 @@ export class EditorToolbarPanel extends MobxLitElement {
             <vaadin-item @click="${this.onEditPasteFlameFromClipboard}" id="edit_paste_flame_from_clipboard_itm"><vaadin-icon style="padding-right: 0.5em; width: 1.6em;" icon="vaadin:paste"></vaadin-icon>${msg('Paste flame from clipboard')}</vaadin-item>
             <vaadin-item @click="${this.onEditUndo}" id="edit_undo_itm"><vaadin-icon style="padding-right: 0.5em; width: 1.6em;" icon="vaadin:arrow-backward"></vaadin-icon>${msg('Undo')}</vaadin-item>
             <vaadin-item @click="${this.onEditRedo}" id="edit_redo_itm"><vaadin-icon style="padding-right: 0.5em; width: 1.6em;" icon="vaadin:arrow-forward"></vaadin-icon>${msg('Redo')}</vaadin-item>
+
+            <vaadin-item id="tools_menu"><vaadin-icon style="padding-right: 0.5em; width: 1.6em;" icon="vaadin:wrench"></vaadin-icon>${msg('Tools')}</vaadin-item>
+            <vaadin-item @click="${this.onToolsSendToRenderer}" id="tools_send_to_renderer_itm"><vaadin-icon style="padding-right: 0.5em; width: 1.6em;" icon="vaadin:picture"></vaadin-icon>${msg('Send to renderer')}</vaadin-item>
+ 
           </div>
 `;
   }
@@ -149,12 +162,14 @@ export class EditorToolbarPanel extends MobxLitElement {
           {component: this.editRedoItm},
         ]
       },
+      {
+        component: this.toolsMenu,
+        children: [
+          {component: this.toolsSendToRendererItm},
+        ]
+      },
     ];
     this.mainMenu.items = menuItems;
-  }
-
-  private logout() {
-    Router.go('/logout');
   }
 
 }

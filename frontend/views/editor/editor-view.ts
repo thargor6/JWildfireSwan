@@ -75,6 +75,8 @@ import {
   startupActionHolder
 } from "Frontend/stores/editor-startup-actions";
 import {renderInfoStore} from "Frontend/stores/render-info-store";
+import {singleRendererStore} from "Frontend/stores/single-renderer-store";
+import {cloneDeep} from "lodash";
 
 @localized()
 @customElement('editor-view')
@@ -114,6 +116,7 @@ export class EditorView extends View implements BeforeEnterObserver {
                       .onNewRandomGradient="${this.createRandomGradient}"
                       .onEditUndo="${this.undoEdit}"
                       .onEditRedo="${this.redoEdit}"
+                      .onToolsSendToRenderer="${this.sendFlameToRenderer}"
                     ></editor-toolbar-panel>
           </header>
           <swan-notification-panel></swan-notification-panel>
@@ -433,5 +436,10 @@ export class EditorView extends View implements BeforeEnterObserver {
     if(newFlame) {
       this.setEditflame(newFlame)
     }
+  }
+
+  sendFlameToRenderer = ()=> {
+    singleRendererStore.flame = cloneDeep(editorStore.currFlame)
+    Router.go('/single-renderer/?refresh')
   }
 }
