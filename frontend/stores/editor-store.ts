@@ -33,7 +33,7 @@ export class EditorStore {
   initState = new Set<string>()
   initFlag = false
   editModeTx = EDIT_MODE_TX_AFFINE
-  refreshing = true
+  _refreshing = true
   variations: string[] = []
   _lastError = ''
   _currFlame = new Flame()
@@ -123,10 +123,16 @@ export class EditorStore {
   }
 
   set currFlame(newFlame: Flame) {
-    this._currFlame = newFlame
-    this._undoManager = new UndoManager(newFlame)
-    this.refreshLayers()
-    this._currLayer = undefined
+    this.refreshing = true
+    try {
+      this._currFlame = newFlame
+      this._undoManager = new UndoManager(newFlame)
+      this.refreshLayers()
+      this._currLayer = undefined
+    }
+    finally {
+      this.refreshing = false
+    }
   }
 
   get undoManager() {
@@ -138,15 +144,21 @@ export class EditorStore {
   }
 
   set currLayer(newLayer: Layer | undefined) {
-    this._currLayer = newLayer
-    if(newLayer) {
-      this._currXforms = [...newLayer.xforms, ...newLayer.finalXforms]
+    this.refreshing = true
+    try {
+      this._currLayer = newLayer
+      if (newLayer) {
+        this._currXforms = [...newLayer.xforms, ...newLayer.finalXforms]
+      } else {
+        this._currXforms = []
+      }
+
+      this._currXform = undefined
     }
-    else {
-      this._currXforms = []
+    finally {
+      this.refreshing = false
     }
 
-    this._currXform = undefined
   }
 
   get currLayers(): Array<Layer> {
@@ -158,7 +170,13 @@ export class EditorStore {
   }
 
   set currXform(newXform: XForm | undefined) {
-    this._currXform = newXform
+    this.refreshing = true
+    try {
+      this._currXform = newXform
+    }
+    finally {
+      this.refreshing = false
+    }
   }
 
   get currXforms(): Array<XForm> {
@@ -177,6 +195,13 @@ export class EditorStore {
     this._lastError = value
   }
 
+  get refreshing() {
+    return this._refreshing
+  }
+
+  set refreshing(newValue) {
+    this._refreshing = newValue
+  }
 }
 
 registerVars_All()

@@ -38,8 +38,8 @@ export class EditorEditLayersPanel extends EditPropertyPanel {
   @query('vaadin-grid')
   grid!: Grid
 
-  onAttributeChange = (key: string, value: number) => {
-    this.layerPropertyChange(key, value)
+  onAttributeChange = (key: string, value: number, isImmediateValue: boolean) => {
+    this.layerPropertyChange(key, value, isImmediateValue)
     this.grid.requestContentUpdate()
   }
 

@@ -70,14 +70,17 @@ export class SwanNumberSlider extends MobxLitElement {
               theme="small"
               ?disabled="${this.disabled}"
               @change="${(e: CustomFieldValueChangedEvent) => {
-                  // console.log(e.detail.value)
+                  //console.log('CHANGE', e.detail.value, (e.detail as any).isImmediateValue)
                   const val = e.detail.value
                   e.preventDefault()
-                  this.value = parseFloat(val)
+                  const newValue = parseFloat(val)
+                  // changing of this.value would cause an unwanted refresh here,
+                  // currently we do not need value at all (except for setting an initial value)
+                  // this.value = newValue
                   this.numberField.value = val
                   this.customField.value = val
                   if(this.onValueChange) {
-                      this.onValueChange(this.value, (e.detail as any).isImmediateValue)
+                      this.onValueChange(newValue, (e.detail as any).isImmediateValue)
                   }
               }}">
               <div style="display: flex; flex-direction: row; align-items: center;">
@@ -93,10 +96,11 @@ export class SwanNumberSlider extends MobxLitElement {
     }
 
     sliderChange = (e: Event) => {
+        // console.log("SLIDER", e)
         const target: any = e.target
         if(target) {
             e.preventDefault()
-            this.value = target.value
+            //this.value = target.value
             this.numberField.value = target.value
             this.dispatchChangeEvent(target.value, false)
         }
@@ -110,10 +114,11 @@ export class SwanNumberSlider extends MobxLitElement {
     }
 
     immediateValueChanged = (e: Event) => {
+        // console.log("SLIDER IMMEDIATE", e)
         const target: any = e.target
         if(target) {
             e.preventDefault()
-            this.value = target.immediateValue
+         //   this.value = target.immediateValue
             this.numberField.value = target.immediateValue
             this.dispatchChangeEvent(target.immediateValue, true)
         }
@@ -121,10 +126,10 @@ export class SwanNumberSlider extends MobxLitElement {
 
     updateMinMax() {
         if(this.value<this.min) {
-            this.min = this.value
+            this.min = this.value - 1
         }
         if(this.value>this.max) {
-            this.max = this.value
+            this.max = this.value + 1
         }
     }
 
@@ -156,7 +161,7 @@ export class SwanNumberSlider extends MobxLitElement {
                 isImmediateValue: isImmediateValue,
                 rawValue: value
             },
-            bubbles: true,
+            bubbles: false,
             cancelable: true,
             composed: false
         });

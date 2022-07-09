@@ -31,7 +31,7 @@ export interface ComoboBoxItem {
 export interface CheckboxDescriptor {
   key: string
   label: string
-  onChange(value: number): void
+  onChange(value: number, isImmediateValue: boolean): void
   value(): boolean
 }
 
@@ -39,7 +39,7 @@ export interface ComboBoxDescriptor {
   key: string
   label: string
   items?:Array<ComoboBoxItem>
-  onChange(value: number): void
+  onChange(value: number, isImmediateValue: boolean): void
   value(): number | undefined
 }
 
@@ -155,7 +155,7 @@ export abstract class EditPropertyPanel extends MobxLitElement {
   }
 
   flamePropertyChange = (key: string, value: number, isImmediateValue: boolean) => {
-    if(editorStore.currFlame) {
+    if(editorStore.currFlame && !editorStore.refreshing) {
       // @ts-ignore
       const oldVal: any = this.getProperty(editorStore.currFlame, key)
       if (oldVal && oldVal.type) {
@@ -172,7 +172,7 @@ export abstract class EditPropertyPanel extends MobxLitElement {
   }
 
   layerPropertyChange = (key: string, value: number, isImmediateValue: boolean) => {
-    if(editorStore.currLayer) {
+    if(editorStore.currLayer && !editorStore.refreshing) {
       // @ts-ignore
       const oldVal: any = this.getProperty(editorStore.currLayer, key)
       if (oldVal && oldVal.type) {
@@ -189,7 +189,7 @@ export abstract class EditPropertyPanel extends MobxLitElement {
   }
 
   xformPropertyChange = (key: string, value: number, isImmediateValue: boolean) => {
-    if(editorStore.currXform) {
+    if(editorStore.currXform && !editorStore.refreshing) {
       // @ts-ignore
       const oldVal: any = this.getProperty(editorStore.currXform, key)
       if(oldVal && oldVal.type) {
@@ -213,7 +213,7 @@ export abstract class EditPropertyPanel extends MobxLitElement {
   }
 
   variationPropertyChange = (src: Variation | undefined, key: string, value: number, isImmediateValue: boolean) => {
-    if(src) {
+    if(src  && !editorStore.refreshing) {
       // @ts-ignore
       let oldVal: any = this.getProperty(src, key)
       let isAttrFromMap: boolean
@@ -263,7 +263,7 @@ export abstract class EditPropertyPanel extends MobxLitElement {
   renderCheckbox(desc: CheckboxDescriptor): TemplateResult {
     return html `
         <vaadin-checkbox ?checked=${desc.value} label="${desc.label}"
-          @change=${(e: Event)=>desc.onChange((e.target as any).checked ? 1: 0)}>
+          @change=${(e: Event)=>desc.onChange((e.target as any).checked ? 1: 0, false)}>
         </vaadin-checkbox>
     `
   }
@@ -274,7 +274,7 @@ export abstract class EditPropertyPanel extends MobxLitElement {
                           .value=${desc.value}
                           @change=${(e: Event)=>{
                               const key = (e.target as HasValue<number>).value
-                              desc.onChange(key as any)
+                              desc.onChange(key as any, false)
                           }} label=${desc.label}></vaadin-combo-box>
     `
   }
