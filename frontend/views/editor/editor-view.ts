@@ -66,6 +66,8 @@ import './editor-edit-xform-nonlinear-panel'
 import './editor-edit-xform-xaos-panel'
 import './editor-edit-xform-color-panel'
 import './editor-xforms-grid-panel'
+import './editor-flame-info-dialog'
+
 import {EditorEditLayersPanel} from "Frontend/views/editor/editor-edit-layers-panel";
 import {EditorXformsGridPanel} from "Frontend/views/editor/editor-xforms-grid-panel";
 import {
@@ -77,6 +79,7 @@ import {
 import {renderInfoStore} from "Frontend/stores/render-info-store";
 import {singleRendererStore} from "Frontend/stores/single-renderer-store";
 import {cloneDeep} from "lodash";
+import {EditorFlameInfoDialog} from "Frontend/views/editor/editor-flame-info-dialog";
 
 @localized()
 @customElement('editor-view')
@@ -88,12 +91,6 @@ export class EditorView extends View implements BeforeEnterObserver {
   @state()
   selectedTransformTab = 0
 
-  @state()
-  renderInfo = ''
-
-  @state()
-  notificationMessage = ''
-
   @query('swan-notification-panel')
   notificationPnl!: SwanNotificationPanel
 
@@ -102,6 +99,9 @@ export class EditorView extends View implements BeforeEnterObserver {
 
   @query('editor-xforms-grid-panel')
   transformsGridPanel!: EditorXformsGridPanel
+
+  @query('editor-flame-info-dialog')
+  flameInfoDialog!: EditorFlameInfoDialog
 
   render() {
         return html`
@@ -117,10 +117,13 @@ export class EditorView extends View implements BeforeEnterObserver {
                       .onEditUndo="${this.undoEdit}"
                       .onEditRedo="${this.redoEdit}"
                       .onToolsSendToRenderer="${this.sendFlameToRenderer}"
+                      .onToolsShowFlameInfo="${this.showFlameInfo}"
+                      .onToolsShowUndoHistory="${this.showUndoHistory}"
                     ></editor-toolbar-panel>
           </header>
           <swan-notification-panel></swan-notification-panel>
           <swan-error-panel .errorMessage=${editorStore.lastError}></swan-error-panel>
+          <editor-flame-info-dialog></editor-flame-info-dialog>
           <vaadin-vertical-layout style="width: 100%;">
             <vaadin-horizontal-layout>
               <swan-render-panel
@@ -441,5 +444,14 @@ export class EditorView extends View implements BeforeEnterObserver {
   sendFlameToRenderer = ()=> {
     singleRendererStore.flame = cloneDeep(editorStore.currFlame)
     Router.go('/single-renderer/?refresh')
+  }
+
+  showFlameInfo = ()=> {
+    this.flameInfoDialog.refreshInfos()
+    this.flameInfoDialog.dialogOpened = true
+  }
+
+  showUndoHistory = ()=> {
+    this.notificationPnl.showNotifivation(msg('Not implemented'))
   }
 }

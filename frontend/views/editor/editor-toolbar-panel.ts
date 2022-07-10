@@ -77,6 +77,12 @@ export class EditorToolbarPanel extends MobxLitElement {
   @query('#tools_send_to_renderer_itm')
   private toolsSendToRendererItm!: HTMLElement
 
+  @query('#tools_show_flame_info_itm')
+  private toolsShowFlameInfoItm!: HTMLElement
+
+  @query('#tools_show_undo_history_itm')
+  private toolsShowUndoHistoryItm!: HTMLElement
+
   @property()
   onOpenFile = ()=> {}
 
@@ -107,6 +113,12 @@ export class EditorToolbarPanel extends MobxLitElement {
   @property()
   onToolsSendToRenderer = ()=> {}
 
+  @property()
+  onToolsShowFlameInfo = ()=> {}
+
+  @property()
+  onToolsShowUndoHistory = ()=> {}
+
   // Icons: https://vaadin.com/docs/latest/ds/foundation/icons/vaadin
   render() {
     return html`
@@ -129,7 +141,9 @@ export class EditorToolbarPanel extends MobxLitElement {
 
             <vaadin-item id="tools_menu"><vaadin-icon style="padding-right: 0.5em; width: 1.6em;" icon="vaadin:wrench"></vaadin-icon>${msg('Tools')}</vaadin-item>
             <vaadin-item @click="${this.onToolsSendToRenderer}" id="tools_send_to_renderer_itm"><vaadin-icon style="padding-right: 0.5em; width: 1.6em;" icon="vaadin:picture"></vaadin-icon>${msg('Send to renderer')}</vaadin-item>
- 
+            <vaadin-item @click="${this.onToolsShowFlameInfo}" id="tools_show_flame_info_itm"><vaadin-icon style="padding-right: 0.5em; width: 1.6em;" icon="vaadin:info-circle"></vaadin-icon>${msg('Show flame info')}</vaadin-item>
+            <vaadin-item @click="${this.onToolsShowUndoHistory}" id="tools_show_undo_history_itm"><vaadin-icon style="padding-right: 0.5em; width: 1.6em;" icon="vaadin:table"></vaadin-icon>${msg('Show undo history')}</vaadin-item>
+              
           </div>
 `;
   }
@@ -166,6 +180,8 @@ export class EditorToolbarPanel extends MobxLitElement {
         component: this.toolsMenu,
         children: [
           {component: this.toolsSendToRendererItm},
+          {component: this.toolsShowFlameInfoItm},
+          {component: this.toolsShowUndoHistoryItm},
         ]
       },
     ];
