@@ -34,6 +34,8 @@ import {editorStore} from "Frontend/stores/editor-store";
 import {cloneDeep} from "lodash";
 import {autorun, reaction, IReactionDisposer, makeAutoObservable} from "mobx";
 import {TemplateResult} from "lit-html";
+import {FlamesEndpoint} from "Frontend/generated/endpoints";
+import {FlameMapper} from "Frontend/flames/model/mapper/flame-mapper";
 
 let disposer: IReactionDisposer | undefined = undefined
 
@@ -43,6 +45,7 @@ class EditorFlameInfoDialogStore {
   currRenderFlame: RenderFlame = new RenderFlame()
   currProgPointsVertexShader = ''
   currCompPointsFragmentShader = ''
+  currParamsAsXml = ''
 
   constructor() {
     makeAutoObservable(this);
@@ -78,8 +81,8 @@ export class EditorFlameInfoDialog extends MobxLitElement {
 
   private disposer: IReactionDisposer | undefined = undefined
 
-  textAreaWidth = '60em'
-  textAreaHeight = '50em'
+  textAreaWidth = '50em'
+  textAreaHeight = '30em'
 
   render() {
     return html`
@@ -92,7 +95,6 @@ export class EditorFlameInfoDialog extends MobxLitElement {
       render(this.footerLayout, root);
     })}"
         .renderer="${guard([], () => (root: HTMLElement) => {
-          console.log("RENDER INNER")
       render(this.dialogLayout(), root);
     })}"
       ></vaadin-dialog>
@@ -103,34 +105,42 @@ export class EditorFlameInfoDialog extends MobxLitElement {
     <vaadin-vertical-layout style="align-items: stretch; width: 50rem; min-height: 10em; max-width: 100%;">
         <vaadin-tabs @selected-changed="${this.selectedTabChanged}">
           <vaadin-tab theme="icon-on-top">
-              <span>${msg('Flame params')}</span>
+              <span>${msg('Raw flame params')}</span>
           </vaadin-tab>
           <vaadin-tab theme="icon-on-top">
               <span>${msg('Prepared render params')}</span>
           </vaadin-tab>
           <vaadin-tab theme="icon-on-top">
-              <span>${msg('Generated vertex shader')}</span>
+              <span>${msg('Vertex shader')}</span>
           </vaadin-tab>
           <vaadin-tab theme="icon-on-top">
-              <span>${msg('Generated fragment shader')}</span>
+              <span>${msg('Fragment shader')}</span>
+          </vaadin-tab>
+          <vaadin-tab theme="icon-on-top">
+            <span>${msg('Params as Xml')}</span>
           </vaadin-tab>
       </vaadin-tabs>
       <div style="display: flex; flex-direction: column; align-items: center; width: 100%;">
           <div style="${infoStore.selectedTab===0 ? `display:block;`: `display:none;`}">
-              <vaadin-text-area style="min-width: ${this.textAreaWidth}; min-height: ${this.textAreaHeight}$" 
+              <vaadin-text-area style="min-width: ${this.textAreaWidth}; min-height: ${this.textAreaHeight};" 
                 .value=${JSON.stringify(infoStore.currFlame)}></vaadin-text-area>
           </div>
           <div style="${infoStore.selectedTab===1 ? `display:block;`: `display:none;`}">
-              <vaadin-text-area style="min-width: ${this.textAreaWidth}; min-height: ${this.textAreaHeight}$"
+              <vaadin-text-area style="min-width: ${this.textAreaWidth}; min-height: ${this.textAreaHeight};"
                                 .value=${JSON.stringify(infoStore.currRenderFlame)}></vaadin-text-area>
           </div>
           <div style="${infoStore.selectedTab===2 ? `display:block;`: `display:none;`}">
-              <vaadin-text-area style="min-width: ${this.textAreaWidth}; min-height: ${this.textAreaHeight}$"
+              <vaadin-text-area style="min-width: ${this.textAreaWidth}; min-height: ${this.textAreaHeight};"
                                 .value=${infoStore.currProgPointsVertexShader}></vaadin-text-area>
           </div>
           <div style="${infoStore.selectedTab===3 ? `display:block;`: `display:none;`}">
-              <vaadin-text-area style="min-width: ${this.textAreaWidth}; min-height: ${this.textAreaHeight}$"
+              <vaadin-text-area style="min-width: ${this.textAreaWidth}; min-height: ${this.textAreaHeight};"
                                 .value=${infoStore.currCompPointsFragmentShader}></vaadin-text-area>
+          </div>
+          <div style="${infoStore.selectedTab===4 ? `display:block;`: `display:none;`}">
+              <vaadin-button @click="${this.generateFlameXml}">${msg('Generate xml')}</vaadin-button>
+              <vaadin-text-area style="width: ${this.textAreaWidth}; min-height: ${this.textAreaHeight};"
+                                .value=${infoStore.currParamsAsXml}></vaadin-text-area>
           </div>
        </div>
 
@@ -147,11 +157,22 @@ export class EditorFlameInfoDialog extends MobxLitElement {
     infoStore.selectedTab = e.detail.value
   }
 
+  generateFlameXml = ()=> {
+    FlamesEndpoint.convertFlameToXml(FlameMapper.mapToBackend(infoStore.currFlame)).then(flameXml => {
+      infoStore.currParamsAsXml = flameXml
+
+    })
+    .catch(err=> {
+      editorStore.lastError = err
+    })
+  }
+
   public refreshInfos() {
     infoStore.currFlame = editorStore.sharedRenderCtx.currFlame ? cloneDeep(editorStore.sharedRenderCtx.currFlame) : new Flame()
     infoStore.currRenderFlame = editorStore.sharedRenderCtx.currRenderFlame ? cloneDeep(editorStore.sharedRenderCtx.currRenderFlame) : new RenderFlame()
     infoStore.currProgPointsVertexShader = editorStore.sharedRenderCtx.currProgPointsVertexShader ? editorStore.sharedRenderCtx.currProgPointsVertexShader : ''
     infoStore.currCompPointsFragmentShader = editorStore.sharedRenderCtx.currCompPointsFragmentShader ? editorStore.sharedRenderCtx.currCompPointsFragmentShader : ''
+    infoStore.currParamsAsXml = ''
     infoStore.registerRefresh(this.dialog)
   }
 
