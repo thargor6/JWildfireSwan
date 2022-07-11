@@ -124,12 +124,15 @@
     "electron": "^17.4.1",
     "line-awesome": "1.3.0",
     "lit": "2.2.3",
+    "lit-code": "^0.1.10",
     "lodash.clonedeep": "^4.5.0",
-    "mobx": "^6.3.5"
+    "mobx": "^6.3.5",
+    "prismjs": "^1.28.0"
   },
   "devDependencies": {
     "@lit/localize-tools": "^0.6.3",
     "@types/lodash.clonedeep": "^4.5.7",
+    "@types/prismjs": "^1.26.0",
     "async": "3.2.2",
     "chokidar": "^3.5.0",
     "compression-webpack-plugin": "4.0.1",
@@ -276,7 +279,8 @@
     "@lit/localize": "$@lit/localize",
     "lodash.clonedeep": "$lodash.clonedeep",
     "@vaadin/lit-renderer": "$@vaadin/lit-renderer",
-    "@polymer/paper-slider": "$@polymer/paper-slider"
+    "@polymer/paper-slider": "$@polymer/paper-slider",
+    "prismjs": "$prismjs"
   },
   "vaadin": {
     "dependencies": {
@@ -421,6 +425,6 @@
       "workbox-precaching": "6.5.0",
       "workbox-webpack-plugin": "6.5.0"
     },
-    "hash": "a595d755f7169ac9940da63ecb879461e0951033a7288dbc4dffe83ac9231dfc"
+    "hash": "0a266b8b09c3a416fce9c5b9a0821a1ccba14dc5f66b0cf488c93b61cdc95fd4"
   }
 }
