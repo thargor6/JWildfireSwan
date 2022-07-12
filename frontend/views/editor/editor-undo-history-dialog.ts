@@ -27,18 +27,15 @@ import '@vaadin/tabs'
 
 import {localized, msg} from '@lit/localize';
 import {guard} from "lit/directives/guard.js";
-import {Flame} from "Frontend/flames/model/flame";
-import {RenderFlame} from "Frontend/flames/model/render-flame";
 import {Dialog} from "@vaadin/dialog";
-import {editorStore} from "Frontend/stores/editor-store";
 import {IReactionDisposer} from "mobx";
-import {infoStore} from "Frontend/views/editor/editor-flame-info-dialog-store";
-import {cloneDeep} from "lodash";
-import './editor-flame-info-dialog-content'
+
+import './editor-undo-history-dialog-content'
+import {undoHistoryInfoStore} from "Frontend/views/editor/editor-undo-history-dialog-store";
 
 @localized()
-@customElement('editor-flame-info-dialog')
-export class EditorFlameInfoDialog extends MobxLitElement {
+@customElement('editor-undo-history-dialog')
+export class EditorUndoHistoryDialog extends MobxLitElement {
   @state()
   dialogOpened = false
 
@@ -50,7 +47,7 @@ export class EditorFlameInfoDialog extends MobxLitElement {
   render() {
     return html`
       <vaadin-dialog
-        header-title="${msg('Flame info')}"
+        header-title="${msg('Undo history')}"
         resizable draggable
         .opened="${this.dialogOpened}"
         @opened-changed="${(e: CustomEvent) => (this.dialogOpened = e.detail.value)}"
@@ -64,19 +61,15 @@ export class EditorFlameInfoDialog extends MobxLitElement {
     `;
   }
 
-  dialogLayout = ()=> html`<editor-flame-info-dialog-content></editor-flame-info-dialog-content>`
+  dialogLayout = ()=> html`<editor-undo-history-dialog-content></editor-undo-history-dialog-content>`
 
   footerLayout = html`
     <vaadin-button @click="${() => {this.dialogOpened = false}}">${msg('Close')}</vaadin-button>
   `;
 
-  public refreshInfos() {
-    infoStore.currFlame = editorStore.sharedRenderCtx.currFlame ? cloneDeep(editorStore.sharedRenderCtx.currFlame) : new Flame()
-    infoStore.currRenderFlame = editorStore.sharedRenderCtx.currRenderFlame ? cloneDeep(editorStore.sharedRenderCtx.currRenderFlame) : new RenderFlame()
-    infoStore.currProgPointsVertexShader = editorStore.sharedRenderCtx.currProgPointsVertexShader ? editorStore.sharedRenderCtx.currProgPointsVertexShader : ''
-    infoStore.currCompPointsFragmentShader = editorStore.sharedRenderCtx.currCompPointsFragmentShader ? editorStore.sharedRenderCtx.currCompPointsFragmentShader : ''
-    infoStore.currParamsAsXml = ''
-    infoStore.registerRefresh(this.dialog)
+  public refreshHistory() {
+    undoHistoryInfoStore.registerRefresh(this.dialog)
+    undoHistoryInfoStore.refreshUndoHistory()
   }
 
 }

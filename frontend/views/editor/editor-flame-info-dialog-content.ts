@@ -38,9 +38,6 @@ import * as Prism from 'prismjs';
 @customElement('editor-flame-info-dialog-content')
 export class EditorFlameInfoDialogContent extends MobxLitElement {
 
-  @query('#main_container')
-  mainCodeContainer!: HTMLElement
-
   // more infos about lit-code: https://www.npmjs.com/package/lit-code
   static styles = css`
     lit-code {
@@ -93,7 +90,7 @@ export class EditorFlameInfoDialogContent extends MobxLitElement {
                     <span>${msg('Params as Xml')}</span>
                 </vaadin-tab>
             </vaadin-tabs>
-            <div id="main_container2" style="display: flex; flex-direction: column; align-items: center; width: 100%;">
+            <div style="display: flex; flex-direction: column; align-items: center; width: 100%;">
                 <div style="${infoStore.selectedTab === 0 ? `display:block;` : `display:none;`}">
                   <lit-code language='js'
                             .code=${JSON.stringify(infoStore.currFlame, null, 2)}

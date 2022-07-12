@@ -22,6 +22,7 @@ import {msg} from "@lit/localize";
 
 interface UndoAction {
   restore(): Flame
+  caption(): string
 }
 
 export abstract class AbstractUndoAction implements UndoAction {
@@ -36,13 +37,14 @@ export abstract class AbstractUndoAction implements UndoAction {
 
   abstract restore(): Flame
 
+  abstract caption(): string
 }
 
 export class SetAttributeAction<T> extends AbstractUndoAction {
   _oldValue: any
   _prevState: Flame
 
-  constructor(flame: Flame, src: T, private _key: keyof T, private _newValue: any, private _description: string) {
+  constructor(flame: Flame, private src: T, private _key: keyof T, private _newValue: any, private _description: string) {
     super()
     this._oldValue = this.getAttribute(src, _key)
     this._prevState = cloneDeep(flame)
@@ -52,6 +54,27 @@ export class SetAttributeAction<T> extends AbstractUndoAction {
     return cloneDeep(this._prevState)
   }
 
+  getCaptionPrefix = ()=> {
+    if(this.src instanceof Flame) {
+      return 'flame'
+    }
+    else if(this.src instanceof Layer) {
+      return 'layer'
+    }
+    else if(this.src instanceof XForm) {
+      return 'xform'
+    }
+    else if(this.src instanceof Variation) {
+      return 'variation'
+    }
+    else {
+      return 'unknown type'
+    }
+  }
+
+  caption(): string {
+    return `change [${this.getCaptionPrefix()}] attribute: ${this._oldValue} -> ${this._newValue}`
+  }
 }
 
 export class SetVariationAtrtrMapAttributeAction extends AbstractUndoAction {
@@ -68,6 +91,9 @@ export class SetVariationAtrtrMapAttributeAction extends AbstractUndoAction {
     return cloneDeep(this._prevState)
   }
 
+  caption(): string {
+    return `change variation attribute: ${this._oldValue} -> ${this._newValue}`
+  }
 }
 
 export class UndoManager {

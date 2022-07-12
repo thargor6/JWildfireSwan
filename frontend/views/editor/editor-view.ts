@@ -67,6 +67,7 @@ import './editor-edit-xform-xaos-panel'
 import './editor-edit-xform-color-panel'
 import './editor-xforms-grid-panel'
 import './editor-flame-info-dialog'
+import './editor-undo-history-dialog'
 
 import {EditorEditLayersPanel} from "Frontend/views/editor/editor-edit-layers-panel";
 import {EditorXformsGridPanel} from "Frontend/views/editor/editor-xforms-grid-panel";
@@ -80,6 +81,7 @@ import {renderInfoStore} from "Frontend/stores/render-info-store";
 import {singleRendererStore} from "Frontend/stores/single-renderer-store";
 import {cloneDeep} from "lodash";
 import {EditorFlameInfoDialog} from "Frontend/views/editor/editor-flame-info-dialog";
+import {EditorUndoHistoryDialog} from "Frontend/views/editor/editor-undo-history-dialog";
 
 @localized()
 @customElement('editor-view')
@@ -103,6 +105,9 @@ export class EditorView extends View implements BeforeEnterObserver {
   @query('editor-flame-info-dialog')
   flameInfoDialog!: EditorFlameInfoDialog
 
+  @query('editor-undo-history-dialog')
+  undoHistoryDialog!: EditorUndoHistoryDialog
+
   render() {
         return html`
           <header class="bg-base border-b border-contrast-10 box-border flex h-xl items-center w-full" slot="navbar">
@@ -124,6 +129,7 @@ export class EditorView extends View implements BeforeEnterObserver {
           <swan-notification-panel></swan-notification-panel>
           <swan-error-panel .errorMessage=${editorStore.lastError}></swan-error-panel>
           <editor-flame-info-dialog></editor-flame-info-dialog>
+          <editor-undo-history-dialog></editor-undo-history-dialog>
           <vaadin-vertical-layout style="width: 100%;">
             <vaadin-horizontal-layout>
               <swan-render-panel
@@ -452,6 +458,7 @@ export class EditorView extends View implements BeforeEnterObserver {
   }
 
   showUndoHistory = ()=> {
-    this.notificationPnl.showNotifivation(msg('Not implemented'))
+    this.undoHistoryDialog.refreshHistory()
+    this.undoHistoryDialog.dialogOpened = true
   }
 }

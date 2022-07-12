@@ -280,7 +280,8 @@
     "lodash.clonedeep": "$lodash.clonedeep",
     "@vaadin/lit-renderer": "$@vaadin/lit-renderer",
     "@polymer/paper-slider": "$@polymer/paper-slider",
-    "prismjs": "$prismjs"
+    "prismjs": "$prismjs",
+    "lit-code": "$lit-code"
   },
   "vaadin": {
     "dependencies": {
@@ -425,6 +426,6 @@
       "workbox-precaching": "6.5.0",
       "workbox-webpack-plugin": "6.5.0"
     },
-    "hash": "0a266b8b09c3a416fce9c5b9a0821a1ccba14dc5f66b0cf488c93b61cdc95fd4"
+    "hash": "f8ad30f307ba6369dd02312ab5697fc23413f2737157e514c5cd9cef5b3827c0"
   }
 }
