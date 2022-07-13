@@ -23,3 +23,7 @@ export function getTimeStamp() {
 export function floatToStr(value: number) {
     return value.toLocaleString()
 }
+
+export function floatsAreEqual(a: number, b: number): boolean {
+    return Math.abs(a - b)< 1.0e-05
+}

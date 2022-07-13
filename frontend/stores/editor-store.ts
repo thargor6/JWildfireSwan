@@ -123,7 +123,8 @@ export class EditorStore {
   }
 
   set currFlame(newFlame: Flame) {
-    this.refreshing = true
+    const oldRefreshing = this._refreshing
+    this._refreshing = true
     try {
       this._currFlame = newFlame
       this._undoManager = new UndoManager(newFlame)
@@ -131,7 +132,7 @@ export class EditorStore {
       this._currLayer = undefined
     }
     finally {
-      this.refreshing = false
+      this._refreshing = oldRefreshing
     }
   }
 
@@ -144,7 +145,8 @@ export class EditorStore {
   }
 
   set currLayer(newLayer: Layer | undefined) {
-    this.refreshing = true
+    const oldRefreshing = this._refreshing
+    this._refreshing = true
     try {
       this._currLayer = newLayer
       if (newLayer) {
@@ -152,13 +154,11 @@ export class EditorStore {
       } else {
         this._currXforms = []
       }
-
       this._currXform = undefined
     }
     finally {
-      this.refreshing = false
+      this._refreshing = oldRefreshing
     }
-
   }
 
   get currLayers(): Array<Layer> {
@@ -170,12 +170,13 @@ export class EditorStore {
   }
 
   set currXform(newXform: XForm | undefined) {
-    this.refreshing = true
+    const oldRefreshing = this._refreshing
+    this._refreshing = true
     try {
       this._currXform = newXform
     }
     finally {
-      this.refreshing = false
+      this._refreshing = oldRefreshing
     }
   }
 

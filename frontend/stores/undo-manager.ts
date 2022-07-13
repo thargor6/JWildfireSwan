@@ -38,15 +38,29 @@ export abstract class AbstractUndoAction implements UndoAction {
   abstract restore(): Flame
 
   abstract caption(): string
+
+  valueToString(value: any): string {
+    if(value instanceof FloatScalarParameter) {
+      return value.value.toString()
+    }
+    else if(value instanceof IntScalarParameter) {
+      return value.value.toString()
+    }
+    else {
+      return value.toString()
+    }
+  }
 }
 
 export class SetAttributeAction<T> extends AbstractUndoAction {
   _oldValue: any
+  _newValue: any
   _prevState: Flame
 
-  constructor(flame: Flame, private src: T, private _key: keyof T, private _newValue: any, private _description: string) {
+  constructor(flame: Flame, private src: T, private _key: keyof T, newValue: any, private _description: string) {
     super()
-    this._oldValue = this.getAttribute(src, _key)
+    this._oldValue = cloneDeep(this.getAttribute(src, _key))
+    this._newValue = cloneDeep(newValue)
     this._prevState = cloneDeep(flame)
   }
 
@@ -73,7 +87,7 @@ export class SetAttributeAction<T> extends AbstractUndoAction {
   }
 
   caption(): string {
-    return `change [${this.getCaptionPrefix()}] attribute: ${this._oldValue} -> ${this._newValue}`
+    return `change [${this.getCaptionPrefix()}] attribute [${this._key}]: ${this.valueToString(this._oldValue)} -> ${this.valueToString(this._newValue)}`
   }
 }
 
@@ -92,7 +106,7 @@ export class SetVariationAtrtrMapAttributeAction extends AbstractUndoAction {
   }
 
   caption(): string {
-    return `change variation attribute: ${this._oldValue} -> ${this._newValue}`
+    return `change variation attribute [${this._key}]: ${this.valueToString(this._oldValue)} -> ${this.valueToString(this._newValue)}`
   }
 }
 
@@ -131,7 +145,6 @@ export class UndoManager {
     const desc = msg('Change flame attribute')
     this._undoActions.push(new SetAttributeAction(flame, flame, key, newValue, desc))
     this._undoPosition = this._undoActions.length - 1
-    console.log(this._undoPosition)
   }
 
   registerLayerAttributeChange(flame: Flame, layer: Layer, key: keyof Layer, newValue: any) {

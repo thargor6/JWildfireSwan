@@ -31,7 +31,7 @@ export class EditorUndoHistoryDialogContent extends MobxLitElement {
 
   render() {
     return html`
-        <vaadin-grid style="min-width: 40em;"
+        <vaadin-grid style="min-width: 60em;"
                 .items="${undoHistoryInfoStore.items}"
                 .selectedItems="${undoHistoryInfoStore.selectedItems}"
                 @active-item-changed="${(e: GridActiveItemChangedEvent<UndoHistoryItem>) => {
@@ -39,6 +39,7 @@ export class EditorUndoHistoryDialogContent extends MobxLitElement {
                     undoHistoryInfoStore.selectedItems = item ? [item] : [];
                 }}"
         >
+            <vaadin-grid-column path="position" text-align="end" width="6em" flex-grow="0"></vaadin-grid-column>
             <vaadin-grid-column path="caption"></vaadin-grid-column>
         </vaadin-grid>
     `;

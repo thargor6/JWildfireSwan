@@ -31,6 +31,7 @@ import {editorStore} from "Frontend/stores/editor-store";
 let disposer: IReactionDisposer | undefined = undefined
 
 export class UndoHistoryItem {
+  position = 0
   caption = ''
 
   constructor() {
@@ -61,9 +62,11 @@ class EditorUndoHistoryDialogStore {
   refreshUndoHistory = ()=> {
     this.items = []
     this.selectedItems = []
+    let currPosition = 1
     editorStore.undoManager.undoActions.forEach((undoAction)=>{
       let item = new UndoHistoryItem()
       item.caption = undoAction.caption()
+      item.position = currPosition++
       this.items.push(item)
     })
   }

@@ -100,9 +100,9 @@ export class SwanNumberSlider extends MobxLitElement {
         const target: any = e.target
         if(target) {
             e.preventDefault()
-            //this.value = target.value
+            this.value = target.value
             this.numberField.value = target.value
-            this.dispatchChangeEvent(target.value, false)
+          //  this.dispatchChangeEvent(target.value, false)
         }
     }
 
@@ -118,7 +118,7 @@ export class SwanNumberSlider extends MobxLitElement {
         const target: any = e.target
         if(target) {
             e.preventDefault()
-         //   this.value = target.immediateValue
+            this.value = target.immediateValue
             this.numberField.value = target.immediateValue
             this.dispatchChangeEvent(target.immediateValue, true)
         }

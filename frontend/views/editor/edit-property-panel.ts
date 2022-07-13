@@ -22,6 +22,7 @@ import {TemplateResult} from "lit-html";
 import {editorStore} from "Frontend/stores/editor-store";
 import {HasValue} from "@hilla/form";
 import {Flame, Layer, Variation, XForm} from "Frontend/flames/model/flame";
+import {floatsAreEqual} from "Frontend/components/utils";
 
 export interface ComoboBoxItem {
   key: number
@@ -156,10 +157,9 @@ export abstract class EditPropertyPanel extends MobxLitElement {
 
   flamePropertyChange = (key: string, value: number, isImmediateValue: boolean) => {
     if(editorStore.currFlame && !editorStore.refreshing) {
-      // @ts-ignore
-      const oldVal: any = this.getProperty(editorStore.currFlame, key)
+      const oldVal: any = this.getProperty(editorStore.currFlame, <keyof Flame>key)
       if (oldVal && oldVal.type) {
-        if (oldVal.value !== value) {
+        if (!floatsAreEqual(oldVal.value, value)) {
           if(!isImmediateValue) {
             editorStore.undoManager.registerFlameAttributeChange(editorStore.currFlame, <keyof Flame>key, value)
           }
@@ -176,7 +176,7 @@ export abstract class EditPropertyPanel extends MobxLitElement {
       // @ts-ignore
       const oldVal: any = this.getProperty(editorStore.currLayer, key)
       if (oldVal && oldVal.type) {
-        if (oldVal.value !== value) {
+        if (!floatsAreEqual(oldVal.value, value)) {
           if(!isImmediateValue) {
             editorStore.undoManager.registerLayerAttributeChange(editorStore.currFlame, editorStore.currLayer, <keyof Layer>key, value)
           }
@@ -193,8 +193,10 @@ export abstract class EditPropertyPanel extends MobxLitElement {
       // @ts-ignore
       const oldVal: any = this.getProperty(editorStore.currXform, key)
       if(oldVal && oldVal.type) {
-        if(oldVal.value !== value) {
+        if (!floatsAreEqual(oldVal.value, value)) {
           const oldValueNumber = oldVal.value
+          console.log(editorStore.refreshing, "REGISTER SHIT", 'OLD: ', oldVal.value, 'NEW: ', value, 'OLD READ:', this.getProperty(editorStore.currFlame, <keyof Flame>key))
+
           if(!isImmediateValue) {
             editorStore.undoManager.registerXformAttributeChange(editorStore.currFlame, editorStore.currXform, <keyof XForm>key, value)
           }
@@ -225,7 +227,7 @@ export abstract class EditPropertyPanel extends MobxLitElement {
         isAttrFromMap = false
       }
       if(oldVal && oldVal.type) {
-        if(oldVal.value !== value) {
+        if (!floatsAreEqual(oldVal.value, value)) {
           const oldValueNumber = oldVal.value
           if(!isImmediateValue) {
             if(isAttrFromMap) {
