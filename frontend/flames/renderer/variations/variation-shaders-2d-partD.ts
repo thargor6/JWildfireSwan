@@ -294,6 +294,39 @@ class Disc3Func extends VariationShaderFunc2D {
     }
 }
 
+class DSphericalFunc extends VariationShaderFunc2D {
+    PARAM_D_SPHER_WEIGHT = 'd_spher_weight'
+
+    get params(): VariationParam[] {
+        return [{ name: this.PARAM_D_SPHER_WEIGHT, type: VariationParamType.VP_FLOAT, initialValue: 1.0}
+        ]
+    }
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        // d_spherical by Tatyana Zabanova, https://tatasz.deviantart.com/art/Utilities-Plugin-Pack-684337906
+        return `{
+          float amount = ${variation.amount.toWebGl()};
+          float d_spher_weight = ${variation.params.get(this.PARAM_D_SPHER_WEIGHT)!.toWebGl()};
+          if (rand8(tex, rngState) < (d_spher_weight)) {
+            float r = amount / (sqr(_tx) + sqr(_ty));
+            _vx += _tx * r;
+            _vy += _ty * r;
+          } else {
+            _vx += _tx * amount;
+            _vy += _ty * amount;
+          }
+        }`;
+    }
+
+    get name(): string {
+        return 'd_spherical';
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
 class DustPointFunc extends VariationShaderFunc2D {
 
     getCode(xform: RenderXForm, variation: RenderVariation): string {
@@ -1724,6 +1757,7 @@ export function registerVars_2D_PartD() {
     VariationShaders.registerVar(new DiscFunc())
     VariationShaders.registerVar(new Disc2Func())
     VariationShaders.registerVar(new Disc3Func())
+    VariationShaders.registerVar(new DSphericalFunc())
     VariationShaders.registerVar(new DustPointFunc())
     VariationShaders.registerVar(new EclipseFunc())
     VariationShaders.registerVar(new ECollideFunc())

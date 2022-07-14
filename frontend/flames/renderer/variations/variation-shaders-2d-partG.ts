@@ -613,6 +613,46 @@ class Hole2Func extends VariationShaderFunc2D {
     }
 }
 
+class HolesqFunc extends VariationShaderFunc2D {
+
+    getCode(xform: RenderXForm, variation: RenderVariation): string {
+        // holesq by DarkBeam
+        return `{
+            float amount = ${variation.amount.toWebGl()};
+            float x = amount * _tx;
+            float y = amount * _ty;
+            float fax = abs(x);
+            float fay = abs(y);
+            if (fax+fay>1.0) {
+              _vx += x;
+              _vy += y;
+            } else {
+              float t;
+              if (fax > fay) {
+                t = (x-fay+1.0)*0.5;
+                if (x<0.0) t = (x+fay-1.0)*0.5;
+                _vx += t;
+                _vy += y;
+              }
+              else {
+                t = (y-fax+1.0)*0.5;
+                if (y<0.0) t = (y+fax-1.0)*0.5;
+                _vx += x;
+                _vy += t;
+              }
+            }
+        }`;
+    }
+
+    get name(): string {
+        return 'holesq';
+    }
+
+    get variationTypes(): VariationTypes[] {
+        return [VariationTypes.VARTYPE_2D];
+    }
+}
+
 class HorseshoeFunc extends VariationShaderFunc2D {
     getCode(xform: RenderXForm, variation: RenderVariation): string {
         return `{
@@ -1330,6 +1370,7 @@ export function registerVars_2D_PartG() {
     VariationShaders.registerVar(new HenonFunc())
     VariationShaders.registerVar(new HoleFunc())
     VariationShaders.registerVar(new Hole2Func())
+    VariationShaders.registerVar(new HolesqFunc())
     VariationShaders.registerVar(new HorseshoeFunc())
     VariationShaders.registerVar(new HyperbolicFunc())
     VariationShaders.registerVar(new HypershiftFunc())
