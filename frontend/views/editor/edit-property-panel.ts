@@ -55,6 +55,12 @@ export interface NumberFieldDescriptor {
   value(): number | undefined
 }
 
+class HtmlControlReference {
+  constructor(public desc: NumberFieldDescriptor | ComboBoxDescriptor | CheckboxDescriptor, public component: HTMLElement | undefined) {
+    // EMPTY
+  }
+}
+
 export abstract class EditPropertyPanel extends MobxLitElement {
   @property({type: Boolean})
   visible = true
@@ -64,6 +70,8 @@ export abstract class EditPropertyPanel extends MobxLitElement {
 
   @property()
   onPropertyChange = (paramId: number, oldValue: number, newValue: number)=>{}
+
+  registeredControls = new Map<String, HtmlControlReference>()
 
   render() {
     return html`
@@ -195,8 +203,6 @@ export abstract class EditPropertyPanel extends MobxLitElement {
       if(oldVal && oldVal.type) {
         if (!floatsAreEqual(oldVal.value, value)) {
           const oldValueNumber = oldVal.value
-          console.log(editorStore.refreshing, "REGISTER SHIT", 'OLD: ', oldVal.value, 'NEW: ', value, 'OLD READ:', this.getProperty(editorStore.currFlame, <keyof Flame>key))
-
           if(!isImmediateValue) {
             editorStore.undoManager.registerXformAttributeChange(editorStore.currFlame, editorStore.currXform, <keyof XForm>key, value)
           }
@@ -253,10 +259,17 @@ export abstract class EditPropertyPanel extends MobxLitElement {
 
   abstract renderControls(): TemplateResult
 
+  registerControl(desc: NumberFieldDescriptor | ComboBoxDescriptor | CheckboxDescriptor) {
+    if (this.registeredControls.has(desc.key)) {
+      throw new Error(`Control ${desc.key} is already registered`)
+    }
+    this.registeredControls.set(desc.key, new HtmlControlReference(desc, undefined))
+  }
+
   renderNumberField(desc: NumberFieldDescriptor): TemplateResult {
     return html `
       <swan-number-slider labelWidth="${desc.labelWidth ? desc.labelWidth : '10em'}" .disabled="${undefined===desc.value()}" min="${desc.min}" max="${desc.max}" step="${desc.step}" 
-        label="${desc.label}" .value=${desc.value()}
+        label="${desc.label}" .value2=${desc.value()} id="${desc.key}"
         .onValueChange="${desc.onChange}">
       </swan-number-slider>
     `
@@ -264,7 +277,7 @@ export abstract class EditPropertyPanel extends MobxLitElement {
 
   renderCheckbox(desc: CheckboxDescriptor): TemplateResult {
     return html `
-        <vaadin-checkbox ?checked=${desc.value} label="${desc.label}"
+        <vaadin-checkbox ?checked=${desc.value} label="${desc.label}" id="${desc.key}"
           @change=${(e: Event)=>desc.onChange((e.target as any).checked ? 1: 0, false)}>
         </vaadin-checkbox>
     `
@@ -272,13 +285,38 @@ export abstract class EditPropertyPanel extends MobxLitElement {
 
   renderComboBox(desc: ComboBoxDescriptor): TemplateResult {
     return html `
-        <vaadin-combo-box style="width:23em;" .items="${desc.items}" item-value-path="key" item-label-path="caption"
-                          .value=${desc.value}
+        <vaadin-combo-box style="width:23em;" .items="${desc.items}" item-value-path="key" item-label-path="caption" id="${desc.key}"
+                          .value2=${desc.value}
                           @change=${(e: Event)=>{
                               const key = (e.target as HasValue<number>).value
                               desc.onChange(key as any, false)
                           }} label=${desc.label}></vaadin-combo-box>
     `
+  }
+
+  updateControlReferences(useShadowDom: boolean) {
+    for(const key of this.registeredControls.keys()) {
+      let ref = this.registeredControls.get(key)
+      if(ref && ref.component==undefined) {
+        const ctrl = useShadowDom ? this.shadowRoot!.querySelector('#'+key) : this.querySelector('#'+key)
+        if(!ctrl) {
+          console.log(`WARN: control ${key} not found`)
+        }
+        else {
+         ref.component = ctrl as HTMLElement
+        }
+      }
+    }
+  }
+
+  refreshControls() {
+    for(const key of this.registeredControls.keys()) {
+      let ref = this.registeredControls.get(key)!
+      if(!ref.component) {
+        throw new Error('Please call updateControlReferences() first')
+      }
+      (ref.component as any).value = ref.desc.value()
+    }
   }
 
   /*
@@ -298,5 +336,10 @@ export abstract class EditPropertyPanel extends MobxLitElement {
     }
 }
    */
+
+  requestContentUpdate() {
+    this.refreshControls()
+    this.requestUpdate()
+  }
 }
 

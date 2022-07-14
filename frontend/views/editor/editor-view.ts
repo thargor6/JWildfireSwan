@@ -82,6 +82,7 @@ import {singleRendererStore} from "Frontend/stores/single-renderer-store";
 import {cloneDeep} from "lodash";
 import {EditorFlameInfoDialog} from "Frontend/views/editor/editor-flame-info-dialog";
 import {EditorUndoHistoryDialog} from "Frontend/views/editor/editor-undo-history-dialog";
+import {EditorEditXformAffinePanel} from "Frontend/views/editor/editor-edit-xform-affine-panel";
 
 @localized()
 @customElement('editor-view')
@@ -107,6 +108,9 @@ export class EditorView extends View implements BeforeEnterObserver {
 
   @query('editor-undo-history-dialog')
   undoHistoryDialog!: EditorUndoHistoryDialog
+
+  @query('editor-edit-xform-affine-panel')
+  xformAffinePanel!: EditorEditXformAffinePanel
 
   render() {
         return html`
@@ -137,13 +141,18 @@ export class EditorView extends View implements BeforeEnterObserver {
                       .canvasDisplayWidth="${'30em'}" .canvasDisplayHeight="${'30em'}"
                       .onCreateFlameRenderer=${this.createFlameRenderer}
                       .sharedRenderCtx=${editorStore.sharedRenderCtx}></swan-render-panel>
-              <editor-xforms-grid-panel .afterPropertyChange=${this.reRender}></editor-xforms-grid-panel>
+              <editor-xforms-grid-panel .afterPropertyChange=${this.reRender} .afterSelectionChange="${this.afterXformChange}"></editor-xforms-grid-panel>
               ${this.renderTransformTabs()}
             </vaadin-horizontal-layout>
             ${this.renderFlameTabs()}
           </vaadin-vertical-layout>
         `;
     }
+
+  afterXformChange = () => {
+    console.log("XFORMCHANTED")
+    this.xformAffinePanel.requestContentUpdate()
+  }
 
     createFlameRenderer = ()=> {
         return new FlameRenderer(editorStore.sharedRenderCtx,512, 256,

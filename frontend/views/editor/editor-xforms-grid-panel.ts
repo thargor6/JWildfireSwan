@@ -46,6 +46,9 @@ export class EditorXformsGridPanel extends MobxLitElement {
   @property()
   afterPropertyChange = ()=>{}
 
+  @property()
+  afterSelectionChange = ()=>{}
+
   render() {
     return html`
         <vaadin-vertical-layout style="margin-left: 1em;">
@@ -70,6 +73,7 @@ export class EditorXformsGridPanel extends MobxLitElement {
                 const item = e.detail.value;
                 this.selectedItems = item ? [item] : [];
                 editorStore.currXform = item ? item : undefined
+                this.afterSelectionChange()
             }}">
             <vaadin-grid-column header="${msg('Transformation')}" .renderer="${this.txColRenderer}"></vaadin-grid-column>
           </vaadin-grid>

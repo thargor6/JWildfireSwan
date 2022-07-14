@@ -15,7 +15,7 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 */
 
-import {html} from 'lit';
+import {html, PropertyValues} from 'lit';
 import {customElement, state} from 'lit/decorators.js';
 import '@vaadin/vaadin-tabs'
 import '@vaadin/vaadin-ordered-layout/vaadin-horizontal-layout'
@@ -47,7 +47,6 @@ export class EditorEditXformAffinePanel extends EditPropertyPanel {
   
   @state()
   selectedEditPlane = this.EDITPLANE_XY
-
 
   private xyC00: NumberFieldDescriptor = {
     key: 'xyC00', label: msg('C00'), min: this.AFFINE_MIN_VALUE, max: this.AFFINE_MAX_VALUE, step: this.AFFINE_VALUE_STEP,
@@ -468,9 +467,65 @@ export class EditorEditXformAffinePanel extends EditPropertyPanel {
     `;
   }
 
+  protected firstUpdated(_changedProperties: PropertyValues) {
+    super.firstUpdated(_changedProperties)
+    this.registerControl(this.xyC00)
+    this.registerControl(this.xyC01)
+    this.registerControl(this.xyC10)
+    this.registerControl(this.xyC11)
+    this.registerControl(this.xyC20)
+    this.registerControl(this.xyC21)
+    this.registerControl(this.xyCRotate)
+    this.registerControl(this.xyCScale)
+    this.registerControl(this.xyP00)
+    this.registerControl(this.xyP01)
+    this.registerControl(this.xyP10)
+    this.registerControl(this.xyP11)
+    this.registerControl(this.xyP20)
+    this.registerControl(this.xyP21)
+    this.registerControl(this.xyPRotate)
+    this.registerControl(this.xyPScale)
+
+    this.registerControl(this.yzC00)
+    this.registerControl(this.yzC01)
+    this.registerControl(this.yzC10)
+    this.registerControl(this.yzC11)
+    this.registerControl(this.yzC20)
+    this.registerControl(this.yzC21)
+    this.registerControl(this.yzCRotate)
+    this.registerControl(this.yzCScale)
+    this.registerControl(this.yzP00)
+    this.registerControl(this.yzP01)
+    this.registerControl(this.yzP10)
+    this.registerControl(this.yzP11)
+    this.registerControl(this.yzP20)
+    this.registerControl(this.yzP21)
+    this.registerControl(this.yzPRotate)
+    this.registerControl(this.yzPScale)
+
+    this.registerControl(this.zxC00)
+    this.registerControl(this.zxC01)
+    this.registerControl(this.zxC10)
+    this.registerControl(this.zxC11)
+    this.registerControl(this.zxC20)
+    this.registerControl(this.zxC21)
+    this.registerControl(this.zxCRotate)
+    this.registerControl(this.zxCScale)
+    this.registerControl(this.zxP00)
+    this.registerControl(this.zxP01)
+    this.registerControl(this.zxP10)
+    this.registerControl(this.zxP11)
+    this.registerControl(this.zxP20)
+    this.registerControl(this.zxP21)
+    this.registerControl(this.zxPRotate)
+    this.registerControl(this.zxPScale)
+    this.updateControlReferences(true)
+  }
+
   editPlaneTabChanged(e: CustomEvent) {
     this.selectedEditPlane = e.detail.value;
   }
+
 
 }
 
