@@ -310,12 +310,19 @@ export abstract class EditPropertyPanel extends MobxLitElement {
   }
 
   refreshControls() {
-    for(const key of this.registeredControls.keys()) {
-      let ref = this.registeredControls.get(key)!
-      if(!ref.component) {
-        throw new Error('Please call updateControlReferences() first')
+    const oldRefresh = editorStore.refreshing
+    editorStore.refreshing = true
+    try {
+      for (const key of this.registeredControls.keys()) {
+        let ref = this.registeredControls.get(key)!
+        if (!ref.component) {
+          throw new Error('Please call updateControlReferences() first')
+        }
+        (ref.component as any).value = ref.desc.value()
       }
-      (ref.component as any).value = ref.desc.value()
+    }
+    finally {
+      editorStore.refreshing = oldRefresh
     }
   }
 

@@ -25,7 +25,7 @@ import {EditPropertyPanel, NumberFieldDescriptor} from "Frontend/views/editor/ed
 export class EditorEditXformXaosPanel extends EditPropertyPanel {
   renderControls() {
     return html`
-         Xaos
+         Xaos...
     `;
   }
 

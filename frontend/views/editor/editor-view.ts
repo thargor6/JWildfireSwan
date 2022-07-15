@@ -83,6 +83,11 @@ import {cloneDeep} from "lodash";
 import {EditorFlameInfoDialog} from "Frontend/views/editor/editor-flame-info-dialog";
 import {EditorUndoHistoryDialog} from "Frontend/views/editor/editor-undo-history-dialog";
 import {EditorEditXformAffinePanel} from "Frontend/views/editor/editor-edit-xform-affine-panel";
+import {EditorEditXformColorPanel} from "Frontend/views/editor/editor-edit-xform-color-panel";
+import {EditorEditCameraPanel} from "Frontend/views/editor/editor-edit-camera-panel";
+import {EditorEditColoringPanel} from "Frontend/views/editor/editor-edit-coloring-panel";
+import {EditorEditDenoiserPanel} from "Frontend/views/editor/editor-edit-denoiser-panel";
+import {EditorEditMotionPanel} from "Frontend/views/editor/editor-edit-motion-panel";
 
 @localized()
 @customElement('editor-view')
@@ -97,9 +102,6 @@ export class EditorView extends View implements BeforeEnterObserver {
   @query('swan-notification-panel')
   notificationPnl!: SwanNotificationPanel
 
-  @query('editor-edit-layers-panel')
-  flameLayersPanel!: EditorEditLayersPanel
-
   @query('editor-xforms-grid-panel')
   transformsGridPanel!: EditorXformsGridPanel
 
@@ -109,8 +111,26 @@ export class EditorView extends View implements BeforeEnterObserver {
   @query('editor-undo-history-dialog')
   undoHistoryDialog!: EditorUndoHistoryDialog
 
+  @query('editor-edit-camera-panel')
+  cameraPanel!: EditorEditCameraPanel
+
+  @query('editor-edit-coloring-panel')
+  coloringPanel!: EditorEditColoringPanel
+
+  @query('editor-edit-denoiser-panel')
+  denoiserPanel!: EditorEditDenoiserPanel
+
+  @query('editor-edit-motion-panel')
+  motionPanel!: EditorEditMotionPanel
+
+  @query('editor-edit-layers-panel')
+  layersPanel!: EditorEditLayersPanel
+
   @query('editor-edit-xform-affine-panel')
   xformAffinePanel!: EditorEditXformAffinePanel
+
+  @query('editor-edit-xform-color-panel')
+  xformColorPanel!: EditorEditXformColorPanel
 
   render() {
         return html`
@@ -149,9 +169,24 @@ export class EditorView extends View implements BeforeEnterObserver {
         `;
     }
 
+  afterFlameChange =() => {
+    this.cameraPanel.requestContentUpdate()
+    this.coloringPanel.requestContentUpdate()
+    this.denoiserPanel.requestContentUpdate()
+    this.motionPanel.requestContentUpdate()
+    this.layersPanel.refreshLayers()
+  }
+
+  afterLayerChange =() => {
+    this.layersPanel.requestContentUpdate()
+    this.transformsGridPanel.refreshXforms()
+    this.transformsGridPanel.selectFirstXform()
+
+  }
+
   afterXformChange = () => {
-    console.log("XFORMCHANTED")
     this.xformAffinePanel.requestContentUpdate()
+    this.xformColorPanel.requestContentUpdate()
   }
 
     createFlameRenderer = ()=> {
@@ -273,7 +308,7 @@ export class EditorView extends View implements BeforeEnterObserver {
                     <editor-edit-motion-panel .visible=${this.selectedFlameTab === 3}
                       .afterPropertyChange=${this.reRender}></editor-edit-motion-panel>
                     <editor-edit-layers-panel .visible=${this.selectedFlameTab === 4}
-                      .afterPropertyChange=${this.reRender}></editor-edit-layers-panel>
+                      .afterPropertyChange=${this.reRender} .onAfterLayerChanged="${this.afterLayerChange}" ></editor-edit-layers-panel>
                  </div>
            </div>`
     }
@@ -414,11 +449,8 @@ export class EditorView extends View implements BeforeEnterObserver {
 
   private set currFlame(newFlame) {
     editorStore.currFlame = newFlame
-    setTimeout(()=>{
-      this.flameLayersPanel.selectFirstLayer()
-      // seems to modify the flame (!?)
-     // setTimeout(()=>this.transformsGridPanel.selectFirstXform(), 250)
-    }, 250)
+    this.afterFlameChange()
+    this.layersPanel.selectFirstLayer()
   }
 
   protected firstUpdated(_changedProperties: PropertyValues) {
@@ -429,6 +461,9 @@ export class EditorView extends View implements BeforeEnterObserver {
 
   renderFirstFlame = ()=> {
     this.getRenderPanel().rerenderFlame()
+    if(editorStore.currFlame.layers.length>0 && this.layersPanel) {
+      this.layersPanel.selectFirstLayer()
+    }
   }
 
   setEditflame = (newFlame: Flame) => {
@@ -447,7 +482,6 @@ export class EditorView extends View implements BeforeEnterObserver {
       this.setEditflame(newFlame)
     }
   }
-
 
   redoEdit = () => {
     let newFlame = editorStore.undoManager.redo()

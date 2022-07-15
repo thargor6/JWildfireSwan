@@ -65,6 +65,7 @@ export class SwanNumberSlider extends MobxLitElement {
     private numberField!: NumberField
 
     render() {
+        this.updateMinMax()
         return html  `
             <vaadin-custom-field
               theme="small"
@@ -102,7 +103,7 @@ export class SwanNumberSlider extends MobxLitElement {
             e.preventDefault()
             this.value = target.value
             this.numberField.value = target.value
-          //  this.dispatchChangeEvent(target.value, false)
+            // this.dispatchChangeEvent(target.value, false)
         }
     }
 
@@ -126,10 +127,10 @@ export class SwanNumberSlider extends MobxLitElement {
 
     updateMinMax() {
         if(this.value<this.min) {
-            this.min = this.value - 1
+            this.min = this.value - (this.max - this.value) / 10
         }
         if(this.value>this.max) {
-            this.max = this.value + 1
+            this.max = this.value + (this.value - this.min) / 10
         }
     }
 

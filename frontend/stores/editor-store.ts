@@ -37,9 +37,7 @@ export class EditorStore {
   variations: string[] = []
   _lastError = ''
   _currFlame = new Flame()
-  _currLayers: Layer[] = []
   _currLayer: Layer | undefined = undefined
-  _currXforms: XForm[] = []
   _currXform: XForm | undefined = undefined
 
   private _undoManager = new UndoManager(this._currFlame)
@@ -128,7 +126,6 @@ export class EditorStore {
     try {
       this._currFlame = newFlame
       this._undoManager = new UndoManager(newFlame)
-      this.refreshLayers()
       this._currLayer = undefined
     }
     finally {
@@ -149,20 +146,11 @@ export class EditorStore {
     this._refreshing = true
     try {
       this._currLayer = newLayer
-      if (newLayer) {
-        this._currXforms = [...newLayer.xforms, ...newLayer.finalXforms]
-      } else {
-        this._currXforms = []
-      }
       this._currXform = undefined
     }
     finally {
       this._refreshing = oldRefreshing
     }
-  }
-
-  get currLayers(): Array<Layer> {
-    return this._currLayers
   }
 
   get currXform() {
@@ -178,14 +166,6 @@ export class EditorStore {
     finally {
       this._refreshing = oldRefreshing
     }
-  }
-
-  get currXforms(): Array<XForm> {
-    return this._currXforms
-  }
-
-  refreshLayers() {
-    this._currLayers = [...this._currFlame.layers]
   }
 
   get lastError() {

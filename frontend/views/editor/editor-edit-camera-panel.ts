@@ -15,7 +15,7 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 */
 
-import {html} from 'lit';
+import {html, PropertyValues} from 'lit';
 import {customElement} from 'lit/decorators.js';
 import {localized, msg} from "@lit/localize";
 import {EditPropertyPanel, NumberFieldDescriptor} from "Frontend/views/editor/edit-property-panel";
@@ -83,6 +83,19 @@ export class EditorEditCameraPanel extends EditPropertyPanel {
           ${this.renderNumberField(this.centreY)}
           ${this.renderNumberField(this.camZoom)}
     `;
+  }
+
+  protected firstUpdated(_changedProperties: PropertyValues) {
+    super.firstUpdated(_changedProperties);
+    this.registerControl(this.camRoll)
+    this.registerControl(this.camPitch)
+    this.registerControl(this.camYaw)
+    this.registerControl(this.camBank)
+    this.registerControl(this.camPerspective)
+    this.registerControl(this.centreX)
+    this.registerControl(this.centreY)
+    this.registerControl(this.camZoom)
+    this.updateControlReferences(true)
   }
 
 

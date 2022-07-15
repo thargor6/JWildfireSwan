@@ -15,8 +15,8 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 */
 
-import {html, render} from 'lit';
-import {customElement, query, state} from 'lit/decorators.js';
+import {html, PropertyValues, render} from 'lit';
+import {customElement, property, query, state} from 'lit/decorators.js';
 import '@vaadin/vaadin-ordered-layout/vaadin-vertical-layout'
 import '@vaadin/vaadin-ordered-layout/vaadin-horizontal-layout'
 import '@vaadin/vaadin-grid'
@@ -33,10 +33,16 @@ import {floatToStr} from "Frontend/components/utils";
 export class EditorEditLayersPanel extends EditPropertyPanel {
 
   @state()
+  private items: Layer[] = [];
+
+  @state()
   private selectedItems: Layer[] = [];
 
   @query('vaadin-grid')
   grid!: Grid
+
+  @property()
+  onAfterLayerChanged = ()=> {}
 
   onAttributeChange = (key: string, value: number, isImmediateValue: boolean) => {
     this.layerPropertyChange(key, value, isImmediateValue)
@@ -46,7 +52,7 @@ export class EditorEditLayersPanel extends EditPropertyPanel {
   private weight: NumberFieldDescriptor = {
     key: 'weight', label: msg('Weight'), min: 0, max: 2, step: 0.1,
     onChange: this.onAttributeChange.bind(this,'weight'),
-    value: this.getLayerValue.bind(this,'density')
+    value: this.getLayerValue.bind(this,'weight')
   }
 
   private density: NumberFieldDescriptor = {
@@ -60,11 +66,12 @@ export class EditorEditLayersPanel extends EditPropertyPanel {
       <vaadin-horizontal-layout theme="spacing">
         <vaadin-vertical-layout>
           <h2>${msg('Layers')}</h2>
-          <vaadin-grid theme="no-border" style="width: 30em; height: 12em;" .items="${editorStore.currLayers}"
+          <vaadin-grid theme="no-border" style="width: 30em; height: 12em;" .items="${this.items}"
             .selectedItems="${this.selectedItems}" @active-item-changed="${(e: GridActiveItemChangedEvent<Layer>) => {
               const item = e.detail.value;
               this.selectedItems = item ? [item] : [];
               editorStore.currLayer = item ? item : undefined
+              this.onAfterLayerChanged()
              }}">
             <vaadin-grid-column frozen header="${msg('Layer')}" .renderer="${this.layerColRenderer}"></vaadin-grid-column>
             <vaadin-grid-column frozen header="${msg('Density')}" text-align="end" .renderer="${this.densityColRenderer}"></vaadin-grid-column>
@@ -85,7 +92,7 @@ export class EditorEditLayersPanel extends EditPropertyPanel {
   }
 
   private layerColRenderer = (root: HTMLElement, _: HTMLElement, model: GridItemModel<Layer>) => {
-    render(html`${msg('Layer')} ${editorStore.currLayers.indexOf(model.item) + 1}`, root)
+    render(html`${msg('Layer')} ${editorStore.currFlame.layers.indexOf(model.item) + 1}`, root)
   }
 
   private densityColRenderer = (root: HTMLElement, _: HTMLElement, model: GridItemModel<Layer>) => {
@@ -98,30 +105,40 @@ export class EditorEditLayersPanel extends EditPropertyPanel {
 
   addLayer = () => {
     editorStore.currFlame.addLayer()
-    editorStore.refreshLayers()
+    this.refreshLayers()
   }
 
   duplicateLayer = () => {
     if(this.selectedItems.length>0) {
       editorStore.currFlame.duplicateLayer(this.selectedItems[0])
-      editorStore.refreshLayers()
+      this.refreshLayers()
     }
-
   }
 
   deleteLayer = () => {
     if(this.selectedItems.length>0) {
       editorStore.currFlame.deleteLayer(this.selectedItems[0])
       this.selectedItems=[]
-      editorStore.refreshLayers()
+      this.refreshLayers()
     }
   }
 
   selectFirstLayer = ()=> {
-    if(editorStore.currLayers.length>0) {
-      const event = new CustomEvent('active-item-changed', { detail: { value: editorStore.currLayers[0]} });
+    if(this.items.length>0) {
+      const event = new CustomEvent('active-item-changed', { detail: { value: this.items[0]} });
       this.grid.dispatchEvent(event)
     }
+  }
+
+  refreshLayers() {
+    this.items = [...editorStore.currFlame.layers]
+  }
+
+  protected firstUpdated(_changedProperties: PropertyValues) {
+    super.firstUpdated(_changedProperties);
+    this.registerControl(this.weight)
+    this.registerControl(this.density)
+    this.updateControlReferences(true)
   }
 }
 

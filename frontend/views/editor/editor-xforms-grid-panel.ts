@@ -38,6 +38,9 @@ export class EditorXformsGridPanel extends MobxLitElement {
   private flameEditService = new FlameEditService()
 
   @state()
+  private items: XForm[] = [];
+
+  @state()
   private selectedItems: XForm[] = [];
 
   @query('vaadin-grid')
@@ -68,7 +71,7 @@ export class EditorXformsGridPanel extends MobxLitElement {
                    .onEditTransformName=${this.onEditTransformName}
                ></editor-xform-toolbar-panel>
             
-          <vaadin-grid style="width: 9em; height: 19em;" theme="compact" .items="${editorStore.currXforms}"
+          <vaadin-grid style="width: 9em; height: 19em;" theme="compact" .items="${this.items}"
               .selectedItems="${this.selectedItems}" @active-item-changed="${(e: GridActiveItemChangedEvent<XForm>) => {
                 const item = e.detail.value;
                 this.selectedItems = item ? [item] : [];
@@ -111,8 +114,8 @@ export class EditorXformsGridPanel extends MobxLitElement {
   }
 
   selectFirstXform = ()=> {
-    if(editorStore.currXforms.length>0) {
-      const event = new CustomEvent('active-item-changed', { detail: { value: editorStore.currXforms[0]} });
+    if(this.items.length>0) {
+      const event = new CustomEvent('active-item-changed', { detail: { value: this.items[0]} });
       this.grid.dispatchEvent(event)
     }
   }
@@ -173,5 +176,14 @@ export class EditorXformsGridPanel extends MobxLitElement {
   private reRender() {
     this.afterPropertyChange()
   }
+
+  refreshXforms = ()=> {
+    if (editorStore.currLayer) {
+      this.items = [...editorStore.currLayer.xforms, ...editorStore.currLayer.finalXforms]
+    } else {
+      this.items = []
+    }
+  }
+
 }
 

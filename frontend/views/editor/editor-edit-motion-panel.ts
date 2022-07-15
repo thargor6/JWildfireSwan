@@ -15,7 +15,7 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 */
 
-import {html} from 'lit';
+import {html, PropertyValues} from 'lit';
 import {customElement} from 'lit/decorators.js';
 
 import {localized, msg} from "@lit/localize";
@@ -72,6 +72,16 @@ export class EditorEditMotionPanel extends EditPropertyPanel {
     `;
   }
 
+  protected firstUpdated(_changedProperties: PropertyValues) {
+    super.firstUpdated(_changedProperties)
+    this.registerControl(this.frame)
+    this.registerControl(this.frameCount)
+    this.registerControl(this.fps)
+    this.registerControl(this.motionBlurLength)
+    this.registerControl(this.motionBlurTimeStep)
+    this.registerControl(this.motionBlurDecay)
+    this.updateControlReferences(true)
+  }
 
 }
 

@@ -28,7 +28,17 @@ import {Variation} from "Frontend/flames/model/flame";
 @localized()
 @customElement('editor-edit-xform-nonlinear-panel')
 export class EditorEditXformNonlinearPanel extends EditPropertyPanel {
+
   renderControls() {
+    return html`
+         <vaadin-vertical-layout>
+             <vaadin-button ?disabled="${undefined===editorStore.currXform}" @click="${this.addVariation}">${msg('Add variation')}</vaadin-button>
+
+         </vaadin-vertical-layout>
+    `;
+  }
+
+  renderControls2() {
     return html`
          <vaadin-vertical-layout>
              <vaadin-button ?disabled="${undefined===editorStore.currXform}" @click="${this.addVariation}">${msg('Add variation')}</vaadin-button>

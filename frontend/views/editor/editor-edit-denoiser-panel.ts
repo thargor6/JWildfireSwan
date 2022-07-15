@@ -15,7 +15,7 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 */
 
-import {html} from 'lit';
+import {html, PropertyValues} from 'lit';
 import {customElement} from 'lit/decorators.js';
 import {localized, msg} from "@lit/localize";
 import {ComboBoxDescriptor, EditPropertyPanel, NumberFieldDescriptor} from "Frontend/views/editor/edit-property-panel";
@@ -87,6 +87,17 @@ export class EditorEditDenoiserPanel extends EditPropertyPanel {
     `;
   }
 
+  protected firstUpdated(_changedProperties: PropertyValues) {
+    super.firstUpdated(_changedProperties)
+    this.registerControl(this.dnType)
+    this.registerControl(this.dnSplitter)
+    this.registerControl(this.dnSigma)
+    this.registerControl(this.dnKSigma)
+    this.registerControl(this.dnThreshold)
+    this.registerControl(this.dnMix)
+    this.registerControl(this.dnGamma)
+    this.updateControlReferences(true)
+  }
 
 }
 

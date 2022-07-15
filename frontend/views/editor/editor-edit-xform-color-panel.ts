@@ -15,7 +15,7 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 */
 
-import {html} from 'lit';
+import {html, PropertyValues} from 'lit';
 import '@vaadin/vaadin-button'
 import '@vaadin/vaadin-ordered-layout/vaadin-horizontal-layout'
 import '@vaadin/vaadin-ordered-layout/vaadin-vertical-layout'
@@ -63,12 +63,19 @@ export class EditorEditXformColorPanel extends EditPropertyPanel {
     `;
   }
 
+  protected firstUpdated(_changedProperties: PropertyValues) {
+    super.firstUpdated(_changedProperties);
+    this.registerControl(this.weight)
+    this.registerControl(this.color)
+    this.registerControl(this.colorSymmetry)
+    this.updateControlReferences(true)
+  }
+
   randomizeColors = ()=> {
     if(editorStore.currLayer) {
       this.flameEditService.randomizeColors(editorStore.currLayer)
       this.afterPropertyChange()
-      this.refreshForm()
-      this.requestUpdate()
+      this.requestContentUpdate()
     }
   }
 
@@ -76,8 +83,7 @@ export class EditorEditXformColorPanel extends EditPropertyPanel {
     if(editorStore.currLayer) {
       this.flameEditService.randomizeColorSymmetry(editorStore.currLayer)
       this.afterPropertyChange()
-      this.refreshForm()
-      this.requestUpdate()
+      this.requestContentUpdate()
     }
   }
 
@@ -85,8 +91,7 @@ export class EditorEditXformColorPanel extends EditPropertyPanel {
     if(editorStore.currLayer) {
       this.flameEditService.resetColors(editorStore.currLayer)
       this.afterPropertyChange()
-      this.refreshForm()
-      this.requestUpdate()
+      this.requestContentUpdate()
     }
   }
 
@@ -94,17 +99,9 @@ export class EditorEditXformColorPanel extends EditPropertyPanel {
     if(editorStore.currLayer) {
       this.flameEditService.distributeColors(editorStore.currLayer)
       this.afterPropertyChange()
-      this.refreshForm()
-      this.requestUpdate()
+      this.requestContentUpdate()
     }
   }
 
-  private refreshForm = () => {
-    if(editorStore.currXform) {
-      editorStore.currXform.weight = Parameters.floatParam(editorStore.currXform.weight.value)
-      editorStore.currXform.color = Parameters.floatParam(editorStore.currXform.color.value)
-      editorStore.currXform.colorSymmetry = Parameters.floatParam(editorStore.currXform.colorSymmetry.value)
-    }
-  }
 }
 

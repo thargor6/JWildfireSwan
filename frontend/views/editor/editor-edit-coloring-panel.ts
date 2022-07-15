@@ -15,7 +15,7 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 */
 
-import {html} from 'lit';
+import {html, PropertyValues} from 'lit';
 import {customElement} from 'lit/decorators.js';
 
 import {localized, msg} from "@lit/localize";
@@ -113,6 +113,23 @@ export class EditorEditColoringPanel extends EditPropertyPanel {
           ${this.renderNumberField(this.foregroundOpacity)}
           ${this.renderCheckbox(this.bgTransparency)}
     `;
+  }
+
+  protected firstUpdated(_changedProperties: PropertyValues) {
+    super.firstUpdated(_changedProperties)
+    this.registerControl(this.brightness)
+    this.registerControl(this.lowDensityBrightness)
+    this.registerControl(this.gamma)
+    this.registerControl(this.gammaThreshold)
+    this.registerControl(this.contrast)
+    this.registerControl(this.balanceRed)
+    this.registerControl(this.balanceGreen)
+    this.registerControl(this.balanceBlue)
+    this.registerControl(this.whiteLevel)
+    this.registerControl(this.vibrancy)
+    this.registerControl(this.foregroundOpacity)
+    this.registerControl(this.bgTransparency)
+    this.updateControlReferences(true)
   }
 
 
