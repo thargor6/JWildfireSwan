@@ -85,7 +85,7 @@ export class SwanVariationEditPanel extends EditPropertyPanel {
   }
 
   variationChanged = (e: CustomEvent) => {
-    if(editorStore.currXform && e && e.detail && e.detail.value) {
+    if(editorStore.currXform && e && e.detail && e.detail.value && e.detail.value!==this.variation.name) {
       const idx = editorStore.currXform.variations.indexOf(this.variation)
       if(idx>=0) {
         let newVariation = new Variation()

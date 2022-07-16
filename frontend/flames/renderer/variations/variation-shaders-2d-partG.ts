@@ -1204,11 +1204,11 @@ class JuliaNFunc extends VariationShaderFunc2D {
     }
 
     get name(): string {
-        return 'julian';
+        return 'julian'
     }
 
     get variationTypes(): VariationTypes[] {
-        return [VariationTypes.VARTYPE_2D];
+        return [VariationTypes.VARTYPE_2D]
     }
 }
 

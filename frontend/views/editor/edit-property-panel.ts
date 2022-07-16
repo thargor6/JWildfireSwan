@@ -267,16 +267,17 @@ export abstract class EditPropertyPanel extends MobxLitElement {
   }
 
   registerControl(desc: NumberFieldDescriptor | ComboBoxDescriptor | CheckboxDescriptor) {
-    if (this.registeredControls.has(desc.key)) {
-      throw new Error(`Control ${desc.key} is already registered`)
+    const key = desc.id ? desc.id : desc.key
+    if (this.registeredControls.has(key)) {
+      throw new Error(`Control ${key} is already registered`)
     }
-    this.registeredControls.set(desc.key, new HtmlControlReference(desc, undefined))
+    this.registeredControls.set(key, new HtmlControlReference(desc, undefined))
   }
 
   renderNumberField(desc: NumberFieldDescriptor): TemplateResult {
     return html `
       <swan-number-slider labelWidth="${desc.labelWidth ? desc.labelWidth : '10em'}" .disabled="${undefined===desc.value()}" min="${desc.min}" max="${desc.max}" step="${desc.step}" 
-        label="${desc.label}" .value2=${desc.value()} id="${desc.key}"
+        label="${desc.label}" .value2=${desc.value()} id="${desc.id ? desc.id : desc.key}"
         .onValueChange="${desc.onChange}">
       </swan-number-slider>
     `
@@ -284,7 +285,7 @@ export abstract class EditPropertyPanel extends MobxLitElement {
 
   renderCheckbox(desc: CheckboxDescriptor): TemplateResult {
     return html `
-        <vaadin-checkbox ?checked=${desc.value} label="${desc.label}" id="${desc.key}"
+        <vaadin-checkbox ?checked=${desc.value} label="${desc.label}" id="${desc.id ? desc.id : desc.key}"
           @change=${(e: Event)=>desc.onChange((e.target as any).checked ? 1: 0, false)}>
         </vaadin-checkbox>
     `
@@ -292,7 +293,7 @@ export abstract class EditPropertyPanel extends MobxLitElement {
 
   renderComboBox(desc: ComboBoxDescriptor): TemplateResult {
     return html `
-        <vaadin-combo-box style="width:23em;" .items="${desc.items}" item-value-path="key" item-label-path="caption" id="${desc.key}"
+        <vaadin-combo-box style="width:23em;" .items="${desc.items}" item-value-path="key" item-label-path="caption" id="${desc.id ? desc.id : desc.key}"
                           .value2=${desc.value}
                           @change=${(e: Event)=>{
                               const key = (e.target as HasValue<number>).value

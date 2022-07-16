@@ -65,7 +65,7 @@ export class EditorEditXformNonlinearPanel extends EditPropertyPanel {
   }
 
   protected updated(_changedProperties: PropertyValues) {
-    super.updated(_changedProperties);
+    super.updated(_changedProperties)
     for(let panel of this.panels) {
       panel.refreshProperties()
     }
