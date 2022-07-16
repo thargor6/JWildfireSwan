@@ -15,8 +15,8 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 */
 
-import {html} from 'lit';
-import {customElement, property} from 'lit/decorators.js';
+import {html, PropertyValues} from 'lit';
+import {customElement, property, state} from 'lit/decorators.js';
 
 import '@vaadin/vaadin-button'
 import '@vaadin/vaadin-combo-box'
@@ -36,31 +36,41 @@ export class SwanVariationEditPanel extends EditPropertyPanel {
   @property()
   variation: Variation = new Variation()
 
-  renderControls() {
-    const amount: NumberFieldDescriptor = {
-      key: 'amount', label: msg('Amount'), min: -5, max: 5, step: 0.01,
-      onChange: this.variationPropertyChange.bind(this, this.variation, 'amount'),
-      value: this.getVariationValue.bind(this, this.variation, 'amount')
-    }
-    const paramsDesc: NumberFieldDescriptor[] = []
-    this.variation.params.forEach(( value, key, map)=> {
-      paramsDesc.push({
-        key: key, label: msg(key), min: -5, max: 5, step: 0.01,
-        onChange: this.variationPropertyChange.bind(this, this.variation, key),
-        value: this.getVariationValue.bind(this, this.variation, key)
-      })
-    })
+  @state()
+  paramsDesc: NumberFieldDescriptor[] = []
 
+  @property()
+  onAfterVariationChange = ()=> {}
+
+  renderControls() {
     return html `
       <vaadin-vertical-layout>
         <vaadin-horizontal-layout>  
           <vaadin-combo-box style="min-width: 20em;" @value-changed="${this.variationChanged}" value="${this.variation.name}" .items=${editorStore.variations}></vaadin-combo-box>
           <vaadin-button @click="${this.deleteVariation}">${msg('Delete')}</vaadin-button>  
         </vaadin-horizontal-layout>
-        ${this.renderNumberField(amount)}
-        ${paramsDesc.map(paramDesc=>this.renderNumberField(paramDesc))}
+        ${this.paramsDesc.map(paramDesc=>this.renderNumberField(paramDesc))}
       </vaadin-vertical-layout>
     `
+  }
+
+  refreshProperties = ()=> {
+    this.paramsDesc = []
+    const varIdx = editorStore.currXform ? editorStore.currXform.variations.indexOf(this.variation) : -1
+    const amount: NumberFieldDescriptor = {
+      key: 'amount', label: msg('Amount'), min: -5, max: 5, step: 0.01,
+      onChange: this.variationPropertyChange.bind(this, this.variation, 'amount'),
+      value: this.getVariationValue.bind(this, this.variation, 'amount')
+    }
+    this.paramsDesc.push(amount)
+    this.variation.params.forEach((value, key, map) => {
+      this.paramsDesc.push({
+        id: `${key}_${varIdx}`,
+        key: key, label: msg(key), min: -5, max: 5, step: 0.01,
+        onChange: this.variationPropertyChange.bind(this, this.variation, key),
+        value: this.getVariationValue.bind(this, this.variation, key)
+      })
+    })
   }
 
   deleteVariation = ()=> {
@@ -68,9 +78,7 @@ export class SwanVariationEditPanel extends EditPropertyPanel {
       const idx = editorStore.currXform.variations.indexOf(this.variation)
       if(idx>=0) {
         editorStore.currXform.variations.splice(idx, 1)
-        const prevXform = editorStore.currXform
-        editorStore.currLayer = editorStore.currLayer
-        editorStore.currXform = prevXform
+        this.onAfterVariationChange()
         this.afterPropertyChange()
       }
     }
@@ -89,13 +97,20 @@ export class SwanVariationEditPanel extends EditPropertyPanel {
         })
 
         editorStore.currXform.variations = [...editorStore.currXform.variations.slice(0, idx), newVariation, ...editorStore.currXform.variations.slice(idx+1, editorStore.currXform.variations.length - idx)]
-        this.variation = newVariation
-        const prevXform = editorStore.currXform
-        editorStore.currLayer = editorStore.currLayer
-        editorStore.currXform = prevXform
+        this.onAfterVariationChange()
         this.afterPropertyChange()
       }
     }
+  }
+
+  protected updated(_changedProperties: PropertyValues) {
+    super.updated(_changedProperties)
+    this.unregisterAllControls()
+    for(let ctrl of this.paramsDesc) {
+      this.registerControl(ctrl)
+    }
+    this.updateControlReferences(true)
+    this.refreshControls()
   }
 
 }

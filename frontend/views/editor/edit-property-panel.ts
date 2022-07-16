@@ -30,6 +30,7 @@ export interface ComoboBoxItem {
 }
 
 export interface CheckboxDescriptor {
+  id?: string
   key: string
   label: string
   onChange(value: number, isImmediateValue: boolean): void
@@ -37,6 +38,7 @@ export interface CheckboxDescriptor {
 }
 
 export interface ComboBoxDescriptor {
+  id?: string
   key: string
   label: string
   items?:Array<ComoboBoxItem>
@@ -45,6 +47,7 @@ export interface ComboBoxDescriptor {
 }
 
 export interface NumberFieldDescriptor {
+  id?: string
   key: string
   label: string
   min: number
@@ -258,6 +261,10 @@ export abstract class EditPropertyPanel extends MobxLitElement {
   }
 
   abstract renderControls(): TemplateResult
+
+  unregisterAllControls = ()=> {
+    this.registeredControls = new Map<String, HtmlControlReference>()
+  }
 
   registerControl(desc: NumberFieldDescriptor | ComboBoxDescriptor | CheckboxDescriptor) {
     if (this.registeredControls.has(desc.key)) {

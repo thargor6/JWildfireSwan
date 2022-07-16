@@ -15,8 +15,8 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 */
 
-import {html} from 'lit';
-import {customElement} from 'lit/decorators.js';
+import {html, PropertyValues} from 'lit';
+import {customElement, queryAll} from 'lit/decorators.js';
 import '@vaadin/vaadin-button'
 import '@vaadin/vaadin-ordered-layout/vaadin-vertical-layout'
 import '../../components/swan-variation-edit-panel'
@@ -24,27 +24,27 @@ import {localized, msg} from "@lit/localize";
 import {EditPropertyPanel} from "Frontend/views/editor/edit-property-panel";
 import {editorStore} from "Frontend/stores/editor-store";
 import {Variation} from "Frontend/flames/model/flame";
+import {state} from "lit/decorators";
+import {SwanVariationEditPanel} from "Frontend/components/swan-variation-edit-panel";
 
 @localized()
 @customElement('editor-edit-xform-nonlinear-panel')
 export class EditorEditXformNonlinearPanel extends EditPropertyPanel {
 
+  @state()
+  items: Variation[] = []
+
+  @queryAll('swan-variation-edit-panel')
+  panels!: SwanVariationEditPanel[]
+
   renderControls() {
     return html`
          <vaadin-vertical-layout>
              <vaadin-button ?disabled="${undefined===editorStore.currXform}" @click="${this.addVariation}">${msg('Add variation')}</vaadin-button>
-
-         </vaadin-vertical-layout>
-    `;
-  }
-
-  renderControls2() {
-    return html`
-         <vaadin-vertical-layout>
-             <vaadin-button ?disabled="${undefined===editorStore.currXform}" @click="${this.addVariation}">${msg('Add variation')}</vaadin-button>
-            ${editorStore.currXform?.variations.map(variation => {
+            ${this.items.map(variation => {
                 return html `<swan-variation-edit-panel .variation=${variation} 
-                               .afterPropertyChange=${this.afterPropertyChange}>
+                               .afterPropertyChange=${this.afterPropertyChange}
+                               .onAfterVariationChange=${this.refreshVariations}>
                              </swan-variation-edit-panel>`
             })}
          </vaadin-vertical-layout>
@@ -55,10 +55,19 @@ export class EditorEditXformNonlinearPanel extends EditPropertyPanel {
     if(editorStore.currXform) {
       const variation = new Variation()
       editorStore.currXform.variations.push(variation)
-      const prevXform = editorStore.currXform
-      editorStore.currLayer = editorStore.currLayer
-      editorStore.currXform = prevXform
+      this.refreshVariations()
       this.afterPropertyChange()
+    }
+  }
+
+  refreshVariations = () => {
+    this.items = editorStore.currXform ? [...editorStore.currXform.variations] : []
+  }
+
+  protected updated(_changedProperties: PropertyValues) {
+    super.updated(_changedProperties);
+    for(let panel of this.panels) {
+      panel.refreshProperties()
     }
   }
 

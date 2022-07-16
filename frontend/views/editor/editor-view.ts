@@ -88,6 +88,7 @@ import {EditorEditCameraPanel} from "Frontend/views/editor/editor-edit-camera-pa
 import {EditorEditColoringPanel} from "Frontend/views/editor/editor-edit-coloring-panel";
 import {EditorEditDenoiserPanel} from "Frontend/views/editor/editor-edit-denoiser-panel";
 import {EditorEditMotionPanel} from "Frontend/views/editor/editor-edit-motion-panel";
+import {EditorEditXformNonlinearPanel} from "Frontend/views/editor/editor-edit-xform-nonlinear-panel";
 
 @localized()
 @customElement('editor-view')
@@ -131,6 +132,9 @@ export class EditorView extends View implements BeforeEnterObserver {
 
   @query('editor-edit-xform-color-panel')
   xformColorPanel!: EditorEditXformColorPanel
+
+  @query('editor-edit-xform-nonlinear-panel')
+  xformNonlinearPanel!: EditorEditXformNonlinearPanel
 
   render() {
         return html`
@@ -181,12 +185,12 @@ export class EditorView extends View implements BeforeEnterObserver {
     this.layersPanel.requestContentUpdate()
     this.transformsGridPanel.refreshXforms()
     this.transformsGridPanel.selectFirstXform()
-
   }
 
   afterXformChange = () => {
     this.xformAffinePanel.requestContentUpdate()
     this.xformColorPanel.requestContentUpdate()
+    this.xformNonlinearPanel.refreshVariations()
   }
 
     createFlameRenderer = ()=> {
