@@ -52,7 +52,6 @@ import {RenderResolutions} from "Frontend/flames/renderer/render-resolution";
 import {msg, localized} from "@lit/localize";
 import {singleRendererStore} from "Frontend/stores/single-renderer-store";
 import {BeforeEnterObserver, PreventAndRedirectCommands, Router, RouterLocation} from "@vaadin/router";
-import {LoadExampleFlameAction, startupActionHolder} from "Frontend/stores/editor-startup-actions";
 
 @localized()
 @customElement('single-renderer-view')

@@ -26,6 +26,8 @@ export type ViewRoute = Route & {
   children?: ViewRoute[];
 };
 
+
+// line awesome icons: https://preview.keenthemes.com/metronic/demo6/features/icons/lineawesome.html
 export const views: ViewRoute[] = [
   // place routes below (more info https://vaadin.com/docs/latest/fusion/routing/overview)
   {
@@ -37,37 +39,37 @@ export const views: ViewRoute[] = [
   {
     path: 'editor',
     component: 'editor-view',
-    icon: 'la la-file',
+    icon: 'la la-edit',
     title: msg('Flame editor'),
   },
   {
     path: 'editor/example/:example',
     component: 'editor-view',
-    icon: 'la la-file',
+    icon: 'la la-edit',
     title: msg('Flame editor'),
   },
   {
     path: 'editor/genrnd/:rndGenName',
     component: 'editor-view',
-    icon: 'la la-file',
+    icon: 'la la-edit',
     title: msg('Flame editor'),
   },
   {
     path: 'editor/openrnd/:rndFlameName',
     component: 'editor-view',
-    icon: 'la la-file',
+    icon: 'la la-edit',
     title: msg('Flame editor'),
   },
   {
-    path: 'playground/openrnd/:parentRndFlameName/:rndFlameName',
+    path: 'editor/openrnd/:parentRndFlameName/:rndFlameName',
     component: 'editor-view',
-    icon: 'la la-file',
+    icon: 'la la-edit',
     title: msg('Flame editor'),
   },
   {
     path: 'single-renderer',
     component: 'single-renderer-view',
-    icon: 'la la-th-list',
+    icon: 'la la-images',
     title: msg('Flame renderer'),
     action: async (_context, _command) => {
       await import('./views/single-renderer/single-renderer-view');
@@ -90,7 +92,7 @@ export const views: ViewRoute[] = [
   {
     path: 'gallery',
     component: 'gallery-view',
-    icon: 'la la-th-list',
+    icon: 'la la-icons',
     title: msg('Flame example gallery'),
     action: async (_context, _command) => {
       await import('./views/gallery/gallery-view');
@@ -101,7 +103,7 @@ export const views: ViewRoute[] = [
   {
     path: 'batch-renderer',
     component: 'batch-renderer-view',
-    icon: 'la la-th-list',
+    icon: 'la la-photo-video',
     title: msg('Batch renderer'),
     action: async (_context, _command) => {
       await import('./views/batch-renderer/batch-renderer-view');
@@ -112,7 +114,7 @@ export const views: ViewRoute[] = [
   {
     path: 'about',
     component: 'about-view',
-    icon: 'la la-file',
+    icon: 'la la-info-circle',
     title: msg('Help / About'),
     action: async (_context, _command) => {
       await import('./views/about/about-view');

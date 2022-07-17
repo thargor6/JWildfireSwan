@@ -73,7 +73,7 @@ import {EditorEditLayersPanel} from "Frontend/views/editor/editor-edit-layers-pa
 import {EditorXformsGridPanel} from "Frontend/views/editor/editor-xforms-grid-panel";
 import {
   EmptyAction, GenerateRandomFlameAction,
-  LoadExampleFlameAction, LoadRandomFlameAction,
+  LoadRandomFlameAction,
   LoadRandomSubFlameAction,
   startupActionHolder
 } from "Frontend/stores/editor-startup-actions";
@@ -89,6 +89,7 @@ import {EditorEditColoringPanel} from "Frontend/views/editor/editor-edit-colorin
 import {EditorEditDenoiserPanel} from "Frontend/views/editor/editor-edit-denoiser-panel";
 import {EditorEditMotionPanel} from "Frontend/views/editor/editor-edit-motion-panel";
 import {EditorEditXformNonlinearPanel} from "Frontend/views/editor/editor-edit-xform-nonlinear-panel";
+import {LoadExampleFlameAction} from "Frontend/views/editor/editor-view-startup-actions";
 
 @localized()
 @customElement('editor-view')
@@ -250,7 +251,7 @@ export class EditorView extends View implements BeforeEnterObserver {
       {
         const exampleName = _location.params['example'] as string;
         if (exampleName && exampleName !== '') {
-          startupActionHolder.action = new LoadExampleFlameAction(exampleName)
+          startupActionHolder.action = new LoadExampleFlameAction(this, exampleName)
           return
         }
       }
@@ -282,23 +283,23 @@ export class EditorView extends View implements BeforeEnterObserver {
            <div style="display: flex; flex-direction: column; padding: 0.5em;">
                 <vaadin-tabs @selected-changed="${this.selectedFlameTabChanged}">
                     <vaadin-tab theme="icon-on-top">
-                        <vaadin-icon icon="vaadin:fire"></vaadin-icon>
+                        <vaadin-icon icon="vaadin:viewport"></vaadin-icon>
                         <span>${msg('Camera')}</span>
                     </vaadin-tab>
                     <vaadin-tab theme="icon-on-top">
-                        <vaadin-icon icon="vaadin:eye"></vaadin-icon>
+                        <vaadin-icon icon="vaadin:palette"></vaadin-icon>
                         <span>${msg('Coloring')}</span>
                     </vaadin-tab>
                     <vaadin-tab theme="icon-on-top">
-                        <vaadin-icon icon="vaadin:eye"></vaadin-icon>
+                        <vaadin-icon icon="vaadin:scatter-chart"></vaadin-icon>
                         <span>${msg('Denoiser')}</span>
                     </vaadin-tab>
                     <vaadin-tab theme="icon-on-top">
-                        <vaadin-icon icon="vaadin:eye"></vaadin-icon>
+                        <vaadin-icon icon="vaadin:film"></vaadin-icon>
                         <span>${msg('Motion')}</span>
                     </vaadin-tab>
                     <vaadin-tab theme="icon-on-top">
-                        <vaadin-icon icon="vaadin:eye"></vaadin-icon>
+                        <vaadin-icon icon="vaadin:list-ol"></vaadin-icon>
                         <span>${msg('Layers')}</span>
                     </vaadin-tab>
                 </vaadin-tabs>
@@ -323,19 +324,19 @@ export class EditorView extends View implements BeforeEnterObserver {
               
                 <vaadin-tabs @selected-changed="${this.selectedTransformTabChanged}">
                     <vaadin-tab theme="icon-on-top">
-                        <vaadin-icon icon="vaadin:fire"></vaadin-icon>
+                        <vaadin-icon icon="vaadin:function"></vaadin-icon>
                         <span>${msg('Affine')}</span>
                     </vaadin-tab>
                     <vaadin-tab theme="icon-on-top">
-                        <vaadin-icon icon="vaadin:eye"></vaadin-icon>
+                        <vaadin-icon icon="vaadin:spline-chart"></vaadin-icon>
                         <span>${msg('Nonlinear')}</span>
                     </vaadin-tab>
                     <vaadin-tab theme="icon-on-top">
-                        <vaadin-icon icon="vaadin:eye"></vaadin-icon>
+                        <vaadin-icon icon="vaadin:grid-small-o"></vaadin-icon>
                         <span>${msg('Xaos')}</span>
                     </vaadin-tab>
                     <vaadin-tab theme="icon-on-top">
-                        <vaadin-icon icon="vaadin:eye"></vaadin-icon>
+                        <vaadin-icon icon="vaadin:paintbrush"></vaadin-icon>
                         <span>${msg('Color')}</span>
                     </vaadin-tab>
                 </vaadin-tabs>
@@ -447,27 +448,32 @@ export class EditorView extends View implements BeforeEnterObserver {
       }
     }
 
-  private get currFlame() {
+  get currFlame() {
     return editorStore.currFlame
   }
 
-  private set currFlame(newFlame) {
+  public set currFlame(newFlame) {
     editorStore.currFlame = newFlame
     this.afterFlameChange()
     this.layersPanel.selectFirstLayer()
   }
 
+  protected updated(_changedProperties: PropertyValues) {
+    super.updated(_changedProperties)
+  }
+
   protected firstUpdated(_changedProperties: PropertyValues) {
     super.firstUpdated(_changedProperties);
-    startupActionHolder.action.execute()
-    editorStore.registerInitCallback(['editor-xforms-grid-panel'], this.renderFirstFlame)
+    editorStore.registerInitCallback(['editor-edit-camera-panel', 'editor-xforms-grid-panel', 'editor-edit-layers-panel'], this.renderFirstFlame)
   }
 
   renderFirstFlame = ()=> {
+    startupActionHolder.action.execute()
     this.getRenderPanel().rerenderFlame()
     if(editorStore.currFlame.layers.length>0 && this.layersPanel) {
       this.layersPanel.selectFirstLayer()
     }
+    this.requestUpdate()
   }
 
   setEditflame = (newFlame: Flame) => {
