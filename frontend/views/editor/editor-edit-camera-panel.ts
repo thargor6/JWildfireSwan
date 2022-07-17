@@ -19,6 +19,7 @@ import {html, PropertyValues} from 'lit';
 import {customElement} from 'lit/decorators.js';
 import {localized, msg} from "@lit/localize";
 import {EditPropertyPanel, NumberFieldDescriptor} from "Frontend/views/editor/edit-property-panel";
+import {editorStore} from "Frontend/stores/editor-store";
 
 @localized()
 @customElement('editor-edit-camera-panel')
@@ -96,6 +97,7 @@ export class EditorEditCameraPanel extends EditPropertyPanel {
     this.registerControl(this.centreY)
     this.registerControl(this.camZoom)
     this.updateControlReferences(true)
+    editorStore.notifyInit('editor-edit-camera-panel')
   }
 
 

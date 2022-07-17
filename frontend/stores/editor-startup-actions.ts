@@ -22,33 +22,14 @@ import {FlamesEndpoint} from "Frontend/generated/endpoints";
 import {renderInfoStore} from "Frontend/stores/render-info-store";
 
 export interface StartupAction {
-  execute(): void
+  execute(): boolean
 }
 
 export class EmptyAction implements StartupAction {
-  execute(): void {
-    // EMPTY
+  execute(): boolean {
+    return false
   }
 
-}
-
-export class LoadExampleFlameAction implements StartupAction {
-  private executed = false
-
-  constructor(private exampleName: string) {
-    //
-  }
-
-  execute(): void {
-    if(!this.executed) {
-      FlamesEndpoint.getExampleFlame(this.exampleName).then(flame => {
-        editorStore.currFlame = FlameMapper.mapFromBackend(flame)
-      }).catch(err=>{
-        console.log(`Error loading example flame ${this.exampleName}: ${err}`)
-      })
-      this.executed = true
-    }
-  }
 }
 
 export class GenerateRandomFlameAction implements StartupAction {
@@ -58,7 +39,7 @@ export class GenerateRandomFlameAction implements StartupAction {
     //
   }
 
-  execute(): void {
+  execute(): boolean {
     if(!this.executed) {
       renderInfoStore.calculating = true
       editorStore.lastError = ''
@@ -76,6 +57,10 @@ export class GenerateRandomFlameAction implements StartupAction {
         renderInfoStore.calculating = false
       }
       this.executed = true
+      return true
+    }
+    else {
+      return false
     }
   }
 
@@ -88,7 +73,7 @@ export class LoadRandomFlameAction implements StartupAction {
     //
   }
 
-  execute(): void {
+  execute(): boolean {
     if(!this.executed) {
       const rndFlame = randomizerStore.getFlameByName(this.flameName)
       if(!rndFlame) {
@@ -98,6 +83,10 @@ export class LoadRandomFlameAction implements StartupAction {
         editorStore.currFlame = rndFlame.flame
       }
       this.executed = true
+      return true
+    }
+    else {
+      return true
     }
   }
 
@@ -110,7 +99,7 @@ export class LoadRandomSubFlameAction implements StartupAction {
     //
   }
 
-  execute(): void {
+  execute(): boolean {
     if(!this.executed) {
       let rndFlame = randomizerStore.getSubFlameByName(this.parentName, this.subFlameName)
       if(!rndFlame) {
@@ -120,6 +109,10 @@ export class LoadRandomSubFlameAction implements StartupAction {
         editorStore.currFlame = rndFlame.flame
       }
       this.executed = true
+      return true
+    }
+    else {
+      return false
     }
   }
 

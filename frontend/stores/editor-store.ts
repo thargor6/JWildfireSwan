@@ -65,21 +65,27 @@ export class EditorStore {
   }
 
   registerInitCallback(componentIds: string[], cb: InitCallback) {
+    componentIds.forEach((key)=>{
+      if(this.initState.has(key)) {
+        this.initState.delete(key)
+      }
+    })
     this.initCallbacks.set(['store', ...componentIds], cb)
   }
 
   private executeOnInitCallbacks() {
     let removeCbs = new Array<string[]>()
     this.initCallbacks.forEach((value, key) => {
-      let registerState = true
-      key.forEach(key => {
-        if(!this.initState.has(key)) {
-          registerState = false
+      let registrationComplete = true
+      key.forEach(stateKey => {
+        if(!this.initState.has(stateKey)) {
+          registrationComplete = false
         }
       })
-      if(registerState) {
+      if(registrationComplete) {
         removeCbs.push(key)
-        value()
+        setTimeout(()=>value(), 150)
+        //value()
       }
     })
     // remove executed callbacks

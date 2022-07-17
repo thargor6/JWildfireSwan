@@ -135,10 +135,12 @@ export class EditorEditLayersPanel extends EditPropertyPanel {
   }
 
   protected firstUpdated(_changedProperties: PropertyValues) {
-    super.firstUpdated(_changedProperties);
+    super.firstUpdated(_changedProperties)
     this.registerControl(this.weight)
     this.registerControl(this.density)
     this.updateControlReferences(true)
+    editorStore.notifyInit('editor-edit-layers-panel')
   }
+
 }
 
