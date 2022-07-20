@@ -19,11 +19,11 @@ import {customElement, property, query} from 'lit/decorators.js';
 import {MobxLitElement} from "@adobe/lit-mobx";
 import {html, PropertyValues} from "lit";
 import '@vaadin/number-field';
-import '@vaadin/custom-field'
 import '@polymer/paper-slider/paper-slider'
 import {PaperSliderElement} from "@polymer/paper-slider";
 import {NumberField} from "@vaadin/number-field/src/vaadin-number-field";
-import {CustomField, CustomFieldValueChangedEvent} from "@vaadin/custom-field";
+import {CustomFieldValueChangedEvent} from "@vaadin/custom-field";
+import {floatsAreEqual} from "Frontend/components/utils";
 
 @customElement('swan-number-slider')
 export class SwanNumberSlider extends MobxLitElement {
@@ -55,118 +55,101 @@ export class SwanNumberSlider extends MobxLitElement {
     @property()
     onValueChange?: (value: number, isImmediateValue: boolean)=>{}
 
-    @query('vaadin-custom-field')
-    private customField!: CustomField
-
     @query('paper-slider')
     private slider!: PaperSliderElement
 
     @query('vaadin-number-field')
     private numberField!: NumberField
 
+    refreshing = false
+
     render() {
-        this.updateMinMax()
         return html  `
-            <vaadin-custom-field
-              theme="small"
-              ?disabled="${this.disabled}"
-              @change="${(e: CustomFieldValueChangedEvent) => {
-                  //console.log('CHANGE', e.detail.value, (e.detail as any).isImmediateValue)
-                  const val = e.detail.value
-                  e.preventDefault()
-                  const newValue = parseFloat(val)
-                  // changing of this.value would cause an unwanted refresh here,
-                  // currently we do not need value at all (except for setting an initial value)
-                  // this.value = newValue
-                  this.numberField.value = val
-                  this.customField.value = val
-                  if(this.onValueChange) {
-                      this.onValueChange(newValue, (e.detail as any).isImmediateValue)
-                  }
-              }}">
               <div style="display: flex; flex-direction: row; align-items: center;">
-                <div style="width: ${this.labelWidth}; margin-right: 0.5em; text-align: end; font-weight: bold;">${this.label}</div>
+                <div style="width: ${this.labelWidth}; margin-right: 0.5em; text-align: end; font-size: small; font-weight: bold;">${this.label}</div>
                 <vaadin-number-field theme="small" @change=${this.numberFieldChanged} step=${this.step}
                   ?disabled="${this.disabled}" value="${this.value}"></vaadin-number-field>
                  <paper-slider style="width: ${this.sliderWidth};" @immediate-value-change="${this.immediateValueChanged}"
                    ?disabled="${this.disabled}" @value-change="${this.sliderChange}" value="${this.value}" min="${this.min}"
                    step=${this.step} max="${this.max}"></paper-slider>
               </div>
-            </vaadin-custom-field>
         `
     }
 
     sliderChange = (e: Event) => {
-        // console.log("SLIDER", e)
-        const target: any = e.target
-        if(target) {
-            e.preventDefault()
-            this.value = target.value
-            this.numberField.value = target.value
-            // this.dispatchChangeEvent(target.value, false)
+        const newValue = (e.target as any).value
+        if(!floatsAreEqual(this.value, newValue)) {
+            this.value = newValue
+            // console.log('SLIDER', this.value, '->', newValue, e)
+            if (this.onValueChange) {
+                this.onValueChange(newValue, false)
+            }
         }
     }
 
     numberFieldChanged = (e: Event) => {
-        const target: any = e.target
-        if(target) {
-            e.preventDefault()
+        const newValue = parseFloat((e.target as any).value)
+        if(!floatsAreEqual(this.value, newValue)) {
+            // console.log('NUMBER FIELD', this.value, '->', newValue, e)
+            this.updateMinMax(newValue)
+            this.value = newValue
+            if (this.onValueChange) {
+                this.onValueChange(newValue, false)
+            }
         }
     }
 
     immediateValueChanged = (e: Event) => {
-        // console.log("SLIDER IMMEDIATE", e)
-        const target: any = e.target
-        if(target) {
-            e.preventDefault()
-            this.value = target.immediateValue
-            this.numberField.value = target.immediateValue
-            this.dispatchChangeEvent(target.immediateValue, true)
+        const newValue = (e.target as any).immediateValue
+        if(!floatsAreEqual(this.value, newValue)) {
+            //console.log('SLIDER IMMEDIATE', this.value, '->', newValue, e)
+            this.value = newValue
+            if (this.onValueChange) {
+                this.onValueChange(newValue, false)
+            }
         }
     }
 
-    updateMinMax() {
-        if(this.value<this.min) {
-            this.min = this.value - (this.max - this.value) / 10
+    updateMinMax = (newValue: number) => {
+        if(newValue<this.min) {
+            this.min = newValue - (this.max -newValue) / 10
+            if(this.slider) {
+                this.slider.min = this.min
+            }
+         //   console.log("upd min", this.max, newValue)
         }
-        if(this.value>this.max) {
-            this.max = this.value + (this.value - this.min) / 10
+        if(newValue>this.max) {
+            this.max = newValue + (newValue - this.min) / 10
+            if(this.slider) {
+                this.slider.max = this.max
+            }
+          //  console.log("upd max", this.max, newValue)
         }
     }
 
     protected firstUpdated(_changedProperties: PropertyValues) {
         super.firstUpdated(_changedProperties)
-        this.updateMinMax()
-        if(this.customField) {
-            this.customField.i18n = {
-                formatValue(inputValues: unknown[]): string {
-                    if(inputValues && inputValues.length>0 && typeof inputValues[0] === "string" ) {
-                        return inputValues[0]
-                    }
-                    return "";
-                }, parseValue(value: string): unknown[] {
-                    return [value];
-                }
-            }
-        }
+        this.updateMinMax(this.value)
     }
 
     private convertValueToString(value: number) {
         return value.toString()
     }
 
-    dispatchChangeEvent = (value: number, isImmediateValue: boolean) => {
-        const event = new CustomEvent('change', {
-            detail: {
-                value: this.convertValueToString(value),
-                isImmediateValue: isImmediateValue,
-                rawValue: value
-            },
-            bubbles: false,
-            cancelable: true,
-            composed: false
-        });
-        this.customField.dispatchEvent(event)
+    onChange = (e: CustomFieldValueChangedEvent) => {
+        if(!this.refreshing) {
+            //console.log('CHANGE', e.detail.value, (e.detail as any).isImmediateValue)
+            const val = e.detail.value
+            e.preventDefault()
+            const newValue = parseFloat(val)
+            // changing of this.value would cause an unwanted refresh here,
+            // currently we do not need value at all (except for setting an initial value)
+            this.value = newValue
+            this.numberField.value = val
+            if (this.onValueChange) {
+                this.onValueChange(newValue, (e.detail as any).isImmediateValue)
+            }
+        }
     }
 
 }
