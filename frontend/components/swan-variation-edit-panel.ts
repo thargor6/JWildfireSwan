@@ -42,6 +42,8 @@ export class SwanVariationEditPanel extends EditPropertyPanel {
   @property()
   onAfterVariationChange = ()=> {}
 
+  private readonly LABEL_WIDTH = '8em'
+
   renderControls() {
     return html `
       <vaadin-vertical-layout>
@@ -60,14 +62,16 @@ export class SwanVariationEditPanel extends EditPropertyPanel {
     const amount: NumberFieldDescriptor = {
       key: 'amount', label: msg('Amount'), min: -5, max: 5, step: 0.01,
       onChange: this.variationPropertyChange.bind(this, this.variation, 'amount'),
+      labelWidth: this.LABEL_WIDTH,
       value: this.getVariationValue.bind(this, this.variation, 'amount')
     }
     this.paramsDesc.push(amount)
     this.variation.params.forEach((value, key, map) => {
       this.paramsDesc.push({
         id: `${key}_${varIdx}`,
-        key: key, label: msg(key), min: -5, max: 5, step: 0.01,
+        key: key, label: msg(key.charAt(0).toUpperCase() + key.slice(1)), min: -5, max: 5, step: 0.01,
         onChange: this.variationPropertyChange.bind(this, this.variation, key),
+        labelWidth: this.LABEL_WIDTH,
         value: this.getVariationValue.bind(this, this.variation, key)
       })
     })

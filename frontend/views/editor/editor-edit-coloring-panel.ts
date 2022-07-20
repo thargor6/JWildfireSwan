@@ -91,9 +91,8 @@ export class EditorEditColoringPanel extends EditPropertyPanel {
     value: this.getFlameValue.bind(this,'foregroundOpacity')
   }
 
-  // TODO refresh does not work
   private bgTransparency: CheckboxDescriptor = {
-    key: 'bgTransparency', label: msg('Backend transparency'),
+    key: 'bgTransparency', label: msg('Background transparency'),
     onChange: this.flamePropertyChange.bind(this,'bgTransparency'),
     value: this.getFlameBooleanValue.bind(this,'bgTransparency')
   }

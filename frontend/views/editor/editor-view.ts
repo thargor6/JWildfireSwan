@@ -166,7 +166,9 @@ export class EditorView extends View implements BeforeEnterObserver {
                       .canvasDisplayWidth="${'30em'}" .canvasDisplayHeight="${'30em'}"
                       .onCreateFlameRenderer=${this.createFlameRenderer}
                       .sharedRenderCtx=${editorStore.sharedRenderCtx}></swan-render-panel>
-              <editor-xforms-grid-panel .afterPropertyChange=${this.reRender} .afterSelectionChange="${this.afterXformChange}"></editor-xforms-grid-panel>
+              <editor-xforms-grid-panel .afterPropertyChange=${this.reRender} 
+                    .afterXformStructureChange="${this.afterLayerChange}"                           
+                    .afterSelectionChange="${this.afterXformChange}"></editor-xforms-grid-panel>
               ${this.renderTransformTabs()}
             </vaadin-horizontal-layout>
             ${this.renderFlameTabs()}
@@ -183,6 +185,7 @@ export class EditorView extends View implements BeforeEnterObserver {
   }
 
   afterLayerChange =() => {
+    console.log("REFRSAGSGS")
     this.layersPanel.requestContentUpdate()
     this.transformsGridPanel.refreshXforms()
     this.transformsGridPanel.selectFirstXform()

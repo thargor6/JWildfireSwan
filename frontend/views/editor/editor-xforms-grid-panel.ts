@@ -52,6 +52,9 @@ export class EditorXformsGridPanel extends MobxLitElement {
   @property()
   afterSelectionChange = ()=>{}
 
+  @property()
+  afterXformStructureChange = ()=>{}
+
   render() {
     return html`
         <vaadin-vertical-layout style="margin-left: 1em;">
@@ -59,7 +62,6 @@ export class EditorXformsGridPanel extends MobxLitElement {
                 <vaadin-radio-button value="affine" label="${msg('Affine')}" @checked-changed="${(e: CustomEvent)=>editorStore.checkedSetEditModeTxAffine(e.detail.value)}" ?checked="${editorStore.isEditModeAffine()}"></vaadin-radio-button>
                 <vaadin-radio-button value="post" label="${msg('Post')}" @checked-changed="${(e: CustomEvent)=>editorStore.checkedSetEditModeTxPost(e.detail.value)}" ?checked="${editorStore.isEditModePost()}"></vaadin-radio-button>
                 <vaadin-radio-button value="both" label="${msg('A+P')}" @checked-changed="${(e: CustomEvent)=>editorStore.checkedSetEditModeTxPostAffine(e.detail.value)}" ?checked="${editorStore.isEditModeAffinePost()}"></vaadin-radio-button>
-
             </vaadin-radio-group>
             
             <editor-xform-toolbar-panel
@@ -128,7 +130,7 @@ export class EditorXformsGridPanel extends MobxLitElement {
   onAddTransform = ()=> {
     if(editorStore.currLayer) {
       this.flameEditService.addTransform(editorStore.currLayer)
-      editorStore.currLayer = editorStore.currLayer
+      this.afterXformStructureChange()
       this.reRender()
     }
   }
@@ -136,7 +138,7 @@ export class EditorXformsGridPanel extends MobxLitElement {
   onAddLinkedTransform = ()=> {
     if(editorStore.currLayer && editorStore.currXform) {
       this.flameEditService.addLinkedTransform(editorStore.currLayer, editorStore.currXform)
-      editorStore.currLayer = editorStore.currLayer
+      this.afterXformStructureChange()
       this.reRender()
     }
   }
@@ -144,7 +146,7 @@ export class EditorXformsGridPanel extends MobxLitElement {
   onAddFinalTransform = ()=> {
     if(editorStore.currLayer) {
       this.flameEditService.addFinalTransform(editorStore.currLayer)
-      editorStore.currLayer = editorStore.currLayer
+      this.afterXformStructureChange()
       this.reRender()
     }
   }
@@ -152,7 +154,7 @@ export class EditorXformsGridPanel extends MobxLitElement {
   onEditDeleteTransform = ()=> {
     if(editorStore.currLayer && editorStore.currXform) {
       this.flameEditService.deleteTransform(editorStore.currLayer, editorStore.currXform)
-      editorStore.currLayer = editorStore.currLayer
+      this.afterXformStructureChange()
       this.reRender()
     }
   }
@@ -160,7 +162,7 @@ export class EditorXformsGridPanel extends MobxLitElement {
   onEditDuplicateTransform = ()=> {
     if(editorStore.currLayer && editorStore.currXform) {
       this.flameEditService.duplicateTransform(editorStore.currLayer, editorStore.currXform)
-      editorStore.currLayer = editorStore.currLayer
+      this.afterXformStructureChange()
       this.reRender()
     }
   }
