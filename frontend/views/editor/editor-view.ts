@@ -185,7 +185,6 @@ export class EditorView extends View implements BeforeEnterObserver {
   }
 
   afterLayerChange =() => {
-    console.log("REFRSAGSGS")
     this.layersPanel.requestContentUpdate()
     this.transformsGridPanel.refreshXforms()
     this.transformsGridPanel.selectFirstXform()
@@ -232,7 +231,7 @@ export class EditorView extends View implements BeforeEnterObserver {
                editorStore.refreshing = true
                try {
                  this.currFlame = FlameMapper.mapFromBackend(flame)
-                   this.getRenderPanel().rerenderFlame()
+                   this.reRender()
                    renderInfoStore.calculating = false
                }
                finally {
@@ -372,7 +371,7 @@ export class EditorView extends View implements BeforeEnterObserver {
               editorStore.refreshing = true
               try {
                 this.currFlame = new Flame()
-                  this.getRenderPanel().rerenderFlame()
+                  this.reRender()
                   renderInfoStore.calculating = false
               }
               finally {
@@ -394,7 +393,7 @@ export class EditorView extends View implements BeforeEnterObserver {
               editorStore.refreshing = true
               try {
                 this.currFlame = FlameMapper.mapFromBackend(randomFlame.flame)
-                  this.getRenderPanel().rerenderFlame()
+                  this.reRender()
                   renderInfoStore.calculating = false
               }
               finally {
@@ -416,7 +415,7 @@ export class EditorView extends View implements BeforeEnterObserver {
               editorStore.refreshing = true
               try {
                 this.currFlame = FlameMapper.mapFromBackend(randomFlame.flame)
-                  this.getRenderPanel().rerenderFlame()
+                  this.reRender()
                   renderInfoStore.calculating = false
               }
               finally {
@@ -441,14 +440,7 @@ export class EditorView extends View implements BeforeEnterObserver {
     }
 
     reRender = ()=> {
-      editorStore.refreshing = true
-      try {
-        this.getRenderPanel().rerenderFlame()
-        renderInfoStore.calculating = false
-      }
-      finally {
-        editorStore.refreshing = false
-      }
+      this.getRenderPanel().rerenderFlame()
     }
 
   get currFlame() {
@@ -461,18 +453,14 @@ export class EditorView extends View implements BeforeEnterObserver {
     this.layersPanel.selectFirstLayer()
   }
 
-  protected updated(_changedProperties: PropertyValues) {
-    super.updated(_changedProperties)
-  }
-
-  protected firstUpdated(_changedProperties: PropertyValues) {
-    super.firstUpdated(_changedProperties);
+  connectedCallback() {
+    super.connectedCallback()
     editorStore.registerInitCallback(['editor-edit-camera-panel', 'editor-xforms-grid-panel', 'editor-edit-layers-panel'], this.renderFirstFlame)
   }
 
   renderFirstFlame = ()=> {
     startupActionHolder.action.execute()
-    this.getRenderPanel().rerenderFlame()
+    this.reRender()
     if(editorStore.currFlame.layers.length>0 && this.layersPanel) {
       this.layersPanel.selectFirstLayer()
     }
@@ -485,7 +473,7 @@ export class EditorView extends View implements BeforeEnterObserver {
     if(layerIdx >=0 && layerIdx<editorStore.currFlame.layers.length) {
       editorStore.currLayer = editorStore.currFlame.layers[layerIdx]
     }
-    this.getRenderPanel().rerenderFlame()
+    this.reRender()
   }
 
   undoEdit = () => {

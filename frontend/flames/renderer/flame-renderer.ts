@@ -35,7 +35,7 @@ import {SharedRenderContext} from "Frontend/flames/renderer/shared-render-contex
 type RenderFinishedHandler = (frameCount: number, elapsedTimeInMs: number) => void
 type RenderProgressHandler = (currSampleCount: number, maxSampleCount: number, frameCount: number, elapsedTimeInMs: number) => void
 
-export type OnRenderCancelledCallback = ()=>void
+export type OnRenderFinishedCallback = ()=>void
 
 export class FlameRenderer implements CloseableBuffers {
     currFrameCount = 0
@@ -61,8 +61,8 @@ export class FlameRenderer implements CloseableBuffers {
     framebuffers: Framebuffers | null
     textures: Textures | null
 
-    onRenderCancelledCallback: OnRenderCancelledCallback | undefined = undefined
-    isFinished = true
+    onRenderFinishedCallbacks: OnRenderFinishedCallback[] = []
+    _isFinished = true
 
     constructor(private sharedRenderCtx: SharedRenderContext,
                 private canvas_size: number,
@@ -130,6 +130,7 @@ export class FlameRenderer implements CloseableBuffers {
             this.shaders.closeBuffers()
             this.shaders = null
         }
+        this.onRenderFinishedCallbacks = []
     }
 
     private prepareFlame(renderFlame: RenderFlame) {
@@ -145,7 +146,7 @@ export class FlameRenderer implements CloseableBuffers {
     }
 
     public drawScene() {
-        this.isFinished = false
+        this._isFinished = false
         this.settings.frames = this.currFrameCount;
         // TODO remove
         this.settings.brightness = 1.0 // this.brightnessElement.value;
@@ -190,12 +191,7 @@ export class FlameRenderer implements CloseableBuffers {
         const elapsedTimeInSeconds = (this.currTimeStampInMs-this.startTimeStampInMs) / 1000
         if(this.cancelSignalled) {
             this.onRenderCancelled(this.currFrameCount, elapsedTimeInSeconds)
-            this.isFinished = true
-            if(this.onRenderCancelledCallback) {
-                const cb = this.onRenderCancelledCallback
-                this.onRenderCancelledCallback = undefined
-                cb()
-            }
+            this.finishRendering()
         }
         else {
             if (this.currSampleCount < this.maxSampleCount) {
@@ -203,8 +199,8 @@ export class FlameRenderer implements CloseableBuffers {
                 window.requestAnimationFrame(this.drawScene.bind(this));
             }
             else {
-                if(this.autoCaptureImage && this.imgCaptureContainer) {
-                    if(this.cropRegion) {
+                if (this.autoCaptureImage && this.imgCaptureContainer) {
+                    if (this.cropRegion) {
                         const gl = this.canvas.getContext("webgl")!
                         const croppedWidth = this.cropRegion.width
                         const croppedHeight = this.cropRegion.height
@@ -239,14 +235,13 @@ export class FlameRenderer implements CloseableBuffers {
                         this.imgCaptureContainer.innerHTML = ''
                         this.imgCaptureContainer.appendChild(imgElement)
                         const divElement = document.createElement('div')
-                        divElement.innerText = `Cropped resolution: ${croppedWidth}x${croppedHeight}, render time: ${Math.round(elapsedTimeInSeconds*100)/100}  s`
+                        divElement.innerText = `Cropped resolution: ${croppedWidth}x${croppedHeight}, render time: ${Math.round(elapsedTimeInSeconds * 100) / 100}  s`
                         this.imgCaptureContainer.appendChild(divElement)
-                        if(this.imgOutputFilename && this.imgOutputFilename.length > 0) {
+                        if (this.imgOutputFilename && this.imgOutputFilename.length > 0) {
                             this.notifyImageRendered(imgElement, this.imgOutputFilename)
                         }
-                    }
-                    else {
-                        const imgData =  this.canvas.toDataURL("image/jpg")
+                    } else {
+                        const imgData = this.canvas.toDataURL("image/jpg")
                         const imgElement: HTMLImageElement = document.createElement('img')
                         imgElement.src = imgData;
                         imgElement.width = 128
@@ -254,17 +249,17 @@ export class FlameRenderer implements CloseableBuffers {
                         this.imgCaptureContainer.appendChild(imgElement)
 
                         const divElement = document.createElement('div')
-                        divElement.innerText = `Resolution: ${this.canvas.width}x${this.canvas.height}, render time: ${Math.round(elapsedTimeInSeconds*100)/100}  s`
+                        divElement.innerText = `Resolution: ${this.canvas.width}x${this.canvas.height}, render time: ${Math.round(elapsedTimeInSeconds * 100) / 100}  s`
                         this.imgCaptureContainer.appendChild(divElement)
-                        if(this.imgOutputFilename && this.imgOutputFilename.length > 0) {
+                        if (this.imgOutputFilename && this.imgOutputFilename.length > 0) {
                             this.notifyImageRendered(imgElement, this.imgOutputFilename)
                         }
                     }
                 }
                 this.onRenderFinished(this.currFrameCount, elapsedTimeInSeconds)
-                this.isFinished = true
-              }
-        }
+                this.finishRendering()
+            }
+          }
     }
 
     private notifyImageRendered(imgElement: HTMLImageElement, imgOutputFilename: string) {
@@ -277,14 +272,18 @@ export class FlameRenderer implements CloseableBuffers {
         }
     }
 
-    public signalCancel(cb: OnRenderCancelledCallback | undefined) {
-        if(!this.isFinished) {
-            this.onRenderCancelledCallback = cb
+    public signalCancel = (cb: OnRenderFinishedCallback | undefined) => {
+        if(!this._isFinished) {
+            if(cb) {
+                this.onRenderFinishedCallbacks = [cb]
+            }
+            this.cancelSignalled = true
         }
-        else if(cb) {
-            cb()
+        else {
+            if(cb) {
+                cb()
+            }
         }
-        this.cancelSignalled = true
     }
 
     public changeParameter(paramId: number, refValue: number, currValue: number): boolean {
@@ -292,7 +291,14 @@ export class FlameRenderer implements CloseableBuffers {
         const currMax = this.maxSampleCount
         this.maxSampleCount += this.initialMaxSampleCount
         this.currSampleCount = currMax
-        return this.isFinished
+        return this._isFinished
+    }
+
+    finishRendering = () => {
+        this._isFinished = true
+        for(let cb of this.onRenderFinishedCallbacks) {
+            cb()
+        }
     }
 
 }

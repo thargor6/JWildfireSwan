@@ -25,5 +25,5 @@ export function floatToStr(value: number) {
 }
 
 export function floatsAreEqual(a: number, b: number): boolean {
-    return Math.abs(a - b)< 1.0e-05
+    return Math.abs(a - b) < 1.0e-05
 }

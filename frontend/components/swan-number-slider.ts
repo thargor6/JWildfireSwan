@@ -24,6 +24,7 @@ import {PaperSliderElement} from "@polymer/paper-slider";
 import {NumberField} from "@vaadin/number-field/src/vaadin-number-field";
 import {CustomFieldValueChangedEvent} from "@vaadin/custom-field";
 import {floatsAreEqual} from "Frontend/components/utils";
+import {editorStore} from "Frontend/stores/editor-store";
 
 @customElement('swan-number-slider')
 export class SwanNumberSlider extends MobxLitElement {
@@ -78,11 +79,12 @@ export class SwanNumberSlider extends MobxLitElement {
 
     sliderChange = (e: Event) => {
         const newValue = (e.target as any).value
-        if(!floatsAreEqual(this.value, newValue)) {
+        if(!floatsAreEqual(this.value, newValue) && !editorStore.refreshing) {
+            //console.log('SLIDER', this.value, '->', newValue, e)
             this.value = newValue
-            // console.log('SLIDER', this.value, '->', newValue, e)
             if (this.onValueChange) {
-                this.onValueChange(newValue, false)
+               // leads to unwanted changes of the slider-position:
+               // this.onValueChange(newValue, false)
             }
         }
     }

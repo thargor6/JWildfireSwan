@@ -29,6 +29,7 @@ import {getTimeStamp} from "Frontend/components/utils";
 import {AppInfoEndpoint} from "Frontend/generated/endpoints";
 import {renderInfoStore} from "Frontend/stores/render-info-store";
 import {SharedRenderContext} from "Frontend/flames/renderer/shared-render-context";
+import {editorStore} from "Frontend/stores/editor-store";
 
 @customElement('swan-render-panel')
 export class SwanRenderPanel extends MobxLitElement {
@@ -100,11 +101,11 @@ export class SwanRenderPanel extends MobxLitElement {
       const reuseCanvas = this.hasCanvas()
       const that = this
       this.renderer.signalCancel(()=>{
-        that.renderer!.closeBuffers()
         if(!reuseCanvas) {
-          this.recreateCanvas()
+          that.renderer!.closeBuffers()
+          that.recreateCanvas()
         }
-        this.renderFlame(renderer)
+        that.renderFlame(renderer)
       })
     }
     else {

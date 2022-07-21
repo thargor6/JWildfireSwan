@@ -18,7 +18,7 @@ export class LoadExampleFlameAction implements StartupAction {
         editorStore.refreshing = true
         try {
           this.view.currFlame = FlameMapper.mapFromBackend(flame)
-          this.view.getRenderPanel().rerenderFlame()
+          this.view.reRender()
           renderInfoStore.calculating = false
         }
         finally {

@@ -35,7 +35,7 @@ export class SwanProgressIndicator extends MobxLitElement {
   render() {
     return html `
       <div style="display: flex; flex-direction: column; min-width: ${this.displayWidth};">
-          <div>${this.renderInfo}</div>
+          <div style="font-size: smaller;">${this.renderInfo}</div>
           <vaadin-progress-bar .value=${this.renderProgress} theme="contrast"></vaadin-progress-bar>
       </div>
     `
