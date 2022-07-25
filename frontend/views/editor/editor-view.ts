@@ -56,11 +56,6 @@ import {DisplayMode} from "Frontend/flames/renderer/render-settings";
 import {localized, msg} from "@lit/localize";
 import {Flame} from "Frontend/flames/model/flame";
 
-import './editor-edit-camera-panel'
-import './editor-edit-coloring-panel'
-import './editor-edit-denoiser-panel'
-import './editor-edit-motion-panel'
-import './editor-edit-layers-panel'
 import './editor-edit-xform-affine-panel'
 import './editor-edit-xform-nonlinear-panel'
 import './editor-edit-xform-xaos-panel'
@@ -68,8 +63,8 @@ import './editor-edit-xform-color-panel'
 import './editor-xforms-grid-panel'
 import './editor-flame-info-dialog'
 import './editor-undo-history-dialog'
+import './editor-flame-tabs-panel'
 
-import {EditorEditLayersPanel} from "Frontend/views/editor/editor-edit-layers-panel";
 import {EditorXformsGridPanel} from "Frontend/views/editor/editor-xforms-grid-panel";
 import {
   EmptyAction, GenerateRandomFlameAction,
@@ -84,25 +79,22 @@ import {EditorFlameInfoDialog} from "Frontend/views/editor/editor-flame-info-dia
 import {EditorUndoHistoryDialog} from "Frontend/views/editor/editor-undo-history-dialog";
 import {EditorEditXformAffinePanel} from "Frontend/views/editor/editor-edit-xform-affine-panel";
 import {EditorEditXformColorPanel} from "Frontend/views/editor/editor-edit-xform-color-panel";
-import {EditorEditCameraPanel} from "Frontend/views/editor/editor-edit-camera-panel";
-import {EditorEditColoringPanel} from "Frontend/views/editor/editor-edit-coloring-panel";
-import {EditorEditDenoiserPanel} from "Frontend/views/editor/editor-edit-denoiser-panel";
-import {EditorEditMotionPanel} from "Frontend/views/editor/editor-edit-motion-panel";
 import {EditorEditXformNonlinearPanel} from "Frontend/views/editor/editor-edit-xform-nonlinear-panel";
 import {LoadExampleFlameAction} from "Frontend/views/editor/editor-view-startup-actions";
+import {EditorFlameTabsPanel} from "Frontend/views/editor/editor-flame-tabs-panel";
 
 @localized()
 @customElement('editor-view')
 export class EditorView extends View implements BeforeEnterObserver {
 
   @state()
-  selectedFlameTab = 0
-
-  @state()
   selectedTransformTab = 0
 
   @query('swan-notification-panel')
   notificationPnl!: SwanNotificationPanel
+
+  @query('editor-flame-tabs-panel')
+  editorFlameTabsPanel!: EditorFlameTabsPanel
 
   @query('editor-xforms-grid-panel')
   transformsGridPanel!: EditorXformsGridPanel
@@ -112,21 +104,6 @@ export class EditorView extends View implements BeforeEnterObserver {
 
   @query('editor-undo-history-dialog')
   undoHistoryDialog!: EditorUndoHistoryDialog
-
-  @query('editor-edit-camera-panel')
-  cameraPanel!: EditorEditCameraPanel
-
-  @query('editor-edit-coloring-panel')
-  coloringPanel!: EditorEditColoringPanel
-
-  @query('editor-edit-denoiser-panel')
-  denoiserPanel!: EditorEditDenoiserPanel
-
-  @query('editor-edit-motion-panel')
-  motionPanel!: EditorEditMotionPanel
-
-  @query('editor-edit-layers-panel')
-  layersPanel!: EditorEditLayersPanel
 
   @query('editor-edit-xform-affine-panel')
   xformAffinePanel!: EditorEditXformAffinePanel
@@ -171,21 +148,22 @@ export class EditorView extends View implements BeforeEnterObserver {
                     .afterSelectionChange="${this.afterXformChange}"></editor-xforms-grid-panel>
               ${this.renderTransformTabs()}
             </vaadin-horizontal-layout>
-            ${this.renderFlameTabs()}
+        
+            <editor-flame-tabs-panel .reRender=${this.reRender} .afterLayerChange=${this.afterLayerChange}></editor-flame-tabs-panel>
           </vaadin-vertical-layout>
         `;
     }
 
   afterFlameChange =() => {
-    this.cameraPanel.requestContentUpdate()
-    this.coloringPanel.requestContentUpdate()
-    this.denoiserPanel.requestContentUpdate()
-    this.motionPanel.requestContentUpdate()
-    this.layersPanel.refreshLayers()
+    this.editorFlameTabsPanel.cameraPanel.requestContentUpdate()
+    this.editorFlameTabsPanel.coloringPanel.requestContentUpdate()
+    this.editorFlameTabsPanel.denoiserPanel.requestContentUpdate()
+    this.editorFlameTabsPanel.motionPanel.requestContentUpdate()
+    this.editorFlameTabsPanel.layersPanel.refreshLayers()
   }
 
   afterLayerChange =() => {
-    this.layersPanel.requestContentUpdate()
+    this.editorFlameTabsPanel.layersPanel.requestContentUpdate()
     this.transformsGridPanel.refreshXforms()
     this.transformsGridPanel.selectFirstXform()
   }
@@ -205,10 +183,6 @@ export class EditorView extends View implements BeforeEnterObserver {
           this.currFlame)
     }
 
-    selectedFlameTabChanged(e: CustomEvent) {
-        this.selectedFlameTab = e.detail.value;
-    }
-
   selectedTransformTabChanged(e: CustomEvent) {
     this.selectedTransformTab = e.detail.value;
   }
@@ -216,7 +190,7 @@ export class EditorView extends View implements BeforeEnterObserver {
     exportParamsToClipboard = (): void => {
         FlamesEndpoint.convertFlameToXml(FlameMapper.mapToBackend(this.currFlame)).then(flameXml => {
             navigator.clipboard.writeText(flameXml)
-            this.notificationPnl.showNotifivation(msg('Parameters were copied to the Clipboard'))
+            this.notificationPnl.showNotifivation(msg('Parameters were copied to the clipboard'))
         })
           .catch(err=> {
               editorStore.lastError = err
@@ -278,46 +252,6 @@ export class EditorView extends View implements BeforeEnterObserver {
         }
       }
       startupActionHolder.action = new EmptyAction()
-    }
-
-    private renderFlameTabs = () => {
-        return html `
-           <div style="display: flex; flex-direction: column; padding: 0.5em;">
-                <vaadin-tabs @selected-changed="${this.selectedFlameTabChanged}">
-                    <vaadin-tab theme="icon-on-top">
-                        <vaadin-icon icon="vaadin:viewport"></vaadin-icon>
-                        <span>${msg('Camera')}</span>
-                    </vaadin-tab>
-                    <vaadin-tab theme="icon-on-top">
-                        <vaadin-icon icon="vaadin:palette"></vaadin-icon>
-                        <span>${msg('Coloring')}</span>
-                    </vaadin-tab>
-                    <vaadin-tab theme="icon-on-top">
-                        <vaadin-icon icon="vaadin:scatter-chart"></vaadin-icon>
-                        <span>${msg('Denoiser')}</span>
-                    </vaadin-tab>
-                    <vaadin-tab theme="icon-on-top">
-                        <vaadin-icon icon="vaadin:film"></vaadin-icon>
-                        <span>${msg('Motion')}</span>
-                    </vaadin-tab>
-                    <vaadin-tab theme="icon-on-top">
-                        <vaadin-icon icon="vaadin:list-ol"></vaadin-icon>
-                        <span>${msg('Layers')}</span>
-                    </vaadin-tab>
-                </vaadin-tabs>
-                <div style="display: flex; flex-direction: column; align-items: center; width: 100%;">
-                    <editor-edit-camera-panel .visible=${this.selectedFlameTab === 0}
-                     .afterPropertyChange=${this.reRender}></editor-edit-camera-panel>
-                    <editor-edit-coloring-panel .visible=${this.selectedFlameTab === 1}
-                      .afterPropertyChange=${this.reRender}></editor-edit-coloring-panel>
-                    <editor-edit-denoiser-panel .visible=${this.selectedFlameTab === 2}
-                      .afterPropertyChange=${this.reRender}></editor-edit-denoiser-panel>
-                    <editor-edit-motion-panel .visible=${this.selectedFlameTab === 3}
-                      .afterPropertyChange=${this.reRender}></editor-edit-motion-panel>
-                    <editor-edit-layers-panel .visible=${this.selectedFlameTab === 4}
-                      .afterPropertyChange=${this.reRender} .onAfterLayerChanged="${this.afterLayerChange}" ></editor-edit-layers-panel>
-                 </div>
-           </div>`
     }
 
   private renderTransformTabs = () => {
@@ -450,7 +384,7 @@ export class EditorView extends View implements BeforeEnterObserver {
   public set currFlame(newFlame) {
     editorStore.currFlame = newFlame
     this.afterFlameChange()
-    this.layersPanel.selectFirstLayer()
+    this.editorFlameTabsPanel.layersPanel.selectFirstLayer()
   }
 
   connectedCallback() {
@@ -461,8 +395,8 @@ export class EditorView extends View implements BeforeEnterObserver {
   renderFirstFlame = ()=> {
     startupActionHolder.action.execute()
     this.reRender()
-    if(editorStore.currFlame.layers.length>0 && this.layersPanel) {
-      this.layersPanel.selectFirstLayer()
+    if(editorStore.currFlame.layers.length>0 && this.editorFlameTabsPanel.layersPanel) {
+      this.editorFlameTabsPanel.layersPanel.selectFirstLayer()
     }
     this.requestUpdate()
   }
