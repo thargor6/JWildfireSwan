@@ -38,7 +38,7 @@ import '@vaadin/vaadin-split-layout'
 import '@vaadin/app-layout/vaadin-drawer-toggle';
 
 import {FlameRenderer} from '../../flames/renderer/flame-renderer'
-import {FlamesEndpoint, GalleryEndpoint} from "Frontend/generated/endpoints";
+import {FlamesEndpoint} from "Frontend/generated/endpoints";
 import {FlameMapper} from '../../flames/model/mapper/flame-mapper'
 import '@vaadin/vaadin-combo-box';
 import '../../components/swan-loading-indicator'
@@ -56,14 +56,11 @@ import {DisplayMode} from "Frontend/flames/renderer/render-settings";
 import {localized, msg} from "@lit/localize";
 import {Flame} from "Frontend/flames/model/flame";
 
-import './editor-edit-xform-affine-panel'
-import './editor-edit-xform-nonlinear-panel'
-import './editor-edit-xform-xaos-panel'
-import './editor-edit-xform-color-panel'
 import './editor-xforms-grid-panel'
 import './editor-flame-info-dialog'
 import './editor-undo-history-dialog'
 import './editor-flame-tabs-panel'
+import './editor-xform-tabs-panel'
 
 import {EditorXformsGridPanel} from "Frontend/views/editor/editor-xforms-grid-panel";
 import {
@@ -77,24 +74,22 @@ import {singleRendererStore} from "Frontend/stores/single-renderer-store";
 import {cloneDeep} from "lodash";
 import {EditorFlameInfoDialog} from "Frontend/views/editor/editor-flame-info-dialog";
 import {EditorUndoHistoryDialog} from "Frontend/views/editor/editor-undo-history-dialog";
-import {EditorEditXformAffinePanel} from "Frontend/views/editor/editor-edit-xform-affine-panel";
-import {EditorEditXformColorPanel} from "Frontend/views/editor/editor-edit-xform-color-panel";
-import {EditorEditXformNonlinearPanel} from "Frontend/views/editor/editor-edit-xform-nonlinear-panel";
 import {LoadExampleFlameAction} from "Frontend/views/editor/editor-view-startup-actions";
 import {EditorFlameTabsPanel} from "Frontend/views/editor/editor-flame-tabs-panel";
+import {EditorXformTabsPanel} from "Frontend/views/editor/editor-xform-tabs-panel";
 
 @localized()
 @customElement('editor-view')
 export class EditorView extends View implements BeforeEnterObserver {
-
-  @state()
-  selectedTransformTab = 0
 
   @query('swan-notification-panel')
   notificationPnl!: SwanNotificationPanel
 
   @query('editor-flame-tabs-panel')
   editorFlameTabsPanel!: EditorFlameTabsPanel
+
+  @query('editor-xform-tabs-panel')
+  editorXformTabsPanel!: EditorXformTabsPanel
 
   @query('editor-xforms-grid-panel')
   transformsGridPanel!: EditorXformsGridPanel
@@ -105,54 +100,46 @@ export class EditorView extends View implements BeforeEnterObserver {
   @query('editor-undo-history-dialog')
   undoHistoryDialog!: EditorUndoHistoryDialog
 
-  @query('editor-edit-xform-affine-panel')
-  xformAffinePanel!: EditorEditXformAffinePanel
-
-  @query('editor-edit-xform-color-panel')
-  xformColorPanel!: EditorEditXformColorPanel
-
-  @query('editor-edit-xform-nonlinear-panel')
-  xformNonlinearPanel!: EditorEditXformNonlinearPanel
-
   render() {
-        return html`
-          <header class="bg-base border-b border-contrast-10 box-border flex h-xl items-center w-full" slot="navbar">
-            <vaadin-drawer-toggle aria-label="Menu toggle" class="text-secondary" theme="contrast"></vaadin-drawer-toggle>
-            <h1 class="m-0 text-l" style="margin-right: 1em;">${msg('Flame editor')}</h1>
-            <editor-toolbar-panel 
-                      .onEditPasteFlameFromClipboard="${this.importParamsFromClipboard}"
-                      .onEditCopyFlameToClipboard="${this.exportParamsToClipboard}"
-                      .onNewBlankFlame="${this.createBlankFlame}"
-                      .onNewRandomFlame="${this.createRandomFlame}"
-                      .onNewRandomGradient="${this.createRandomGradient}"
-                      .onEditUndo="${this.undoEdit}"
-                      .onEditRedo="${this.redoEdit}"
-                      .onToolsSendToRenderer="${this.sendFlameToRenderer}"
-                      .onToolsShowFlameInfo="${this.showFlameInfo}"
-                      .onToolsShowUndoHistory="${this.showUndoHistory}"
-                    ></editor-toolbar-panel>
-          </header>
-          <swan-notification-panel></swan-notification-panel>
-          <swan-error-panel .errorMessage=${editorStore.lastError}></swan-error-panel>
-          <editor-flame-info-dialog></editor-flame-info-dialog>
-          <editor-undo-history-dialog></editor-undo-history-dialog>
-          <vaadin-vertical-layout style="width: 100%;">
-            <vaadin-horizontal-layout>
-              <swan-render-panel
-                      .containerWidth="${'34em'}" .containerHeight="${'34em'}"
-                      .canvasDisplayWidth="${'30em'}" .canvasDisplayHeight="${'30em'}"
-                      .onCreateFlameRenderer=${this.createFlameRenderer}
-                      .sharedRenderCtx=${editorStore.sharedRenderCtx}></swan-render-panel>
-              <editor-xforms-grid-panel .afterPropertyChange=${this.reRender} 
-                    .afterXformStructureChange="${this.afterLayerChange}"                           
-                    .afterSelectionChange="${this.afterXformChange}"></editor-xforms-grid-panel>
-              ${this.renderTransformTabs()}
-            </vaadin-horizontal-layout>
-        
-            <editor-flame-tabs-panel .reRender=${this.reRender} .afterLayerChange=${this.afterLayerChange}></editor-flame-tabs-panel>
-          </vaadin-vertical-layout>
-        `;
-    }
+    return html`
+      <header class="bg-base border-b border-contrast-10 box-border flex h-xl items-center w-full" slot="navbar">
+        <vaadin-drawer-toggle aria-label="Menu toggle" class="text-secondary" theme="contrast"></vaadin-drawer-toggle>
+        <h1 class="m-0 text-l" style="margin-right: 1em;">${msg('Flame editor')}</h1>
+        <editor-toolbar-panel 
+                  .onEditPasteFlameFromClipboard="${this.importParamsFromClipboard}"
+                  .onEditCopyFlameToClipboard="${this.exportParamsToClipboard}"
+                  .onNewBlankFlame="${this.createBlankFlame}"
+                  .onNewRandomFlame="${this.createRandomFlame}"
+                  .onNewRandomGradient="${this.createRandomGradient}"
+                  .onEditUndo="${this.undoEdit}"
+                  .onEditRedo="${this.redoEdit}"
+                  .onToolsSendToRenderer="${this.sendFlameToRenderer}"
+                  .onToolsShowFlameInfo="${this.showFlameInfo}"
+                  .onToolsShowUndoHistory="${this.showUndoHistory}"
+                ></editor-toolbar-panel>
+      </header>
+      <div>
+        <swan-notification-panel></swan-notification-panel>
+        <swan-error-panel .errorMessage=${editorStore.lastError}></swan-error-panel>
+        <editor-flame-info-dialog></editor-flame-info-dialog>
+        <editor-undo-history-dialog></editor-undo-history-dialog>
+      </div>
+      <vaadin-vertical-layout style="width: 100%;">
+        <vaadin-horizontal-layout>
+          <swan-render-panel
+                  .containerWidth="${'32em'}" .containerHeight="${'32em'}"
+                  .canvasDisplayWidth="${'28em'}" .canvasDisplayHeight="${'28em'}"
+                  .onCreateFlameRenderer=${this.createFlameRenderer}
+                  .sharedRenderCtx=${editorStore.sharedRenderCtx}></swan-render-panel>
+          <editor-xforms-grid-panel .afterPropertyChange=${this.reRender} 
+                .afterXformStructureChange="${this.afterLayerChange}"                           
+                .afterSelectionChange="${this.afterXformChange}"></editor-xforms-grid-panel>
+          <editor-xform-tabs-panel .reRender=${this.reRender} .fluidReRender=${this.fluidReRender}></editor-xform-tabs-panel>
+        </vaadin-horizontal-layout>
+        <editor-flame-tabs-panel .reRender=${this.reRender} .afterLayerChange=${this.afterLayerChange}></editor-flame-tabs-panel>
+      </vaadin-vertical-layout>
+    `;
+  }
 
   afterFlameChange =() => {
     this.editorFlameTabsPanel.cameraPanel.requestContentUpdate()
@@ -169,9 +156,9 @@ export class EditorView extends View implements BeforeEnterObserver {
   }
 
   afterXformChange = () => {
-    this.xformAffinePanel.requestContentUpdate()
-    this.xformColorPanel.requestContentUpdate()
-    this.xformNonlinearPanel.refreshVariations()
+    this.editorXformTabsPanel.xformAffinePanel.requestContentUpdate()
+    this.editorXformTabsPanel.xformColorPanel.requestContentUpdate()
+    this.editorXformTabsPanel.xformNonlinearPanel.refreshVariations()
   }
 
     createFlameRenderer = ()=> {
@@ -182,10 +169,6 @@ export class EditorView extends View implements BeforeEnterObserver {
           undefined, 1.5,
           this.currFlame)
     }
-
-  selectedTransformTabChanged(e: CustomEvent) {
-    this.selectedTransformTab = e.detail.value;
-  }
 
     exportParamsToClipboard = (): void => {
         FlamesEndpoint.convertFlameToXml(FlameMapper.mapToBackend(this.currFlame)).then(flameXml => {
@@ -253,44 +236,6 @@ export class EditorView extends View implements BeforeEnterObserver {
       }
       startupActionHolder.action = new EmptyAction()
     }
-
-  private renderTransformTabs = () => {
-    return html `
-           <div style="display: flex; flex-direction: column; padding: 0.5em;">
-              
-                <vaadin-tabs @selected-changed="${this.selectedTransformTabChanged}">
-                    <vaadin-tab theme="icon-on-top">
-                        <vaadin-icon icon="vaadin:function"></vaadin-icon>
-                        <span>${msg('Affine')}</span>
-                    </vaadin-tab>
-                    <vaadin-tab theme="icon-on-top">
-                        <vaadin-icon icon="vaadin:spline-chart"></vaadin-icon>
-                        <span>${msg('Nonlinear')}</span>
-                    </vaadin-tab>
-                    <vaadin-tab theme="icon-on-top">
-                        <vaadin-icon icon="vaadin:grid-small-o"></vaadin-icon>
-                        <span>${msg('Xaos')}</span>
-                    </vaadin-tab>
-                    <vaadin-tab theme="icon-on-top">
-                        <vaadin-icon icon="vaadin:paintbrush"></vaadin-icon>
-                        <span>${msg('Color')}</span>
-                    </vaadin-tab>
-                </vaadin-tabs>
-               <vaadin-scroller style="height: 22em; width: 100%;">
-                <div style="display: flex; flex-direction: column; align-items: center; width: 100%;">
-                  <editor-edit-xform-affine-panel .visible=${this.selectedTransformTab === 0}
-                    .afterPropertyChange=${this.reRender} .onPropertyChange="${this.fluidReRender}" ></editor-edit-xform-affine-panel>
-                  <editor-edit-xform-nonlinear-panel .visible=${this.selectedTransformTab === 1}
-                    .afterPropertyChange=${this.reRender}></editor-edit-xform-nonlinear-panel>
-                  <editor-edit-xform-xaos-panel .visible=${this.selectedTransformTab === 2}
-                    .afterPropertyChange=${this.reRender}></editor-edit-xform-xaos-panel>
-                  <editor-edit-xform-color-panel .visible=${this.selectedTransformTab === 3}
-                    .afterPropertyChange=${this.reRender}></editor-edit-xform-color-panel>
-                 </div>
-               </vaadin-scroller>
-           </div>`
-  }
-
 
   getRenderPanel = (): SwanRenderPanel =>  {
         return document.querySelector('swan-render-panel')!
