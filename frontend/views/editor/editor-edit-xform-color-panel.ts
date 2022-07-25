@@ -55,11 +55,13 @@ export class EditorEditXformColorPanel extends EditPropertyPanel {
           ${this.renderNumberField(this.weight)}
           ${this.renderNumberField(this.color)}
           ${this.renderNumberField(this.colorSymmetry)}
+          <div style="flex; flex-direction: row; flex-wrap: wrap;">
+            <vaadin-button ?disabled=${undefined===editorStore.currLayer} @click="${this.randomizeColors}">${msg('Randomize colors')}</vaadin-button>
+            <vaadin-button ?disabled=${undefined===editorStore.currLayer} @click="${this.randomizeColorSymmetry}">${msg('Randomize color speed')}</vaadin-button>
+            <vaadin-button ?disabled=${undefined===editorStore.currLayer} @click="${this.resetColors}">${msg('Reset colors')}</vaadin-button>
+            <vaadin-button ?disabled=${undefined===editorStore.currLayer} @click="${this.distributeColors}">${msg('Distribute colors')}</vaadin-button>
+          </div>  
         </vaadin-vertical-layout>
-        <vaadin-button ?disabled=${undefined===editorStore.currLayer} @click="${this.randomizeColors}">${msg('Randomize colors')}</vaadin-button>
-        <vaadin-button ?disabled=${undefined===editorStore.currLayer} @click="${this.randomizeColorSymmetry}">${msg('Randomize color speed')}</vaadin-button>
-        <vaadin-button ?disabled=${undefined===editorStore.currLayer} @click="${this.resetColors}">${msg('Reset colors')}</vaadin-button>
-        <vaadin-button ?disabled=${undefined===editorStore.currLayer} @click="${this.distributeColors}">${msg('Distribute colors')}</vaadin-button>
     `;
   }
 

@@ -78,7 +78,7 @@ export abstract class EditPropertyPanel extends MobxLitElement {
 
   render() {
     return html`
-      <vertical-layout theme="spacing" style="${this.visible ? `display:block;`: `display:none;`}">
+      <vertical-layout theme="spacing" style="${this.visible ? `display:flex; flex-direction: row; flex-wrap: wrap;;`: `display:none;`}">
        ${this.renderControls()}
       </vertical-layout>
 `;

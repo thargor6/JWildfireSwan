@@ -386,6 +386,7 @@ export class EditorEditXformAffinePanel extends EditPropertyPanel {
 
   renderControls() {
     return html`
+      <vaadin-vertical-layout>  
         <vaadin-tabs  @selected-changed="${this.editPlaneTabChanged}">
             <vaadin-tab>${msg('XY-plane')}</vaadin-tab>
             <vaadin-tab>${msg('YZ-plane')}</vaadin-tab>
@@ -464,6 +465,7 @@ export class EditorEditXformAffinePanel extends EditPropertyPanel {
             </vaadin-vertical-layout>
           </vaadin-horizontal-layout>
         </div>
+      </vaadin-vertical-layout>     
     `;
   }
 
