@@ -25,18 +25,6 @@ import {EditPropertyPanel, NumberFieldDescriptor} from "./edit-property-panel";
 @customElement('editor-edit-motion-panel')
 export class EditorEditMotionPanel extends EditPropertyPanel {
 
-  private frame: NumberFieldDescriptor = {
-    key: 'frame', label: msg('Frame'), min: 0, max: 100, step: 1,
-    onChange: this.flamePropertyChange.bind(this,'frame'),
-    value: this.getFlameValue.bind(this,'frame')
-  }
-
-  private frameCount: NumberFieldDescriptor = {
-    key: 'frameCount', label: msg('Frame count'), min: 3, max: 100, step: 10,
-    onChange: this.flamePropertyChange.bind(this,'frameCount'),
-    value: this.getFlameValue.bind(this,'frameCount')
-  }
-
   private fps: NumberFieldDescriptor = {
     key: 'fps', label: msg('FPS'), min: 1, max: 120, step: 1,
     onChange: this.flamePropertyChange.bind(this,'fps'),
@@ -63,8 +51,6 @@ export class EditorEditMotionPanel extends EditPropertyPanel {
 
   renderControls() {
     return html`
-          ${this.renderNumberField(this.frame)}
-          ${this.renderNumberField(this.frameCount)}
           ${this.renderNumberField(this.fps)}
           ${this.renderNumberField(this.motionBlurLength)}
           ${this.renderNumberField(this.motionBlurTimeStep)}
@@ -74,8 +60,6 @@ export class EditorEditMotionPanel extends EditPropertyPanel {
 
   protected firstUpdated(_changedProperties: PropertyValues) {
     super.firstUpdated(_changedProperties)
-    this.registerControl(this.frame)
-    this.registerControl(this.frameCount)
     this.registerControl(this.fps)
     this.registerControl(this.motionBlurLength)
     this.registerControl(this.motionBlurTimeStep)

@@ -84,7 +84,7 @@ export class EditorXformTabsPanel extends MobxLitElement {
                <vaadin-scroller style="height: 22em; width: 100%;">
                 <div style="display: flex; flex-direction: column; align-items: center; width: 100%;">
                   <editor-edit-xform-affine-panel .visible=${this.selectedTransformTab === 0}
-                    .afterPropertyChange=${this.reRender} .onPropertyChange="${this.fluidReRender}" ></editor-edit-xform-affine-panel>
+                    .afterPropertyChange=${this.reRender} .onPropertyChange=${this.fluidReRender} ></editor-edit-xform-affine-panel>
                   <editor-edit-xform-nonlinear-panel .visible=${this.selectedTransformTab === 1}
                     .afterPropertyChange=${this.reRender}></editor-edit-xform-nonlinear-panel>
                   <editor-edit-xform-xaos-panel .visible=${this.selectedTransformTab === 2}

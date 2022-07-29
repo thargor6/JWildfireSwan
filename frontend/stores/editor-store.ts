@@ -34,6 +34,7 @@ export class EditorStore {
   initFlag = false
   editModeTx = EDIT_MODE_TX_AFFINE
   _refreshing = true
+  _playingAnimation = false
   variations: string[] = []
   _lastError = ''
   _currFlame = new Flame()
@@ -189,6 +190,15 @@ export class EditorStore {
   set refreshing(newValue) {
     this._refreshing = newValue
   }
+
+  get playingAnimation() {
+    return this._playingAnimation
+  }
+
+  set playingAnimation(newValue) {
+    this._playingAnimation = newValue
+  }
+
 }
 
 registerVars_All()

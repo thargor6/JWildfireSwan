@@ -54,13 +54,14 @@ import {editorStore} from "Frontend/stores/editor-store";
 import {SwanNotificationPanel} from "Frontend/components/swan-notification-panel";
 import {DisplayMode} from "Frontend/flames/renderer/render-settings";
 import {localized, msg} from "@lit/localize";
-import {Flame} from "Frontend/flames/model/flame";
+import {DenoiserType, Flame} from "Frontend/flames/model/flame";
 
 import './editor-xforms-grid-panel'
 import './editor-flame-info-dialog'
 import './editor-undo-history-dialog'
 import './editor-flame-tabs-panel'
 import './editor-xform-tabs-panel'
+import './editor-anim-frame-panel'
 
 import {EditorXformsGridPanel} from "Frontend/views/editor/editor-xforms-grid-panel";
 import {
@@ -77,6 +78,8 @@ import {EditorUndoHistoryDialog} from "Frontend/views/editor/editor-undo-history
 import {LoadExampleFlameAction} from "Frontend/views/editor/editor-view-startup-actions";
 import {EditorFlameTabsPanel} from "Frontend/views/editor/editor-flame-tabs-panel";
 import {EditorXformTabsPanel} from "Frontend/views/editor/editor-xform-tabs-panel";
+import {EditorAnimFramePanel} from "Frontend/views/editor/editor-anim-frame-panel";
+import {Parameters} from "Frontend/flames/model/parameters";
 
 @localized()
 @customElement('editor-view')
@@ -99,6 +102,9 @@ export class EditorView extends View implements BeforeEnterObserver {
 
   @query('editor-undo-history-dialog')
   undoHistoryDialog!: EditorUndoHistoryDialog
+
+  @query('editor-anim-frame-panel')
+  animFramePanel!: EditorAnimFramePanel
 
   render() {
     return html`
@@ -136,6 +142,7 @@ export class EditorView extends View implements BeforeEnterObserver {
                 .afterSelectionChange="${this.afterXformChange}"></editor-xforms-grid-panel>
           <editor-xform-tabs-panel .reRender=${this.reRender} .fluidReRender=${this.fluidReRender}></editor-xform-tabs-panel>
         </vaadin-horizontal-layout>
+        <editor-anim-frame-panel .afterPropertyChange=${this.reRender} .playAnimation="${this.playAnimation}"></editor-anim-frame-panel>  
         <editor-flame-tabs-panel .reRender=${this.reRender} .afterLayerChange=${this.afterLayerChange}></editor-flame-tabs-panel>
       </vaadin-vertical-layout>
     `;
@@ -146,6 +153,7 @@ export class EditorView extends View implements BeforeEnterObserver {
     this.editorFlameTabsPanel.coloringPanel.requestContentUpdate()
     this.editorFlameTabsPanel.denoiserPanel.requestContentUpdate()
     this.editorFlameTabsPanel.motionPanel.requestContentUpdate()
+    this.animFramePanel.requestContentUpdate()
     this.editorFlameTabsPanel.layersPanel.refreshLayers()
   }
 
@@ -162,12 +170,22 @@ export class EditorView extends View implements BeforeEnterObserver {
   }
 
     createFlameRenderer = ()=> {
+      if(editorStore.playingAnimation) {
+        return new FlameRenderer(editorStore.sharedRenderCtx,256, 256,
+          DisplayMode.FLAME, this.getRenderPanel().canvas,
+          undefined, false,
+          '',
+          undefined, 0.85, true,
+          this.currFlame)
+      }
+      else {
         return new FlameRenderer(editorStore.sharedRenderCtx,512, 256,
           DisplayMode.FLAME, this.getRenderPanel().canvas,
           undefined, false,
           '',
-          undefined, 1.5,
+          undefined, 1.0, false,
           this.currFlame)
+      }
     }
 
     exportParamsToClipboard = (): void => {
@@ -237,9 +255,9 @@ export class EditorView extends View implements BeforeEnterObserver {
       startupActionHolder.action = new EmptyAction()
     }
 
-  getRenderPanel = (): SwanRenderPanel =>  {
-        return document.querySelector('swan-render-panel')!
-  }
+    getRenderPanel = (): SwanRenderPanel =>  {
+      return document.querySelector('swan-render-panel')!
+    }
 
     createBlankFlame = () => {
         renderInfoStore.calculating = true
@@ -319,8 +337,16 @@ export class EditorView extends View implements BeforeEnterObserver {
     }
 
     reRender = ()=> {
-      this.getRenderPanel().rerenderFlame()
+      let renderPanel = this.getRenderPanel()
+      renderPanel.onAfterRenderFinishedOnce = undefined
+      renderPanel.rerenderFlame()
     }
+
+  reRenderWithCallback = (cb: ()=>void)=> {
+    let renderPanel = this.getRenderPanel()
+    renderPanel.onAfterRenderFinishedOnce = cb
+    renderPanel.rerenderFlame()
+  }
 
   get currFlame() {
     return editorStore.currFlame
@@ -383,5 +409,42 @@ export class EditorView extends View implements BeforeEnterObserver {
   showUndoHistory = ()=> {
     this.undoHistoryDialog.refreshHistory()
     this.undoHistoryDialog.dialogOpened = true
+  }
+
+  renderNextFrame = (startFrame: number, frameCount: number, prevFrame: number) => {
+    try {
+      if (prevFrame < frameCount) {
+        const currFrame = prevFrame + 3
+        editorStore.currFlame.frame = Parameters.intParam(currFrame)
+        editorStore.currFlame.layers[0].xforms[0].xyPRotate = Parameters.floatParam(currFrame)
+        this.reRenderWithCallback(this.renderNextFrame.bind(this, startFrame, frameCount, currFrame))
+      } else {
+        editorStore.currFlame.frame = Parameters.intParam(startFrame)
+        editorStore.playingAnimation = false
+        this.reRender()
+      }
+    }
+    catch(error) {
+      editorStore.playingAnimation = false
+      editorStore.lastError = `${error}`
+    }
+  }
+
+  playAnimation = ()=> {
+    if(editorStore.currFlame.layers.length>0) {
+      editorStore.lastError = ''
+      editorStore.playingAnimation = true
+      try {
+        const currFrame = editorStore.currFlame.frame.value
+        const frameCount = editorStore.currFlame.frameCount.value
+        editorStore.currFlame.frame = Parameters.intParam(currFrame)
+        editorStore.currFlame.dnType = DenoiserType.OFF
+        this.reRenderWithCallback(this.renderNextFrame.bind(this, currFrame, frameCount, currFrame))
+      }
+      catch(error) {
+        editorStore.playingAnimation = false
+        editorStore.lastError = `${error}`
+      }
+    }
   }
 }

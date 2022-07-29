@@ -59,6 +59,7 @@ export class SwanRenderPanel extends MobxLitElement {
   onCreateFlameRenderer?: ()=>FlameRenderer
 
   onRenderFinished?: (frameCount: number, elapsedTimeInS: number) => void
+  onAfterRenderFinishedOnce?: () => void | undefined = undefined
 
   renderer: FlameRenderer | undefined = undefined
 
@@ -172,11 +173,18 @@ export class SwanRenderPanel extends MobxLitElement {
   }
 
   execOnRenderFinished = (frameCount: number, elapsedTimeInS: number) => {
-    renderInfoStore.renderProgress = 1.0
-    renderInfoStore.renderInfo = 'Rendering finished after ' + Math.round((elapsedTimeInS + Number.EPSILON) * 100) / 100 + ' s'
-    AppInfoEndpoint.incFlamesRendered()
-    if(this.onRenderFinished) {
-      this.onRenderFinished(frameCount, elapsedTimeInS)
+    if(!(this.renderer && this.renderer.fastPreview)) {
+      renderInfoStore.renderProgress = 1.0
+      renderInfoStore.renderInfo = 'Rendering finished after ' + Math.round((elapsedTimeInS + Number.EPSILON) * 100) / 100 + ' s'
+      //AppInfoEndpoint.incFlamesRendered()
+      if (this.onRenderFinished) {
+        this.onRenderFinished(frameCount, elapsedTimeInS)
+      }
+    }
+    if(this.onAfterRenderFinishedOnce) {
+      const cb = this.onAfterRenderFinishedOnce
+      this.onAfterRenderFinishedOnce = undefined
+      cb()
     }
   }
 

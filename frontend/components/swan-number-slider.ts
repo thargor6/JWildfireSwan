@@ -17,7 +17,7 @@
 
 import {customElement, property, query} from 'lit/decorators.js';
 import {MobxLitElement} from "@adobe/lit-mobx";
-import {html, PropertyValues} from "lit";
+import {html, nothing, PropertyValues} from "lit";
 import '@vaadin/number-field';
 import '@polymer/paper-slider/paper-slider'
 import {PaperSliderElement} from "@polymer/paper-slider";
@@ -54,6 +54,12 @@ export class SwanNumberSlider extends MobxLitElement {
     sliderWidth = '15em'
 
     @property()
+    hideSlider = false
+
+    @property()
+    hideEditField = false
+
+    @property()
     onValueChange?: (value: number, isImmediateValue: boolean)=>{}
 
     @query('paper-slider')
@@ -66,14 +72,20 @@ export class SwanNumberSlider extends MobxLitElement {
 
     render() {
         return html  `
-              <div style="display: flex; flex-direction: row; align-items: center;">
-                <div style="width: ${this.labelWidth}; margin-right: 0.5em; text-align: end; font-size: small; font-weight: bold;">${this.label}</div>
-                <vaadin-number-field theme="small" @change=${this.numberFieldChanged} step=${this.step}
-                  ?disabled="${this.disabled}" value="${this.value}"></vaadin-number-field>
-                 <paper-slider style="width: ${this.sliderWidth};" @immediate-value-change="${this.immediateValueChanged}"
-                   ?disabled="${this.disabled}" @value-change="${this.sliderChange}" value="${this.value}" min="${this.min}"
-                   step=${this.step} max="${this.max}"></paper-slider>
-              </div>
+          <div style="display: flex; flex-direction: row; align-items: center;">
+            <div style="width: ${this.labelWidth}; margin-right: 0.5em; text-align: end; font-size: small; font-weight: bold;">${this.label}</div>
+           
+            ${this.hideEditField ? html `<div style="font-size: small; min-width:3em;">${this.value}</div>` : html `
+              <vaadin-number-field theme="small" @change=${this.numberFieldChanged} step=${this.step}
+                ?disabled="${this.disabled}" value="${this.value}"></vaadin-number-field>            
+            `}
+            ${this.hideSlider ? nothing : html `
+              <paper-slider style="width: ${this.sliderWidth};" @immediate-value-change="${this.immediateValueChanged}"
+                ?disabled="${this.disabled}" @value-change="${this.sliderChange}" value="${this.value}" 
+                min="${this.min}" step=${this.step} max="${this.max}"></paper-slider>                
+            `}  
+
+          </div>
         `
     }
 
