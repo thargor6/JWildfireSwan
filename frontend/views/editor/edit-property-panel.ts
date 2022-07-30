@@ -23,6 +23,7 @@ import {editorStore} from "Frontend/stores/editor-store";
 import {HasValue} from "@hilla/form";
 import {Flame, Layer, Variation, XForm} from "Frontend/flames/model/flame";
 import {floatsAreEqual} from "Frontend/components/utils";
+import {FloatMotionCurveParameter, MotionCurveInterpolation, Parameters} from "Frontend/flames/model/parameters";
 
 export interface ComoboBoxItem {
   key: number
@@ -58,6 +59,7 @@ export interface NumberFieldDescriptor {
   hideSlider?: boolean
   hideEditField?: boolean
   onChange(value: number, isImmediateValue: boolean): void
+  onButtonClicked?: (e: Event) => void
   value(): number | undefined
 }
 
@@ -91,7 +93,89 @@ export abstract class EditPropertyPanel extends MobxLitElement {
   // credit: Typescript documentation, src
   // https://www.typescriptlang.org/docs/handbook/advanced-types.html#index-types
   getProperty<T, K extends keyof T>(o: T, propertyName: K): T[K] {
-    return o[propertyName]; // o[propertyName] is of type T[K]
+    return o[propertyName] // o[propertyName] is of type T[K]
+  }
+
+  setProperty<T, K extends keyof T>(o: T, propertyName: K, newValue: T[K])  {
+    o[propertyName] = newValue
+  }
+
+  xformKeyFrameClicked(key: keyof XForm, e:Event) {
+    if(editorStore.currXform) {
+      const val: any = this.getProperty(editorStore.currXform, key)
+      if(val && val.type && val.datatype) {
+        const viewXMin = 1
+        const viewXMax = 120
+        const viewYMin = -10
+        const viewYMax = 10
+        if(val.datatype==='float') {
+          if(val.type==='scalar') {
+            console.log("WAS SCALAR")
+            const newX = [editorStore.currFlame.frame.value]
+            const newY = [val.value]
+            let newCurve = Parameters.floatMotionCurveParam(val.value, viewXMin, viewXMax, viewYMin, viewYMax, MotionCurveInterpolation.SPLINE, 0, newX, newY, false)
+            this.setProperty(editorStore.currXform, key, newCurve)
+          }
+          else if(val.type==='curve') {
+            console.log("WAS CURVE")
+            const oldCurve = val as FloatMotionCurveParameter
+            const x = [...oldCurve.x]
+            const y = [...oldCurve.y]
+            const frame = editorStore.currFlame.frame.value
+            let haveKey = false
+            let lessIdx = -1
+            for(let idx=0;idx<x.length;idx++) {
+              if(floatsAreEqual(x[idx], frame)) {
+                haveKey = true
+                // TODO something to do ?
+              }
+              else if(frame < x[idx] && lessIdx < idx) {
+                lessIdx = idx
+              }
+            }
+            console.log("GHAVE JKEY", haveKey, "IDX", lessIdx)
+            if(!haveKey) {
+               let   newX = [...x, frame]
+               let    newY = [...y, val.value]
+
+              let newCurve = Parameters.floatMotionCurveParam(val.value, oldCurve.viewXMin, oldCurve.viewXMax, oldCurve.viewYMin, oldCurve.viewYMax, oldCurve.interpolation, oldCurve.selectedIdx, newX, newY, oldCurve.locked)
+              this.setProperty(editorStore.currXform, key, newCurve)
+            }
+
+
+
+          }
+          else {
+            console.log(`WARN: unsupported type ${val.type} for xform parameter ${key}`)
+          }
+        }
+        else if(val.datatype==='int') {
+          if(val.type==='scalar') {
+            const x = [editorStore.currFlame.frame.value]
+            const y = [val.value]
+            let newCurve = Parameters.intMotionCurveParam(val.value, viewXMin, viewXMax, viewYMin, viewYMax, MotionCurveInterpolation.SPLINE, 0, x, y, false)
+            this.setProperty(editorStore.currXform, key, newCurve)
+          }
+          else if(val.type==='curve') {
+            // TODO
+          }
+          else {
+            console.log(`WARN: unsupported type ${val.type} for xform parameter ${key}`)
+          }
+        }
+        else {
+          console.log(`WARN: unsupported datatype ${val.datatype} for xform parameter ${key}`)
+        }
+
+        const setVal: any = this.getProperty(editorStore.currXform, key)
+        console.log("NEW CURVE", setVal)
+
+
+      }
+      else {
+        console.log(`WARN: unsupported flame parameter ${key}`)
+      }
+    }
   }
 
   getFlameValue(key: string): number | undefined {
@@ -286,7 +370,8 @@ export abstract class EditPropertyPanel extends MobxLitElement {
         .hideEditField=${desc.hideEditField ? true : false}
         .disabled="${undefined===desc.value()}" min="${desc.min}" max="${desc.max}" step="${desc.step}" 
         label="${desc.label}" .value2=${desc.value()} id="${desc.id ? desc.id : desc.key}"
-        .onValueChange="${desc.onChange}">
+        .onValueChange=${desc.onChange} .onButtonClicked=${desc.onButtonClicked}
+      >
       </swan-number-slider>
     `
   }

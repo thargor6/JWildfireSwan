@@ -60,7 +60,13 @@ export class SwanNumberSlider extends MobxLitElement {
     hideEditField = false
 
     @property()
+    buttonText = '...'
+
+    @property()
     onValueChange?: (value: number, isImmediateValue: boolean)=>{}
+
+    @property()
+    onButtonClicked : (((e: Event) => void) | undefined) = undefined
 
     @query('paper-slider')
     private slider!: PaperSliderElement
@@ -74,7 +80,11 @@ export class SwanNumberSlider extends MobxLitElement {
         return html  `
           <div style="display: flex; flex-direction: row; align-items: center;">
             <div style="width: ${this.labelWidth}; margin-right: 0.5em; text-align: end; font-size: small; font-weight: bold;">${this.label}</div>
-           
+            ${!this.onButtonClicked ? nothing : html `
+              <vaadin-button @click="${this.onButtonClicked}">${this.buttonText}</vaadin-button>  
+             `
+            }
+              
             ${this.hideEditField ? html `<div style="font-size: small; min-width:3em;">${this.value}</div>` : html `
               <vaadin-number-field theme="small" @change=${this.numberFieldChanged} step=${this.step}
                 ?disabled="${this.disabled}" value="${this.value}"></vaadin-number-field>            
