@@ -18,13 +18,16 @@
 import {customElement, property, query} from 'lit/decorators.js';
 import {MobxLitElement} from "@adobe/lit-mobx";
 import {html, nothing, PropertyValues} from "lit";
-import '@vaadin/number-field';
 import '@polymer/paper-slider/paper-slider'
 import {PaperSliderElement} from "@polymer/paper-slider";
 import {NumberField} from "@vaadin/number-field/src/vaadin-number-field";
 import {CustomFieldValueChangedEvent} from "@vaadin/custom-field";
 import {floatsAreEqual} from "Frontend/components/utils";
 import {editorStore} from "Frontend/stores/editor-store";
+import '@vaadin/number-field'
+import '@vaadin/vaadin-button'
+import '@vaadin/vaadin-icon'
+
 
 @customElement('swan-number-slider')
 export class SwanNumberSlider extends MobxLitElement {
@@ -51,6 +54,9 @@ export class SwanNumberSlider extends MobxLitElement {
     labelWidth = '8em'
 
     @property()
+    editFieldWidth = '5em'
+
+    @property()
     sliderWidth = '15em'
 
     @property()
@@ -60,7 +66,13 @@ export class SwanNumberSlider extends MobxLitElement {
     hideEditField = false
 
     @property()
-    buttonText = '...'
+    buttonText = ''
+
+    @property()
+    buttonIcon = 'vaadin:plus-circle-o'
+
+    @property()
+    buttonWidth = '3em'
 
     @property()
     onValueChange?: (value: number, isImmediateValue: boolean)=>{}
@@ -81,12 +93,12 @@ export class SwanNumberSlider extends MobxLitElement {
           <div style="display: flex; flex-direction: row; align-items: center;">
             <div style="width: ${this.labelWidth}; margin-right: 0.5em; text-align: end; font-size: small; font-weight: bold;">${this.label}</div>
             ${!this.onButtonClicked ? nothing : html `
-              <vaadin-button @click="${this.onButtonClicked}">${this.buttonText}</vaadin-button>  
+              <vaadin-button style="min-width: ${this.buttonWidth}; margin-right: 0.5em;" @click="${this.onButtonClicked}"><vaadin-icon icon="${this.buttonIcon}"></vaadin-icon>${this.buttonText}</vaadin-button>  
              `
             }
               
             ${this.hideEditField ? html `<div style="font-size: small; min-width:3em;">${this.value}</div>` : html `
-              <vaadin-number-field theme="small" @change=${this.numberFieldChanged} step=${this.step}
+              <vaadin-number-field style="width: ${this.editFieldWidth};" theme="small" @change=${this.numberFieldChanged} step=${this.step}
                 ?disabled="${this.disabled}" value="${this.value}"></vaadin-number-field>            
             `}
             ${this.hideSlider ? nothing : html `

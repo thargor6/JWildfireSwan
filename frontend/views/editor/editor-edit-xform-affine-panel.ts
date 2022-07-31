@@ -100,294 +100,336 @@ export class EditorEditXformAffinePanel extends EditPropertyPanel {
     key: 'xyCRotate', label: msg('Rot'), min: this.AFFINE_ROT_MIN_VALUE, max: this.AFFINE_ROT_MAX_VALUE, step: this.AFFINE_ROT_VALUE_STEP,
     labelWidth: this.LABEL_WIDTH,
     onChange: this.xformPropertyChange.bind(this,'xyCRotate'),
-    value: this.getXformValue.bind(this,'xyCRotate')
+    value: this.getXformValue.bind(this,'xyCRotate'),
+    onButtonClicked: this.xformKeyFrameClicked.bind(this, 'xyCRotate')
   }
 
   private xyCScale: NumberFieldDescriptor = {
     key: 'xyCScale', label: msg('Scl'), min: this.AFFINE_SCL_MIN_VALUE, max: this.AFFINE_SCL_MAX_VALUE, step: this.AFFINE_SCL_VALUE_STEP,
     labelWidth: this.LABEL_WIDTH,
     onChange: this.xformPropertyChange.bind(this,'xyCScale'),
-    value: this.getXformValue.bind(this,'xyCScale')
+    value: this.getXformValue.bind(this,'xyCScale'),
+    onButtonClicked: this.xformKeyFrameClicked.bind(this, 'xyCScale')
   }
 
   private yzC00: NumberFieldDescriptor = {
     key: 'yzC00', label: msg('C00'), min: this.AFFINE_MIN_VALUE, max: this.AFFINE_MAX_VALUE, step: this.AFFINE_VALUE_STEP,
     labelWidth: this.LABEL_WIDTH,
     onChange: this.xformPropertyChange.bind(this,'yzC00'),
-    value: this.getXformValue.bind(this,'yzC00')
+    value: this.getXformValue.bind(this,'yzC00'),
+    onButtonClicked: this.xformKeyFrameClicked.bind(this, 'yzC00')
   }
 
   private yzC01: NumberFieldDescriptor = {
     key: 'yzC01', label: msg('C01'), min: this.AFFINE_MIN_VALUE, max: this.AFFINE_MAX_VALUE, step: this.AFFINE_VALUE_STEP,
     labelWidth: this.LABEL_WIDTH,
     onChange: this.xformPropertyChange.bind(this,'yzC01'),
-    value: this.getXformValue.bind(this,'yzC01')
+    value: this.getXformValue.bind(this,'yzC01'),
+    onButtonClicked: this.xformKeyFrameClicked.bind(this, 'yzC01')
   }
 
   private yzC10: NumberFieldDescriptor = {
     key: 'yzC10', label: msg('C10'), min: this.AFFINE_MIN_VALUE, max: this.AFFINE_MAX_VALUE, step: this.AFFINE_VALUE_STEP,
     labelWidth: this.LABEL_WIDTH,
     onChange: this.xformPropertyChange.bind(this,'yzC10'),
-    value: this.getXformValue.bind(this,'yzC10')
+    value: this.getXformValue.bind(this,'yzC10'),
+    onButtonClicked: this.xformKeyFrameClicked.bind(this, 'yzC10')
   }
 
   private yzC11: NumberFieldDescriptor = {
     key: 'yzC11', label: msg('C11'), min: this.AFFINE_MIN_VALUE, max: this.AFFINE_MAX_VALUE, step: this.AFFINE_VALUE_STEP,
     labelWidth: this.LABEL_WIDTH,
     onChange: this.xformPropertyChange.bind(this,'yzC11'),
-    value: this.getXformValue.bind(this,'yzC11')
+    value: this.getXformValue.bind(this,'yzC11'),
+    onButtonClicked: this.xformKeyFrameClicked.bind(this, 'yzC11')
   }
 
   private yzC20: NumberFieldDescriptor = {
     key: 'yzC20', label: msg('C20'), min: this.AFFINE_MIN_VALUE, max: this.AFFINE_MAX_VALUE, step: this.AFFINE_VALUE_STEP,
     labelWidth: this.LABEL_WIDTH,
     onChange: this.xformPropertyChange.bind(this,'yzC20'),
-    value: this.getXformValue.bind(this,'yzC20')
+    value: this.getXformValue.bind(this,'yzC20'),
+    onButtonClicked: this.xformKeyFrameClicked.bind(this, 'yzC20')
   }
 
   private yzC21: NumberFieldDescriptor = {
     key: 'yzC21', label: msg('C21'), min: this.AFFINE_MIN_VALUE, max: this.AFFINE_MAX_VALUE, step: this.AFFINE_VALUE_STEP,
     labelWidth: this.LABEL_WIDTH,
     onChange: this.xformPropertyChange.bind(this,'yzC21'),
-    value: this.getXformValue.bind(this,'yzC21')
+    value: this.getXformValue.bind(this,'yzC21'),
+    onButtonClicked: this.xformKeyFrameClicked.bind(this, 'yzC21')
   }
 
   private yzCRotate: NumberFieldDescriptor = {
     key: 'yzCRotate', label: msg('Rot'), min: this.AFFINE_ROT_MIN_VALUE, max: this.AFFINE_ROT_MAX_VALUE, step: this.AFFINE_ROT_VALUE_STEP,
     labelWidth: this.LABEL_WIDTH,
     onChange: this.xformPropertyChange.bind(this,'yzCRotate'),
-    value: this.getXformValue.bind(this,'yzCRotate')
+    value: this.getXformValue.bind(this,'yzCRotate'),
+    onButtonClicked: this.xformKeyFrameClicked.bind(this, 'yzCRotate')
   }
 
   private yzCScale: NumberFieldDescriptor = {
     key: 'yzCScale', label: msg('Scl'), min: this.AFFINE_SCL_MIN_VALUE, max: this.AFFINE_SCL_MAX_VALUE, step: this.AFFINE_SCL_VALUE_STEP,
     labelWidth: this.LABEL_WIDTH,
     onChange: this.xformPropertyChange.bind(this,'yzCScale'),
-    value: this.getXformValue.bind(this,'yzCScale')
+    value: this.getXformValue.bind(this,'yzCScale'),
+    onButtonClicked: this.xformKeyFrameClicked.bind(this, 'yzCScale')
   }
 
   private zxC00: NumberFieldDescriptor = {
     key: 'zxC00', label: msg('C00'), min: this.AFFINE_MIN_VALUE, max: this.AFFINE_MAX_VALUE, step: this.AFFINE_VALUE_STEP,
     labelWidth: this.LABEL_WIDTH,
     onChange: this.xformPropertyChange.bind(this,'zxC00'),
-    value: this.getXformValue.bind(this,'zxC00')
+    value: this.getXformValue.bind(this,'zxC00'),
+    onButtonClicked: this.xformKeyFrameClicked.bind(this, 'zxC00')
   }
 
   private zxC01: NumberFieldDescriptor = {
     key: 'zxC01', label: msg('C01'), min: this.AFFINE_MIN_VALUE, max: this.AFFINE_MAX_VALUE, step: this.AFFINE_VALUE_STEP,
     labelWidth: this.LABEL_WIDTH,
     onChange: this.xformPropertyChange.bind(this,'zxC01'),
-    value: this.getXformValue.bind(this,'zxC01')
+    value: this.getXformValue.bind(this,'zxC01'),
+    onButtonClicked: this.xformKeyFrameClicked.bind(this, 'zxC01')
   }
 
   private zxC10: NumberFieldDescriptor = {
     key: 'zxC10', label: msg('C10'), min: this.AFFINE_MIN_VALUE, max: this.AFFINE_MAX_VALUE, step: this.AFFINE_VALUE_STEP,
     labelWidth: this.LABEL_WIDTH,
     onChange: this.xformPropertyChange.bind(this,'zxC10'),
-    value: this.getXformValue.bind(this,'zxC10')
+    value: this.getXformValue.bind(this,'zxC10'),
+    onButtonClicked: this.xformKeyFrameClicked.bind(this, 'zxC10')
   }
 
   private zxC11: NumberFieldDescriptor = {
     key: 'zxC11', label: msg('C11'), min: this.AFFINE_MIN_VALUE, max: this.AFFINE_MAX_VALUE, step: this.AFFINE_VALUE_STEP,
     labelWidth: this.LABEL_WIDTH,
     onChange: this.xformPropertyChange.bind(this,'zxC11'),
-    value: this.getXformValue.bind(this,'zxC11')
+    value: this.getXformValue.bind(this,'zxC11'),
+    onButtonClicked: this.xformKeyFrameClicked.bind(this, 'zxC11')
   }
 
   private zxC20: NumberFieldDescriptor = {
     key: 'zxC20', label: msg('C20'), min: this.AFFINE_MIN_VALUE, max: this.AFFINE_MAX_VALUE, step: this.AFFINE_VALUE_STEP,
     labelWidth: this.LABEL_WIDTH,
     onChange: this.xformPropertyChange.bind(this,'zxC20'),
-    value: this.getXformValue.bind(this,'zxC20')
+    value: this.getXformValue.bind(this,'zxC20'),
+    onButtonClicked: this.xformKeyFrameClicked.bind(this, 'zxC20')
   }
 
   private zxC21: NumberFieldDescriptor = {
     key: 'zxC21', label: msg('C21'), min: this.AFFINE_MIN_VALUE, max: this.AFFINE_MAX_VALUE, step: this.AFFINE_VALUE_STEP,
     labelWidth: this.LABEL_WIDTH,
     onChange: this.xformPropertyChange.bind(this,'zxC21'),
-    value: this.getXformValue.bind(this,'zxC21')
+    value: this.getXformValue.bind(this,'zxC21'),
+    onButtonClicked: this.xformKeyFrameClicked.bind(this, 'zxC21')
   }
 
   private zxCRotate: NumberFieldDescriptor = {
     key: 'zxCRotate', label: msg('Rot'), min: this.AFFINE_ROT_MIN_VALUE, max: this.AFFINE_ROT_MAX_VALUE, step: this.AFFINE_ROT_VALUE_STEP,
     labelWidth: this.LABEL_WIDTH,
     onChange: this.xformPropertyChange.bind(this,'zxCRotate'),
-    value: this.getXformValue.bind(this,'zxCRotate')
+    value: this.getXformValue.bind(this,'zxCRotate'),
+    onButtonClicked: this.xformKeyFrameClicked.bind(this, 'zxCRotate')
   }
 
   private zxCScale: NumberFieldDescriptor = {
     key: 'zxCScale', label: msg('Scl'), min: this.AFFINE_SCL_MIN_VALUE, max: this.AFFINE_SCL_MAX_VALUE, step: this.AFFINE_SCL_VALUE_STEP,
     labelWidth: this.LABEL_WIDTH,
     onChange: this.xformPropertyChange.bind(this,'zxCScale'),
-    value: this.getXformValue.bind(this,'zxCScale')
+    value: this.getXformValue.bind(this,'zxCScale'),
+    onButtonClicked: this.xformKeyFrameClicked.bind(this, 'zxCScale')
   }
 
   private xyP00: NumberFieldDescriptor = {
     key: 'xyP00', label: msg('P00'), min: this.AFFINE_MIN_VALUE, max: this.AFFINE_MAX_VALUE, step: this.AFFINE_VALUE_STEP,
     labelWidth: this.LABEL_WIDTH,
     onChange: this.xformPropertyChange.bind(this,'xyP00'),
-    value: this.getXformValue.bind(this,'xyP00')
+    value: this.getXformValue.bind(this,'xyP00'),
+    onButtonClicked: this.xformKeyFrameClicked.bind(this, 'xyP00')
   }
 
   private xyP01: NumberFieldDescriptor = {
     key: 'xyP01', label: msg('P01'), min: this.AFFINE_MIN_VALUE, max: this.AFFINE_MAX_VALUE, step: this.AFFINE_VALUE_STEP,
     labelWidth: this.LABEL_WIDTH,
     onChange: this.xformPropertyChange.bind(this,'xyP01'),
-    value: this.getXformValue.bind(this,'xyP01')
+    value: this.getXformValue.bind(this,'xyP01'),
+    onButtonClicked: this.xformKeyFrameClicked.bind(this, 'xyP01')
   }
 
   private xyP10: NumberFieldDescriptor = {
     key: 'xyP10', label: msg('P10'), min: this.AFFINE_MIN_VALUE, max: this.AFFINE_MAX_VALUE, step: this.AFFINE_VALUE_STEP,
     labelWidth: this.LABEL_WIDTH,
     onChange: this.xformPropertyChange.bind(this,'xyP10'),
-    value: this.getXformValue.bind(this,'xyP10')
+    value: this.getXformValue.bind(this,'xyP10'),
+    onButtonClicked: this.xformKeyFrameClicked.bind(this, 'xyP10')
   }
 
   private xyP11: NumberFieldDescriptor = {
     key: 'xyP11', label: msg('P11'), min: this.AFFINE_MIN_VALUE, max: this.AFFINE_MAX_VALUE, step: this.AFFINE_VALUE_STEP,
     labelWidth: this.LABEL_WIDTH,
     onChange: this.xformPropertyChange.bind(this,'xyP11'),
-    value: this.getXformValue.bind(this,'xyP11')
+    value: this.getXformValue.bind(this,'xyP11'),
+    onButtonClicked: this.xformKeyFrameClicked.bind(this, 'xyP11')
   }
 
   private xyP20: NumberFieldDescriptor = {
     key: 'xyP20', label: msg('P20'), min: this.AFFINE_MIN_VALUE, max: this.AFFINE_MAX_VALUE, step: this.AFFINE_VALUE_STEP,
     labelWidth: this.LABEL_WIDTH,
     onChange: this.xformPropertyChange.bind(this,'xyP20'),
-    value: this.getXformValue.bind(this,'xyP20')
+    value: this.getXformValue.bind(this,'xyP20'),
+    onButtonClicked: this.xformKeyFrameClicked.bind(this, 'xyP20')
   }
 
   private xyP21: NumberFieldDescriptor = {
     key: 'xyP21', label: msg('P21'), min: this.AFFINE_MIN_VALUE, max: this.AFFINE_MAX_VALUE, step: this.AFFINE_VALUE_STEP,
     labelWidth: this.LABEL_WIDTH,
     onChange: this.xformPropertyChange.bind(this,'xyP21'),
-    value: this.getXformValue.bind(this,'xyP21')
+    value: this.getXformValue.bind(this,'xyP21'),
+    onButtonClicked: this.xformKeyFrameClicked.bind(this, 'xyP21')
   }
 
   private xyPRotate: NumberFieldDescriptor = {
     key: 'xyPRotate', label: msg('Rot'), min: this.AFFINE_ROT_MIN_VALUE, max: this.AFFINE_ROT_MAX_VALUE, step: this.AFFINE_ROT_VALUE_STEP,
     labelWidth: this.LABEL_WIDTH,
     onChange: this.xformPropertyChange.bind(this,'xyPRotate'),
-    value: this.getXformValue.bind(this,'xyPRotate')
+    value: this.getXformValue.bind(this,'xyPRotate'),
+    onButtonClicked: this.xformKeyFrameClicked.bind(this, 'xyPRotate')
   }
 
   private xyPScale: NumberFieldDescriptor = {
     key: 'xyPScale', label: msg('Scl'), min: this.AFFINE_SCL_MIN_VALUE, max: this.AFFINE_SCL_MAX_VALUE, step: this.AFFINE_SCL_VALUE_STEP,
     labelWidth: this.LABEL_WIDTH,
     onChange: this.xformPropertyChange.bind(this,'xyPScale'),
-    value: this.getXformValue.bind(this,'xyPScale')
+    value: this.getXformValue.bind(this,'xyPScale'),
+    onButtonClicked: this.xformKeyFrameClicked.bind(this, 'xyPScale')
   }
 
   private yzP00: NumberFieldDescriptor = {
     key: 'yzP00', label: msg('P00'), min: this.AFFINE_MIN_VALUE, max: this.AFFINE_MAX_VALUE, step: this.AFFINE_VALUE_STEP,
     labelWidth: this.LABEL_WIDTH,
     onChange: this.xformPropertyChange.bind(this,'yzP00'),
-    value: this.getXformValue.bind(this,'yzP00')
+    value: this.getXformValue.bind(this,'yzP00'),
+    onButtonClicked: this.xformKeyFrameClicked.bind(this, 'yzP00')
   }
 
   private yzP01: NumberFieldDescriptor = {
     key: 'yzP01', label: msg('P01'), min: this.AFFINE_MIN_VALUE, max: this.AFFINE_MAX_VALUE, step: this.AFFINE_VALUE_STEP,
     labelWidth: this.LABEL_WIDTH,
     onChange: this.xformPropertyChange.bind(this,'yzP01'),
-    value: this.getXformValue.bind(this,'yzP01')
+    value: this.getXformValue.bind(this,'yzP01'),
+    onButtonClicked: this.xformKeyFrameClicked.bind(this, 'yzP01')
   }
 
   private yzP10: NumberFieldDescriptor = {
     key: 'yzP10', label: msg('P10'), min: this.AFFINE_MIN_VALUE, max: this.AFFINE_MAX_VALUE, step: this.AFFINE_VALUE_STEP,
     labelWidth: this.LABEL_WIDTH,
     onChange: this.xformPropertyChange.bind(this,'yzP10'),
-    value: this.getXformValue.bind(this,'yzP10')
+    value: this.getXformValue.bind(this,'yzP10'),
+    onButtonClicked: this.xformKeyFrameClicked.bind(this, 'yzP10')
   }
 
   private yzP11: NumberFieldDescriptor = {
     key: 'yzP11', label: msg('P11'), min: this.AFFINE_MIN_VALUE, max: this.AFFINE_MAX_VALUE, step: this.AFFINE_VALUE_STEP,
     labelWidth: this.LABEL_WIDTH,
     onChange: this.xformPropertyChange.bind(this,'yzP11'),
-    value: this.getXformValue.bind(this,'yzP11')
+    value: this.getXformValue.bind(this,'yzP11'),
+    onButtonClicked: this.xformKeyFrameClicked.bind(this, 'yzP11')
   }
 
   private yzP20: NumberFieldDescriptor = {
     key: 'yzP20', label: msg('P20'), min: this.AFFINE_MIN_VALUE, max: this.AFFINE_MAX_VALUE, step: this.AFFINE_VALUE_STEP,
     labelWidth: this.LABEL_WIDTH,
     onChange: this.xformPropertyChange.bind(this,'yzP20'),
-    value: this.getXformValue.bind(this,'yzP20')
+    value: this.getXformValue.bind(this,'yzP20'),
+    onButtonClicked: this.xformKeyFrameClicked.bind(this, 'yzP20')
   }
 
   private yzP21: NumberFieldDescriptor = {
     key: 'yzP21', label: msg('P21'), min: this.AFFINE_MIN_VALUE, max: this.AFFINE_MAX_VALUE, step: this.AFFINE_VALUE_STEP,
     labelWidth: this.LABEL_WIDTH,
     onChange: this.xformPropertyChange.bind(this,'yzP21'),
-    value: this.getXformValue.bind(this,'yzP21')
+    value: this.getXformValue.bind(this,'yzP21'),
+    onButtonClicked: this.xformKeyFrameClicked.bind(this, 'yzP21')
   }
 
   private yzPRotate: NumberFieldDescriptor = {
     key: 'yzPRotate', label: msg('Rot'), min: this.AFFINE_ROT_MIN_VALUE, max: this.AFFINE_ROT_MAX_VALUE, step: this.AFFINE_ROT_VALUE_STEP,
     labelWidth: this.LABEL_WIDTH,
     onChange: this.xformPropertyChange.bind(this,'yzPRotate'),
-    value: this.getXformValue.bind(this,'yzPRotate')
+    value: this.getXformValue.bind(this,'yzPRotate'),
+    onButtonClicked: this.xformKeyFrameClicked.bind(this, 'yzPRotate')
   }
 
   private yzPScale: NumberFieldDescriptor = {
     key: 'yzPScale', label: msg('Scl'), min: this.AFFINE_SCL_MIN_VALUE, max: this.AFFINE_SCL_MAX_VALUE, step: this.AFFINE_SCL_VALUE_STEP,
     labelWidth: this.LABEL_WIDTH,
     onChange: this.xformPropertyChange.bind(this,'yzPScale'),
-    value: this.getXformValue.bind(this,'yzPScale')
+    value: this.getXformValue.bind(this,'yzPScale'),
+    onButtonClicked: this.xformKeyFrameClicked.bind(this, 'yzPScale')
   }
 
   private zxP00: NumberFieldDescriptor = {
     key: 'zxP00', label: msg('P00'), min: this.AFFINE_MIN_VALUE, max: this.AFFINE_MAX_VALUE, step: this.AFFINE_VALUE_STEP,
     labelWidth: this.LABEL_WIDTH,
     onChange: this.xformPropertyChange.bind(this,'zxP00'),
-    value: this.getXformValue.bind(this,'zxP00')
+    value: this.getXformValue.bind(this,'zxP00'),
+    onButtonClicked: this.xformKeyFrameClicked.bind(this, 'zxP00')
   }
 
   private zxP01: NumberFieldDescriptor = {
     key: 'zxP01', label: msg('P01'), min: this.AFFINE_MIN_VALUE, max: this.AFFINE_MAX_VALUE, step: this.AFFINE_VALUE_STEP,
     labelWidth: this.LABEL_WIDTH,
     onChange: this.xformPropertyChange.bind(this,'zxP01'),
-    value: this.getXformValue.bind(this,'zxP01')
+    value: this.getXformValue.bind(this,'zxP01'),
+    onButtonClicked: this.xformKeyFrameClicked.bind(this, 'zxP01')
   }
 
   private zxP10: NumberFieldDescriptor = {
     key: 'zxP10', label: msg('P10'), min: this.AFFINE_MIN_VALUE, max: this.AFFINE_MAX_VALUE, step: this.AFFINE_VALUE_STEP,
     labelWidth: this.LABEL_WIDTH,
     onChange: this.xformPropertyChange.bind(this,'zxP10'),
-    value: this.getXformValue.bind(this,'zxP10')
+    value: this.getXformValue.bind(this,'zxP10'),
+    onButtonClicked: this.xformKeyFrameClicked.bind(this, 'zxP10')
   }
 
   private zxP11: NumberFieldDescriptor = {
     key: 'zxP11', label: msg('P11'), min: this.AFFINE_MIN_VALUE, max: this.AFFINE_MAX_VALUE, step: this.AFFINE_VALUE_STEP,
     labelWidth: this.LABEL_WIDTH,
     onChange: this.xformPropertyChange.bind(this,'zxP11'),
-    value: this.getXformValue.bind(this,'zxP11')
+    value: this.getXformValue.bind(this,'zxP11'),
+    onButtonClicked: this.xformKeyFrameClicked.bind(this, 'zxP11')
   }
 
   private zxP20: NumberFieldDescriptor = {
     key: 'zxP20', label: msg('P20'), min: this.AFFINE_MIN_VALUE, max: this.AFFINE_MAX_VALUE, step: this.AFFINE_VALUE_STEP,
     labelWidth: this.LABEL_WIDTH,
     onChange: this.xformPropertyChange.bind(this,'zxP20'),
-    value: this.getXformValue.bind(this,'zxP20')
+    value: this.getXformValue.bind(this,'zxP20'),
+    onButtonClicked: this.xformKeyFrameClicked.bind(this, 'zxP20')
   }
 
   private zxP21: NumberFieldDescriptor = {
     key: 'zxP21', label: msg('P21'), min: this.AFFINE_MIN_VALUE, max: this.AFFINE_MAX_VALUE, step: this.AFFINE_VALUE_STEP,
     labelWidth: this.LABEL_WIDTH,
     onChange: this.xformPropertyChange.bind(this,'zxP21'),
-    value: this.getXformValue.bind(this,'zxP21')
+    value: this.getXformValue.bind(this,'zxP21'),
+    onButtonClicked: this.xformKeyFrameClicked.bind(this, 'zxP21')
   }
 
   private zxPRotate: NumberFieldDescriptor = {
     key: 'zxPRotate', label: msg('Rot'), min: this.AFFINE_ROT_MIN_VALUE, max: this.AFFINE_ROT_MAX_VALUE, step: this.AFFINE_ROT_VALUE_STEP,
     labelWidth: this.LABEL_WIDTH,
     onChange: this.xformPropertyChange.bind(this,'zxPRotate'),
-    value: this.getXformValue.bind(this,'zxPRotate')
+    value: this.getXformValue.bind(this,'zxPRotate'),
+    onButtonClicked: this.xformKeyFrameClicked.bind(this, 'zxPRotate')
   }
 
   private zxPScale: NumberFieldDescriptor = {
     key: 'zxPScale', label: msg('Scl'), min: this.AFFINE_SCL_MIN_VALUE, max: this.AFFINE_SCL_MAX_VALUE, step: this.AFFINE_SCL_VALUE_STEP,
     labelWidth: this.LABEL_WIDTH,
     onChange: this.xformPropertyChange.bind(this,'zxPScale'),
-    value: this.getXformValue.bind(this,'zxPScale')
+    value: this.getXformValue.bind(this,'zxPScale'),
+    onButtonClicked: this.xformKeyFrameClicked.bind(this, 'zxPScale')
   }
 
   renderControls() {
