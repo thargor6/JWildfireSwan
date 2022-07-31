@@ -23,7 +23,13 @@ import {editorStore} from "Frontend/stores/editor-store";
 import {HasValue} from "@hilla/form";
 import {Flame, Layer, Variation, XForm} from "Frontend/flames/model/flame";
 import {floatsAreEqual} from "Frontend/components/utils";
-import {FloatMotionCurveParameter, MotionCurveInterpolation, Parameters} from "Frontend/flames/model/parameters";
+import {
+  FloatMotionCurveParameter,
+  IntMotionCurveParameter,
+  MotionCurveInterpolation,
+  Parameters
+} from "Frontend/flames/model/parameters";
+import {FlameEditService} from "Frontend/flames/service/flame-edit-service";
 
 export interface ComoboBoxItem {
   key: number
@@ -70,6 +76,8 @@ class HtmlControlReference {
 }
 
 export abstract class EditPropertyPanel extends MobxLitElement {
+  protected flameEditService = new FlameEditService()
+
   @property({type: Boolean})
   visible = true
 
@@ -104,46 +112,13 @@ export abstract class EditPropertyPanel extends MobxLitElement {
     if(editorStore.currXform) {
       const val: any = this.getProperty(editorStore.currXform, key)
       if(val && val.type && val.datatype) {
-        const viewXMin = 1
-        const viewXMax = 120
-        const viewYMin = -10
-        const viewYMax = 10
+        const currFrame = editorStore.currFlame.frame.value
         if(val.datatype==='float') {
           if(val.type==='scalar') {
-            console.log("WAS SCALAR")
-            const newX = [editorStore.currFlame.frame.value]
-            const newY = [val.value]
-            let newCurve = Parameters.floatMotionCurveParam(val.value, viewXMin, viewXMax, viewYMin, viewYMax, MotionCurveInterpolation.SPLINE, 0, newX, newY, false)
-            this.setProperty(editorStore.currXform, key, newCurve)
+            this.setProperty(editorStore.currXform, key, this.flameEditService.createFloatMotionCurveFromPoint(currFrame, val.value))
           }
           else if(val.type==='curve') {
-            console.log("WAS CURVE")
-            const oldCurve = val as FloatMotionCurveParameter
-            const x = [...oldCurve.x]
-            const y = [...oldCurve.y]
-            const frame = editorStore.currFlame.frame.value
-            let haveKey = false
-            let lessIdx = -1
-            for(let idx=0;idx<x.length;idx++) {
-              if(floatsAreEqual(x[idx], frame)) {
-                haveKey = true
-                // TODO something to do ?
-              }
-              else if(frame < x[idx] && lessIdx < idx) {
-                lessIdx = idx
-              }
-            }
-            console.log("GHAVE JKEY", haveKey, "IDX", lessIdx)
-            if(!haveKey) {
-               let   newX = [...x, frame]
-               let    newY = [...y, val.value]
-
-              let newCurve = Parameters.floatMotionCurveParam(val.value, oldCurve.viewXMin, oldCurve.viewXMax, oldCurve.viewYMin, oldCurve.viewYMax, oldCurve.interpolation, oldCurve.selectedIdx, newX, newY, oldCurve.locked)
-              this.setProperty(editorStore.currXform, key, newCurve)
-            }
-
-
-
+            this.setProperty(editorStore.currXform, key, this.flameEditService.addPointToFloatMotionCurve(currFrame, val.value, val as FloatMotionCurveParameter))
           }
           else {
             console.log(`WARN: unsupported type ${val.type} for xform parameter ${key}`)
@@ -151,13 +126,10 @@ export abstract class EditPropertyPanel extends MobxLitElement {
         }
         else if(val.datatype==='int') {
           if(val.type==='scalar') {
-            const x = [editorStore.currFlame.frame.value]
-            const y = [val.value]
-            let newCurve = Parameters.intMotionCurveParam(val.value, viewXMin, viewXMax, viewYMin, viewYMax, MotionCurveInterpolation.SPLINE, 0, x, y, false)
-            this.setProperty(editorStore.currXform, key, newCurve)
+            this.setProperty(editorStore.currXform, key, this.flameEditService.createIntMotionCurveFromPoint(currFrame, val.value))
           }
           else if(val.type==='curve') {
-            // TODO
+            this.setProperty(editorStore.currXform, key, this.flameEditService.addPointToIntMotionCurve(currFrame, val.value, val as IntMotionCurveParameter))
           }
           else {
             console.log(`WARN: unsupported type ${val.type} for xform parameter ${key}`)

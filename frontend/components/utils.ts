@@ -15,6 +15,8 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 */
 
+const EPSILON = 1.0e-05
+
 export function getTimeStamp() {
     // @ts-ignore
     return window.performance && window.performance.now && window.performance.timing && window.performance.timing.navigationStart ? window.performance.now() + window.performance.timing.navigationStart : Date.now()
@@ -25,5 +27,9 @@ export function floatToStr(value: number) {
 }
 
 export function floatsAreEqual(a: number, b: number): boolean {
-    return Math.abs(a - b) < 1.0e-05
+    return Math.abs(a - b) < EPSILON
+}
+
+export function floatIsLess(a: number, b: number): boolean {
+    return (a + EPSILON) < b
 }

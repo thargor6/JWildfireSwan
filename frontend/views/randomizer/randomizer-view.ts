@@ -210,7 +210,7 @@ export class RandomizerView extends View {
       DisplayMode.FLAME, this.getRenderPanel().canvas,
      imgCnt, true,
       '',
-      undefined, 1.0,
+      undefined, 1.0, false,
       randomizerStore.currFlame)
   }
 

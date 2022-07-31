@@ -416,7 +416,6 @@ export class EditorView extends View implements BeforeEnterObserver {
       if (prevFrame < frameCount) {
         const currFrame = prevFrame + 3
         editorStore.currFlame.frame = Parameters.intParam(currFrame)
-        editorStore.currFlame.layers[0].xforms[0].xyPRotate = Parameters.floatParam(currFrame)
         this.reRenderWithCallback(this.renderNextFrame.bind(this, startFrame, frameCount, currFrame))
       } else {
         editorStore.currFlame.frame = Parameters.intParam(startFrame)

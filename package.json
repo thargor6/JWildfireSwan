@@ -279,9 +279,9 @@
     "@lit/localize": "$@lit/localize",
     "lodash.clonedeep": "$lodash.clonedeep",
     "@vaadin/lit-renderer": "$@vaadin/lit-renderer",
-    "@polymer/paper-slider": "$@polymer/paper-slider",
     "prismjs": "$prismjs",
-    "lit-code": "$lit-code"
+    "lit-code": "$lit-code",
+    "@polymer/paper-slider": "$@polymer/paper-slider"
   },
   "vaadin": {
     "dependencies": {

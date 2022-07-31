@@ -15,9 +15,16 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 */
 
-import {Parameters} from "Frontend/flames/model/parameters";
+import {
+  FloatMotionCurveParameter,
+  IntMotionCurveParameter,
+  MotionCurveInterpolation,
+  Parameters
+} from "Frontend/flames/model/parameters";
 import {Layer, Variation, XForm} from "Frontend/flames/model/flame";
 import {cloneDeep} from "lodash";
+import {editorStore} from "Frontend/stores/editor-store";
+import {floatIsLess, floatsAreEqual} from "Frontend/components/utils";
 
 export class FlameEditService {
 
@@ -138,7 +145,6 @@ export class FlameEditService {
     }
   }
 
-
   duplicateTransform(layer: Layer, srcXform: XForm) {
     {
       const idx = layer.xforms.indexOf(srcXform)
@@ -168,5 +174,68 @@ export class FlameEditService {
       }
     }
   }
+
+  createFloatMotionCurveFromPoint(x: number, y: number) {
+    const pX = [x]
+    const pY = [y]
+    return Parameters.floatMotionCurveParam(y, 0, 320, -10, 10, MotionCurveInterpolation.SPLINE, 0, pX, pY, false)
+  }
+
+  addPointToFloatMotionCurve(x: number, y: number, curve: FloatMotionCurveParameter): FloatMotionCurveParameter {
+    let haveKey = false
+    let pX = [...curve.x]
+    let pY = [...curve.y]
+    let minIdx = -1
+    for (let idx = 0; idx < pX.length; idx++) {
+      if (floatsAreEqual(pX[idx], x)) {
+        pY[idx] = y
+        return Parameters.floatMotionCurveParam(y, curve.viewXMin, curve.viewXMax, curve.viewYMin, curve.viewYMax, curve.interpolation, curve.selectedIdx, pX, pY, curve.locked)
+      } else if (floatIsLess(pX[idx], x) && minIdx < idx) {
+        minIdx = idx
+      }
+    }
+    let newX, newY
+    if(minIdx<0) {
+      newX = [...pX, x]
+      newY = [...pY, y]
+    }
+    else {
+      newX = [...pX.slice(0, minIdx+1), x, ...pX.slice(minIdx+1, pX.length)]
+      newY = [...pY.slice(0, minIdx+1), y, ...pY.slice(minIdx+1, pY.length)]
+    }
+    return Parameters.floatMotionCurveParam(y, curve.viewXMin, curve.viewXMax, curve.viewYMin, curve.viewYMax, curve.interpolation, curve.selectedIdx, newX, newY, curve.locked)
+  }
+
+  createIntMotionCurveFromPoint(x: number, y: number) {
+    const pX = [x]
+    const pY = [y]
+    return Parameters.intMotionCurveParam(y, 0, 320, -10, 10, MotionCurveInterpolation.SPLINE, 0, pX, pY, false)
+  }
+
+  addPointToIntMotionCurve(x: number, y: number, curve: IntMotionCurveParameter): IntMotionCurveParameter {
+    let haveKey = false
+    let pX = [...curve.x]
+    let pY = [...curve.y]
+    let minIdx = -1
+    for (let idx = 0; idx < pX.length; idx++) {
+      if (floatsAreEqual(pX[idx], x)) {
+        pY[idx] = y
+        return Parameters.intMotionCurveParam(y, curve.viewXMin, curve.viewXMax, curve.viewYMin, curve.viewYMax, curve.interpolation, curve.selectedIdx, pX, pY, curve.locked)
+      } else if (floatIsLess(pX[idx], x) && minIdx < idx) {
+        minIdx = idx
+      }
+    }
+    let newX, newY
+    if(minIdx<0) {
+      newX = [...pX, x]
+      newY = [...pY, y]
+    }
+    else {
+      newX = [...pX.slice(0, minIdx+1), x, ...pX.slice(minIdx+1, pX.length)]
+      newY = [...pY.slice(0, minIdx+1), y, ...pY.slice(minIdx+1, pY.length)]
+    }
+    return Parameters.intMotionCurveParam(y, curve.viewXMin, curve.viewXMax, curve.viewYMin, curve.viewYMax, curve.interpolation, curve.selectedIdx, newX, newY, curve.locked)
+  }
+
 
 }

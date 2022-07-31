@@ -23,13 +23,10 @@ import {customElement} from 'lit/decorators.js';
 import {localized, msg} from "@lit/localize";
 import {EditPropertyPanel, NumberFieldDescriptor} from "Frontend/views/editor/edit-property-panel";
 import {editorStore} from "Frontend/stores/editor-store";
-import {Parameters} from "Frontend/flames/model/parameters";
-import {FlameEditService} from "Frontend/flames/service/flame-edit-service";
 
 @localized()
 @customElement('editor-edit-xform-color-panel')
 export class EditorEditXformColorPanel extends EditPropertyPanel {
-  private flameEditService = new FlameEditService()
 
   private color: NumberFieldDescriptor = {
     key: 'color', label: msg('Color'), min: 0, max: 1, step: 0.01,

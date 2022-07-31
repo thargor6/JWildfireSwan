@@ -108,7 +108,7 @@ export class SingleRendererView extends View implements BeforeEnterObserver {
           '',
           RenderResolutions.getCropRegion(this.getRenderSettingsPanel().renderSize,
             this.getRenderSettingsPanel().cropSize), this.getRenderSettingsPanel().qualityScale,
-          singleRendererStore.flame)
+          false, singleRendererStore.flame)
     }
 
     selectedChanged(e: CustomEvent) {

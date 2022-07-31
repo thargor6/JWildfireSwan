@@ -178,7 +178,8 @@ export class BatchRendererView extends View  {
     createFlameRenderer = ()=> {
       return new FlameRenderer(batchRendererStore.sharedRenderCtx, 256, 256,
         DisplayMode.FLAME, this.getRenderPanel().canvas, undefined,
-          false, '', undefined, 1.0, batchRendererStore.selectedFlames[0].flame)
+          false, '', undefined, 1.0,
+          false, batchRendererStore.selectedFlames[0].flame)
     }
 
     getRenderPanel = (): SwanRenderPanel =>  {
@@ -217,7 +218,7 @@ export class BatchRendererView extends View  {
               true, '',
               // TODO: renderPath
               RenderResolutions.getCropRegion(this.renderSize, this.cropSize),
-              this.qualityScale, flame.flame)
+              this.qualityScale, false, flame.flame)
             this.renderer.onRenderFinished=this.onFlameFinished.bind(this, flame)
             this.getRenderPanel().rerenderFlame(this.renderer)
         }
