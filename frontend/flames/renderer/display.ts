@@ -27,99 +27,98 @@ export class FlameRendererDisplay {
         const canvas_size = this.settings.canvas_size
         const cropRegion = this.settings.cropRegion
         if(cropRegion) {
-            gl.enable(gl.SCISSOR_TEST);
-            gl.scissor(cropRegion.x,cropRegion.y,cropRegion.width, cropRegion.height);
-            gl.viewport(cropRegion.x,cropRegion.y,cropRegion.width, cropRegion.height);
+            gl.enable(gl.SCISSOR_TEST)
+            gl.scissor(cropRegion.x,cropRegion.y,cropRegion.width, cropRegion.height)
+            gl.viewport(cropRegion.x,cropRegion.y,cropRegion.width, cropRegion.height)
         }
-        gl.disable(gl.BLEND);
-        gl.viewport(0, 0, canvas_size, canvas_size);
-        gl.useProgram(this.ctx.shaders.prog_show);
-        gl.activeTexture(gl.TEXTURE0);
-        gl.bindTexture(gl.TEXTURE_2D, this.ctx.textures.texture2);
-        gl.uniform1i(this.ctx.shaders.prog_show!.uTexSamp, 0);
-        gl.uniform1f(this.ctx.shaders.prog_show!.frames, this.settings.frames);
-        gl.uniform1f(this.ctx.shaders.prog_show!.brightness, this.settings.brightness);
-        gl.bindFramebuffer(gl.FRAMEBUFFER, null);
-        gl.bindBuffer(gl.ARRAY_BUFFER, this.ctx.buffers.quadVertexPositionBuffer_array[0]);
-        gl.vertexAttribPointer(this.ctx.shaders.prog_comp_array[0].vertexPositionAttribute, this.ctx.buffers.quadVertexPositionBuffer_array[0].itemSize, gl.FLOAT, false, 0, 0);
-        gl.drawArrays(gl.TRIANGLE_STRIP, 0, this.ctx.buffers.quadVertexPositionBuffer_array[0].numItems);
-        gl.disable(gl.SCISSOR_TEST);
+        gl.disable(gl.BLEND)
+        gl.viewport(0, 0, canvas_size, canvas_size)
+        gl.useProgram(this.ctx.shaders.prog_show)
+        gl.activeTexture(gl.TEXTURE0)
+        gl.bindTexture(gl.TEXTURE_2D, this.ctx.textures.texture2)
+        gl.uniform1i(this.ctx.shaders.prog_show!.uTexSamp, 0)
+        gl.uniform1f(this.ctx.shaders.prog_show!.frames, this.settings.frames)
+        gl.bindFramebuffer(gl.FRAMEBUFFER, null)
+        gl.bindBuffer(gl.ARRAY_BUFFER, this.ctx.buffers.quadVertexPositionBuffer_array[0])
+        gl.vertexAttribPointer(this.ctx.shaders.prog_comp_array[0].vertexPositionAttribute, this.ctx.buffers.quadVertexPositionBuffer_array[0].itemSize, gl.FLOAT, false, 0, 0)
+        gl.drawArrays(gl.TRIANGLE_STRIP, 0, this.ctx.buffers.quadVertexPositionBuffer_array[0].numItems)
+        gl.disable(gl.SCISSOR_TEST)
     }
 
     public displayPositionIteration() {
-        const gl = this.ctx.gl;
-        const canvas_size = this.settings.canvas_size;
-        gl.disable(gl.BLEND);
-        gl.viewport(0, 0, canvas_size, canvas_size);
-        gl.useProgram(this.ctx.shaders.prog_show_raw);
-        gl.activeTexture(gl.TEXTURE0);
-        gl.bindTexture(gl.TEXTURE_2D, this.ctx.textures.texture1_array[0]);
-        gl.uniform1i(this.ctx.shaders.prog_show_raw!.uTexSamp, 0);
-        gl.uniform1i(this.ctx.shaders.prog_show_raw!.pTexSamp, 1);
-        gl.uniform1i(this.ctx.shaders.prog_show_raw!.gradTexSamp,2);
-        gl.uniform1i(this.ctx.shaders.prog_show_raw!.motionBlurTimeStamp,3);
-        gl.uniform1i(this.ctx.shaders.prog_show_raw!.displayMode, 0);
-        gl.bindFramebuffer(gl.FRAMEBUFFER, null);
-        gl.bindBuffer(gl.ARRAY_BUFFER, this.ctx.buffers.quadVertexPositionBuffer_array[0]);
-        gl.vertexAttribPointer(this.ctx.shaders.prog_comp_array[0].vertexPositionAttribute, this.ctx.buffers.quadVertexPositionBuffer_array[0].itemSize, gl.FLOAT, false, 0, 0);
-        gl.drawArrays(gl.TRIANGLE_STRIP, 0, this.ctx.buffers.quadVertexPositionBuffer_array[0].numItems);
+        const gl = this.ctx.gl
+        const canvas_size = this.settings.canvas_size
+        gl.disable(gl.BLEND)
+        gl.viewport(0, 0, canvas_size, canvas_size)
+        gl.useProgram(this.ctx.shaders.prog_show_raw)
+        gl.activeTexture(gl.TEXTURE0)
+        gl.bindTexture(gl.TEXTURE_2D, this.ctx.textures.texture1_array[0])
+        gl.uniform1i(this.ctx.shaders.prog_show_raw!.uTexSamp, 0)
+        gl.uniform1i(this.ctx.shaders.prog_show_raw!.pTexSamp, 1)
+        gl.uniform1i(this.ctx.shaders.prog_show_raw!.gradTexSamp,2)
+        gl.uniform1i(this.ctx.shaders.prog_show_raw!.motionBlurTimeStamp,3)
+        gl.uniform1i(this.ctx.shaders.prog_show_raw!.displayMode, 0)
+        gl.bindFramebuffer(gl.FRAMEBUFFER, null)
+        gl.bindBuffer(gl.ARRAY_BUFFER, this.ctx.buffers.quadVertexPositionBuffer_array[0])
+        gl.vertexAttribPointer(this.ctx.shaders.prog_comp_array[0].vertexPositionAttribute, this.ctx.buffers.quadVertexPositionBuffer_array[0].itemSize, gl.FLOAT, false, 0, 0)
+        gl.drawArrays(gl.TRIANGLE_STRIP, 0, this.ctx.buffers.quadVertexPositionBuffer_array[0].numItems)
     }
 
     public displayColorIteration() {
-        const gl = this.ctx.gl;
-        const canvas_size = this.settings.canvas_size;
-        gl.disable(gl.BLEND);
-        gl.viewport(0, 0, canvas_size, canvas_size);
-        gl.useProgram(this.ctx.shaders.prog_show_raw);
-        gl.activeTexture(gl.TEXTURE0);
-        gl.bindTexture(gl.TEXTURE_2D, this.ctx.textures._texture1_array[0]);
-        gl.uniform1i(this.ctx.shaders.prog_show_raw!.uTexSamp, 0);
-        gl.uniform1i(this.ctx.shaders.prog_show_raw!.pTexSamp, 1);
-        gl.uniform1i(this.ctx.shaders.prog_show_raw!.gradTexSamp, 2);
-        gl.uniform1i(this.ctx.shaders.prog_show_raw!.motionBlurTimeStamp, 3);
-        gl.uniform1i(this.ctx.shaders.prog_show_raw!.displayMode, 0);
-        gl.bindFramebuffer(gl.FRAMEBUFFER, null);
-        gl.bindBuffer(gl.ARRAY_BUFFER, this.ctx.buffers.quadVertexPositionBuffer_array[0]);
-        gl.vertexAttribPointer(this.ctx.shaders.prog_comp_array[0].vertexPositionAttribute, this.ctx.buffers.quadVertexPositionBuffer_array[0].itemSize, gl.FLOAT, false, 0, 0);
-        gl.drawArrays(gl.TRIANGLE_STRIP, 0, this.ctx.buffers.quadVertexPositionBuffer_array[0].numItems);
+        const gl = this.ctx.gl
+        const canvas_size = this.settings.canvas_size
+        gl.disable(gl.BLEND)
+        gl.viewport(0, 0, canvas_size, canvas_size)
+        gl.useProgram(this.ctx.shaders.prog_show_raw)
+        gl.activeTexture(gl.TEXTURE0)
+        gl.bindTexture(gl.TEXTURE_2D, this.ctx.textures._texture1_array[0])
+        gl.uniform1i(this.ctx.shaders.prog_show_raw!.uTexSamp, 0)
+        gl.uniform1i(this.ctx.shaders.prog_show_raw!.pTexSamp, 1)
+        gl.uniform1i(this.ctx.shaders.prog_show_raw!.gradTexSamp, 2)
+        gl.uniform1i(this.ctx.shaders.prog_show_raw!.motionBlurTimeStamp, 3)
+        gl.uniform1i(this.ctx.shaders.prog_show_raw!.displayMode, 0)
+        gl.bindFramebuffer(gl.FRAMEBUFFER, null)
+        gl.bindBuffer(gl.ARRAY_BUFFER, this.ctx.buffers.quadVertexPositionBuffer_array[0])
+        gl.vertexAttribPointer(this.ctx.shaders.prog_comp_array[0].vertexPositionAttribute, this.ctx.buffers.quadVertexPositionBuffer_array[0].itemSize, gl.FLOAT, false, 0, 0)
+        gl.drawArrays(gl.TRIANGLE_STRIP, 0, this.ctx.buffers.quadVertexPositionBuffer_array[0].numItems)
     }
 
     public displayGradient() {
-        const gl = this.ctx.gl;
-        const canvas_size = this.settings.canvas_size;
-        gl.disable(gl.BLEND);
-        gl.viewport(0, 0, canvas_size, canvas_size);
-        gl.useProgram(this.ctx.shaders.prog_show_raw);
-        gl.activeTexture(gl.TEXTURE0);
-        gl.bindTexture(gl.TEXTURE_2D, this.ctx.textures._texture1_array[0]);
-        gl.uniform1i(this.ctx.shaders.prog_show_raw!.uTexSamp, 0);
-        gl.uniform1i(this.ctx.shaders.prog_show_raw!.pTexSamp, 1);
-        gl.uniform1i(this.ctx.shaders.prog_show_raw!.gradTexSamp, 2);
-        gl.uniform1i(this.ctx.shaders.prog_show_raw!.motionBlurTimeStamp, 3);
-        gl.uniform1i(this.ctx.shaders.prog_show_raw!.displayMode, 1);
-        gl.bindFramebuffer(gl.FRAMEBUFFER, null);
-        gl.bindBuffer(gl.ARRAY_BUFFER, this.ctx.buffers.quadVertexPositionBuffer_array[0]);
-        gl.vertexAttribPointer(this.ctx.shaders.prog_comp_array[0].vertexPositionAttribute, this.ctx.buffers.quadVertexPositionBuffer_array[0].itemSize, gl.FLOAT, false, 0, 0);
-        gl.drawArrays(gl.TRIANGLE_STRIP, 0, this.ctx.buffers.quadVertexPositionBuffer_array[0].numItems);
+        const gl = this.ctx.gl
+        const canvas_size = this.settings.canvas_size
+        gl.disable(gl.BLEND)
+        gl.viewport(0, 0, canvas_size, canvas_size)
+        gl.useProgram(this.ctx.shaders.prog_show_raw)
+        gl.activeTexture(gl.TEXTURE0)
+        gl.bindTexture(gl.TEXTURE_2D, this.ctx.textures._texture1_array[0])
+        gl.uniform1i(this.ctx.shaders.prog_show_raw!.uTexSamp, 0)
+        gl.uniform1i(this.ctx.shaders.prog_show_raw!.pTexSamp, 1)
+        gl.uniform1i(this.ctx.shaders.prog_show_raw!.gradTexSamp, 2)
+        gl.uniform1i(this.ctx.shaders.prog_show_raw!.motionBlurTimeStamp, 3)
+        gl.uniform1i(this.ctx.shaders.prog_show_raw!.displayMode, 1)
+        gl.bindFramebuffer(gl.FRAMEBUFFER, null)
+        gl.bindBuffer(gl.ARRAY_BUFFER, this.ctx.buffers.quadVertexPositionBuffer_array[0])
+        gl.vertexAttribPointer(this.ctx.shaders.prog_comp_array[0].vertexPositionAttribute, this.ctx.buffers.quadVertexPositionBuffer_array[0].itemSize, gl.FLOAT, false, 0, 0)
+        gl.drawArrays(gl.TRIANGLE_STRIP, 0, this.ctx.buffers.quadVertexPositionBuffer_array[0].numItems)
     }
 
     public displayMotionBlurTime() {
-        const gl = this.ctx.gl;
-        const canvas_size = this.settings.canvas_size;
-        gl.disable(gl.BLEND);
-        gl.viewport(0, 0, canvas_size, canvas_size);
-        gl.useProgram(this.ctx.shaders.prog_show_raw);
-        gl.activeTexture(gl.TEXTURE0);
-        gl.bindTexture(gl.TEXTURE_2D, this.ctx.textures._texture1_array[0]);
-        gl.uniform1i(this.ctx.shaders.prog_show_raw!.uTexSamp, 0);
-        gl.uniform1i(this.ctx.shaders.prog_show_raw!.pTexSamp, 1);
-        gl.uniform1i(this.ctx.shaders.prog_show_raw!.gradTexSamp, 2);
-        gl.uniform1i(this.ctx.shaders.prog_show_raw!.motionBlurTimeStamp, 3);
-        gl.uniform1i(this.ctx.shaders.prog_show_raw!.displayMode, 2);
-        gl.bindFramebuffer(gl.FRAMEBUFFER, null);
-        gl.bindBuffer(gl.ARRAY_BUFFER, this.ctx.buffers.quadVertexPositionBuffer_array[0]);
-        gl.vertexAttribPointer(this.ctx.shaders.prog_comp_array[0].vertexPositionAttribute, this.ctx.buffers.quadVertexPositionBuffer_array[0].itemSize, gl.FLOAT, false, 0, 0);
-        gl.drawArrays(gl.TRIANGLE_STRIP, 0, this.ctx.buffers.quadVertexPositionBuffer_array[0].numItems);
+        const gl = this.ctx.gl
+        const canvas_size = this.settings.canvas_size
+        gl.disable(gl.BLEND)
+        gl.viewport(0, 0, canvas_size, canvas_size)
+        gl.useProgram(this.ctx.shaders.prog_show_raw)
+        gl.activeTexture(gl.TEXTURE0)
+        gl.bindTexture(gl.TEXTURE_2D, this.ctx.textures._texture1_array[0])
+        gl.uniform1i(this.ctx.shaders.prog_show_raw!.uTexSamp, 0)
+        gl.uniform1i(this.ctx.shaders.prog_show_raw!.pTexSamp, 1)
+        gl.uniform1i(this.ctx.shaders.prog_show_raw!.gradTexSamp, 2)
+        gl.uniform1i(this.ctx.shaders.prog_show_raw!.motionBlurTimeStamp, 3)
+        gl.uniform1i(this.ctx.shaders.prog_show_raw!.displayMode, 2)
+        gl.bindFramebuffer(gl.FRAMEBUFFER, null)
+        gl.bindBuffer(gl.ARRAY_BUFFER, this.ctx.buffers.quadVertexPositionBuffer_array[0])
+        gl.vertexAttribPointer(this.ctx.shaders.prog_comp_array[0].vertexPositionAttribute, this.ctx.buffers.quadVertexPositionBuffer_array[0].itemSize, gl.FLOAT, false, 0, 0)
+        gl.drawArrays(gl.TRIANGLE_STRIP, 0, this.ctx.buffers.quadVertexPositionBuffer_array[0].numItems)
     }
 
 }

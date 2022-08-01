@@ -105,8 +105,8 @@ export class FlameRenderer implements CloseableBuffers {
         this.textures = new Textures(gl, this.swarm_size, this.canvas_size, renderFlame)
         this.framebuffers = new Framebuffers(gl, this.textures, renderFlame)
         this.ctx = new FlameRenderContext(gl, this.shaders, this.buffers, this.textures, this.framebuffers)
-        this.settings = new FlameRenderSettings(1.2, this.canvas_size, this.swarm_size, cropRegion,
-          1, 0.0, displayMode)
+        this.settings = new FlameRenderSettings(this.canvas_size, this.swarm_size, cropRegion,
+          1, displayMode)
         this.display = new FlameRendererDisplay(this.ctx, this.settings, renderFlame)
         this.iterator = new FlameIterator(this.ctx, this.settings, renderFlame)
 
@@ -149,18 +149,15 @@ export class FlameRenderer implements CloseableBuffers {
     public drawScene() {
         this._isFinished = false
         this.settings.frames = this.currFrameCount;
-        // TODO remove
-        this.settings.brightness = 1.0 // this.brightnessElement.value;
-        this.settings.time += 0.01;
 
-        const iterationsPerFrame = 7
+        const iterationsPerFrame = 21; //7
 
         //
         for(let iter=0;iter<iterationsPerFrame; iter++) {
             this.iterator.iterateIFS();
             this.currSampleCount += this.samplesPerFrame
             const finishedPct = this.currSampleCount / this.maxSampleCount * 100.0
-            if ( finishedPct > 1.25 * 0.00001) {
+            if ( finishedPct > 1.25) {
                 this.iterator.plotHistogram();
             }
         }

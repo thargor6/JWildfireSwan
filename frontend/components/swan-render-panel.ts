@@ -176,7 +176,7 @@ export class SwanRenderPanel extends MobxLitElement {
     if(!(this.renderer && this.renderer.fastPreview)) {
       renderInfoStore.renderProgress = 1.0
       renderInfoStore.renderInfo = 'Rendering finished after ' + Math.round((elapsedTimeInS + Number.EPSILON) * 100) / 100 + ' s'
-      //AppInfoEndpoint.incFlamesRendered()
+      AppInfoEndpoint.incFlamesRendered()
       if (this.onRenderFinished) {
         this.onRenderFinished(frameCount, elapsedTimeInS)
       }

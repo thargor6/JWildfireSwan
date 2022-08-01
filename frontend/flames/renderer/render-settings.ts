@@ -27,11 +27,9 @@ export enum DisplayMode {
 
 export class FlameRenderSettings {
     constructor(
-        public brightness: number,
         public canvas_size: number,
         public swarm_size: number,
         public cropRegion: CropRegion | undefined,
         public frames: number,
-        public time: number,
         public displayMode: DisplayMode) {}
 }

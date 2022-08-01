@@ -108,6 +108,44 @@ export abstract class EditPropertyPanel extends MobxLitElement {
     o[propertyName] = newValue
   }
 
+  flameKeyFrameClicked(key: keyof Flame, e:Event) {
+    if(editorStore.currFlame) {
+      const val: any = this.getProperty(editorStore.currFlame, key)
+      if(val && val.type && val.datatype) {
+        const currFrame = editorStore.currFlame.frame.value
+        if(val.datatype==='float') {
+          if(val.type==='scalar') {
+            this.setProperty(editorStore.currFlame, key, this.flameEditService.createFloatMotionCurveFromPoint(currFrame, val.value))
+          }
+          else if(val.type==='curve') {
+            this.setProperty(editorStore.currFlame, key, this.flameEditService.addPointToFloatMotionCurve(currFrame, val.value, val as FloatMotionCurveParameter))
+          }
+          else {
+            console.log(`WARN: unsupported type ${val.type} for flame parameter ${key}`)
+          }
+        }
+        else if(val.datatype==='int') {
+          if(val.type==='scalar') {
+            this.setProperty(editorStore.currFlame, key, this.flameEditService.createIntMotionCurveFromPoint(currFrame, val.value))
+          }
+          else if(val.type==='curve') {
+            this.setProperty(editorStore.currFlame, key, this.flameEditService.addPointToIntMotionCurve(currFrame, val.value, val as IntMotionCurveParameter))
+          }
+          else {
+            console.log(`WARN: unsupported type ${val.type} for flame parameter ${key}`)
+          }
+        }
+        else {
+          console.log(`WARN: unsupported datatype ${val.datatype} for flame parameter ${key}`)
+        }
+        const setVal: any = this.getProperty(editorStore.currFlame, key)
+      }
+      else {
+        console.log(`WARN: unsupported flame parameter ${key}`)
+      }
+    }
+  }
+
   xformKeyFrameClicked(key: keyof XForm, e:Event) {
     if(editorStore.currXform) {
       const val: any = this.getProperty(editorStore.currXform, key)
@@ -138,14 +176,10 @@ export abstract class EditPropertyPanel extends MobxLitElement {
         else {
           console.log(`WARN: unsupported datatype ${val.datatype} for xform parameter ${key}`)
         }
-
         const setVal: any = this.getProperty(editorStore.currXform, key)
-        console.log("NEW CURVE", setVal)
-
-
       }
       else {
-        console.log(`WARN: unsupported flame parameter ${key}`)
+        console.log(`WARN: unsupported xform parameter ${key}`)
       }
     }
   }

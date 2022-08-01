@@ -148,6 +148,26 @@ class ParamMapper {
         }
     }
 
+    static mapNumberParamForRendering(ctx: RenderMappingContext, source: FlameParameter): number {
+        if(source.datatype==='int') {
+            if(source.type==='curve') {
+                const val = evaluator.evaluate(source as FloatMotionCurveParameter, ctx.frame)
+                return Math.round(val)
+            }
+            else {
+                return Math.round(source.value)
+            }
+        }
+        else {
+            if(source.type==='curve') {
+                return evaluator.evaluate(source as FloatMotionCurveParameter, ctx.frame)
+            }
+            else {
+                return source.value
+            }
+        }
+    }
+
     private static mapInterpolationFromBackend(source: SourceFlameParamCurveInterpolation): MotionCurveInterpolation {
         if(source===SourceFlameParamCurveInterpolation.LINEAR) {
             return MotionCurveInterpolation.LINEAR
@@ -732,16 +752,16 @@ export class FlameMapper {
         res.pixelsPerUnit = source.pixelsPerUnit.value
         res.width = source.width.value
         res.height = source.height.value
-        res.camZoom = source.camZoom.value
-        res.centreX = source.centreX.value
-        res.centreY = source.centreY.value
-        res.camYaw = source.camYaw.value
-        res.camPitch = source.camPitch.value
-        res.camRoll = source.camRoll.value
-        res.camBank = source.camBank.value
+        res.camZoom = ParamMapper.mapNumberParamForRendering(ctx, source.camZoom)
+        res.centreX = ParamMapper.mapNumberParamForRendering(ctx, source.centreX)
+        res.centreY = ParamMapper.mapNumberParamForRendering(ctx, source.centreY)
+        res.camYaw =  ParamMapper.mapNumberParamForRendering(ctx, source.camYaw)
+        res.camPitch = ParamMapper.mapNumberParamForRendering(ctx, source.camPitch)
+        res.camRoll = ParamMapper.mapNumberParamForRendering(ctx, source.camRoll)
+        res.camBank = ParamMapper.mapNumberParamForRendering(ctx, source.camBank)
         res.camDOF = source.camDOF.value
         res.camDOFArea = source.camDOFArea.value
-        res.camPerspective = source.camPerspective.value
+        res.camPerspective = ParamMapper.mapNumberParamForRendering(ctx, source.camPerspective)
         res.diminishZ = source.diminishZ.value
         res.camPosX = source.camPosX.value
         res.camPosY = source.camPosY.value

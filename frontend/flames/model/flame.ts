@@ -188,17 +188,17 @@ export class Flame {
     public motionBlurLength = Parameters.intParam(0)
     public motionBlurTimeStep = Parameters.floatParam(0.05)
     public motionBlurDecay = Parameters.floatParam(0.03)
-    public frame = Parameters.intParam(1);
-    public frameCount = Parameters.intParam(100);
-    public fps = Parameters.intParam(25);
+    public frame = Parameters.intParam(1)
+    public frameCount = Parameters.intParam(100)
+    public fps = Parameters.intParam(25)
 
-    public dnType = DenoiserType.SMART_DENOISE_SRGB;
-    public dnSplitter = Parameters.floatParam(-1.0);
-    public dnSigma = Parameters.floatParam(2.1);
-    public dnKSigma  = Parameters.floatParam(1.15);
-    public dnThreshold = Parameters.floatParam(0.165);
-    public dnMix = Parameters.floatParam(0.25);
-    public dnGamma = Parameters.floatParam(2.2);
+    public dnType = DenoiserType.OFF // DenoiserType.SMART_DENOISE_SRGB;
+    public dnSplitter = Parameters.floatParam(-1.0)
+    public dnSigma = Parameters.floatParam(2.1)
+    public dnKSigma  = Parameters.floatParam(1.15)
+    public dnThreshold = Parameters.floatParam(0.165)
+    public dnMix = Parameters.floatParam(0.25)
+    public dnGamma = Parameters.floatParam(2.2)
 
     private _layers = new Array<Layer>();
 

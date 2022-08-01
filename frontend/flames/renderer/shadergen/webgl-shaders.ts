@@ -63,7 +63,6 @@ interface ComputeColorsProgram extends WebGLProgram {
 interface ShowHistogramProgram extends WebGLProgram {
     uTexSamp: WebGLUniformLocation;
     frames: WebGLUniformLocation;
-    brightness: WebGLUniformLocation;
 }
 
 interface ShowRawBufferProgram extends WebGLProgram {
@@ -167,9 +166,8 @@ export class WebglShaders implements CloseableBuffers{
                 this.prog_show = compileShaderDirect(gl, shader_direct_vs, shader_show_with_denoiser_fs, extParams) as ShowHistogramProgram;
             }
 
-            this.prog_show.uTexSamp = gl.getUniformLocation(this.prog_show, "uTexSamp")!;
-            this.prog_show.frames = gl.getUniformLocation(this.prog_show, "frames")!;
-            this.prog_show.brightness = gl.getUniformLocation(this.prog_show, "brightness")!;
+            this.prog_show.uTexSamp = gl.getUniformLocation(this.prog_show, "uTexSamp")!
+            this.prog_show.frames = gl.getUniformLocation(this.prog_show, "frames")!
         }
         this.prog_show_raw = compileShaderDirect(gl, shader_direct_vs, shader_show_raw_fs, {RESOLUTION: canvas.width}) as ShowRawBufferProgram;
         this.prog_show_raw.uTexSamp = gl.getUniformLocation(this.prog_show_raw, "uTexSamp")!;

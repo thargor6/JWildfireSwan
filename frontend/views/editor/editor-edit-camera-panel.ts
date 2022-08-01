@@ -28,49 +28,57 @@ export class EditorEditCameraPanel extends EditPropertyPanel {
   private camRoll: NumberFieldDescriptor = {
     key: 'camRoll', label: msg('Roll'), min: -360, max: 360, step: 3,
     onChange: this.flamePropertyChange.bind(this,'camRoll'),
-    value: this.getFlameValue.bind(this,'camRoll')
+    value: this.getFlameValue.bind(this,'camRoll'),
+    onButtonClicked: this.flameKeyFrameClicked.bind(this, 'camRoll')
   }
 
   private camPitch: NumberFieldDescriptor = {
     key: 'camPitch', label: msg('Pitch'), min: -360, max: 360, step: 3,
     onChange: this.flamePropertyChange.bind(this,'camPitch'),
-    value: this.getFlameValue.bind(this,'camPitch')
+    value: this.getFlameValue.bind(this,'camPitch'),
+    onButtonClicked: this.flameKeyFrameClicked.bind(this, 'camPitch')
   }
 
   private camYaw: NumberFieldDescriptor = {
     key: 'camYaw', label: msg('Yaw'), min: -360, max: 360, step: 3,
     onChange: this.flamePropertyChange.bind(this,'camYaw'),
-    value: this.getFlameValue.bind(this,'camYaw')
+    value: this.getFlameValue.bind(this,'camYaw'),
+    onButtonClicked: this.flameKeyFrameClicked.bind(this, 'camYaw')
   }
 
   private camBank: NumberFieldDescriptor = {
     key: 'camBank', label: msg('Bank'), min: -360, max: 360, step: 3,
     onChange: this.flamePropertyChange.bind(this,'camBank'),
-    value: this.getFlameValue.bind(this,'camBank')
+    value: this.getFlameValue.bind(this,'camBank'),
+    onButtonClicked: this.flameKeyFrameClicked.bind(this, 'camBank')
   }
 
   private camPerspective: NumberFieldDescriptor = {
     key: 'camPerspective', label: msg('Perspective'), min: -1, max: 1, step: 0.1,
     onChange: this.flamePropertyChange.bind(this,'camPerspective'),
-    value: this.getFlameValue.bind(this,'camPerspective')
+    value: this.getFlameValue.bind(this,'camPerspective'),
+    onButtonClicked: this.flameKeyFrameClicked.bind(this, 'camPerspective')
   }
 
   private centreX: NumberFieldDescriptor = {
     key: 'centreX', label: msg('CentreX'), min: -3, max: 3, step: 0.1,
     onChange: this.flamePropertyChange.bind(this,'centreX'),
-    value: this.getFlameValue.bind(this,'centreX')
+    value: this.getFlameValue.bind(this,'centreX'),
+    onButtonClicked: this.flameKeyFrameClicked.bind(this, 'centreX')
   }
 
   private centreY: NumberFieldDescriptor = {
     key: 'centreY', label: msg('CentreY'), min: -3, max: 3, step: 0.1,
     onChange: this.flamePropertyChange.bind(this,'centreY'),
-    value: this.getFlameValue.bind(this,'centreY')
+    value: this.getFlameValue.bind(this,'centreY'),
+    onButtonClicked: this.flameKeyFrameClicked.bind(this, 'centreY')
   }
 
   private camZoom: NumberFieldDescriptor = {
     key: 'camZoom', label: msg('Zoom'), min: 0.1, max: 3, step: 0.1,
     onChange: this.flamePropertyChange.bind(this,'camZoom'),
-    value: this.getFlameValue.bind(this,'camZoom')
+    value: this.getFlameValue.bind(this,'camZoom'),
+    onButtonClicked: this.flameKeyFrameClicked.bind(this, 'camZoom')
   }
 
   renderControls() {
