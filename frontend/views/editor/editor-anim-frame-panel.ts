@@ -24,6 +24,8 @@ import {localized, msg} from "@lit/localize";
 import '../../components/swan-number-slider'
 import {MobxLitElement} from "@adobe/lit-mobx";
 import {EditPropertyPanel, NumberFieldDescriptor} from "Frontend/views/editor/edit-property-panel";
+import {SwanNumberSlider} from "Frontend/components/swan-number-slider";
+import {editorStore} from "Frontend/stores/editor-store";
 
 @localized()
 @customElement('editor-anim-frame-panel')
@@ -33,18 +35,35 @@ export class EditorAnimFramePanel extends EditPropertyPanel {
   reRender = () => {}
 
   @property()
+  afterFrameChanged = ()=> {}
+
+  @property()
   playAnimation = ()=>{}
+
+  onFrameChange = (value: number, isImmediateValue: boolean) => {
+    this.flamePropertyChange('frame', value, isImmediateValue)
+    this.afterFrameChanged()
+  }
+
+  onFrameCountChange = (value: number, isImmediateValue: boolean) => {
+    this.flamePropertyChange('frameCount', value, isImmediateValue)
+    const frameCount = editorStore.currFlame.frameCount.value
+    const oldMax = (this.getRegisteredControl('frame') as SwanNumberSlider).max
+    if(oldMax<frameCount) {
+      (this.getRegisteredControl('frame') as SwanNumberSlider).max = frameCount
+    }
+  }
 
   private frame: NumberFieldDescriptor = {
     key: 'frame', label: msg('Frame'), min: 0, max: 100, step: 1,
-    onChange: this.flamePropertyChange.bind(this,'frame'),
+    onChange: this.onFrameChange,
     labelWidth: '5em', sliderWidth: '30em', hideEditField: true,
     value: this.getFlameValue.bind(this,'frame')
   }
 
   private frameCount: NumberFieldDescriptor = {
     key: 'frameCount', label: msg('Frame count'), min: 3, max: 100, step: 10,
-    onChange: this.flamePropertyChange.bind(this,'frameCount'),
+    onChange: this.onFrameCountChange,
     hideSlider: true, labelWidth: '7em',
     value: this.getFlameValue.bind(this,'frameCount')
   }

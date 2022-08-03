@@ -189,6 +189,7 @@ export abstract class EditPropertyPanel extends MobxLitElement {
       // @ts-ignore
       const val: any = this.getProperty(editorStore.currFlame, key)
       if (val) {
+        console.log("VAL", val)
         if (val.type) {
           return val.value
         } else {
@@ -365,6 +366,16 @@ export abstract class EditPropertyPanel extends MobxLitElement {
       throw new Error(`Control ${key} is already registered`)
     }
     this.registeredControls.set(key, new HtmlControlReference(desc, undefined))
+  }
+
+  getRegisteredControl(key: string): HTMLElement {
+    const ref = this.registeredControls.get(key)
+    if(ref && ref.component) {
+      return ref.component
+    }
+    else {
+      throw new Error(`No instance of component ${key} found`)
+    }
   }
 
   renderNumberField(desc: NumberFieldDescriptor): TemplateResult {
