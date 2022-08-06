@@ -15,7 +15,7 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 */
 
-import {FloatMotionCurveParameter} from "Frontend/flames/model/parameters";
+import {FloatMotionCurveParameter, IntMotionCurveParameter} from "Frontend/flames/model/parameters";
 import {InterpolatedPointsCache} from "Frontend/flames/animation/interpolation-cache";
 
 const cache = new InterpolatedPointsCache()
@@ -23,7 +23,7 @@ const cache = new InterpolatedPointsCache()
 export class MotionCurveEvaluator {
   private useBisection = false
 
-  public evaluate(curve: FloatMotionCurveParameter, pTime: number): number {
+  public evaluate(curve: FloatMotionCurveParameter | IntMotionCurveParameter, pTime: number): number {
     if (curve.size() === 0)
       return 0.0
     else if (curve.size() === 1)
@@ -87,3 +87,5 @@ export class MotionCurveEvaluator {
   }
 
 }
+
+export const motionCurveEvaluator = new MotionCurveEvaluator()

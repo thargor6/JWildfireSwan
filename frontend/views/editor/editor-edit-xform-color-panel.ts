@@ -23,6 +23,7 @@ import {customElement} from 'lit/decorators.js';
 import {localized, msg} from "@lit/localize";
 import {EditPropertyPanel, NumberFieldDescriptor} from "Frontend/views/editor/edit-property-panel";
 import {editorStore} from "Frontend/stores/editor-store";
+import {flameEditService} from "Frontend/flames/service/flame-edit-service";
 
 @localized()
 @customElement('editor-edit-xform-color-panel')
@@ -72,7 +73,7 @@ export class EditorEditXformColorPanel extends EditPropertyPanel {
 
   randomizeColors = ()=> {
     if(editorStore.currLayer) {
-      this.flameEditService.randomizeColors(editorStore.currLayer)
+      flameEditService.randomizeColors(editorStore.currLayer)
       this.afterPropertyChange()
       this.requestContentUpdate()
     }
@@ -80,7 +81,7 @@ export class EditorEditXformColorPanel extends EditPropertyPanel {
 
   randomizeColorSymmetry = ()=> {
     if(editorStore.currLayer) {
-      this.flameEditService.randomizeColorSymmetry(editorStore.currLayer)
+      flameEditService.randomizeColorSymmetry(editorStore.currLayer)
       this.afterPropertyChange()
       this.requestContentUpdate()
     }
@@ -88,7 +89,7 @@ export class EditorEditXformColorPanel extends EditPropertyPanel {
 
   resetColors = ()=> {
     if(editorStore.currLayer) {
-      this.flameEditService.resetColors(editorStore.currLayer)
+      flameEditService.resetColors(editorStore.currLayer)
       this.afterPropertyChange()
       this.requestContentUpdate()
     }
@@ -96,7 +97,7 @@ export class EditorEditXformColorPanel extends EditPropertyPanel {
 
   distributeColors = ()=> {
     if(editorStore.currLayer) {
-      this.flameEditService.distributeColors(editorStore.currLayer)
+      flameEditService.distributeColors(editorStore.currLayer)
       this.afterPropertyChange()
       this.requestContentUpdate()
     }

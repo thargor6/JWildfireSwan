@@ -34,7 +34,7 @@ import {
     FlameParameter,
     FlameResource,
     FlameResourceType,
-    FloatMotionCurveParameter,
+    FloatMotionCurveParameter, IntMotionCurveParameter,
     MotionCurveInterpolation,
     Parameters,
     RenderParameter,
@@ -53,10 +53,8 @@ import FlameParamType from "Frontend/generated/org/jwildfire/swan/flames/model/f
 import FlameParamDataType from "Frontend/generated/org/jwildfire/swan/flames/model/flame/FlameParamDataType";
 import VariationParam from "Frontend/generated/org/jwildfire/swan/flames/model/flame/VariationParam";
 import VariationResource from "Frontend/generated/org/jwildfire/swan/flames/model/flame/VariationResource";
-import {MotionCurveEvaluator} from "Frontend/flames/animation/motion-curve-eval";
+import {motionCurveEvaluator, MotionCurveEvaluator} from "Frontend/flames/animation/motion-curve-eval";
 import {EPSILON} from "Frontend/flames/renderer/mathlib";
-
-const evaluator = new MotionCurveEvaluator()
 
 class ResourceMapper {
     public static mapFromBackend(source: SourceFlameResource): FlameResource {
@@ -116,10 +114,10 @@ class ParamMapper {
     static mapForRendering(ctx: RenderMappingContext, source: FlameParameter): RenderParameter {
         if(source.datatype==='int') {
             if(source.type==='curve') {
-                const val = evaluator.evaluate(source as FloatMotionCurveParameter, ctx.frame)
+                const val = motionCurveEvaluator.evaluate(source as IntMotionCurveParameter, ctx.frame)
                 const mbLength = ctx.motionBlurTimeLength
                 if(mbLength>EPSILON) {
-                    const nextVal = evaluator.evaluate(source as FloatMotionCurveParameter, ctx.frame + mbLength)
+                    const nextVal = motionCurveEvaluator.evaluate(source as IntMotionCurveParameter, ctx.frame + mbLength)
                     return RenderParameters.intLerpParam(val, nextVal)
                 }
                 else {
@@ -132,10 +130,10 @@ class ParamMapper {
         }
         else {
             if(source.type==='curve') {
-                const val = evaluator.evaluate(source as FloatMotionCurveParameter, ctx.frame)
+                const val = motionCurveEvaluator.evaluate(source as FloatMotionCurveParameter, ctx.frame)
                 const mbLength = ctx.motionBlurTimeLength
                 if(mbLength>EPSILON) {
-                    const nextVal = evaluator.evaluate(source as FloatMotionCurveParameter, ctx.frame + mbLength)
+                    const nextVal = motionCurveEvaluator.evaluate(source as FloatMotionCurveParameter, ctx.frame + mbLength)
                     return RenderParameters.floatLerpParam(val, nextVal)
                 }
                 else {
@@ -151,7 +149,7 @@ class ParamMapper {
     static mapNumberParamForRendering(ctx: RenderMappingContext, source: FlameParameter): number {
         if(source.datatype==='int') {
             if(source.type==='curve') {
-                const val = evaluator.evaluate(source as FloatMotionCurveParameter, ctx.frame)
+                const val = motionCurveEvaluator.evaluate(source as IntMotionCurveParameter, ctx.frame)
                 return Math.round(val)
             }
             else {
@@ -160,7 +158,7 @@ class ParamMapper {
         }
         else {
             if(source.type==='curve') {
-                return evaluator.evaluate(source as FloatMotionCurveParameter, ctx.frame)
+                return motionCurveEvaluator.evaluate(source as FloatMotionCurveParameter, ctx.frame)
             }
             else {
                 return source.value

@@ -176,7 +176,7 @@ export class EditorView extends View implements BeforeEnterObserver {
           DisplayMode.FLAME, this.getRenderPanel().canvas,
           undefined, false,
           '',
-          undefined, 2.0, true,
+          undefined, 0.85, true,
           this.currFlame)
       }
       else {

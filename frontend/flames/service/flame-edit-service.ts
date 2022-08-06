@@ -237,5 +237,6 @@ export class FlameEditService {
     return Parameters.intMotionCurveParam(y, curve.viewXMin, curve.viewXMax, curve.viewYMin, curve.viewYMax, curve.interpolation, curve.selectedIdx, newX, newY, curve.locked)
   }
 
-
 }
+
+export const flameEditService = new FlameEditService()

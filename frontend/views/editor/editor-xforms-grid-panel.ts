@@ -29,14 +29,12 @@ import {XForm} from "Frontend/flames/model/flame";
 import {Grid, GridActiveItemChangedEvent, GridItemModel} from "@vaadin/grid";
 import {floatToStr} from "Frontend/components/utils";
 import './editor-xform-toolbar-panel'
-import {FlameEditService} from "Frontend/flames/service/flame-edit-service";
+import {flameEditService, FlameEditService} from "Frontend/flames/service/flame-edit-service";
 import {property} from "lit/decorators";
 
 @localized()
 @customElement('editor-xforms-grid-panel')
 export class EditorXformsGridPanel extends MobxLitElement {
-  private flameEditService = new FlameEditService()
-
   @state()
   private items: XForm[] = [];
 
@@ -129,7 +127,7 @@ export class EditorXformsGridPanel extends MobxLitElement {
 
   onAddTransform = ()=> {
     if(editorStore.currLayer) {
-      this.flameEditService.addTransform(editorStore.currLayer)
+      flameEditService.addTransform(editorStore.currLayer)
       this.afterXformStructureChange()
       this.reRender()
     }
@@ -137,7 +135,7 @@ export class EditorXformsGridPanel extends MobxLitElement {
 
   onAddLinkedTransform = ()=> {
     if(editorStore.currLayer && editorStore.currXform) {
-      this.flameEditService.addLinkedTransform(editorStore.currLayer, editorStore.currXform)
+      flameEditService.addLinkedTransform(editorStore.currLayer, editorStore.currXform)
       this.afterXformStructureChange()
       this.reRender()
     }
@@ -145,7 +143,7 @@ export class EditorXformsGridPanel extends MobxLitElement {
 
   onAddFinalTransform = ()=> {
     if(editorStore.currLayer) {
-      this.flameEditService.addFinalTransform(editorStore.currLayer)
+      flameEditService.addFinalTransform(editorStore.currLayer)
       this.afterXformStructureChange()
       this.reRender()
     }
@@ -153,7 +151,7 @@ export class EditorXformsGridPanel extends MobxLitElement {
 
   onEditDeleteTransform = ()=> {
     if(editorStore.currLayer && editorStore.currXform) {
-      this.flameEditService.deleteTransform(editorStore.currLayer, editorStore.currXform)
+      flameEditService.deleteTransform(editorStore.currLayer, editorStore.currXform)
       this.afterXformStructureChange()
       this.reRender()
     }
@@ -161,7 +159,7 @@ export class EditorXformsGridPanel extends MobxLitElement {
 
   onEditDuplicateTransform = ()=> {
     if(editorStore.currLayer && editorStore.currXform) {
-      this.flameEditService.duplicateTransform(editorStore.currLayer, editorStore.currXform)
+      flameEditService.duplicateTransform(editorStore.currLayer, editorStore.currXform)
       this.afterXformStructureChange()
       this.reRender()
     }

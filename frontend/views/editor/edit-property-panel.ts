@@ -29,7 +29,8 @@ import {
   MotionCurveInterpolation,
   Parameters
 } from "Frontend/flames/model/parameters";
-import {FlameEditService} from "Frontend/flames/service/flame-edit-service";
+import {flameEditService, FlameEditService} from "Frontend/flames/service/flame-edit-service";
+import {propertyHandlingService} from "Frontend/flames/service/property-handling-service";
 
 export interface ComoboBoxItem {
   key: number
@@ -76,7 +77,6 @@ class HtmlControlReference {
 }
 
 export abstract class EditPropertyPanel extends MobxLitElement {
-  protected flameEditService = new FlameEditService()
 
   @property({type: Boolean})
   visible = true
@@ -115,10 +115,10 @@ export abstract class EditPropertyPanel extends MobxLitElement {
         const currFrame = editorStore.currFlame.frame.value
         if(val.datatype==='float') {
           if(val.type==='scalar') {
-            this.setProperty(editorStore.currFlame, key, this.flameEditService.createFloatMotionCurveFromPoint(currFrame, val.value))
+            this.setProperty(editorStore.currFlame, key, flameEditService.createFloatMotionCurveFromPoint(currFrame, val.value))
           }
           else if(val.type==='curve') {
-            this.setProperty(editorStore.currFlame, key, this.flameEditService.addPointToFloatMotionCurve(currFrame, val.value, val as FloatMotionCurveParameter))
+            this.setProperty(editorStore.currFlame, key, flameEditService.addPointToFloatMotionCurve(currFrame, val.value, val as FloatMotionCurveParameter))
           }
           else {
             console.log(`WARN: unsupported type ${val.type} for flame parameter ${key}`)
@@ -126,10 +126,10 @@ export abstract class EditPropertyPanel extends MobxLitElement {
         }
         else if(val.datatype==='int') {
           if(val.type==='scalar') {
-            this.setProperty(editorStore.currFlame, key, this.flameEditService.createIntMotionCurveFromPoint(currFrame, val.value))
+            this.setProperty(editorStore.currFlame, key, flameEditService.createIntMotionCurveFromPoint(currFrame, val.value))
           }
           else if(val.type==='curve') {
-            this.setProperty(editorStore.currFlame, key, this.flameEditService.addPointToIntMotionCurve(currFrame, val.value, val as IntMotionCurveParameter))
+            this.setProperty(editorStore.currFlame, key, flameEditService.addPointToIntMotionCurve(currFrame, val.value, val as IntMotionCurveParameter))
           }
           else {
             console.log(`WARN: unsupported type ${val.type} for flame parameter ${key}`)
@@ -153,10 +153,10 @@ export abstract class EditPropertyPanel extends MobxLitElement {
         const currFrame = editorStore.currFlame.frame.value
         if(val.datatype==='float') {
           if(val.type==='scalar') {
-            this.setProperty(editorStore.currXform, key, this.flameEditService.createFloatMotionCurveFromPoint(currFrame, val.value))
+            this.setProperty(editorStore.currXform, key, flameEditService.createFloatMotionCurveFromPoint(currFrame, val.value))
           }
           else if(val.type==='curve') {
-            this.setProperty(editorStore.currXform, key, this.flameEditService.addPointToFloatMotionCurve(currFrame, val.value, val as FloatMotionCurveParameter))
+            this.setProperty(editorStore.currXform, key, flameEditService.addPointToFloatMotionCurve(currFrame, val.value, val as FloatMotionCurveParameter))
           }
           else {
             console.log(`WARN: unsupported type ${val.type} for xform parameter ${key}`)
@@ -164,10 +164,10 @@ export abstract class EditPropertyPanel extends MobxLitElement {
         }
         else if(val.datatype==='int') {
           if(val.type==='scalar') {
-            this.setProperty(editorStore.currXform, key, this.flameEditService.createIntMotionCurveFromPoint(currFrame, val.value))
+            this.setProperty(editorStore.currXform, key, flameEditService.createIntMotionCurveFromPoint(currFrame, val.value))
           }
           else if(val.type==='curve') {
-            this.setProperty(editorStore.currXform, key, this.flameEditService.addPointToIntMotionCurve(currFrame, val.value, val as IntMotionCurveParameter))
+            this.setProperty(editorStore.currXform, key, flameEditService.addPointToIntMotionCurve(currFrame, val.value, val as IntMotionCurveParameter))
           }
           else {
             console.log(`WARN: unsupported type ${val.type} for xform parameter ${key}`)
@@ -184,80 +184,24 @@ export abstract class EditPropertyPanel extends MobxLitElement {
     }
   }
 
-  getFlameValue(key: string): number | undefined {
-    if(editorStore.currFlame) {
-      // @ts-ignore
-      const val: any = this.getProperty(editorStore.currFlame, key)
-      if (val) {
-        console.log("VAL", val)
-        if (val.type) {
-          return val.value
-        } else {
-          return 0
-        }
-      }
-    }
-    return undefined
+  getFlameValue(key: keyof Flame): number | undefined {
+    return propertyHandlingService.getFlameValue(key)
   }
 
-  getLayerValue(key: string): number | undefined {
-    if(editorStore.currLayer) {
-      // @ts-ignore
-      const val: any = this.getProperty(editorStore.currLayer, key)
-      if(val) {
-        if(val.type) {
-          return val.value
-        }
-        else {
-          return 0
-        }
-      }
-    }
-    return undefined
+  getFlameBooleanValue(key: keyof Flame): boolean {
+    return propertyHandlingService.getFlameBooleanValue(key)
   }
 
-  getXformValue(key: string): number | undefined {
-    if(editorStore.currXform) {
-      // @ts-ignore
-      const val: any = this.getProperty(editorStore.currXform, key)
-      if(val) {
-        if(val.type) {
-          return val.value
-        }
-        else {
-          return 0
-        }
-      }
-    }
-    return undefined
+  getLayerValue(key: keyof Layer): number | undefined {
+    return propertyHandlingService.getLayerValue(key)
+  }
+
+  getXformValue(key: keyof XForm): number | undefined {
+    return propertyHandlingService.getXformValue(key)
   }
 
   getVariationValue(src: Variation | undefined, key: string): number | undefined {
-    if(src) {
-      // @ts-ignore
-      let val: any = this.getProperty(src, key)
-      if(!val) {
-        val = src.params.get(key)
-      }
-      if(val) {
-        if(val.type) {
-          return val.value
-        }
-        else {
-          return 0
-        }
-      }
-    }
-    return undefined
-  }
-
-  getFlameBooleanValue(key: string): boolean {
-    // @ts-ignore
-    const val: any = this.getProperty(editorStore.currFlame, key)
-    if(val && val.type && val.value) {
-      return true
-    }
-    return false
+    return propertyHandlingService.getVariationValue(src, key)
   }
 
   flamePropertyChange = (key: string, value: number, isImmediateValue: boolean) => {
