@@ -35,7 +35,7 @@ void main(void) {
   vec3 colorTexel = texture2D(uTexSamp, gl_FragCoord.xy / <%= RESOLUTION %>).rgb;
   float x = texture2D(uTexSamp, gl_FragCoord.xy / <%= RESOLUTION %>).a;
   float swarmSizeScl = float(256 * 256) / (<%= SWARM_SIZE %> * <%= SWARM_SIZE %>);
-  float resolutionScl = float(512 * 512) / (<%= RESOLUTION %> * <%= RESOLUTION %>);
+  float resolutionScl = float(512) / (<%= RESOLUTION %>);
   
   float _whiteLevel = <%= WHITE_LEVEL %>;
   

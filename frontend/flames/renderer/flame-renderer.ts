@@ -88,8 +88,11 @@ export class FlameRenderer implements CloseableBuffers {
         renderFlame.pixelsPerUnit = (wScl + hScl) * 0.5 * renderFlame.pixelsPerUnit
         renderFlame.width = imageWidth
         renderFlame.height = imageHeight
+        renderFlame.sampleDensity*=this.qualityScale
 
         this.maxSampleCount = imageWidth * imageHeight * flame.sampleDensity.value * 1.5 * this.qualityScale
+
+
         this.initialMaxSampleCount = this.maxSampleCount
 
         this.samplesPerFrame = swarm_size * swarm_size

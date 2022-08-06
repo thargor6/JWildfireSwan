@@ -26,69 +26,80 @@ import {CheckboxDescriptor, EditPropertyPanel, NumberFieldDescriptor} from "Fron
 export class EditorEditColoringPanel extends EditPropertyPanel {
 
   private brightness: NumberFieldDescriptor = {
-    key: 'brightness', label: msg('Brightness'), min: 0, max: 12, step: 0.5,
+    key: 'brightness', label: msg('Brightness'), min: 0.2, max: 12, step: 0.5,
     onChange: this.flamePropertyChange.bind(this,'brightness'),
-    value: this.getFlameValue.bind(this,'brightness')
+    value: this.getFlameValue.bind(this,'brightness'),
+    onButtonClicked: this.flameKeyFrameClicked.bind(this, 'brightness')
   }
 
   private lowDensityBrightness: NumberFieldDescriptor = {
     key: 'lowDensityBrightness', label: msg('Low brightness'), min: -10, max: 10, step: 0.1,
     onChange: this.flamePropertyChange.bind(this,'lowDensityBrightness'),
-    value: this.getFlameValue.bind(this,'lowDensityBrightness')
+    value: this.getFlameValue.bind(this,'lowDensityBrightness'),
+    onButtonClicked: this.flameKeyFrameClicked.bind(this, 'lowDensityBrightness')
   }
 
   private gamma: NumberFieldDescriptor = {
     key: 'gamma', label: msg('Gamma'), min: 1, max: 10, step: 0.2,
     onChange: this.flamePropertyChange.bind(this,'gamma'),
-    value: this.getFlameValue.bind(this,'gamma')
+    value: this.getFlameValue.bind(this,'gamma'),
+    onButtonClicked: this.flameKeyFrameClicked.bind(this, 'gamma')
   }
 
   private gammaThreshold: NumberFieldDescriptor = {
     key: 'gammaThreshold', label: msg('Gamma threshold'), min: 0.0002, max: 0.2, step: 0.05,
     onChange: this.flamePropertyChange.bind(this,'gammaThreshold'),
-    value: this.getFlameValue.bind(this,'gammaThreshold')
+    value: this.getFlameValue.bind(this,'gammaThreshold'),
+    onButtonClicked: this.flameKeyFrameClicked.bind(this, 'gammaThreshold')
   }
 
   private contrast: NumberFieldDescriptor = {
-    key: 'contrast', label: msg('Contrast'), min: 0, max: 1, step: 0.05,
+    key: 'contrast', label: msg('Contrast'), min: 0.2, max: 1, step: 0.05,
     onChange: this.flamePropertyChange.bind(this,'contrast'),
-    value: this.getFlameValue.bind(this,'contrast')
+    value: this.getFlameValue.bind(this,'contrast'),
+    onButtonClicked: this.flameKeyFrameClicked.bind(this, 'contrast')
   }
 
   private balanceRed: NumberFieldDescriptor = {
     key: 'balanceRed', label: msg('Red balance'), min: 0, max: 3, step: 0.1,
     onChange: this.flamePropertyChange.bind(this,'balanceRed'),
-    value: this.getFlameValue.bind(this,'balanceRed')
+    value: this.getFlameValue.bind(this,'balanceRed'),
+    onButtonClicked: this.flameKeyFrameClicked.bind(this, 'balanceRed')
   }
 
   private balanceGreen: NumberFieldDescriptor = {
     key: 'balanceGreen', label: msg('Green balance'), min: 0, max: 3, step: 0.1,
     onChange: this.flamePropertyChange.bind(this,'balanceGreen'),
-    value: this.getFlameValue.bind(this,'balanceGreen')
+    value: this.getFlameValue.bind(this,'balanceGreen'),
+    onButtonClicked: this.flameKeyFrameClicked.bind(this, 'balanceGreen')
   }
 
   private balanceBlue: NumberFieldDescriptor = {
     key: 'balanceBlue', label: msg('Blue balance'), min: 0, max: 3, step: 0.1,
     onChange: this.flamePropertyChange.bind(this,'balanceBlue'),
-    value: this.getFlameValue.bind(this,'balanceBlue')
+    value: this.getFlameValue.bind(this,'balanceBlue'),
+    onButtonClicked: this.flameKeyFrameClicked.bind(this, 'balanceBlue')
   }
 
   private whiteLevel: NumberFieldDescriptor = {
     key: 'whiteLevel', label: msg('Fade to white'), min: 20, max: 500, step: 2,
     onChange: this.flamePropertyChange.bind(this,'whiteLevel'),
-    value: this.getFlameValue.bind(this,'whiteLevel')
+    value: this.getFlameValue.bind(this,'whiteLevel'),
+    onButtonClicked: this.flameKeyFrameClicked.bind(this, 'whiteLevel')
   }
 
   private vibrancy: NumberFieldDescriptor = {
     key: 'vibrancy', label: msg('Vibrancy'), min: 0, max: 1, step: 0.05,
     onChange: this.flamePropertyChange.bind(this,'vibrancy'),
-    value: this.getFlameValue.bind(this,'vibrancy')
+    value: this.getFlameValue.bind(this,'vibrancy'),
+    onButtonClicked: this.flameKeyFrameClicked.bind(this, 'vibrancy')
   }
 
   private foregroundOpacity: NumberFieldDescriptor = {
     key: 'foregroundOpacity', label: msg('Fg opacity'), min: 0, max: 2, step: 0.1,
     onChange: this.flamePropertyChange.bind(this,'foregroundOpacity'),
-    value: this.getFlameValue.bind(this,'foregroundOpacity')
+    value: this.getFlameValue.bind(this,'foregroundOpacity'),
+    onButtonClicked: this.flameKeyFrameClicked.bind(this, 'foregroundOpacity')
   }
 
   private bgTransparency: CheckboxDescriptor = {
