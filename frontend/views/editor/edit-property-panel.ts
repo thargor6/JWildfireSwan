@@ -22,12 +22,9 @@ import {TemplateResult} from "lit-html";
 import {editorStore} from "Frontend/stores/editor-store";
 import {HasValue} from "@hilla/form";
 import {Flame, Layer, Variation, XForm} from "Frontend/flames/model/flame";
-import {floatsAreEqual} from "Frontend/components/utils";
 import {
   FloatMotionCurveParameter,
-  IntMotionCurveParameter,
-  MotionCurveInterpolation,
-  Parameters
+  IntMotionCurveParameter
 } from "Frontend/flames/model/parameters";
 import {flameEditService, FlameEditService} from "Frontend/flames/service/flame-edit-service";
 import {propertyHandlingService} from "Frontend/flames/service/property-handling-service";
@@ -205,97 +202,19 @@ export abstract class EditPropertyPanel extends MobxLitElement {
   }
 
   flamePropertyChange = (key: string, value: number, isImmediateValue: boolean) => {
-    if(editorStore.currFlame && !editorStore.refreshing) {
-      const oldVal: any = this.getProperty(editorStore.currFlame, <keyof Flame>key)
-      if (oldVal && oldVal.type) {
-        if (!floatsAreEqual(oldVal.value, value)) {
-          if(!isImmediateValue) {
-            editorStore.undoManager.registerFlameAttributeChange(editorStore.currFlame, <keyof Flame>key, value)
-          }
-          oldVal.value = value
-          this.afterPropertyChange()
-          // console.log('FLAME ATTRIBUTE CHANGED', key, value, oldVal)
-        }
-      }
-    }
+    propertyHandlingService.flamePropertyChange(key, value, isImmediateValue, this.afterPropertyChange)
   }
 
   layerPropertyChange = (key: string, value: number, isImmediateValue: boolean) => {
-    if(editorStore.currLayer && !editorStore.refreshing) {
-      // @ts-ignore
-      const oldVal: any = this.getProperty(editorStore.currLayer, key)
-      if (oldVal && oldVal.type) {
-        if (!floatsAreEqual(oldVal.value, value)) {
-          if(!isImmediateValue) {
-            editorStore.undoManager.registerLayerAttributeChange(editorStore.currFlame, editorStore.currLayer, <keyof Layer>key, value)
-          }
-          oldVal.value = value
-          this.afterPropertyChange()
-          // console.log('LAYER ATTRIBUTE CHANGED', key, value, oldVal)
-        }
-      }
-    }
+    propertyHandlingService.layerPropertyChange(key, value, isImmediateValue, this.afterPropertyChange)
   }
 
   xformPropertyChange = (key: string, value: number, isImmediateValue: boolean) => {
-    if(editorStore.currXform && !editorStore.refreshing) {
-      // @ts-ignore
-      const oldVal: any = this.getProperty(editorStore.currXform, key)
-      if(oldVal && oldVal.type) {
-        if (!floatsAreEqual(oldVal.value, value)) {
-          const oldValueNumber = oldVal.value
-          if(!isImmediateValue) {
-            editorStore.undoManager.registerXformAttributeChange(editorStore.currFlame, editorStore.currXform, <keyof XForm>key, value)
-          }
-          oldVal.value = value
-          // !!!just for testing now, do not use in production!!!
-          if(key==='_xyC21_') {
-            this.onPropertyChange(0, oldValueNumber, value)
-          }
-          else {
-            this.afterPropertyChange()
-          }
-          // console.log('XFORM ATTRIBUTE CHANGED', key, value, oldVal)
-        }
-      }
-    }
+    propertyHandlingService.xformPropertyChange(key, value, isImmediateValue, this.afterPropertyChange, this.onPropertyChange)
   }
 
   variationPropertyChange = (src: Variation | undefined, key: string, value: number, isImmediateValue: boolean) => {
-    if(src  && !editorStore.refreshing) {
-      // @ts-ignore
-      let oldVal: any = this.getProperty(src, key)
-      let isAttrFromMap: boolean
-      if(!oldVal) {
-        oldVal = src.params.get(key)
-        isAttrFromMap = true
-      }
-      else {
-        isAttrFromMap = false
-      }
-      if(oldVal && oldVal.type) {
-        if (!floatsAreEqual(oldVal.value, value)) {
-          const oldValueNumber = oldVal.value
-          if(!isImmediateValue) {
-            if(isAttrFromMap) {
-              editorStore.undoManager.registerVariationAttrMapAttributeChange(editorStore.currFlame, src, key, value)
-            }
-            else {
-              editorStore.undoManager.registerVariationAttributeChange(editorStore.currFlame, src, <keyof Variation>key, value)
-            }
-          }
-          oldVal.value = value
-          // !!!just for testing now, do not use in production!!!
-          if(key==='_xyC21_') {
-            this.onPropertyChange(0, oldValueNumber, value)
-          }
-          else {
-            this.afterPropertyChange()
-          }
-          // console.log('VARIATION ATTRIBUTE CHANGED', key, value, oldVal)
-        }
-      }
-    }
+    propertyHandlingService.variationPropertyChange(src, key, value, isImmediateValue, this.afterPropertyChange, this.onPropertyChange)
   }
 
   abstract renderControls(): TemplateResult
@@ -387,24 +306,6 @@ export abstract class EditPropertyPanel extends MobxLitElement {
       editorStore.refreshing = oldRefresh
     }
   }
-
-  /*
-  export function getFlameParam(propertyPath: string): FlameParameter | undefined {
-    if(!playgroundStore || !playgroundStore.flame) {
-        return undefined
-    }
-    // TODO - subProperties
-    let val = (playgroundStore.flame as any)[propertyPath]
-    // enums
-    if(typeof val==='number') {
-        return Parameters.intParam(val)
-    }
-    else {
-        const param: FlameParameter = (playgroundStore.flame as any)[propertyPath]
-        return param  ? param : undefined
-    }
-}
-   */
 
   requestContentUpdate() {
     this.refreshControls()

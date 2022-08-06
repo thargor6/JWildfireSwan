@@ -17,9 +17,10 @@
 
 
 import {editorStore} from "Frontend/stores/editor-store";
-import {Flame, Variation} from "Frontend/flames/model/flame";
+import {Flame, Layer, Variation, XForm} from "Frontend/flames/model/flame";
 import {FloatMotionCurveParameter, IntMotionCurveParameter} from "Frontend/flames/model/parameters";
 import {motionCurveEvaluator} from "Frontend/flames/animation/motion-curve-eval";
+import {floatsAreEqual} from "Frontend/components/utils";
 
 export class PropertyHandlingService {
   // https://www.nadershamma.dev/blog/2019/how-to-access-object-properties-dynamically-using-bracket-notation-in-typescript/
@@ -33,93 +34,167 @@ export class PropertyHandlingService {
     o[propertyName] = newValue
   }
 
-  // datatype: ""
-  // interpolation: "SPLINE"
+  private computeNumericValue(val: any): number | undefined {
+    if (val) {
+      if(val.interpolation && val.interpolation === 'SPLINE' && val.datatype) {
+        if(val.datatype==='float') {
+          return motionCurveEvaluator.evaluate(val as FloatMotionCurveParameter, editorStore.currFlame.frame.value)
+        }
+        else if(val.datatype==='int') {
+          return motionCurveEvaluator.evaluate(val as IntMotionCurveParameter, editorStore.currFlame.frame.value)
+        }
+        else {
+          throw new Error(`Unknown datatype ${val.datatype}`)
+        }
+      }
+      else if (val.type && val.value) {
+        return val.value
+      } else {
+        return 0
+      }
+    }
+    return undefined
+  }
 
   getFlameValue(key: keyof Flame): number | undefined {
     if(editorStore.currFlame) {
       const val: any = this.getProperty(editorStore.currFlame, key)
-      if (val) {
-        if(val.interpolation && val.interpolation === 'SPLINE' && val.datatype) {
-          if(val.datatype==='float') {
-            return motionCurveEvaluator.evaluate(val as FloatMotionCurveParameter, editorStore.currFlame.frame.value)
-          }
-          else if(val.datatype==='int') {
-            return motionCurveEvaluator.evaluate(val as IntMotionCurveParameter, editorStore.currFlame.frame.value)
-          }
-          else {
-            throw new Error(`Unknown datatype ${val.datatype}`)
-          }
-        }
-        else if (val.type && val.value) {
-          return val.value
-        } else {
-          return 0
-        }
-      }
+      return this.computeNumericValue(val)
     }
     return undefined
   }
 
-  getLayerValue(key: string): number | undefined {
+  getLayerValue(key: keyof Layer): number | undefined {
     if(editorStore.currLayer) {
-      // @ts-ignore
       const val: any = this.getProperty(editorStore.currLayer, key)
-      if(val) {
-        if(val.type) {
-          return val.value
-        }
-        else {
-          return 0
-        }
-      }
+      return this.computeNumericValue(val)
     }
     return undefined
   }
 
-
-  getXformValue(key: string): number | undefined {
+  getXformValue(key: keyof XForm): number | undefined {
     if(editorStore.currXform) {
-      // @ts-ignore
       const val: any = this.getProperty(editorStore.currXform, key)
-      if(val) {
-        if(val.type) {
-          return val.value
-        }
-        else {
-          return 0
-        }
-      }
+      return this.computeNumericValue(val)
     }
     return undefined
   }
 
   getVariationValue(src: Variation | undefined, key: string): number | undefined {
     if(src) {
-      // @ts-ignore
-      let val: any = this.getProperty(src, key)
+      let val: any = this.getProperty(src, key as keyof Variation)
       if(!val) {
         val = src.params.get(key)
       }
-      if(val) {
-        if(val.type) {
-          return val.value
-        }
-        else {
-          return 0
-        }
-      }
+      return this.computeNumericValue(val)
     }
     return undefined
   }
 
-  getFlameBooleanValue(key: string): boolean {
-    // @ts-ignore
+  getFlameBooleanValue(key: keyof Flame): boolean {
     const val: any = this.getProperty(editorStore.currFlame, key)
     if(val && val.type && val.value) {
       return true
     }
     return false
+  }
+
+  flamePropertyChange = (key: string, value: number, isImmediateValue: boolean, afterPropertyChange: ()=>void) => {
+    if(editorStore.currFlame && !editorStore.refreshing) {
+      const oldVal: any = this.getProperty(editorStore.currFlame, <keyof Flame>key)
+      if (oldVal && oldVal.type) {
+        if (!floatsAreEqual(oldVal.value, value)) {
+          if(!isImmediateValue) {
+            editorStore.undoManager.registerFlameAttributeChange(editorStore.currFlame, <keyof Flame>key, value)
+          }
+          oldVal.value = value
+          oldVal.intermediateValue = value
+          afterPropertyChange()
+          // console.log('FLAME ATTRIBUTE CHANGED', key, value, oldVal)
+        }
+      }
+    }
+  }
+
+  layerPropertyChange = (key: string, value: number, isImmediateValue: boolean, afterPropertyChange: ()=>void) => {
+    if(editorStore.currLayer && !editorStore.refreshing) {
+      // @ts-ignore
+      const oldVal: any = this.getProperty(editorStore.currLayer, key)
+      if (oldVal && oldVal.type) {
+        if (!floatsAreEqual(oldVal.value, value)) {
+          if(!isImmediateValue) {
+            editorStore.undoManager.registerLayerAttributeChange(editorStore.currFlame, editorStore.currLayer, <keyof Layer>key, value)
+          }
+          oldVal.value = value
+          oldVal.intermediateValue = value
+          afterPropertyChange()
+          // console.log('LAYER ATTRIBUTE CHANGED', key, value, oldVal)
+        }
+      }
+    }
+  }
+
+  xformPropertyChange = (key: string, value: number, isImmediateValue: boolean, afterPropertyChange: ()=>void, onPropertyChange: (paramId: number, oldValue: number, newValue: number)=>void) => {
+    if(editorStore.currXform && !editorStore.refreshing) {
+      // @ts-ignore
+      const oldVal: any = this.getProperty(editorStore.currXform, key)
+      if(oldVal && oldVal.type) {
+        if (!floatsAreEqual(oldVal.value, value)) {
+          const oldValueNumber = oldVal.value
+          if(!isImmediateValue) {
+            editorStore.undoManager.registerXformAttributeChange(editorStore.currFlame, editorStore.currXform, <keyof XForm>key, value)
+          }
+          oldVal.value = value
+          oldVal.intermediateValue = value
+          // !!!just for testing now, do not use in production!!!
+          if(key==='_xyC21_') {
+            onPropertyChange(0, oldValueNumber, value)
+          }
+          else {
+            afterPropertyChange()
+          }
+          // console.log('XFORM ATTRIBUTE CHANGED', key, value, oldVal)
+        }
+      }
+    }
+  }
+
+  variationPropertyChange = (src: Variation | undefined, key: string, value: number, isImmediateValue: boolean, afterPropertyChange: ()=>void, onPropertyChange: (paramId: number, oldValue: number, newValue: number)=>void) => {
+    if(src  && !editorStore.refreshing) {
+      // @ts-ignore
+      let oldVal: any = this.getProperty(src, key)
+      let isAttrFromMap: boolean
+      if(!oldVal) {
+        oldVal = src.params.get(key)
+        isAttrFromMap = true
+      }
+      else {
+        isAttrFromMap = false
+      }
+      if(oldVal && oldVal.type) {
+        if (!floatsAreEqual(oldVal.value, value)) {
+          const oldValueNumber = oldVal.value
+          if(!isImmediateValue) {
+            if(isAttrFromMap) {
+              editorStore.undoManager.registerVariationAttrMapAttributeChange(editorStore.currFlame, src, key, value)
+            }
+            else {
+              editorStore.undoManager.registerVariationAttributeChange(editorStore.currFlame, src, <keyof Variation>key, value)
+            }
+          }
+          oldVal.value = value
+          oldVal.intermediateValue = value
+          // !!!just for testing now, do not use in production!!!
+          if(key==='_xyC21_') {
+            onPropertyChange(0, oldValueNumber, value)
+          }
+          else {
+            afterPropertyChange()
+          }
+          // console.log('VARIATION ATTRIBUTE CHANGED', key, value, oldVal)
+        }
+      }
+    }
   }
 
 }

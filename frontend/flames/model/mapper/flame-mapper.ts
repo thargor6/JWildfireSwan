@@ -147,6 +147,11 @@ class ParamMapper {
     }
 
     static mapNumberParamForRendering(ctx: RenderMappingContext, source: FlameParameter): number {
+        if((source as any).intermediateValue && (typeof (source as any).intermediateValue)==='number') {
+            const intermediateValue = (source as any).intermediateValue as number
+            (source as any).intermediateValue = undefined
+            return intermediateValue
+        }
         if(source.datatype==='int') {
             if(source.type==='curve') {
                 const val = motionCurveEvaluator.evaluate(source as IntMotionCurveParameter, ctx.frame)
