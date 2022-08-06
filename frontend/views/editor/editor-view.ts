@@ -435,7 +435,7 @@ export class EditorView extends View implements BeforeEnterObserver {
       editorStore.lastError = ''
       editorStore.playingAnimation = true
       try {
-        const currFrame = editorStore.currFlame.frame.value
+        const currFrame = 1 // editorStore.currFlame.frame.value
         const frameCount = editorStore.currFlame.frameCount.value
         editorStore.currFlame.frame = Parameters.intParam(currFrame)
         editorStore.currFlame.dnType = DenoiserType.OFF

@@ -114,6 +114,11 @@ class ParamMapper {
     static mapForRendering(ctx: RenderMappingContext, source: FlameParameter): RenderParameter {
         if(source.datatype==='int') {
             if(source.type==='curve') {
+                if((source as any).intermediateValue && (typeof (source as any).intermediateValue)==='number') {
+                    const intermediateValue = (source as any).intermediateValue as number
+                    (source as any).intermediateValue = undefined
+                    return RenderParameters.intParam(Math.round(intermediateValue))
+                }
                 const val = motionCurveEvaluator.evaluate(source as IntMotionCurveParameter, ctx.frame)
                 const mbLength = ctx.motionBlurTimeLength
                 if(mbLength>EPSILON) {
@@ -130,6 +135,11 @@ class ParamMapper {
         }
         else {
             if(source.type==='curve') {
+                if((source as any).intermediateValue && (typeof (source as any).intermediateValue)==='number') {
+                    const intermediateValue = (source as any).intermediateValue as number
+                    (source as any).intermediateValue = undefined
+                    return RenderParameters.floatParam(intermediateValue)
+                }
                 const val = motionCurveEvaluator.evaluate(source as FloatMotionCurveParameter, ctx.frame)
                 const mbLength = ctx.motionBlurTimeLength
                 if(mbLength>EPSILON) {
