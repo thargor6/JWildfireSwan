@@ -30,9 +30,9 @@ html {
 
 [theme~="dark"] {
 
-      --lumo-base-color: #202020;
-      --lumo-primary-color: hsl(34, 96%, 47%);
-      --lumo-primary-text-color: hsl(36, 96%, 47%);
+      --lumo-base-color: #0c0e24;
+      --lumo-primary-color: hsl(48, 96%, 47%);
+      --lumo-primary-text-color: hsl(43, 96%, 47%);
 
       --lumo-shade-5pct: rgba(33, 33, 33, 0.05);
       --lumo-shade-10pct: rgba(33, 33, 33, 0.1);

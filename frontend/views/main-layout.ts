@@ -51,7 +51,7 @@ export class MainLayout extends Layout {
               <div style="height: 3em;"></div>  
               <swan-loading-indicator style="height: 3em; flex-grow: 1;" .loading=${renderInfoStore.calculating} caption=""></swan-loading-indicator>
             </div>
-            <img style="width: 12.5rem;" alt="JWildfire Swan" src="./icons/swan_logo_05.svg" />
+            <img style="width: 12.5rem;" alt="JWildfire Swan" src="./icons/swan_logo_200.png" />
           </div>
           <h2 class="flex items-center h-xl m-0 px-m text-m">${appStore.applicationName}</h2>
           <nav aria-labelledby="views-title" class="border-b border-contrast-10 flex-grow overflow-auto">
