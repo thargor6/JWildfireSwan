@@ -20,6 +20,7 @@ import {VariationMathFunctions} from "Frontend/flames/renderer/variations/variat
 import {VariationShaders} from "Frontend/flames/renderer/variations/variation-shaders";
 import {XFormPartShaderGenerator} from "Frontend/flames/renderer/shadergen/xform-gen";
 import {DepFunctionsPartShaderGenerator} from "Frontend/flames/renderer/shadergen/dep-functions-gen";
+import {FloatValueRenderParameter} from "Frontend/flames/model/parameters";
 
 export class CompPointsFragmentShaderGenerator {
     private xformGen = new XFormPartShaderGenerator();
@@ -42,7 +43,7 @@ export class CompPointsFragmentShaderGenerator {
         const weights = new Array<number>()
         let wsum = 0.0
         for (let i = 0; i < xFormCount; i++) {
-            const w = layer.xforms[i].weight * xForm.modifiedWeights[i]
+            const w = (layer.xforms[i].weight as FloatValueRenderParameter).value * xForm.modifiedWeights[i]
             wsum += w
             weights.push(w)
         }
@@ -60,7 +61,7 @@ export class CompPointsFragmentShaderGenerator {
         const weights = new Array<number>()
         let wsum = 0.0
         for (let i = 0; i < layer.xforms.length; i++) {
-            const w = layer.xforms[i].weight
+            const w = (layer.xforms[i].weight as FloatValueRenderParameter).value
             wsum += w
             weights.push(w)
         }

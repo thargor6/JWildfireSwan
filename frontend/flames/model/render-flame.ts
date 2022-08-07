@@ -109,11 +109,11 @@ export class RenderXForm {
     public zxPRotate = RenderParameters.floatParam(0.0)
     public zxPScale = RenderParameters.floatParam(1.0)
 
-    public color = 0.0
-    public colorSymmetry = 0.0
+    public color = RenderParameters.floatParam(0.0)
+    public colorSymmetry = RenderParameters.floatParam(0.0)
     public c1 = 0.0
     public c2 = 0.0
-    public weight = 0.0
+    public weight = RenderParameters.floatParam(0.0)
 
     private _modifiedWeights: number[] = [];
     public get modifiedWeights() {

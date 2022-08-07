@@ -143,7 +143,7 @@ export class EditorView extends View implements BeforeEnterObserver {
           <editor-xform-tabs-panel .reRender=${this.reRender} .fluidReRender=${this.fluidReRender}></editor-xform-tabs-panel>
         </vaadin-horizontal-layout>
         <editor-anim-frame-panel .afterPropertyChange=${this.reRender} 
-           .playAnimation=${this.playAnimation} .afterFrameChanged=${this.afterFlameChange}></editor-anim-frame-panel>  
+           .playAnimation=${this.playAnimation} .afterFrameChanged=${this.afterAnimFrameChange}></editor-anim-frame-panel>  
         <editor-flame-tabs-panel .reRender=${this.reRender} .afterLayerChange=${this.afterLayerChange}></editor-flame-tabs-panel>
       </vaadin-vertical-layout>
     `;
@@ -168,6 +168,12 @@ export class EditorView extends View implements BeforeEnterObserver {
     this.editorXformTabsPanel.xformAffinePanel.requestContentUpdate()
     this.editorXformTabsPanel.xformColorPanel.requestContentUpdate()
     this.editorXformTabsPanel.xformNonlinearPanel.refreshVariations()
+  }
+
+  afterAnimFrameChange =() => {
+    this.afterFlameChange()
+    this.afterLayerChange()
+    this.afterXformChange()
   }
 
     createFlameRenderer = ()=> {

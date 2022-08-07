@@ -32,19 +32,22 @@ export class EditorEditXformColorPanel extends EditPropertyPanel {
   private color: NumberFieldDescriptor = {
     key: 'color', label: msg('Color'), min: 0, max: 1, step: 0.01,
     onChange: this.xformPropertyChange.bind(this,'color'),
-    value: this.getXformValue.bind(this,'color')
+    value: this.getXformValue.bind(this,'color'),
+    onButtonClicked: this.xformKeyFrameClicked.bind(this, 'color')
   }
 
   private colorSymmetry: NumberFieldDescriptor = {
     key: 'colorSymmetry', label: msg('Color speed'), min: -1, max: 1, step: 0.01,
     onChange: this.xformPropertyChange.bind(this,'colorSymmetry'),
-    value: this.getXformValue.bind(this,'colorSymmetry')
+    value: this.getXformValue.bind(this,'colorSymmetry'),
+    onButtonClicked: this.xformKeyFrameClicked.bind(this, 'colorSymmetry')
   }
 
   private weight: NumberFieldDescriptor = {
     key: 'weight', label: msg('Weight'), min: 0, max: 10, step: 0.25,
     onChange: this.xformPropertyChange.bind(this,'weight'),
-    value: this.getXformValue.bind(this,'weight')
+    value: this.getXformValue.bind(this,'weight'),
+    onButtonClicked: this.xformKeyFrameClicked.bind(this, 'weight')
   }
 
   renderControls() {

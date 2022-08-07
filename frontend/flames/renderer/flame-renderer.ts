@@ -31,6 +31,7 @@ import {getTimeStamp} from "Frontend/components/utils";
 import {CropRegion} from "Frontend/flames/renderer/render-resolution";
 import {appStore} from "Frontend/stores/app-store";
 import {SharedRenderContext} from "Frontend/flames/renderer/shared-render-context";
+import {FloatValueRenderParameter} from "Frontend/flames/model/parameters";
 
 type RenderFinishedHandler = (frameCount: number, elapsedTimeInMs: number) => void
 type RenderProgressHandler = (currSampleCount: number, maxSampleCount: number, frameCount: number, elapsedTimeInMs: number) => void
@@ -140,8 +141,8 @@ export class FlameRenderer implements CloseableBuffers {
     private prepareFlame(renderFlame: RenderFlame) {
        renderFlame.layers.forEach(layer=> {
          layer.xforms.forEach(xform => {
-           xform.c1 = (1.0 + xform.colorSymmetry) * 0.5;
-           xform.c2 = xform.color * (1 - xform.colorSymmetry) * 0.5;
+           xform.c1 = (1.0 + (xform.colorSymmetry as FloatValueRenderParameter).value) * 0.5;
+           xform.c2 = (xform.color as FloatValueRenderParameter).value * (1 - (xform.colorSymmetry as FloatValueRenderParameter).value) * 0.5;
          })
          while(layer.gradient.length<GRADIENT_SIZE) {
            layer.gradient.push(new RenderColor(0, 0, 0))

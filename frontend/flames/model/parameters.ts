@@ -224,6 +224,10 @@ export class FloatValueRenderParameter implements RenderParameter {
         return Math.abs(this._value -  refValue) < EPSILON
     }
 
+    get value() {
+        return this._value
+    }
+
 }
 
 export class IntValueRenderParameter implements RenderParameter {
@@ -236,6 +240,10 @@ export class IntValueRenderParameter implements RenderParameter {
 
     equals(refValue: number): boolean {
         return Math.abs(Math.round(this._value) - Math.round(refValue)) < EPSILON
+    }
+
+    get value() {
+        return this._value
     }
 }
 

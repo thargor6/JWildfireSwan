@@ -487,7 +487,7 @@ class XFormMapper {
     static mapForRendering(ctx: RenderMappingContext, source: XForm): RenderXForm {
         const res = new RenderXForm()
 
-        res.weight = source.weight.value
+        res.weight = ParamMapper.mapForRendering(ctx, source.weight)
         for(let i=0;i<source.modifiedWeights.length;i++) {
             if(i>=res.modifiedWeights.length) {
                 res.modifiedWeights.push(source.modifiedWeights[i])
@@ -497,8 +497,8 @@ class XFormMapper {
             }
         }
 
-        res.color = source.color.value
-        res.colorSymmetry = source.colorSymmetry.value
+        res.color = ParamMapper.mapForRendering(ctx, source.color)
+        res.colorSymmetry = ParamMapper.mapForRendering(ctx, source.colorSymmetry)
 
         res.xyC00 = ParamMapper.mapForRendering(ctx, source.xyC00)
         res.xyC01 = ParamMapper.mapForRendering(ctx, source.xyC01)
