@@ -63,8 +63,10 @@ export interface NumberFieldDescriptor {
   hideSlider?: boolean
   hideEditField?: boolean
   onChange(value: number, isImmediateValue: boolean): void
+  buttonIcon?: () => string
   onButtonClicked?: (e: Event) => void
   value(): number | undefined
+  noUpdateOfSliderRange?: boolean
 }
 
 class HtmlControlReference {
@@ -185,6 +187,10 @@ export abstract class EditPropertyPanel extends MobxLitElement {
     return propertyHandlingService.getFlameValue(key)
   }
 
+  getFlameKeyFrameIcon(key: keyof Flame): string {
+    return propertyHandlingService.getFlameKeyFrameIcon(key)
+  }
+
   getFlameBooleanValue(key: keyof Flame): boolean {
     return propertyHandlingService.getFlameBooleanValue(key)
   }
@@ -195,6 +201,10 @@ export abstract class EditPropertyPanel extends MobxLitElement {
 
   getXformValue(key: keyof XForm): number | undefined {
     return propertyHandlingService.getXformValue(key)
+  }
+
+  getXformKeyFrameIcon(key: keyof XForm): string {
+    return propertyHandlingService.getXformKeyFrameIcon(key)
   }
 
   getVariationValue(src: Variation | undefined, key: string): number | undefined {
@@ -244,13 +254,20 @@ export abstract class EditPropertyPanel extends MobxLitElement {
   renderNumberField(desc: NumberFieldDescriptor): TemplateResult {
     return html `
       <swan-number-slider 
-        .labelWidth="${desc.labelWidth ? desc.labelWidth : '10em'}"
-        .sliderWidth="${desc.sliderWidth ? desc.sliderWidth : '15em'}"
-        .hideSlider=${desc.hideSlider ? true : false}
-        .hideEditField=${desc.hideEditField ? true : false}
+        .labelWidth="${desc.labelWidth ? desc.labelWidth : '8em'}"
+        .sliderWidth="${desc.sliderWidth ? desc.sliderWidth : '14em'}"
+        .hideSlider=${(!!desc.hideSlider)}
+        .hideEditField=${(!!desc.hideEditField)}
+        .noUpdateOfSliderRange=${(!!desc.noUpdateOfSliderRange)}
+        .buttonIcon=${desc.buttonIcon ? desc.buttonIcon() : ''} 
         .disabled="${undefined===desc.value()}" min="${desc.min}" max="${desc.max}" step="${desc.step}" 
-        label="${desc.label}" .value2=${desc.value()} id="${desc.id ? desc.id : desc.key}"
-        .onValueChange=${desc.onChange} .onButtonClicked=${desc.onButtonClicked}
+        label="${desc.label}" id="${desc.id ? desc.id : desc.key}"
+        .onValueChange=${desc.onChange} .onButtonClicked=${desc.onButtonClicked ? 
+              (e:Event)=>{if(desc.onButtonClicked) {
+                     desc.onButtonClicked(e)
+                   }
+                   this.requestContentUpdate()} : undefined
+           }
       >
       </swan-number-slider>
     `

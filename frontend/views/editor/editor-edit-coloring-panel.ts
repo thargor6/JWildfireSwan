@@ -29,6 +29,7 @@ export class EditorEditColoringPanel extends EditPropertyPanel {
     key: 'brightness', label: msg('Brightness'), min: 0.2, max: 12, step: 0.5,
     onChange: this.flamePropertyChange.bind(this,'brightness'),
     value: this.getFlameValue.bind(this,'brightness'),
+    buttonIcon: this.getFlameKeyFrameIcon.bind(this,'brightness'),
     onButtonClicked: this.flameKeyFrameClicked.bind(this, 'brightness')
   }
 
@@ -36,6 +37,7 @@ export class EditorEditColoringPanel extends EditPropertyPanel {
     key: 'lowDensityBrightness', label: msg('Low brightness'), min: -10, max: 10, step: 0.1,
     onChange: this.flamePropertyChange.bind(this,'lowDensityBrightness'),
     value: this.getFlameValue.bind(this,'lowDensityBrightness'),
+    buttonIcon: this.getFlameKeyFrameIcon.bind(this,'lowDensityBrightness'),
     onButtonClicked: this.flameKeyFrameClicked.bind(this, 'lowDensityBrightness')
   }
 
@@ -43,6 +45,7 @@ export class EditorEditColoringPanel extends EditPropertyPanel {
     key: 'gamma', label: msg('Gamma'), min: 1, max: 10, step: 0.2,
     onChange: this.flamePropertyChange.bind(this,'gamma'),
     value: this.getFlameValue.bind(this,'gamma'),
+    buttonIcon: this.getFlameKeyFrameIcon.bind(this,'gamma'),
     onButtonClicked: this.flameKeyFrameClicked.bind(this, 'gamma')
   }
 
@@ -50,6 +53,7 @@ export class EditorEditColoringPanel extends EditPropertyPanel {
     key: 'gammaThreshold', label: msg('Gamma threshold'), min: 0.0002, max: 0.2, step: 0.05,
     onChange: this.flamePropertyChange.bind(this,'gammaThreshold'),
     value: this.getFlameValue.bind(this,'gammaThreshold'),
+    buttonIcon: this.getFlameKeyFrameIcon.bind(this,'gammaThreshold'),
     onButtonClicked: this.flameKeyFrameClicked.bind(this, 'gammaThreshold')
   }
 
@@ -57,6 +61,7 @@ export class EditorEditColoringPanel extends EditPropertyPanel {
     key: 'contrast', label: msg('Contrast'), min: 0.2, max: 1, step: 0.05,
     onChange: this.flamePropertyChange.bind(this,'contrast'),
     value: this.getFlameValue.bind(this,'contrast'),
+    buttonIcon: this.getFlameKeyFrameIcon.bind(this,'contrast'),
     onButtonClicked: this.flameKeyFrameClicked.bind(this, 'contrast')
   }
 
@@ -64,6 +69,7 @@ export class EditorEditColoringPanel extends EditPropertyPanel {
     key: 'balanceRed', label: msg('Red balance'), min: 0, max: 3, step: 0.1,
     onChange: this.flamePropertyChange.bind(this,'balanceRed'),
     value: this.getFlameValue.bind(this,'balanceRed'),
+    buttonIcon: this.getFlameKeyFrameIcon.bind(this,'balanceRed'),
     onButtonClicked: this.flameKeyFrameClicked.bind(this, 'balanceRed')
   }
 
@@ -71,6 +77,7 @@ export class EditorEditColoringPanel extends EditPropertyPanel {
     key: 'balanceGreen', label: msg('Green balance'), min: 0, max: 3, step: 0.1,
     onChange: this.flamePropertyChange.bind(this,'balanceGreen'),
     value: this.getFlameValue.bind(this,'balanceGreen'),
+    buttonIcon: this.getFlameKeyFrameIcon.bind(this,'balanceGreen'),
     onButtonClicked: this.flameKeyFrameClicked.bind(this, 'balanceGreen')
   }
 
@@ -78,6 +85,7 @@ export class EditorEditColoringPanel extends EditPropertyPanel {
     key: 'balanceBlue', label: msg('Blue balance'), min: 0, max: 3, step: 0.1,
     onChange: this.flamePropertyChange.bind(this,'balanceBlue'),
     value: this.getFlameValue.bind(this,'balanceBlue'),
+    buttonIcon: this.getFlameKeyFrameIcon.bind(this,'balanceBlue'),
     onButtonClicked: this.flameKeyFrameClicked.bind(this, 'balanceBlue')
   }
 
@@ -85,6 +93,7 @@ export class EditorEditColoringPanel extends EditPropertyPanel {
     key: 'whiteLevel', label: msg('Fade to white'), min: 20, max: 500, step: 2,
     onChange: this.flamePropertyChange.bind(this,'whiteLevel'),
     value: this.getFlameValue.bind(this,'whiteLevel'),
+    buttonIcon: this.getFlameKeyFrameIcon.bind(this,'whiteLevel'),
     onButtonClicked: this.flameKeyFrameClicked.bind(this, 'whiteLevel')
   }
 
@@ -92,6 +101,7 @@ export class EditorEditColoringPanel extends EditPropertyPanel {
     key: 'vibrancy', label: msg('Vibrancy'), min: 0, max: 1, step: 0.05,
     onChange: this.flamePropertyChange.bind(this,'vibrancy'),
     value: this.getFlameValue.bind(this,'vibrancy'),
+    buttonIcon: this.getFlameKeyFrameIcon.bind(this,'vibrancy'),
     onButtonClicked: this.flameKeyFrameClicked.bind(this, 'vibrancy')
   }
 
@@ -99,6 +109,7 @@ export class EditorEditColoringPanel extends EditPropertyPanel {
     key: 'foregroundOpacity', label: msg('Fg opacity'), min: 0, max: 2, step: 0.1,
     onChange: this.flamePropertyChange.bind(this,'foregroundOpacity'),
     value: this.getFlameValue.bind(this,'foregroundOpacity'),
+    buttonIcon: this.getFlameKeyFrameIcon.bind(this,'foregroundOpacity'),
     onButtonClicked: this.flameKeyFrameClicked.bind(this, 'foregroundOpacity')
   }
 

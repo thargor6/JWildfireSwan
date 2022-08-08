@@ -55,10 +55,11 @@ export class EditorAnimFramePanel extends EditPropertyPanel {
   }
 
   private frame: NumberFieldDescriptor = {
-    key: 'frame', label: msg('Frame'), min: 0, max: 100, step: 1,
+    key: 'frame', label: msg('Frame'), min: 1, max: 120, step: 1,
     onChange: this.onFrameChange,
-    labelWidth: '5em', sliderWidth: '30em', hideEditField: true,
-    value: this.getFlameValue.bind(this,'frame')
+    labelWidth: '5em', sliderWidth: '42em', hideEditField: true,
+    value: this.getFlameValue.bind(this,'frame'),
+    noUpdateOfSliderRange: true
   }
 
   private frameCount: NumberFieldDescriptor = {
@@ -84,7 +85,6 @@ export class EditorAnimFramePanel extends EditPropertyPanel {
     this.registerControl(this.frameCount)
     this.updateControlReferences(true)
   }
-
 
 }
 

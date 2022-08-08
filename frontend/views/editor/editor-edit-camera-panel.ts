@@ -29,6 +29,7 @@ export class EditorEditCameraPanel extends EditPropertyPanel {
     key: 'camRoll', label: msg('Roll'), min: -360, max: 360, step: 3,
     onChange: this.flamePropertyChange.bind(this,'camRoll'),
     value: this.getFlameValue.bind(this,'camRoll'),
+    buttonIcon: this.getFlameKeyFrameIcon.bind(this,'camRoll'),
     onButtonClicked: this.flameKeyFrameClicked.bind(this, 'camRoll')
   }
 
@@ -36,6 +37,7 @@ export class EditorEditCameraPanel extends EditPropertyPanel {
     key: 'camPitch', label: msg('Pitch'), min: -360, max: 360, step: 3,
     onChange: this.flamePropertyChange.bind(this,'camPitch'),
     value: this.getFlameValue.bind(this,'camPitch'),
+    buttonIcon: this.getFlameKeyFrameIcon.bind(this,'camPitch'),
     onButtonClicked: this.flameKeyFrameClicked.bind(this, 'camPitch')
   }
 
@@ -43,6 +45,7 @@ export class EditorEditCameraPanel extends EditPropertyPanel {
     key: 'camYaw', label: msg('Yaw'), min: -360, max: 360, step: 3,
     onChange: this.flamePropertyChange.bind(this,'camYaw'),
     value: this.getFlameValue.bind(this,'camYaw'),
+    buttonIcon: this.getFlameKeyFrameIcon.bind(this,'camYaw'),
     onButtonClicked: this.flameKeyFrameClicked.bind(this, 'camYaw')
   }
 
@@ -50,6 +53,7 @@ export class EditorEditCameraPanel extends EditPropertyPanel {
     key: 'camBank', label: msg('Bank'), min: -360, max: 360, step: 3,
     onChange: this.flamePropertyChange.bind(this,'camBank'),
     value: this.getFlameValue.bind(this,'camBank'),
+    buttonIcon: this.getFlameKeyFrameIcon.bind(this,'camBank'),
     onButtonClicked: this.flameKeyFrameClicked.bind(this, 'camBank')
   }
 
@@ -57,6 +61,7 @@ export class EditorEditCameraPanel extends EditPropertyPanel {
     key: 'camPerspective', label: msg('Perspective'), min: -1, max: 1, step: 0.1,
     onChange: this.flamePropertyChange.bind(this,'camPerspective'),
     value: this.getFlameValue.bind(this,'camPerspective'),
+    buttonIcon: this.getFlameKeyFrameIcon.bind(this,'camPerspective'),
     onButtonClicked: this.flameKeyFrameClicked.bind(this, 'camPerspective')
   }
 
@@ -64,6 +69,7 @@ export class EditorEditCameraPanel extends EditPropertyPanel {
     key: 'centreX', label: msg('CentreX'), min: -3, max: 3, step: 0.1,
     onChange: this.flamePropertyChange.bind(this,'centreX'),
     value: this.getFlameValue.bind(this,'centreX'),
+    buttonIcon: this.getFlameKeyFrameIcon.bind(this,'centreX'),
     onButtonClicked: this.flameKeyFrameClicked.bind(this, 'centreX')
   }
 
@@ -71,6 +77,7 @@ export class EditorEditCameraPanel extends EditPropertyPanel {
     key: 'centreY', label: msg('CentreY'), min: -3, max: 3, step: 0.1,
     onChange: this.flamePropertyChange.bind(this,'centreY'),
     value: this.getFlameValue.bind(this,'centreY'),
+    buttonIcon: this.getFlameKeyFrameIcon.bind(this,'centreY'),
     onButtonClicked: this.flameKeyFrameClicked.bind(this, 'centreY')
   }
 
@@ -78,6 +85,7 @@ export class EditorEditCameraPanel extends EditPropertyPanel {
     key: 'camZoom', label: msg('Zoom'), min: 0.1, max: 3, step: 0.1,
     onChange: this.flamePropertyChange.bind(this,'camZoom'),
     value: this.getFlameValue.bind(this,'camZoom'),
+    buttonIcon: this.getFlameKeyFrameIcon.bind(this,'camZoom'),
     onButtonClicked: this.flameKeyFrameClicked.bind(this, 'camZoom')
   }
 

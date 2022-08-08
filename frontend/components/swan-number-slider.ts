@@ -66,6 +66,9 @@ export class SwanNumberSlider extends MobxLitElement {
     hideEditField = false
 
     @property()
+    noUpdateOfSliderRange = false
+
+    @property()
     buttonText = ''
 
     @property()
@@ -147,19 +150,21 @@ export class SwanNumberSlider extends MobxLitElement {
     }
 
     updateMinMax = (newValue: number) => {
-        if(newValue<this.min) {
-            this.min = newValue - (this.max -newValue) / 10
-            if(this.slider) {
-                this.slider.min = this.min
+        if(!this.noUpdateOfSliderRange) {
+            if (newValue < this.min) {
+                this.min = newValue - (this.max - newValue) / 10
+                if (this.slider) {
+                    this.slider.min = this.min
+                }
+                //   console.log("upd min", this.max, newValue)
             }
-         //   console.log("upd min", this.max, newValue)
-        }
-        if(newValue>this.max) {
-            this.max = newValue + (newValue - this.min) / 10
-            if(this.slider) {
-                this.slider.max = this.max
+            if (newValue > this.max) {
+                this.max = newValue + (newValue - this.min) / 10
+                if (this.slider) {
+                    this.slider.max = this.max
+                }
+                //  console.log("upd max", this.max, newValue)
             }
-          //  console.log("upd max", this.max, newValue)
         }
     }
 

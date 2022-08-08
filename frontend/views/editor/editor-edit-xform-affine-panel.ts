@@ -53,6 +53,7 @@ export class EditorEditXformAffinePanel extends EditPropertyPanel {
     labelWidth: this.LABEL_WIDTH,
     onChange: this.xformPropertyChange.bind(this,'xyC00'),
     value: this.getXformValue.bind(this,'xyC00'),
+    buttonIcon: this.getXformKeyFrameIcon.bind(this,'xyC00'),
     onButtonClicked: this.xformKeyFrameClicked.bind(this, 'xyC00')
   }
 
@@ -61,6 +62,7 @@ export class EditorEditXformAffinePanel extends EditPropertyPanel {
     labelWidth: this.LABEL_WIDTH,
     onChange: this.xformPropertyChange.bind(this,'xyC01'),
     value: this.getXformValue.bind(this,'xyC01'),
+    buttonIcon: this.getXformKeyFrameIcon.bind(this,'xyC01'),
     onButtonClicked: this.xformKeyFrameClicked.bind(this, 'xyC01')
   }
 
@@ -69,6 +71,7 @@ export class EditorEditXformAffinePanel extends EditPropertyPanel {
     labelWidth: this.LABEL_WIDTH,
     onChange: this.xformPropertyChange.bind(this,'xyC10'),
     value: this.getXformValue.bind(this,'xyC10'),
+    buttonIcon: this.getXformKeyFrameIcon.bind(this,'xyC10'),
     onButtonClicked: this.xformKeyFrameClicked.bind(this, 'xyC10')
   }
 
@@ -77,6 +80,7 @@ export class EditorEditXformAffinePanel extends EditPropertyPanel {
     labelWidth: this.LABEL_WIDTH,
     onChange: this.xformPropertyChange.bind(this,'xyC11'),
     value: this.getXformValue.bind(this,'xyC11'),
+    buttonIcon: this.getXformKeyFrameIcon.bind(this,'xyC11'),
     onButtonClicked: this.xformKeyFrameClicked.bind(this, 'xyC11')
   }
 
@@ -85,6 +89,7 @@ export class EditorEditXformAffinePanel extends EditPropertyPanel {
     labelWidth: this.LABEL_WIDTH,
     onChange: this.xformPropertyChange.bind(this,'xyC20'),
     value: this.getXformValue.bind(this,'xyC20'),
+    buttonIcon: this.getXformKeyFrameIcon.bind(this,'xyC20'),
     onButtonClicked: this.xformKeyFrameClicked.bind(this, 'xyC20')
   }
 
@@ -93,6 +98,7 @@ export class EditorEditXformAffinePanel extends EditPropertyPanel {
     labelWidth: this.LABEL_WIDTH,
     onChange: this.xformPropertyChange.bind(this,'xyC21'),
     value: this.getXformValue.bind(this,'xyC21'),
+    buttonIcon: this.getXformKeyFrameIcon.bind(this,'xyC21'),
     onButtonClicked: this.xformKeyFrameClicked.bind(this, 'xyC21')
   }
 
@@ -101,6 +107,7 @@ export class EditorEditXformAffinePanel extends EditPropertyPanel {
     labelWidth: this.LABEL_WIDTH,
     onChange: this.xformPropertyChange.bind(this,'xyCRotate'),
     value: this.getXformValue.bind(this,'xyCRotate'),
+    buttonIcon: this.getXformKeyFrameIcon.bind(this,'xyCRotate'),
     onButtonClicked: this.xformKeyFrameClicked.bind(this, 'xyCRotate')
   }
 
@@ -109,6 +116,7 @@ export class EditorEditXformAffinePanel extends EditPropertyPanel {
     labelWidth: this.LABEL_WIDTH,
     onChange: this.xformPropertyChange.bind(this,'xyCScale'),
     value: this.getXformValue.bind(this,'xyCScale'),
+    buttonIcon: this.getXformKeyFrameIcon.bind(this,'xyCScale'),
     onButtonClicked: this.xformKeyFrameClicked.bind(this, 'xyCScale')
   }
 
@@ -117,6 +125,7 @@ export class EditorEditXformAffinePanel extends EditPropertyPanel {
     labelWidth: this.LABEL_WIDTH,
     onChange: this.xformPropertyChange.bind(this,'yzC00'),
     value: this.getXformValue.bind(this,'yzC00'),
+    buttonIcon: this.getXformKeyFrameIcon.bind(this,'yzC00'),
     onButtonClicked: this.xformKeyFrameClicked.bind(this, 'yzC00')
   }
 
@@ -125,6 +134,7 @@ export class EditorEditXformAffinePanel extends EditPropertyPanel {
     labelWidth: this.LABEL_WIDTH,
     onChange: this.xformPropertyChange.bind(this,'yzC01'),
     value: this.getXformValue.bind(this,'yzC01'),
+    buttonIcon: this.getXformKeyFrameIcon.bind(this,'yzC01'),
     onButtonClicked: this.xformKeyFrameClicked.bind(this, 'yzC01')
   }
 
@@ -133,6 +143,7 @@ export class EditorEditXformAffinePanel extends EditPropertyPanel {
     labelWidth: this.LABEL_WIDTH,
     onChange: this.xformPropertyChange.bind(this,'yzC10'),
     value: this.getXformValue.bind(this,'yzC10'),
+    buttonIcon: this.getXformKeyFrameIcon.bind(this,'yzC10'),
     onButtonClicked: this.xformKeyFrameClicked.bind(this, 'yzC10')
   }
 
@@ -141,6 +152,7 @@ export class EditorEditXformAffinePanel extends EditPropertyPanel {
     labelWidth: this.LABEL_WIDTH,
     onChange: this.xformPropertyChange.bind(this,'yzC11'),
     value: this.getXformValue.bind(this,'yzC11'),
+    buttonIcon: this.getXformKeyFrameIcon.bind(this,'yzC11'),
     onButtonClicked: this.xformKeyFrameClicked.bind(this, 'yzC11')
   }
 
@@ -149,6 +161,7 @@ export class EditorEditXformAffinePanel extends EditPropertyPanel {
     labelWidth: this.LABEL_WIDTH,
     onChange: this.xformPropertyChange.bind(this,'yzC20'),
     value: this.getXformValue.bind(this,'yzC20'),
+    buttonIcon: this.getXformKeyFrameIcon.bind(this,'yzC20'),
     onButtonClicked: this.xformKeyFrameClicked.bind(this, 'yzC20')
   }
 
@@ -157,6 +170,7 @@ export class EditorEditXformAffinePanel extends EditPropertyPanel {
     labelWidth: this.LABEL_WIDTH,
     onChange: this.xformPropertyChange.bind(this,'yzC21'),
     value: this.getXformValue.bind(this,'yzC21'),
+    buttonIcon: this.getXformKeyFrameIcon.bind(this,'yzC21'),
     onButtonClicked: this.xformKeyFrameClicked.bind(this, 'yzC21')
   }
 
@@ -165,6 +179,7 @@ export class EditorEditXformAffinePanel extends EditPropertyPanel {
     labelWidth: this.LABEL_WIDTH,
     onChange: this.xformPropertyChange.bind(this,'yzCRotate'),
     value: this.getXformValue.bind(this,'yzCRotate'),
+    buttonIcon: this.getXformKeyFrameIcon.bind(this,'yzCRotate'),
     onButtonClicked: this.xformKeyFrameClicked.bind(this, 'yzCRotate')
   }
 
@@ -173,6 +188,7 @@ export class EditorEditXformAffinePanel extends EditPropertyPanel {
     labelWidth: this.LABEL_WIDTH,
     onChange: this.xformPropertyChange.bind(this,'yzCScale'),
     value: this.getXformValue.bind(this,'yzCScale'),
+    buttonIcon: this.getXformKeyFrameIcon.bind(this,'yzCScale'),
     onButtonClicked: this.xformKeyFrameClicked.bind(this, 'yzCScale')
   }
 
@@ -181,6 +197,7 @@ export class EditorEditXformAffinePanel extends EditPropertyPanel {
     labelWidth: this.LABEL_WIDTH,
     onChange: this.xformPropertyChange.bind(this,'zxC00'),
     value: this.getXformValue.bind(this,'zxC00'),
+    buttonIcon: this.getXformKeyFrameIcon.bind(this,'zxC00'),
     onButtonClicked: this.xformKeyFrameClicked.bind(this, 'zxC00')
   }
 
@@ -189,6 +206,7 @@ export class EditorEditXformAffinePanel extends EditPropertyPanel {
     labelWidth: this.LABEL_WIDTH,
     onChange: this.xformPropertyChange.bind(this,'zxC01'),
     value: this.getXformValue.bind(this,'zxC01'),
+    buttonIcon: this.getXformKeyFrameIcon.bind(this,'zxC01'),
     onButtonClicked: this.xformKeyFrameClicked.bind(this, 'zxC01')
   }
 
@@ -197,6 +215,7 @@ export class EditorEditXformAffinePanel extends EditPropertyPanel {
     labelWidth: this.LABEL_WIDTH,
     onChange: this.xformPropertyChange.bind(this,'zxC10'),
     value: this.getXformValue.bind(this,'zxC10'),
+    buttonIcon: this.getXformKeyFrameIcon.bind(this,'zxC10'),
     onButtonClicked: this.xformKeyFrameClicked.bind(this, 'zxC10')
   }
 
@@ -205,6 +224,7 @@ export class EditorEditXformAffinePanel extends EditPropertyPanel {
     labelWidth: this.LABEL_WIDTH,
     onChange: this.xformPropertyChange.bind(this,'zxC11'),
     value: this.getXformValue.bind(this,'zxC11'),
+    buttonIcon: this.getXformKeyFrameIcon.bind(this,'zxC11'),
     onButtonClicked: this.xformKeyFrameClicked.bind(this, 'zxC11')
   }
 
@@ -213,6 +233,7 @@ export class EditorEditXformAffinePanel extends EditPropertyPanel {
     labelWidth: this.LABEL_WIDTH,
     onChange: this.xformPropertyChange.bind(this,'zxC20'),
     value: this.getXformValue.bind(this,'zxC20'),
+    buttonIcon: this.getXformKeyFrameIcon.bind(this,'zxC20'),
     onButtonClicked: this.xformKeyFrameClicked.bind(this, 'zxC20')
   }
 
@@ -221,6 +242,7 @@ export class EditorEditXformAffinePanel extends EditPropertyPanel {
     labelWidth: this.LABEL_WIDTH,
     onChange: this.xformPropertyChange.bind(this,'zxC21'),
     value: this.getXformValue.bind(this,'zxC21'),
+    buttonIcon: this.getXformKeyFrameIcon.bind(this,'zxC21'),
     onButtonClicked: this.xformKeyFrameClicked.bind(this, 'zxC21')
   }
 
@@ -229,6 +251,7 @@ export class EditorEditXformAffinePanel extends EditPropertyPanel {
     labelWidth: this.LABEL_WIDTH,
     onChange: this.xformPropertyChange.bind(this,'zxCRotate'),
     value: this.getXformValue.bind(this,'zxCRotate'),
+    buttonIcon: this.getXformKeyFrameIcon.bind(this,'zxCRotate'),
     onButtonClicked: this.xformKeyFrameClicked.bind(this, 'zxCRotate')
   }
 
@@ -237,6 +260,7 @@ export class EditorEditXformAffinePanel extends EditPropertyPanel {
     labelWidth: this.LABEL_WIDTH,
     onChange: this.xformPropertyChange.bind(this,'zxCScale'),
     value: this.getXformValue.bind(this,'zxCScale'),
+    buttonIcon: this.getXformKeyFrameIcon.bind(this,'zxCScale'),
     onButtonClicked: this.xformKeyFrameClicked.bind(this, 'zxCScale')
   }
 
@@ -245,6 +269,7 @@ export class EditorEditXformAffinePanel extends EditPropertyPanel {
     labelWidth: this.LABEL_WIDTH,
     onChange: this.xformPropertyChange.bind(this,'xyP00'),
     value: this.getXformValue.bind(this,'xyP00'),
+    buttonIcon: this.getXformKeyFrameIcon.bind(this,'xyP00'),
     onButtonClicked: this.xformKeyFrameClicked.bind(this, 'xyP00')
   }
 
@@ -253,6 +278,7 @@ export class EditorEditXformAffinePanel extends EditPropertyPanel {
     labelWidth: this.LABEL_WIDTH,
     onChange: this.xformPropertyChange.bind(this,'xyP01'),
     value: this.getXformValue.bind(this,'xyP01'),
+    buttonIcon: this.getXformKeyFrameIcon.bind(this,'xyP01'),
     onButtonClicked: this.xformKeyFrameClicked.bind(this, 'xyP01')
   }
 
@@ -261,6 +287,7 @@ export class EditorEditXformAffinePanel extends EditPropertyPanel {
     labelWidth: this.LABEL_WIDTH,
     onChange: this.xformPropertyChange.bind(this,'xyP10'),
     value: this.getXformValue.bind(this,'xyP10'),
+    buttonIcon: this.getXformKeyFrameIcon.bind(this,'xyP10'),
     onButtonClicked: this.xformKeyFrameClicked.bind(this, 'xyP10')
   }
 
@@ -269,6 +296,7 @@ export class EditorEditXformAffinePanel extends EditPropertyPanel {
     labelWidth: this.LABEL_WIDTH,
     onChange: this.xformPropertyChange.bind(this,'xyP11'),
     value: this.getXformValue.bind(this,'xyP11'),
+    buttonIcon: this.getXformKeyFrameIcon.bind(this,'xyP11'),
     onButtonClicked: this.xformKeyFrameClicked.bind(this, 'xyP11')
   }
 
@@ -277,6 +305,7 @@ export class EditorEditXformAffinePanel extends EditPropertyPanel {
     labelWidth: this.LABEL_WIDTH,
     onChange: this.xformPropertyChange.bind(this,'xyP20'),
     value: this.getXformValue.bind(this,'xyP20'),
+    buttonIcon: this.getXformKeyFrameIcon.bind(this,'xyP20'),
     onButtonClicked: this.xformKeyFrameClicked.bind(this, 'xyP20')
   }
 
@@ -285,6 +314,7 @@ export class EditorEditXformAffinePanel extends EditPropertyPanel {
     labelWidth: this.LABEL_WIDTH,
     onChange: this.xformPropertyChange.bind(this,'xyP21'),
     value: this.getXformValue.bind(this,'xyP21'),
+    buttonIcon: this.getXformKeyFrameIcon.bind(this,'xyP21'),
     onButtonClicked: this.xformKeyFrameClicked.bind(this, 'xyP21')
   }
 
@@ -293,6 +323,7 @@ export class EditorEditXformAffinePanel extends EditPropertyPanel {
     labelWidth: this.LABEL_WIDTH,
     onChange: this.xformPropertyChange.bind(this,'xyPRotate'),
     value: this.getXformValue.bind(this,'xyPRotate'),
+    buttonIcon: this.getXformKeyFrameIcon.bind(this,'xyPRotate'),
     onButtonClicked: this.xformKeyFrameClicked.bind(this, 'xyPRotate')
   }
 
@@ -301,6 +332,7 @@ export class EditorEditXformAffinePanel extends EditPropertyPanel {
     labelWidth: this.LABEL_WIDTH,
     onChange: this.xformPropertyChange.bind(this,'xyPScale'),
     value: this.getXformValue.bind(this,'xyPScale'),
+    buttonIcon: this.getXformKeyFrameIcon.bind(this,'xyPScale'),
     onButtonClicked: this.xformKeyFrameClicked.bind(this, 'xyPScale')
   }
 
@@ -309,6 +341,7 @@ export class EditorEditXformAffinePanel extends EditPropertyPanel {
     labelWidth: this.LABEL_WIDTH,
     onChange: this.xformPropertyChange.bind(this,'yzP00'),
     value: this.getXformValue.bind(this,'yzP00'),
+    buttonIcon: this.getXformKeyFrameIcon.bind(this,'yzP00'),
     onButtonClicked: this.xformKeyFrameClicked.bind(this, 'yzP00')
   }
 
@@ -317,6 +350,7 @@ export class EditorEditXformAffinePanel extends EditPropertyPanel {
     labelWidth: this.LABEL_WIDTH,
     onChange: this.xformPropertyChange.bind(this,'yzP01'),
     value: this.getXformValue.bind(this,'yzP01'),
+    buttonIcon: this.getXformKeyFrameIcon.bind(this,'yzP01'),
     onButtonClicked: this.xformKeyFrameClicked.bind(this, 'yzP01')
   }
 
@@ -325,6 +359,7 @@ export class EditorEditXformAffinePanel extends EditPropertyPanel {
     labelWidth: this.LABEL_WIDTH,
     onChange: this.xformPropertyChange.bind(this,'yzP10'),
     value: this.getXformValue.bind(this,'yzP10'),
+    buttonIcon: this.getXformKeyFrameIcon.bind(this,'yzP10'),
     onButtonClicked: this.xformKeyFrameClicked.bind(this, 'yzP10')
   }
 
@@ -333,6 +368,7 @@ export class EditorEditXformAffinePanel extends EditPropertyPanel {
     labelWidth: this.LABEL_WIDTH,
     onChange: this.xformPropertyChange.bind(this,'yzP11'),
     value: this.getXformValue.bind(this,'yzP11'),
+    buttonIcon: this.getXformKeyFrameIcon.bind(this,'yzP11'),
     onButtonClicked: this.xformKeyFrameClicked.bind(this, 'yzP11')
   }
 
@@ -341,6 +377,7 @@ export class EditorEditXformAffinePanel extends EditPropertyPanel {
     labelWidth: this.LABEL_WIDTH,
     onChange: this.xformPropertyChange.bind(this,'yzP20'),
     value: this.getXformValue.bind(this,'yzP20'),
+    buttonIcon: this.getXformKeyFrameIcon.bind(this,'yzP20'),
     onButtonClicked: this.xformKeyFrameClicked.bind(this, 'yzP20')
   }
 
@@ -349,6 +386,7 @@ export class EditorEditXformAffinePanel extends EditPropertyPanel {
     labelWidth: this.LABEL_WIDTH,
     onChange: this.xformPropertyChange.bind(this,'yzP21'),
     value: this.getXformValue.bind(this,'yzP21'),
+    buttonIcon: this.getXformKeyFrameIcon.bind(this,'yzP21'),
     onButtonClicked: this.xformKeyFrameClicked.bind(this, 'yzP21')
   }
 
@@ -357,6 +395,7 @@ export class EditorEditXformAffinePanel extends EditPropertyPanel {
     labelWidth: this.LABEL_WIDTH,
     onChange: this.xformPropertyChange.bind(this,'yzPRotate'),
     value: this.getXformValue.bind(this,'yzPRotate'),
+    buttonIcon: this.getXformKeyFrameIcon.bind(this,'yzPRotate'),
     onButtonClicked: this.xformKeyFrameClicked.bind(this, 'yzPRotate')
   }
 
@@ -365,6 +404,7 @@ export class EditorEditXformAffinePanel extends EditPropertyPanel {
     labelWidth: this.LABEL_WIDTH,
     onChange: this.xformPropertyChange.bind(this,'yzPScale'),
     value: this.getXformValue.bind(this,'yzPScale'),
+    buttonIcon: this.getXformKeyFrameIcon.bind(this,'yzPScale'),
     onButtonClicked: this.xformKeyFrameClicked.bind(this, 'yzPScale')
   }
 
@@ -373,6 +413,7 @@ export class EditorEditXformAffinePanel extends EditPropertyPanel {
     labelWidth: this.LABEL_WIDTH,
     onChange: this.xformPropertyChange.bind(this,'zxP00'),
     value: this.getXformValue.bind(this,'zxP00'),
+    buttonIcon: this.getXformKeyFrameIcon.bind(this,'zxP00'),
     onButtonClicked: this.xformKeyFrameClicked.bind(this, 'zxP00')
   }
 
@@ -381,6 +422,7 @@ export class EditorEditXformAffinePanel extends EditPropertyPanel {
     labelWidth: this.LABEL_WIDTH,
     onChange: this.xformPropertyChange.bind(this,'zxP01'),
     value: this.getXformValue.bind(this,'zxP01'),
+    buttonIcon: this.getXformKeyFrameIcon.bind(this,'zxP01'),
     onButtonClicked: this.xformKeyFrameClicked.bind(this, 'zxP01')
   }
 
@@ -389,6 +431,7 @@ export class EditorEditXformAffinePanel extends EditPropertyPanel {
     labelWidth: this.LABEL_WIDTH,
     onChange: this.xformPropertyChange.bind(this,'zxP10'),
     value: this.getXformValue.bind(this,'zxP10'),
+    buttonIcon: this.getXformKeyFrameIcon.bind(this,'zxP10'),
     onButtonClicked: this.xformKeyFrameClicked.bind(this, 'zxP10')
   }
 
@@ -397,6 +440,7 @@ export class EditorEditXformAffinePanel extends EditPropertyPanel {
     labelWidth: this.LABEL_WIDTH,
     onChange: this.xformPropertyChange.bind(this,'zxP11'),
     value: this.getXformValue.bind(this,'zxP11'),
+    buttonIcon: this.getXformKeyFrameIcon.bind(this,'zxP11'),
     onButtonClicked: this.xformKeyFrameClicked.bind(this, 'zxP11')
   }
 
@@ -405,6 +449,7 @@ export class EditorEditXformAffinePanel extends EditPropertyPanel {
     labelWidth: this.LABEL_WIDTH,
     onChange: this.xformPropertyChange.bind(this,'zxP20'),
     value: this.getXformValue.bind(this,'zxP20'),
+    buttonIcon: this.getXformKeyFrameIcon.bind(this,'zxP20'),
     onButtonClicked: this.xformKeyFrameClicked.bind(this, 'zxP20')
   }
 
@@ -413,6 +458,7 @@ export class EditorEditXformAffinePanel extends EditPropertyPanel {
     labelWidth: this.LABEL_WIDTH,
     onChange: this.xformPropertyChange.bind(this,'zxP21'),
     value: this.getXformValue.bind(this,'zxP21'),
+    buttonIcon: this.getXformKeyFrameIcon.bind(this,'zxP21'),
     onButtonClicked: this.xformKeyFrameClicked.bind(this, 'zxP21')
   }
 
@@ -421,6 +467,7 @@ export class EditorEditXformAffinePanel extends EditPropertyPanel {
     labelWidth: this.LABEL_WIDTH,
     onChange: this.xformPropertyChange.bind(this,'zxPRotate'),
     value: this.getXformValue.bind(this,'zxPRotate'),
+    buttonIcon: this.getXformKeyFrameIcon.bind(this,'zxPRotate'),
     onButtonClicked: this.xformKeyFrameClicked.bind(this, 'zxPRotate')
   }
 
@@ -429,6 +476,7 @@ export class EditorEditXformAffinePanel extends EditPropertyPanel {
     labelWidth: this.LABEL_WIDTH,
     onChange: this.xformPropertyChange.bind(this,'zxPScale'),
     value: this.getXformValue.bind(this,'zxPScale'),
+    buttonIcon: this.getXformKeyFrameIcon.bind(this,'zxPScale'),
     onButtonClicked: this.xformKeyFrameClicked.bind(this, 'zxPScale')
   }
 

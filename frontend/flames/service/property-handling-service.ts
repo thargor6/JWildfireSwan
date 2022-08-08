@@ -64,6 +64,29 @@ export class PropertyHandlingService {
     return undefined
   }
 
+  private calculateIcon(val: any) {
+    if(val) {
+      if(val.interpolation && val.datatype && val._x && val._x.length && val._x.length>0) {
+        const frame = editorStore.currFlame.frame.value
+        for(let idx=0;idx<val._x.length;idx++) {
+          if(floatsAreEqual(frame, val._x[idx])) {
+            // we have a keyframe here
+            return 'vaadin:minus-circle-o'
+          }
+        }
+      }
+      return 'vaadin:plus-circle-o'
+    }
+    else {
+      return 'vaadin:circle-thin'
+    }
+  }
+
+  getFlameKeyFrameIcon(key: keyof Flame) {
+    const val = editorStore.currFlame ? this.getProperty(editorStore.currFlame, key): undefined
+    return this.calculateIcon(val)
+  }
+
   getLayerValue(key: keyof Layer): number | undefined {
     if(editorStore.currLayer) {
       const val: any = this.getProperty(editorStore.currLayer, key)
@@ -78,6 +101,11 @@ export class PropertyHandlingService {
       return this.computeNumericValue(val)
     }
     return undefined
+  }
+
+  getXformKeyFrameIcon(key: keyof XForm) {
+    const val = editorStore.currXform ? this.getProperty(editorStore.currXform, key): undefined
+    return this.calculateIcon(val)
   }
 
   getVariationValue(src: Variation | undefined, key: string): number | undefined {

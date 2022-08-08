@@ -172,6 +172,7 @@ export class EditorView extends View implements BeforeEnterObserver {
 
   afterAnimFrameChange =() => {
     this.afterFlameChange()
+    this.editorFlameTabsPanel.requestContentUpdate()
     this.afterLayerChange()
     this.afterXformChange()
   }

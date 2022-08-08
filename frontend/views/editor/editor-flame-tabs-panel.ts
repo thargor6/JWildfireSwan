@@ -109,4 +109,11 @@ export class EditorFlameTabsPanel extends MobxLitElement {
     this.selectedFlameTab = e.detail.value;
   }
 
+  requestContentUpdate() {
+    this.cameraPanel.requestContentUpdate()
+    this.coloringPanel.requestContentUpdate()
+    this.denoiserPanel.requestContentUpdate()
+    this.layersPanel.requestContentUpdate()
+  }
+
 }
