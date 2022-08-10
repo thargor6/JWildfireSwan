@@ -181,6 +181,15 @@ export class FlameEditService {
     return Parameters.floatMotionCurveParam(y, 0, 320, -10, 10, MotionCurveInterpolation.SPLINE, 0, pX, pY, false)
   }
 
+  motionCurveHasKeyFrame(x: number, curve: FloatMotionCurveParameter | IntMotionCurveParameter): boolean {
+    for (let idx = 0; idx < curve.x.length; idx++) {
+      if (floatsAreEqual(curve.x[idx], x)) {
+        return true
+      }
+    }
+    return false
+  }
+
   addPointToFloatMotionCurve(x: number, y: number, curve: FloatMotionCurveParameter): FloatMotionCurveParameter {
     let haveKey = false
     let pX = [...curve.x]
@@ -204,6 +213,36 @@ export class FlameEditService {
       newY = [...pY.slice(0, minIdx+1), y, ...pY.slice(minIdx+1, pY.length)]
     }
     return Parameters.floatMotionCurveParam(y, curve.viewXMin, curve.viewXMax, curve.viewYMin, curve.viewYMax, curve.interpolation, curve.selectedIdx, newX, newY, curve.locked)
+  }
+
+  removePointFromFloatMotionCurve(x: number, y:number, curve: FloatMotionCurveParameter): FloatMotionCurveParameter | number {
+    for (let idx = 0; idx < curve.x.length; idx++) {
+      if (floatsAreEqual(curve.x[idx], x)) {
+        if(curve.x.length===1) {
+          // last point in curve
+          return y
+        }
+        let newX = [...curve.x.slice(0, idx), ...curve.x.slice(idx+1, curve.x.length)]
+        let newY = [...curve.y.slice(0, idx), ...curve.y.slice(idx+1, curve.y.length)]
+        return Parameters.floatMotionCurveParam(y, curve.viewXMin, curve.viewXMax, curve.viewYMin, curve.viewYMax, curve.interpolation, curve.selectedIdx, newX, newY, curve.locked)
+      }
+    }
+    throw new Error(`The is no key frame at position ${x}`)
+  }
+
+  removePointFromIntMotionCurve(x: number, y:number, curve: IntMotionCurveParameter): IntMotionCurveParameter | number {
+    for (let idx = 0; idx < curve.x.length; idx++) {
+      if (floatsAreEqual(curve.x[idx], x)) {
+        if(curve.x.length===1) {
+          // last point in curve
+          return Math.round(y)
+        }
+        let newX = [...curve.x.slice(0, idx), ...curve.x.slice(idx+1, curve.x.length)]
+        let newY = [...curve.y.slice(0, idx), ...curve.y.slice(idx+1, curve.y.length)]
+        return Parameters.intMotionCurveParam(y, curve.viewXMin, curve.viewXMax, curve.viewYMin, curve.viewYMax, curve.interpolation, curve.selectedIdx, newX, newY, curve.locked)
+      }
+    }
+    throw new Error(`The is no key frame at position ${x}`)
   }
 
   createIntMotionCurveFromPoint(x: number, y: number) {

@@ -23,8 +23,8 @@ import {editorStore} from "Frontend/stores/editor-store";
 import {HasValue} from "@hilla/form";
 import {Flame, Layer, Variation, XForm} from "Frontend/flames/model/flame";
 import {
-  FloatMotionCurveParameter,
-  IntMotionCurveParameter
+  FloatMotionCurveParameter, FloatScalarParameter,
+  IntMotionCurveParameter, Parameters
 } from "Frontend/flames/model/parameters";
 import {flameEditService, FlameEditService} from "Frontend/flames/service/flame-edit-service";
 import {propertyHandlingService} from "Frontend/flames/service/property-handling-service";
@@ -107,79 +107,80 @@ export abstract class EditPropertyPanel extends MobxLitElement {
     o[propertyName] = newValue
   }
 
-  flameKeyFrameClicked(key: keyof Flame, e:Event) {
-    if(editorStore.currFlame) {
-      const val: any = this.getProperty(editorStore.currFlame, key)
-      if(val && val.type && val.datatype) {
-        const currFrame = editorStore.currFlame.frame.value
-        if(val.datatype==='float') {
-          if(val.type==='scalar') {
-            this.setProperty(editorStore.currFlame, key, flameEditService.createFloatMotionCurveFromPoint(currFrame, val.value))
-          }
-          else if(val.type==='curve') {
-            this.setProperty(editorStore.currFlame, key, flameEditService.addPointToFloatMotionCurve(currFrame, val.value, val as FloatMotionCurveParameter))
-          }
-          else {
-            console.log(`WARN: unsupported type ${val.type} for flame parameter ${key}`)
-          }
+  private keyFrameClicked<T>(targetName: string, target: T, key: keyof T, e:Event) {
+    const val: any = this.getProperty(target, key)
+    if(val && val.type && val.datatype) {
+      const currFrame = editorStore.currFlame.frame.value
+      if(val.datatype==='float') {
+        if(val.type==='scalar') {
+          // @ts-ignore
+          this.setProperty(target, key, flameEditService.createFloatMotionCurveFromPoint(currFrame, val.value))
         }
-        else if(val.datatype==='int') {
-          if(val.type==='scalar') {
-            this.setProperty(editorStore.currFlame, key, flameEditService.createIntMotionCurveFromPoint(currFrame, val.value))
-          }
-          else if(val.type==='curve') {
-            this.setProperty(editorStore.currFlame, key, flameEditService.addPointToIntMotionCurve(currFrame, val.value, val as IntMotionCurveParameter))
+        else if(val.type==='curve') {
+          if(flameEditService.motionCurveHasKeyFrame(currFrame, val as FloatMotionCurveParameter)) {
+            const newVal = flameEditService.removePointFromFloatMotionCurve(currFrame, val.value, val as FloatMotionCurveParameter)
+            if(newVal && val.type && val.type==='curve') {
+              // @ts-ignore
+              this.setProperty(target, key, newVal)
+            }
+            else {
+              // @ts-ignore
+              this.setProperty(target, key, Parameters.floatParam(newVal as number))
+            }
           }
           else {
-            console.log(`WARN: unsupported type ${val.type} for flame parameter ${key}`)
+            // @ts-ignore
+            this.setProperty(target, key, flameEditService.addPointToFloatMotionCurve(currFrame, val.value, val as FloatMotionCurveParameter))
           }
         }
         else {
-          console.log(`WARN: unsupported datatype ${val.datatype} for flame parameter ${key}`)
+          console.log(`WARN: unsupported type ${val.type} for ${targetName} parameter ${key}`)
         }
-        const setVal: any = this.getProperty(editorStore.currFlame, key)
+      }
+      else if(val.datatype==='int') {
+        if(val.type==='scalar') {
+          // @ts-ignore
+          this.setProperty(target, key, flameEditService.createIntMotionCurveFromPoint(currFrame, val.value))
+        }
+        else if(val.type==='curve') {
+          if(flameEditService.motionCurveHasKeyFrame(currFrame, val as IntMotionCurveParameter)) {
+            const newVal = flameEditService.removePointFromIntMotionCurve(currFrame, val.value, val as IntMotionCurveParameter)
+            if(newVal && val.type && val.type==='curve') {
+              // @ts-ignore
+              this.setProperty(target, key, newVal)
+            }
+            else {
+              // @ts-ignore
+              this.setProperty(target, key, Parameters.intParam(newVal as number))
+            }
+          }
+          else {
+            // @ts-ignore
+            this.setProperty(target, key, flameEditService.addPointToIntMotionCurve(currFrame, val.value, val as IntMotionCurveParameter))
+          }
+        }
+        else {
+          console.log(`WARN: unsupported type ${val.type} for ${targetName} parameter ${key}`)
+        }
       }
       else {
-        console.log(`WARN: unsupported flame parameter ${key}`)
+        console.log(`WARN: unsupported datatype ${val.datatype} for ${targetName} parameter ${key}`)
       }
+    }
+    else {
+      console.log(`WARN: unsupported ${targetName} parameter ${key}`)
+    }
+  }
+
+  flameKeyFrameClicked(key: keyof Flame, e:Event) {
+    if(editorStore.currFlame) {
+      this.keyFrameClicked('flame', editorStore.currFlame, key, e)
     }
   }
 
   xformKeyFrameClicked(key: keyof XForm, e:Event) {
     if(editorStore.currXform) {
-      const val: any = this.getProperty(editorStore.currXform, key)
-      if(val && val.type && val.datatype) {
-        const currFrame = editorStore.currFlame.frame.value
-        if(val.datatype==='float') {
-          if(val.type==='scalar') {
-            this.setProperty(editorStore.currXform, key, flameEditService.createFloatMotionCurveFromPoint(currFrame, val.value))
-          }
-          else if(val.type==='curve') {
-            this.setProperty(editorStore.currXform, key, flameEditService.addPointToFloatMotionCurve(currFrame, val.value, val as FloatMotionCurveParameter))
-          }
-          else {
-            console.log(`WARN: unsupported type ${val.type} for xform parameter ${key}`)
-          }
-        }
-        else if(val.datatype==='int') {
-          if(val.type==='scalar') {
-            this.setProperty(editorStore.currXform, key, flameEditService.createIntMotionCurveFromPoint(currFrame, val.value))
-          }
-          else if(val.type==='curve') {
-            this.setProperty(editorStore.currXform, key, flameEditService.addPointToIntMotionCurve(currFrame, val.value, val as IntMotionCurveParameter))
-          }
-          else {
-            console.log(`WARN: unsupported type ${val.type} for xform parameter ${key}`)
-          }
-        }
-        else {
-          console.log(`WARN: unsupported datatype ${val.datatype} for xform parameter ${key}`)
-        }
-        const setVal: any = this.getProperty(editorStore.currXform, key)
-      }
-      else {
-        console.log(`WARN: unsupported xform parameter ${key}`)
-      }
+      this.keyFrameClicked('xform', editorStore.currXform, key, e)
     }
   }
 
