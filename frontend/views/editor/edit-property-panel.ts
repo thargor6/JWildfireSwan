@@ -134,7 +134,7 @@ export abstract class EditPropertyPanel extends MobxLitElement {
           }
         }
         else {
-          console.log(`WARN: unsupported type ${val.type} for ${targetName} parameter ${key}`)
+          console.log(`WARN: unsupported type ${val.type} for ${targetName} parameter ${String(key)}`)
         }
       }
       else if(val.datatype==='int') {
@@ -160,15 +160,15 @@ export abstract class EditPropertyPanel extends MobxLitElement {
           }
         }
         else {
-          console.log(`WARN: unsupported type ${val.type} for ${targetName} parameter ${key}`)
+          console.log(`WARN: unsupported type ${val.type} for ${targetName} parameter ${String(key)}`)
         }
       }
       else {
-        console.log(`WARN: unsupported datatype ${val.datatype} for ${targetName} parameter ${key}`)
+        console.log(`WARN: unsupported datatype ${val.datatype} for ${targetName} parameter ${String(key)}`)
       }
     }
     else {
-      console.log(`WARN: unsupported ${targetName} parameter ${key}`)
+      console.log(`WARN: unsupported ${targetName} parameter ${String(key)}`)
     }
   }
 

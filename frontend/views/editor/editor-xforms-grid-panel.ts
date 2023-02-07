@@ -30,7 +30,7 @@ import {Grid, GridActiveItemChangedEvent, GridItemModel} from "@vaadin/grid";
 import {floatToStr} from "Frontend/components/utils";
 import './editor-xform-toolbar-panel'
 import {flameEditService, FlameEditService} from "Frontend/flames/service/flame-edit-service";
-import {property} from "lit/decorators";
+import {property} from "lit/decorators.js";
 
 @localized()
 @customElement('editor-xforms-grid-panel')

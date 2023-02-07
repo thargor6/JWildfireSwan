@@ -87,7 +87,7 @@ export class SetAttributeAction<T> extends AbstractUndoAction {
   }
 
   caption(): string {
-    return `change [${this.getCaptionPrefix()}] attribute [${this._key}]: ${this.valueToString(this._oldValue)} -> ${this.valueToString(this._newValue)}`
+    return `change [${this.getCaptionPrefix()}] attribute [${String(this._key)}]: ${this.valueToString(this._oldValue)} -> ${this.valueToString(this._newValue)}`
   }
 }
 

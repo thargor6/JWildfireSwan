@@ -18,12 +18,12 @@
 import {customElement, property, query} from 'lit/decorators.js';
 import {MobxLitElement} from "@adobe/lit-mobx";
 import {html, render} from "lit";
-import {guard} from "lit/directives/guard";
 import '@vaadin/vaadin-ordered-layout/vaadin-horizontal-layout';
 import '@vaadin/icon'
 import '@vaadin/vaadin-button'
 import '@vaadin/notification'
 import {Notification} from "@vaadin/notification";
+import {guard} from "lit/directives/guard.js";
 
 @customElement('swan-notification-panel')
 export class SwanNotificationPanel extends MobxLitElement {

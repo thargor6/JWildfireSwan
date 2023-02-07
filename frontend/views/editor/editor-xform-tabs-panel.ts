@@ -33,7 +33,7 @@ import {EditorEditXformColorPanel} from "Frontend/views/editor/editor-edit-xform
 import {EditorEditXformNonlinearPanel} from "Frontend/views/editor/editor-edit-xform-nonlinear-panel";
 
 import {localized, msg} from '@lit/localize';
-import {state} from "lit/decorators";
+import {state} from "lit/decorators.js";
 
 
 @localized()

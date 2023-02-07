@@ -30,7 +30,7 @@ import './editor-edit-motion-panel'
 import './editor-edit-layers-panel'
 
 import {localized, msg} from '@lit/localize';
-import {state} from "lit/decorators";
+import {state} from "lit/decorators.js";
 import {EditorEditCameraPanel} from "Frontend/views/editor/editor-edit-camera-panel";
 import {EditorEditColoringPanel} from "Frontend/views/editor/editor-edit-coloring-panel";
 import {EditorEditDenoiserPanel} from "Frontend/views/editor/editor-edit-denoiser-panel";

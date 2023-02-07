@@ -17,7 +17,6 @@
 
 import { makeAutoObservable } from 'mobx';
 import {GalleryEndpoint} from "Frontend/generated/endpoints";
-import {debug} from "webpack";
 import {ExampleFlame, parseExampleFlame, sortExamples, SortOrder} from "Frontend/stores/example-flames";
 
 export class GalleryStore {

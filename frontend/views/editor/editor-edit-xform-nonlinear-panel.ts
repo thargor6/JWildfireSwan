@@ -24,7 +24,7 @@ import {localized, msg} from "@lit/localize";
 import {EditPropertyPanel} from "Frontend/views/editor/edit-property-panel";
 import {editorStore} from "Frontend/stores/editor-store";
 import {Variation} from "Frontend/flames/model/flame";
-import {state} from "lit/decorators";
+import {state} from "lit/decorators.js";
 import {SwanVariationEditPanel} from "Frontend/components/swan-variation-edit-panel";
 
 @localized()
