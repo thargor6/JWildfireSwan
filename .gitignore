@@ -30,3 +30,7 @@ config/secrets/
 
 # temporary
 /frontend_old/
+/src_old/
+/package-lock_old.json
+/package_old.json
+/pom_old.xml
