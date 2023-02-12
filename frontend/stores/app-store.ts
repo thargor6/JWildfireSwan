@@ -1,6 +1,6 @@
 /*
   JWildfire Swan - fractal flames the playful way, GPU accelerated
-  Copyright (C) 2021-2022 Andreas Maschke
+  Copyright (C) 2021-2023 Andreas Maschke
 
   This is free software; you can redistribute it and/or modify it under the terms of the GNU Lesser
   General Public License as published by the Free Software Foundation; either version 2.1 of the
@@ -17,8 +17,8 @@
 import { RouterLocation } from '@vaadin/router';
 import { makeAutoObservable } from 'mobx';
 import {VariationShaders} from "Frontend/flames/renderer/variations/variation-shaders";
-import {galleryStore} from "Frontend/stores/gallery-store";
-import {editorStore} from "Frontend/stores/editor-store";
+import {galleryStore} from "./gallery-store";
+import {editorStore} from "./editor-store";
 
 export class AppStore {
   applicationName = 'JWildfire Swan';

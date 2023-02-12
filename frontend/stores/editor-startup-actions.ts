@@ -15,11 +15,11 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 */
 
-import {randomizerStore} from "Frontend/stores/randomizer-store";
-import {editorStore} from "Frontend/stores/editor-store";
-import {FlameMapper} from "Frontend/flames/model/mapper/flame-mapper";
+import {randomizerStore} from "./randomizer-store";
+import {editorStore} from "./editor-store";
+import {FlameMapper} from "../flames/model/mapper/flame-mapper";
 import {FlamesEndpoint} from "Frontend/generated/endpoints";
-import {renderInfoStore} from "Frontend/stores/render-info-store";
+import {renderInfoStore} from "./render-info-store";
 
 export interface StartupAction {
   execute(): boolean

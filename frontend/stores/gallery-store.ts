@@ -17,7 +17,7 @@
 
 import { makeAutoObservable } from 'mobx';
 import {GalleryEndpoint} from "Frontend/generated/endpoints";
-import {ExampleFlame, parseExampleFlame, sortExamples, SortOrder} from "Frontend/stores/example-flames";
+import {ExampleFlame, parseExampleFlame, sortExamples, SortOrder} from "./example-flames";
 
 export class GalleryStore {
   exampleFlames: ExampleFlame[] = []

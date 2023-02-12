@@ -16,24 +16,11 @@
 */
 
 import {makeAutoObservable} from 'mobx';
-import {VariationShaders} from "Frontend/flames/renderer/variations/variation-shaders";
-import {registerVars_2D_PartA} from "Frontend/flames/renderer/variations/variation-shaders-2d-partA";
-import {registerVars_2D_PartK} from "Frontend/flames/renderer/variations/variation-shaders-2d-partK";
-import {registerVars_3D_PartA} from "Frontend/flames/renderer/variations/variation-shaders-3d-partA";
-import {registerVars_ZTransforms} from "Frontend/flames/renderer/variations/variation-shaders-ztransform";
+
 import {Flame} from "Frontend/flames/model/flame";
-import {GalleryEndpoint} from "Frontend/generated/endpoints";
-import {registerVars_Complex} from "Frontend/flames/renderer/variations/variation-shaders-2d-complex";
-import {registerVars_Waves} from "Frontend/flames/renderer/variations/variation-shaders-waves";
-import {registerVar_Synth} from "Frontend/flames/renderer/variations/variation-shaders-synth";
-import {registerVars_Blur} from "Frontend/flames/renderer/variations/variation-shaders-blur";
-import {registerVars_2D_PartS} from "Frontend/flames/renderer/variations/variation-shaders-2d-partS";
-import {ExampleFlame, parseExampleFlame, sortExamples, SortOrder} from "Frontend/stores/example-flames";
-import {registerVars_Plot} from "Frontend/flames/renderer/variations/variation-shaders-plot";
 import {SharedRenderContext} from "Frontend/flames/renderer/shared-render-context";
 
 type OnInitCallback = () => void
-
 export class RandomFlame {
   subBatch = new Array<RandomFlame>()
 

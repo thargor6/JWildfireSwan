@@ -15,8 +15,6 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 */
 import { makeAutoObservable } from 'mobx';
-import {state} from "lit/decorators";
-
 export class RenderInfoStore {
   _renderInfo = ''
   _renderProgress = 0.0
