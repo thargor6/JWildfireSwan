@@ -7,21 +7,6 @@
   transition: color 140ms;
 }
 
-[slot='drawer'] nav a .la {
-  margin-top: calc(var(--lumo-space-xs) * 0.5);
-}
-
-[slot='drawer'] nav a::before {
-  border-radius: var(--lumo-border-radius);
-  bottom: calc(var(--lumo-space-xs) * 0.5);
-  content: '';
-  left: 0;
-  position: absolute;
-  right: 0;
-  top: calc(var(--lumo-space-xs) * 0.5);
-  transition: background-color 140ms;
-}
-
 [slot='drawer'] nav a[highlight] {
   color: var(--lumo-primary-text-color);
 }

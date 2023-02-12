@@ -1,0 +1,105 @@
+vaadin-app-layout[primary-section="navbar"]::part(navbar)::before {
+  background: var(--lumo-base-color) linear-gradient(var(--lumo-contrast-5pct), var(--lumo-contrast-5pct));
+}
+
+vaadin-app-layout[primary-section="drawer"]::part(navbar)::before {
+  background: var(--lumo-base-color);
+}
+
+vaadin-app-layout[primary-section="drawer"]::part(navbar) {
+  box-shadow: 0 1px 0 0 var(--lumo-contrast-10pct);
+}
+
+vaadin-app-layout[primary-section="drawer"]:not([overlay])::part(drawer) {
+  background: var(--lumo-shade-5pct);
+  border: 0;
+  box-shadow: 1px 0 0 0 var(--lumo-contrast-10pct), 1px 0 0 0 var(--lumo-base-color);
+  z-index: 1;
+}
+
+vaadin-drawer-toggle[slot="navbar"] {
+  color: var(--lumo-secondary-text-color);
+}
+
+::part(navbar) {
+  min-height: var(--lumo-size-xl);
+}
+
+::part(drawer) {
+  display: flex;
+  flex-direction: column;
+}
+
+vaadin-scroller[slot="drawer"] {
+  flex: auto;
+  padding: var(--lumo-space-s);
+}
+
+vaadin-scroller[slot="drawer"][overflow~="top"] {
+  border-top: 1px solid var(--lumo-contrast-10pct);
+}
+
+vaadin-scroller[slot="drawer"][overflow~="bottom"] {
+  border-bottom: 1px solid var(--lumo-contrast-10pct);
+}
+
+[slot="drawer"]:is(header, footer) {
+  display: flex;
+  align-items: center;
+  gap: var(--lumo-space-s);
+  padding: var(--lumo-space-s) var(--lumo-space-m);
+  min-height: var(--lumo-size-xl);
+  box-sizing: border-box;
+}
+
+[slot="drawer"]:is(header, footer):is(:empty) {
+  display: none;
+}
+
+[slot="drawer"]:is(footer) {
+  flex-wrap: wrap;
+}
+
+.navlink {
+  display: block;
+  color: inherit;
+  font-weight: 500;
+}
+
+.navlink:hover {
+  text-decoration: none;
+}
+
+.navlink:active {
+  color: var(--lumo-header-text-color);
+}
+
+.navlink:active:focus {
+  background-color: var(--lumo-contrast-5pct);
+}
+
+.navlink_active > vaadin-item {
+  color: var(--lumo-primary-text-color);
+  background-color: var(--lumo-primary-color-10pct);
+}
+
+@supports selector(:focus-visible) {
+  .navlink {
+    outline: none;
+  }
+
+  .navlink:focus-visible {
+    border-radius: var(--lumo-border-radius-m);
+    box-shadow: 0 0 0 2px var(--lumo-primary-color-50pct);
+  }
+}
+
+.navicon {
+  font-size: 1.25em;
+  min-width: 1em;
+  min-height: 1em;
+  line-height: 1;
+  margin: 0 var(--lumo-space-s);
+  text-align: center;
+  vertical-align: top;
+}

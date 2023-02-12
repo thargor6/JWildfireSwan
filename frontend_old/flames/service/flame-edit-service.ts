@@ -23,7 +23,6 @@ import {
 } from "Frontend/flames/model/parameters";
 import {Layer, Variation, XForm} from "Frontend/flames/model/flame";
 import {cloneDeep} from "lodash";
-import {editorStore} from "Frontend/stores/editor-store";
 import {floatIsLess, floatsAreEqual} from "Frontend/components/utils";
 
 export class FlameEditService {

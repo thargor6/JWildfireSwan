@@ -29,7 +29,7 @@ import {FlameMapper} from "Frontend/flames/model/mapper/flame-mapper";
 import {RenderColor, RenderMappingContext, RenderFlame} from "Frontend/flames/model/render-flame";
 import {getTimeStamp} from "Frontend/components/utils";
 import {CropRegion} from "Frontend/flames/renderer/render-resolution";
-import {appStore} from "Frontend/stores/app-store";
+import {appStore} from "../stores/app-store";
 import {SharedRenderContext} from "Frontend/flames/renderer/shared-render-context";
 import {FloatValueRenderParameter} from "Frontend/flames/model/parameters";
 
@@ -263,6 +263,7 @@ export class FlameRenderer implements CloseableBuffers {
             }
           }
     }
+
 
     private notifyImageRendered(imgElement: HTMLImageElement, imgOutputFilename: string) {
         if(appStore.hasElectron) {
