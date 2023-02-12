@@ -26,3 +26,7 @@ config/secrets/
 # Example flames
 /src/main/resources/examples/_simple.flame
 /src/main/resources/examples/animation*.flame
+
+
+# temporary
+/frontend_old/

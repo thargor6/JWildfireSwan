@@ -18,7 +18,8 @@
 import {Color, Flame, Layer, Variation, XForm} from "Frontend/flames/model/flame";
 import { cloneDeep } from "lodash";
 import {BooleanScalarParameter, FloatScalarParameter, IntScalarParameter} from "Frontend/flames/model/parameters";
-import {msg} from "@lit/localize";
+// TODO
+//import {msg} from "@lit/localize";
 
 interface UndoAction {
   restore(): Flame
@@ -141,32 +142,37 @@ export class UndoManager {
     return this._undoActions
   }
 
+  // TODO: localize
+  msg(key: string): string {
+    return key
+  }
+
   registerFlameAttributeChange(flame: Flame, key: keyof Flame, newValue: any) {
-    const desc = msg('Change flame attribute')
+    const desc = this.msg('Change flame attribute')
     this._undoActions.push(new SetAttributeAction(flame, flame, key, newValue, desc))
     this._undoPosition = this._undoActions.length - 1
   }
 
   registerLayerAttributeChange(flame: Flame, layer: Layer, key: keyof Layer, newValue: any) {
-    const desc = msg('Change layer attribute')
+    const desc = this.msg('Change layer attribute')
     this._undoActions.push(new SetAttributeAction(flame, layer, key, newValue, desc))
     this._undoPosition = this._undoActions.length - 1
   }
 
   registerXformAttributeChange(flame: Flame, xform: XForm, key: keyof XForm, newValue: any) {
-    const desc = msg('Change xform attribute')
+    const desc = this.msg('Change xform attribute')
     this._undoActions.push(new SetAttributeAction(flame, xform, key, newValue, desc))
     this._undoPosition = this._undoActions.length - 1
   }
 
   registerVariationAttributeChange(flame: Flame, variation: Variation, key: keyof Variation, newValue: any) {
-    const desc = msg('Change variation attribute')
+    const desc = this.msg('Change variation attribute')
     this._undoActions.push(new SetAttributeAction(flame, variation, key, newValue, desc))
     this._undoPosition = this._undoActions.length - 1
   }
 
   registerVariationAttrMapAttributeChange(flame: Flame, variation: Variation, key: string, newValue: any) {
-    const desc = msg('Change variation attribute')
+    const desc = this.msg('Change variation attribute')
     this._undoActions.push(new SetVariationAtrtrMapAttributeAction(flame, variation, key, newValue, desc))
     this._undoPosition = this._undoActions.length - 1
   }
