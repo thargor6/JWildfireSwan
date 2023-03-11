@@ -15,8 +15,8 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 */
 import { createContext } from "react";
-import { AppStore } from "./stores/app-store";
+import {appStore} from "./stores/app-store";
 
 export const rootStoreContext = createContext({
-    appStore: new AppStore()
+    appStore: appStore
 });

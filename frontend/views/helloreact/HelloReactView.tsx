@@ -13,7 +13,7 @@ const HelloReactView = observer(() => {
   return (
     <>
       <section className="flex p-m gap-m items-end">
-          <h1>{appStore.applicationName}</h1>
+          <h1>{appStore.applicationName} ({appStore.testItems.length})</h1>
         <TextField
           label="Your name"
           onValueChanged={(e) => {

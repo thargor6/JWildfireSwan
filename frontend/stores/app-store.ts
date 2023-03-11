@@ -20,6 +20,15 @@ import {VariationShaders} from "Frontend/flames/renderer/variations/variation-sh
 import {galleryStore} from "./gallery-store";
 import {editorStore} from "./editor-store";
 
+
+
+export interface AppTestItemProps {
+  firstName?: string;
+  lastName?: string;
+
+  age?: number;
+}
+
 export class AppStore {
   applicationName = 'JWildfire Swan';
 
@@ -35,6 +44,12 @@ export class AppStore {
   _hasElectron = false
   _checkedForElectron = false
   _ipcRenderer: any = undefined
+
+  testItems: AppTestItemProps[] = [
+    { firstName: 'John', lastName: 'Doe', age: 42 },
+    { firstName: 'Jane', lastName: 'Doe', age: 39 },
+    { firstName: 'Jack', lastName: 'Doe', age: 13 }
+  ];
 
   constructor() {
     makeAutoObservable(this);
